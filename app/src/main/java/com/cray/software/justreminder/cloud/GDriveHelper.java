@@ -281,7 +281,7 @@ public class GDriveHelper {
                         File file = new File(sdPathDr, title);
                         if (!file.exists()) {
                             try {
-                                file.createNewFile(); //otherwise dropbox client will fail silently
+                                file.createNewFile();
                             } catch (IOException e1) {
                                 e1.printStackTrace();
                             }
@@ -422,7 +422,7 @@ public class GDriveHelper {
             authorize();
             File sdPath = Environment.getExternalStorageDirectory();
             File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_BIRTHDAY_SD_GDRIVE_TMP);
-            //deleteFolders();
+
             Drive.Files.List request;
             try {
                 request = driveService.files().list().setQ("mimeType = 'text/plain'"); // .setQ("mimeType=\"text/plain\"");

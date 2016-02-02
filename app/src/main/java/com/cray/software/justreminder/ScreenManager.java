@@ -568,9 +568,15 @@ public class ScreenManager extends AppCompatActivity
     }
 
     private void restoreUi(){
-        toolbar.setBackgroundColor(ViewUtils.getColor(this, cSetter.colorPrimary()));
+        int colorPrimary = cSetter.getColor(cSetter.colorPrimary());
+        int colorAccent = cSetter.getColor(cSetter.colorPrimary());
+        int colorDark = cSetter.getColor(cSetter.colorPrimaryDark());
+        toolbar.setBackgroundColor(colorPrimary);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
+            getWindow().setStatusBarColor(colorDark);
+        }
+        if (colorPrimary != 0 && colorAccent != 0) {
+            mFab.setBackgroundTintList(ViewUtils.getFabState(this, colorAccent, colorPrimary));
         }
     }
 

@@ -539,7 +539,7 @@ public class SyncHelper {
         JModel jModel = new JParser(jsonObj).parse();
         String uuID = jModel.getUuId();
         String type = jModel.getType();
-        if (!Reminder.isUuId(mContext, uuID)) {
+        if (!Reminder.isUuId(mContext, uuID) && type != null) {
             if (type.contains(Constants.TYPE_LOCATION)){
                 new LocationType(mContext, type).save(jModel);
             } else {
@@ -558,7 +558,7 @@ public class SyncHelper {
                 }
             }
         } else {
-            if (type.matches(Constants.TYPE_SHOPPING_LIST)) {
+            if (type != null && type.matches(Constants.TYPE_SHOPPING_LIST)) {
                 NextBase db = new NextBase(mContext);
                 db.open();
                 Cursor c = db.getReminder(uuID);

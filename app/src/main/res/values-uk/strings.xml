@@ -404,7 +404,7 @@
     <string name="delete_task">"Видалити завдання"</string>
     <string name="move_to_another_list">"Перемістити до іншого списку"</string>
     <string name="edit_birthday">"Редагувати день народження"</string>
-    <string name="disconnect">"Від'єднано"</string>
+    <string name="disconnect">"Від'єднати"</string>
     <string name="no_action_selected">"Ніяких дій не обрано"</string>
     <string name="you_dont_select_any_calendar">"Ви не обрали календар!"</string>
     <string name="please_wait">"Будь ласка, зачекайте…"</string>

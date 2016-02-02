@@ -1,7 +1,23 @@
+<!--
+  ~ Copyright 2016 Nazar Suhovich
+  ~ <p/>
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~ <p/>
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~ <p/>
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <resources>
 
-    <string name="app_name">"Напоминание"</string>
-    <string name="app_name_pro">"Напоминание ПРО"</string>
+    <string name="app_name">"Напоминания"</string>
+    <string name="app_name_pro">"Напоминания ПРО"</string>
     <string name="action_settings">"Настройки"</string>
     <string name="copyright">"2016\u00a9 Nazar Suhovich"</string>
 
@@ -172,7 +188,7 @@
     <string name="last_modified">"Последнее изменение"</string>
     <string name="no_notes">"Нет заметок"</string>
     <string name="next_event">"Следующее событие"</string>
-    <string name="remind_me">"Напомни мне..."</string>
+    <string name="remind_me">"Напомни мне…"</string>
     <string name="repeat">"Повторение"</string>
     <string name="days">"дней"</string>
     <string name="send">"Отправить"</string>
@@ -183,7 +199,7 @@
     <string name="later">"Позже"</string>
     <string name="never">"Никогда"</string>
     <string name="no_application">"Нет приложений"</string>
-    <string name="url">"Url ..."</string>
+    <string name="url">"Url…"</string>
     <string name="application">"Приложение"</string>
     <string name="open_link">"Открыть ссылку"</string>
     <string name="select_day">"Выберите день"</string>
@@ -293,11 +309,11 @@
     <string name="local_sync">"Локальная синхронизация"</string>
     <string name="other_version_detected">"Другое приложение обнаружено!"</string>
     <string name="open">"Открыть"</string>
-    <string name="trying_to_log_in">"Попытка войти ..."</string>
-    <string name="syncing_groups">"Синхронизация групп ..."</string>
-    <string name="syncing_reminders">"Синхронизация напоминаний ..."</string>
-    <string name="syncing_notes">"Синхронизация заметок ..."</string>
-    <string name="syncing_birthdays">"Синхронизация дней рождений ..."</string>
+    <string name="trying_to_log_in">"Попытка войти…"</string>
+    <string name="syncing_groups">"Синхронизация групп…"</string>
+    <string name="syncing_reminders">"Синхронизация напоминаний…"</string>
+    <string name="syncing_notes">"Синхронизация заметок…"</string>
+    <string name="syncing_birthdays">"Синхронизация дней рождений…"</string>
     <string name="done">"Готово"</string>
     <string name="syncing_google_tasks">"Синхронизация Задач Google"</string>
     <string name="note_deleted">"Заметка удалена"</string>
@@ -391,7 +407,7 @@
     <string name="disconnect">"Отключить"</string>
     <string name="no_action_selected">"Никаких действий не выбрано"</string>
     <string name="you_dont_select_any_calendar">"Вы не выберали календарь!"</string>
-    <string name="please_wait">"Пожалуйста, подождите..."</string>
+    <string name="please_wait">"Пожалуйста, подождите…"</string>
     <string name="no_events_found">"События не найдены!"</string>
     <string name="events_found">"событие (я) найдено"</string>
     <string name="no_files">"Файлов нет"</string>
@@ -437,9 +453,9 @@
     <string name="same_group">"Та же группа!"</string>
     <string name="change_group">"Изменить группу"</string>
     <string name="move_to_trash">"Переместить в корзину"</string>
-    <string name="retrieving_data">"Извлечение данных..."</string>
+    <string name="retrieving_data">"Извлечение данных…"</string>
     <string name="all_files_removed">"Все файлы удалены"</string>
-    <string name="deleting">"Удаление ..."</string>
+    <string name="deleting">"Удаление…"</string>
     <string name="used_x">"Используется %s"</string>
     <string name="available_x">"Доступно %s"</string>
     <string name="change_color">"Изменить цвет"</string>
@@ -468,8 +484,8 @@
     <string name="additional">"Дополнительные"</string>
     <string name="other">"Другие"</string>
     <string name="general">"Общие"</string>
-    <string name="encrypting">"Шифрование ..."</string>
-    <string name="decrypting">"Расшифровка ..."</string>
+    <string name="encrypting">"Шифрование…"</string>
+    <string name="decrypting">"Расшифровка…"</string>
     <string name="xW">"%sН"</string>
     <string name="xD">"%sД"</string>
     <string name="x_min">"%s мин"</string>
@@ -490,7 +506,7 @@
     <string name="and">"и"</string>
     <string name="android_wear_service">"Служба Android Wear"</string>
     <string name="enable_service_if_you_want_">"Включите эту услугу, если вы хотите управлять напоминаниями из часов"</string>
-    <string name="search_place">"Поиск места ..."</string>
+    <string name="search_place">"Поиск места…"</string>
     <string name="click_to_select_reminder_type">"Нажмите, чтобы выбрать тип напоминания"</string>
     <string name="to_insert_task_by_voice">"Чтобы вставить задачу по голосу"</string>
     <string name="click_to_change_reminder_group">"Нажмите, чтобы изменить группу для напоминания"</string>

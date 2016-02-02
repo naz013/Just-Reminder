@@ -435,6 +435,11 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             finish();
         }
 
+        if (type == null) {
+            Messages.toast(this, getString(R.string.something_went_wrong));
+            finish();
+        }
+
         if (type.matches(Constants.TYPE_REMINDER)) {
             spinner.setSelection(0);
         } else if (type.matches(Constants.TYPE_TIME)){
