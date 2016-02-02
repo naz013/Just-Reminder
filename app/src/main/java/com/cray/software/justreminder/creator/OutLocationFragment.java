@@ -242,7 +242,7 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
 
         if (item != null) {
             String text = item.getSummary();
-            String number = item.getAction().getTarget();
+            number = item.getAction().getTarget();
             JPlace jPlace = item.getPlace();
             double latitude = jPlace.getLatitude();
             double longitude = jPlace.getLongitude();

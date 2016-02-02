@@ -161,6 +161,7 @@ public class WeekFragment extends BaseFragment implements
             int expTasks = jExport.getgTasks();
             String type = item.getType();
             long eventTime = item.getEventTime();
+            number = item.getAction().getTarget();
             ArrayList<Integer> weekdays = item.getRecurrence().getWeekdays();
 
             if (exp == 1) dateExport.setChecked(true);

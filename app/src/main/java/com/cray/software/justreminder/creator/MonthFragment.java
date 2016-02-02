@@ -168,6 +168,7 @@ public class MonthFragment extends BaseFragment implements
             int expTasks = jExport.getgTasks();
             String type = item.getType();
             long eventTime = item.getEventTime();
+            number = item.getAction().getTarget();
 
             if (exp == 1) dateExport.setChecked(true);
             if (expTasks == Constants.SYNC_GTASKS_ONLY)

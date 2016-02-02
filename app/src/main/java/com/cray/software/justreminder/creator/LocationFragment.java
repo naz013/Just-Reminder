@@ -246,7 +246,7 @@ public class LocationFragment extends BaseFragment implements GeocoderTask.Geoco
 
         if (item != null) {
             String text = item.getSummary();
-            String number = item.getAction().getTarget();
+            number = item.getAction().getTarget();
             JPlace jPlace = item.getPlace();
             double latitude = jPlace.getLatitude();
             double longitude = jPlace.getLongitude();
