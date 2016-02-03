@@ -109,17 +109,7 @@ public class DropboxHelper {
         } catch (DropboxException e) {
             e.printStackTrace();
         }
-        return account != null ? account.quotaNormal : 0;
-    }
-
-    public long userQuotaShared(){
-        DropboxAPI.Account account = null;
-        try {
-            account = mDBApi.accountInfo();
-        } catch (DropboxException e) {
-            e.printStackTrace();
-        }
-        return account != null ? account.quotaShared : 0;
+        return account != null ? (account.quotaNormal + account.quotaShared) : 0;
     }
 
     public boolean checkLink(){
@@ -324,6 +314,17 @@ public class DropboxHelper {
      */
     public void uploadBirthday() {
         upload(Constants.DIR_BIRTHDAY_SD);
+    }
+
+    public void deleteFile(String fileName) {
+        if (fileName.endsWith(FileConfig.FILE_NAME_REMINDER))
+            deleteReminder(fileName);
+        else if (fileName.endsWith(FileConfig.FILE_NAME_NOTE))
+            deleteNote(fileName);
+        else if (fileName.endsWith(FileConfig.FILE_NAME_GROUP))
+            deleteGroup(fileName);
+        else if (fileName.endsWith(FileConfig.FILE_NAME_BIRTHDAY))
+            deleteBirthday(fileName);
     }
 
     /**

@@ -6,6 +6,7 @@ import android.os.Environment;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.datas.models.UserModel;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.utils.MemoryUtil;
@@ -17,6 +18,7 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
+import com.google.api.services.drive.model.About;
 import com.google.api.services.drive.model.FileList;
 
 import org.json.JSONException;
@@ -39,7 +41,7 @@ public class GDriveHelper {
     private final HttpTransport mTransport = AndroidHttp.newCompatibleTransport();
     private final JsonFactory mJsonFactory = GsonFactory.getDefaultInstance();
     private Drive driveService;
-    private static final String APPLICATION_NAME = "Just Reminder/2.3.4";
+    private static final String APPLICATION_NAME = "Reminder/5.0";
 
     public GDriveHelper(Context context){
         this.mContext = context;
@@ -72,6 +74,25 @@ public class GDriveHelper {
     public void unlink(){
         prefs = new SharedPrefs(mContext);
         prefs.savePrefs(Prefs.DRIVE_USER, Constants.DRIVE_USER_NONE);
+    }
+
+    /**
+     * Get information about user.
+     * @return user info object
+     */
+    public UserModel getData() {
+        if (isLinked()) {
+            authorize();
+            try {
+                About about = driveService.about().get().setFields("user, storageQuota").execute();
+                About.StorageQuota quota = about.getStorageQuota();
+                return new UserModel(about.getUser().getDisplayName(), quota.getLimit(),
+                        quota.getUsage(), countFiles(), about.getUser().getPhotoLink());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     /**
@@ -110,7 +131,6 @@ public class GDriveHelper {
      */
     public void saveReminderToDrive() throws IOException {
         if (isLinked()) {
-            prefs = new SharedPrefs(mContext);
             authorize();
             String folderId = getFolderId();
             if (folderId == null){
@@ -145,7 +165,6 @@ public class GDriveHelper {
      */
     public void saveNoteToDrive() throws IOException {
         if (isLinked()) {
-            prefs = new SharedPrefs(mContext);
             authorize();
             String folderId = getFolderId();
             if (folderId == null){
@@ -180,7 +199,6 @@ public class GDriveHelper {
      */
     public void saveGroupToDrive() throws IOException {
         if (isLinked()) {
-            prefs = new SharedPrefs(mContext);
             authorize();
             String folderId = getFolderId();
             if (folderId == null){
@@ -215,7 +233,6 @@ public class GDriveHelper {
      */
     public void saveBirthToDrive() throws IOException {
         if (isLinked()) {
-            prefs = new SharedPrefs(mContext);
             authorize();
             String folderId = getFolderId();
             if (folderId == null){
@@ -250,7 +267,6 @@ public class GDriveHelper {
      */
     public void downloadReminder() throws IOException {
         if (isLinked()) {
-            prefs = new SharedPrefs(mContext);
             authorize();
             File sdPath = Environment.getExternalStorageDirectory();
             File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_GDRIVE_TMP);
@@ -306,7 +322,6 @@ public class GDriveHelper {
      */
     public void downloadNote() throws IOException {
         if (isLinked()) {
-            prefs = new SharedPrefs(mContext);
             authorize();
             File sdPath = Environment.getExternalStorageDirectory();
             File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_NOTES_SD_GDRIVE_TMP);
@@ -362,7 +377,6 @@ public class GDriveHelper {
      */
     public void downloadGroup() throws IOException {
         if (isLinked()) {
-            prefs = new SharedPrefs(mContext);
             authorize();
             File sdPath = Environment.getExternalStorageDirectory();
             File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_GROUP_SD_GDRIVE_TMP);
@@ -418,7 +432,6 @@ public class GDriveHelper {
      */
     public void downloadBirthday(boolean deleteFile) throws IOException {
         if (isLinked()) {
-            prefs = new SharedPrefs(mContext);
             authorize();
             File sdPath = Environment.getExternalStorageDirectory();
             File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_BIRTHDAY_SD_GDRIVE_TMP);
@@ -476,7 +489,6 @@ public class GDriveHelper {
      */
     public void deleteReminder(String title){
         if (isLinked()) {
-            prefs = new SharedPrefs(mContext);
             authorize();
             Drive.Files.List request = null;
             try {
@@ -517,7 +529,6 @@ public class GDriveHelper {
      */
     public void deleteNote (String title){
         if (isLinked()) {
-            prefs = new SharedPrefs(mContext);
             authorize();
             Drive.Files.List request = null;
             try {
@@ -558,7 +569,6 @@ public class GDriveHelper {
      */
     public void deleteGroup (String title){
         if (isLinked()) {
-            prefs = new SharedPrefs(mContext);
             authorize();
             Drive.Files.List request = null;
             try {
@@ -599,7 +609,6 @@ public class GDriveHelper {
      */
     public void deleteBirthday(String title){
         if (isLinked()) {
-            prefs = new SharedPrefs(mContext);
             authorize();
             Drive.Files.List request = null;
             try {
@@ -634,12 +643,22 @@ public class GDriveHelper {
         }
     }
 
+    public void deleteFile(String fileName) {
+        if (fileName.endsWith(FileConfig.FILE_NAME_REMINDER))
+            deleteReminder(fileName);
+        else if (fileName.endsWith(FileConfig.FILE_NAME_NOTE))
+            deleteNote(fileName);
+        else if (fileName.endsWith(FileConfig.FILE_NAME_GROUP))
+            deleteGroup(fileName);
+        else if (fileName.endsWith(FileConfig.FILE_NAME_BIRTHDAY))
+            deleteBirthday(fileName);
+    }
+
     /**
      * Delete application folder from Google Drive.
      */
     public void clean(){
         if (isLinked()) {
-            prefs = new SharedPrefs(mContext);
             authorize();
 
             Drive.Files.List requestF = null;

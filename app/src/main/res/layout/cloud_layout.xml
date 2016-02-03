@@ -2,183 +2,171 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:widget="http://schemas.android.com/apk/res-auto"
-    xmlns:card_view="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:id="@+id/cloudContainer"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:id="@+id/card1"
+            widget:cardCornerRadius="3dp"
+            android:layout_marginTop="15dp"
+            widget:contentPadding="8dp">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/cloudContainer">
+                android:layout_height="wrap_content">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                <ImageView
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:scaleType="centerCrop"
+                    android:id="@+id/userPhoto"/>
 
-                <android.support.v7.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/backup_card_height_normal"
-                    android:id="@+id/card1"
-                    card_view:cardCornerRadius="3dp"
-                    android:layout_marginTop="15dp"
-                    android:padding="15dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="15dp"
-                        android:gravity="center_vertical"
-                        android:id="@+id/cloudUser"
-                        android:textSize="@dimen/create_text_size_secondary"/>
-
-                </android.support.v7.widget.CardView>
-
-                <android.support.v7.widget.CardView
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/card2"
-                    card_view:cardCornerRadius="3dp"
-                    android:layout_marginTop="15dp"
-                    android:padding="15dp">
+                    android:gravity="center_vertical"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@+id/userPhoto"
+                    android:id="@+id/cloudUser"
+                    android:textSize="@dimen/create_text_size_secondary"/>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+            </RelativeLayout>
 
-                    <com.cray.software.justreminder.graph.PieGraph
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/backup_card_height_normal"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_weight="1"
-                        android:layout_gravity="left|center"
-                        android:layout_marginLeft="15dp"
-                        android:id="@+id/usedSizeGraph"/>
+        </android.support.v7.widget.CardView>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/card2"
+            widget:cardCornerRadius="3dp"
+            widget:contentPadding="8dp"
+            android:layout_marginTop="15dp">
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/usedSpace"
-                            android:textSize="@dimen/create_text_size_normal"
-                            android:layout_marginLeft="5dp"
-                            android:textColor="@color/redPrimary"/>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/freeSpace"
-                            android:textSize="@dimen/create_text_size_normal"
-                            android:layout_marginLeft="5dp"
-                            android:layout_marginTop="15dp"
-                            android:textColor="@color/greenPrimary"/>
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                </android.support.v7.widget.CardView>
-
-                </LinearLayout>
-
-            <android.support.v7.widget.CardView
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_marginTop="15dp"
-                android:id="@+id/card3"
-                card_view:cardCornerRadius="3dp"
-                android:layout_height="@dimen/backup_card_height_normal">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.cray.software.justreminder.graph.PieGraph
+                    android:layout_width="@dimen/backup_card_height_normal"
+                    android:layout_height="@dimen/backup_card_height_normal"
+                    android:layout_gravity="left|center"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/usedSizeGraph"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:padding="15dp">
+                    android:gravity="center"
+                    android:layout_marginLeft="15dp"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/usedSizeGraph"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="@string/files"
-                        android:gravity="center_vertical"
-                        android:id="@+id/cloudText"
-                        android:singleLine="true"
-                        android:layout_weight="0.4"
-                        android:textSize="@dimen/create_text_size_secondary"/>
+                        android:layout_height="wrap_content"
+                        android:id="@+id/usedSpace"
+                        android:textSize="@dimen/create_text_size_normal"
+                        android:textColor="@color/redPrimary"/>
 
                     <TextView
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:id="@+id/cloudCount"
-                        android:textSize="@dimen/create_text_size_primary"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:layout_weight="1"/>
+                        android:layout_height="wrap_content"
+                        android:id="@+id/freeSpace"
+                        android:textSize="@dimen/create_text_size_normal"
+                        android:textColor="@color/greenPrimary"/>
 
                 </LinearLayout>
-            </android.support.v7.widget.CardView>
 
-            </LinearLayout>
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_marginTop="15dp"
+            android:id="@+id/card3"
+            widget:cardCornerRadius="3dp"
+            widget:contentPadding="8dp"
+            android:layout_height="@dimen/backup_card_height_normal">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_height="match_parent"
                 android:orientation="horizontal">
 
-                <com.cray.software.justreminder.views.PaperButton
-                    widget:paper_text="@string/list"
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    widget:paper_color="?attr/colorAccent"
-                    widget:paper_corner_radius="@dimen/log_in_button_corner_radius"
-                    android:layout_gravity="center"
-                    widget:paper_text_color="@color/blackPrimary"
-                    widget:paper_text_size="@dimen/create_text_size_normal"
-                    android:id="@+id/cloudFiles"
-                    android:layout_height="@dimen/log_in_button_height" />
+                    android:layout_height="match_parent"
+                    android:text="@string/files"
+                    android:gravity="center_vertical"
+                    android:id="@+id/cloudText"
+                    android:singleLine="true"
+                    android:layout_weight="0.4"
+                    android:textSize="@dimen/create_text_size_secondary"/>
 
-                <com.cray.software.justreminder.views.PaperButton
-                    widget:paper_text="@string/delete_all"
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    widget:paper_color="?attr/colorAccent"
-                    widget:paper_corner_radius="@dimen/log_in_button_corner_radius"
-                    android:layout_gravity="center"
-                    widget:paper_text_color="@color/blackPrimary"
-                    widget:paper_text_size="@dimen/create_text_size_normal"
-                    android:id="@+id/deleteAllCloudButton"
-                    android:layout_height="@dimen/log_in_button_height" />
-
-                </LinearLayout>
+                    android:layout_height="match_parent"
+                    android:id="@+id/cloudCount"
+                    android:textSize="@dimen/create_text_size_primary"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:layout_weight="1"/>
 
             </LinearLayout>
+        </android.support.v7.widget.CardView>
+        </LinearLayout>
 
-    </ScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal">
+
+        <com.cray.software.justreminder.views.PaperButton
+            widget:paper_text="@string/list"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            widget:paper_color="?attr/colorAccent"
+            widget:paper_corner_radius="@dimen/log_in_button_corner_radius"
+            android:layout_gravity="center"
+            widget:paper_text_color="@color/blackPrimary"
+            widget:paper_text_size="@dimen/create_text_size_normal"
+            android:id="@+id/cloudFiles"
+            android:layout_height="@dimen/log_in_button_height" />
+
+        <com.cray.software.justreminder.views.PaperButton
+            widget:paper_text="@string/delete_all"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            widget:paper_color="?attr/colorAccent"
+            widget:paper_corner_radius="@dimen/log_in_button_corner_radius"
+            android:layout_gravity="center"
+            widget:paper_text_color="@color/blackPrimary"
+            widget:paper_text_size="@dimen/create_text_size_normal"
+            android:id="@+id/deleteAllCloudButton"
+            android:layout_height="@dimen/log_in_button_height" />
+
+    </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:visibility="gone"
-        android:divider="@null"
-        android:dividerHeight="5dp"
         android:id="@+id/filesCloudList"/>
 
 </LinearLayout>

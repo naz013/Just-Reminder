@@ -21,6 +21,7 @@ import android.os.Environment;
 import com.cray.software.justreminder.constants.Constants;
 
 import java.io.File;
+import java.util.Locale;
 
 public class MemoryUtil {
 
@@ -168,5 +169,30 @@ public class MemoryUtil {
             }
             return dir;
         } else return null;
+    }
+
+    /**
+     * Get directory with images.
+     * @return file object or null if cant access external storage.
+     */
+    public static File getImagesDir() {
+        if (isSdPresent()) {
+            File sdPath = Environment.getExternalStorageDirectory();
+            File dir = new File(sdPath.toString() + "/JustReminder/" + "image_cache");
+            if (!dir.exists()) {
+                if (dir.mkdirs()) return dir;
+            }
+            return dir;
+        } else return null;
+    }
+
+    public static String humanReadableByte(long bytes, boolean si) {
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit) {
+            return bytes + " B";
+        }
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "");
+        return String.format(Locale.getDefault(), "%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 }

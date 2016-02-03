@@ -492,7 +492,6 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         initArgs();
 
         View view = inflater.inflate(R.layout.fragment_map, container, false);
@@ -502,6 +501,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
 
         markerRadius = prefs.loadInt(Prefs.LOCATION_RADIUS);
         isDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
+        if (!Module.isPro()) markerStyle = prefs.loadInt(Prefs.MARKER_STYLE);
 
         map = ((SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map)).getMap();

@@ -97,7 +97,7 @@ public class JParser {
     }
 
     public JModel parse(){
-        if (!jsonObject.has(VERSION_KEY)) {
+        if (jsonObject.has(Constants.COLUMN_TECH_VAR)) {
             try {
                 return modelFromOld();
             } catch (JSONException e) {
