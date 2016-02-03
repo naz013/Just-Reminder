@@ -60,8 +60,8 @@
                 android:orientation="horizontal">
 
                 <com.cray.software.justreminder.graph.PieGraph
-                    android:layout_width="@dimen/backup_card_height_normal"
-                    android:layout_height="@dimen/backup_card_height_normal"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
                     android:layout_gravity="left|center"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"

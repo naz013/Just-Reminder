@@ -8,10 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.provider.ContactsContract;
 import android.speech.RecognizerIntent;
 
 import com.cray.software.justreminder.R;
@@ -23,8 +21,6 @@ import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -122,64 +118,7 @@ public class SuperUtil {
      * @param requestCode result request code.
      */
     public static void selectContact(final Activity activity, final int requestCode){
-        class Async extends AsyncTask<Void, Void, Void>{
-
-            private ProgressDialog pd;
-            private ArrayList<String> contacts;
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                pd = ProgressDialog.show(activity, null, activity.getString(R.string.please_wait), true);
-            }
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                Cursor cursor = activity.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI,
-                        null, null, null, ContactsContract.Contacts.DISPLAY_NAME + " ASC");
-                contacts = new ArrayList<>();
-                contacts.clear();
-                if (cursor != null) {
-                    while (cursor.moveToNext()) {
-                        String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                        String hasPhone = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
-
-                        if (hasPhone.equalsIgnoreCase("1"))
-                            hasPhone = "true";
-                        else
-                            hasPhone = "false";
-                        if (name != null) {
-                            if (Boolean.parseBoolean(hasPhone)) {
-                                contacts.add(name);
-                            }
-                        }
-                    }
-                    cursor.close();
-                }
-                try {
-                    Collections.sort(contacts, new Comparator<String>() {
-                        @Override
-                        public int compare(String e1, String e2) {
-                            return e1.compareToIgnoreCase(e2);
-                        }
-                    });
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                if (pd != null && pd.isShowing()) pd.dismiss();
-                Intent i = new Intent(activity, ContactsList.class);
-                i.putStringArrayListExtra(Constants.SELECTED_CONTACT_ARRAY, contacts);
-                activity.startActivityForResult(i, requestCode);
-            }
-        }
-
-        new Async().execute();
+        activity.startActivityForResult(new Intent(activity, ContactsList.class), requestCode);
     }
 
     /**

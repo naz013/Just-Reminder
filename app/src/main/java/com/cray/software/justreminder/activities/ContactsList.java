@@ -1,10 +1,12 @@
 package com.cray.software.justreminder.activities;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -26,6 +28,8 @@ import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class ContactsList extends AppCompatActivity {
 
@@ -33,6 +37,7 @@ public class ContactsList extends AppCompatActivity {
     private String name = "";
 
     private FloatingEditText searchField;
+    private ListView contactsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +58,6 @@ public class ContactsList extends AppCompatActivity {
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
-        Intent intent = getIntent();
-        final ArrayList<String> contacts = intent.getStringArrayListExtra(Constants.SELECTED_CONTACT_ARRAY);
-
         searchField = (FloatingEditText) findViewById(R.id.searchField);
         searchField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -75,76 +77,22 @@ public class ContactsList extends AppCompatActivity {
             }
         });
 
-        ListView contactsList = (ListView) findViewById(R.id.contactsList);
-        adapter = new ArrayAdapter<>(ContactsList.this,
-                android.R.layout.simple_list_item_1, contacts);
-        contactsList.setAdapter(adapter);
-
+        contactsList = (ListView) findViewById(R.id.contactsList);
         contactsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (position != -1) {
                     name = (String) parent.getItemAtPosition(position);
-                    Cursor c;
-                    c = getContentResolver().query(
-                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-                            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + "=?",
-                            new String[]{name}, null);
-
-                    int phoneIdx = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-                    int phoneType = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE);
-
-                    if (c.getCount() > 1) { // contact has multiple phone numbers
-                        final CharSequence[] numbers = new CharSequence[c.getCount()];
-                        int i = 0;
-                        if (c.moveToFirst()) {
-                            while (!c.isAfterLast()) { // for each phone number, add it to the numbers array
-                                String type = (String) ContactsContract.CommonDataKinds.Phone.getTypeLabel(
-                                        getResources(), c.getInt(phoneType), ""); // insert a type string in front of the number
-                                String number = type + ": " + c.getString(phoneIdx);
-                                numbers[i++] = number;
-                                c.moveToNext();
-                            }
-                            // build and show a simple dialog that allows the user to select a number
-                            AlertDialog.Builder builder = new AlertDialog.Builder(ContactsList.this);
-                            builder.setItems(numbers, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int item) {
-                                    String number = (String) numbers[item];
-                                    int index = number.indexOf(":");
-                                    number = number.substring(index + 2);
-                                    //selectedNumber.setText(number);
-                                    Intent intent = new Intent();
-                                    intent.putExtra(Constants.SELECTED_CONTACT_NUMBER, number);
-                                    intent.putExtra(Constants.SELECTED_CONTACT_NAME, name);
-                                    setResult(RESULT_OK, intent);
-                                    finish();
-                                }
-                            });
-                            AlertDialog alert = builder.create();
-                            alert.setOwnerActivity(ContactsList.this);
-                            alert.show();
-
-                        } else Log.w(Constants.LOG_TAG, "No results");
-                    } else if (c.getCount() == 1) {
-                        if (c.moveToFirst()) {
-                            String number = c.getString(phoneIdx);
-                            //selectedNumber.setText(number);
-                            Intent intent = new Intent();
-                            intent.putExtra(Constants.SELECTED_CONTACT_NUMBER, number);
-                            intent.putExtra(Constants.SELECTED_CONTACT_NAME, name);
-                            setResult(RESULT_OK, intent);
-                            finish();
-                        }
-                    } else if (c.getCount() == 0) {
-                        Intent intent = new Intent();
-                        intent.putExtra(Constants.SELECTED_CONTACT_NAME, name);
-                        setResult(RESULT_OK, intent);
-                        finish();
-                    }
+                    selectNumber();
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new Load().execute();
     }
 
     @Override
@@ -153,5 +101,120 @@ public class ContactsList extends AppCompatActivity {
                 Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(searchField.getWindowToken(), 0);
         super.onPause();
+    }
+
+    private void selectNumber() {
+        Cursor c = getContentResolver().query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + "=?",
+                new String[]{name}, null);
+
+        int phoneIdx = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+        int phoneType = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE);
+
+        if (c.getCount() > 1) {
+            final CharSequence[] numbers = new CharSequence[c.getCount()];
+            int i = 0;
+            if (c.moveToFirst()) {
+                while (!c.isAfterLast()) {
+                    String type = (String) ContactsContract.CommonDataKinds.Phone.getTypeLabel(
+                            getResources(), c.getInt(phoneType), ""); // insert a type string in front of the number
+                    String number = type + ": " + c.getString(phoneIdx);
+                    numbers[i++] = number;
+                    c.moveToNext();
+                }
+                // build and show a simple dialog that allows the user to select a number
+                AlertDialog.Builder builder = new AlertDialog.Builder(ContactsList.this);
+                builder.setItems(numbers, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        String number = (String) numbers[item];
+                        int index = number.indexOf(":");
+                        number = number.substring(index + 2);
+                        //selectedNumber.setText(number);
+                        Intent intent = new Intent();
+                        intent.putExtra(Constants.SELECTED_CONTACT_NUMBER, number);
+                        intent.putExtra(Constants.SELECTED_CONTACT_NAME, name);
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.setOwnerActivity(ContactsList.this);
+                alert.show();
+
+            } else Log.w(Constants.LOG_TAG, "No results");
+        } else if (c.getCount() == 1) {
+            if (c.moveToFirst()) {
+                String number = c.getString(phoneIdx);
+                Intent intent = new Intent();
+                intent.putExtra(Constants.SELECTED_CONTACT_NUMBER, number);
+                intent.putExtra(Constants.SELECTED_CONTACT_NAME, name);
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        } else if (c.getCount() == 0) {
+            Intent intent = new Intent();
+            intent.putExtra(Constants.SELECTED_CONTACT_NAME, name);
+            setResult(RESULT_OK, intent);
+            finish();
+        }
+    }
+
+    class Load extends AsyncTask<Void, Void, Void> {
+        private ProgressDialog pd;
+        private ArrayList<String> contacts;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = ProgressDialog.show(ContactsList.this, null, getString(R.string.please_wait), true);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Cursor cursor = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI,
+                    null, null, null, ContactsContract.Contacts.DISPLAY_NAME + " ASC");
+            contacts = new ArrayList<>();
+            contacts.clear();
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                    String hasPhone = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
+
+                    if (hasPhone.equalsIgnoreCase("1"))
+                        hasPhone = "true";
+                    else
+                        hasPhone = "false";
+                    if (name != null) {
+                        if (Boolean.parseBoolean(hasPhone)) {
+                            contacts.add(name);
+                        }
+                    }
+                }
+                cursor.close();
+            }
+            try {
+                Collections.sort(contacts, new Comparator<String>() {
+                    @Override
+                    public int compare(String e1, String e2) {
+                        return e1.compareToIgnoreCase(e2);
+                    }
+                });
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (pd != null && pd.isShowing()) pd.dismiss();
+
+            adapter = new ArrayAdapter<>(ContactsList.this,
+                    android.R.layout.simple_list_item_1, contacts);
+            contactsList.setAdapter(adapter);
+        }
     }
 }

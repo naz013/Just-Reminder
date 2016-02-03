@@ -164,7 +164,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         }
         final Item item = navIds.get(position);
         if (item.getId() == LOCAL_INT){
-            addFragment(DropboxFragment.newInstance(LOCAL_INT));
+            addFragment(CloudFragment.newInstance(LOCAL_INT));
             toolbar.setLogo(item.getLogo());
         } else {
             if (item.getId() == DROPBOX_INT){
@@ -176,7 +176,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                             @Override
                             public void run() {
                                 if (isC) {
-                                    addFragment(DropboxFragment.newInstance(DROPBOX_INT));
+                                    addFragment(CloudFragment.newInstance(DROPBOX_INT));
                                     toolbar.setLogo(item.getLogo());
                                 } else {
                                     spinner.setSelection(0);
@@ -195,7 +195,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                             @Override
                             public void run() {
                                 if (isC) {
-                                    addFragment(DropboxFragment.newInstance(GOOGLE_DRIVE_INT));
+                                    addFragment(CloudFragment.newInstance(GOOGLE_DRIVE_INT));
                                     toolbar.setLogo(item.getLogo());
                                 } else {
                                     spinner.setSelection(0);
