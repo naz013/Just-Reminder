@@ -12,41 +12,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:id="@+id/windowBackground"
-        android:padding="@dimen/backup_manager_padding">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
-        android:id="@+id/localLayout">
-
-        <include layout="@layout/local_layout"/>
-
-        </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
-        android:id="@+id/cloudLayout">
-
-        <include layout="@layout/cloud_layout"/>
-
-        </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
-        android:id="@+id/googleLayout">
-
-        <include layout="@layout/google_layout"/>
-
-    </LinearLayout>
-
-    </LinearLayout>
+        android:padding="@dimen/backup_manager_padding"/>
 
 </LinearLayout>
