@@ -30,6 +30,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -38,7 +39,6 @@ import com.cray.software.justreminder.CategoryManager;
 import com.cray.software.justreminder.NotesManager;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
-import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.activities.AddBirthday;
 import com.cray.software.justreminder.adapters.FileRecyclerAdapter;
 import com.cray.software.justreminder.async.DeleteAsync;
@@ -69,7 +69,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class DropboxFragment extends Fragment implements SimpleListener, SyncListener, DataListener {
+public class CloudFragment extends Fragment implements SimpleListener, SyncListener, DataListener {
 
     private static final String TYPE = "window_type";
     private static final String FILE_NAME = "Google_photo.jpg";
@@ -79,7 +79,7 @@ public class DropboxFragment extends Fragment implements SimpleListener, SyncLis
     private TextView usedSpace;
     private TextView freeSpace;
     private RecyclerView filesCloudList;
-    private PieGraph usedSizeGraph;
+    private PieGraph pieChart;
     private LinearLayout cloudContainer;
     private ImageView userPhoto;
 
@@ -90,15 +90,15 @@ public class DropboxFragment extends Fragment implements SimpleListener, SyncLis
 
     private int type;
 
-    public static DropboxFragment newInstance(int type) {
-        DropboxFragment fragment = new DropboxFragment();
+    public static CloudFragment newInstance(int type) {
+        CloudFragment fragment = new CloudFragment();
         Bundle args = new Bundle();
         args.putInt(TYPE, type);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public DropboxFragment() {
+    public CloudFragment() {
     }
 
     @Override
@@ -107,13 +107,6 @@ public class DropboxFragment extends Fragment implements SimpleListener, SyncLis
         if (getArguments() != null) {
             type = getArguments().getInt(TYPE);
         }
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        // Indicate that this fragment would like to influence the set of actions in the action bar.
-        setHasOptionsMenu(false);
     }
 
     @Override
@@ -146,7 +139,7 @@ public class DropboxFragment extends Fragment implements SimpleListener, SyncLis
         userPhoto = (ImageView) view.findViewById(R.id.userPhoto);
         userPhoto.setVisibility(View.INVISIBLE);
 
-        usedSizeGraph = (PieGraph) view.findViewById(R.id.usedSizeGraph);
+        pieChart = (PieGraph) view.findViewById(R.id.usedSizeGraph);
 
         TextView cloudText = (TextView) view.findViewById(R.id.cloudText);
         cloudText.setTypeface(typefaceThin);
@@ -179,11 +172,7 @@ public class DropboxFragment extends Fragment implements SimpleListener, SyncLis
             @Override
             public void onClick(View view) {
                 new DeleteAsync(getActivity(), mCallbacks,
-                        DropboxFragment.this, type).execute(getFolders());
-                if (cloudContainer.getVisibility() == View.GONE) {
-                    isDeleted = true;
-                }
-                reload();
+                        CloudFragment.this, type).execute(getFolders());
             }
         });
 
@@ -262,27 +251,19 @@ public class DropboxFragment extends Fragment implements SimpleListener, SyncLis
             final float used = (int) ((model.used * 100.0f) / quota);
 
             cloudContainer.setVisibility(View.VISIBLE);
-            usedSizeGraph.removeSlices();
+            pieChart.removeSlices();
             PieSlice slice = new PieSlice();
-            slice.setTitle(String.format(getString(R.string.used_x), used));
+            final String usTitle = String.format(getString(R.string.used_x), used);
+            slice.setTitle(usTitle);
             slice.setColor(ViewUtils.getColor(getActivity(), R.color.redPrimary));
             slice.setValue(used);
-            usedSizeGraph.addSlice(slice);
+            pieChart.addSlice(slice);
             slice = new PieSlice();
-            slice.setTitle(String.format(getString(R.string.available_x), free));
+            final String avTitle = String.format(getString(R.string.available_x), free);
+            slice.setTitle(avTitle);
             slice.setColor(ViewUtils.getColor(getActivity(), R.color.greenPrimary));
             slice.setValue(free);
-            usedSizeGraph.addSlice(slice);
-            usedSizeGraph.setOnSliceClickedListener(new PieGraph.OnSliceClickedListener() {
-                @Override
-                public void onClick(int index) {
-                    if (index == 0) {
-                        mCallbacks.showSnackbar(R.string.used_x);
-                    } else {
-                        mCallbacks.showSnackbar(R.string.available_x);
-                    }
-                }
-            });
+            pieChart.addSlice(slice);
 
             usedSpace.setText(String.format(getString(R.string.used_x),
                     MemoryUtil.humanReadableByte(model.used, false)));
@@ -295,7 +276,9 @@ public class DropboxFragment extends Fragment implements SimpleListener, SyncLis
         new android.os.Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                usedSizeGraph.animate();
+                pieChart.setAnimation(new ScaleAnimation(0f, 100f, 0f, 100f, 50f, 50f));
+                pieChart.getAnimation().setDuration(500);
+                pieChart.animate();
             }
         }, 500);
     }
@@ -353,7 +336,6 @@ public class DropboxFragment extends Fragment implements SimpleListener, SyncLis
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement NavigationCallbacks.");
         }
-        ((ScreenManager)activity).onSectionAttached(ScreenManager.FRAGMENT_GROUPS);
     }
 
     @Override
@@ -399,7 +381,7 @@ public class DropboxFragment extends Fragment implements SimpleListener, SyncLis
                     editFile(position);
                 }
                 if (item == 1) {
-                    new DeleteAsync(getActivity(), mCallbacks, DropboxFragment.this, type)
+                    new DeleteAsync(getActivity(), mCallbacks, CloudFragment.this, type)
                             .execute(provider.getItem(position).getFilePath());
                     reload();
                 }
@@ -410,7 +392,7 @@ public class DropboxFragment extends Fragment implements SimpleListener, SyncLis
     @Override
     public void endExecution(boolean result) {
         isDeleted = true;
-        loadList();
+        reload();
     }
 
     @Override

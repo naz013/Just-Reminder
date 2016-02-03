@@ -34,8 +34,8 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     public static final int DROPBOX_INT = 121;
     public static final int GOOGLE_DRIVE_INT = 122;
 
-
     private ArrayList<Item> navIds = new ArrayList<>();
+    private int lastPos;
 
     private Toolbar toolbar;
     private Spinner spinner;
@@ -147,6 +147,8 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         TitleNavigationAdapter adapter = new TitleNavigationAdapter(getActivity(), navSpinner);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
+
+        spinner.setSelection(lastPos);
     }
 
     private void addFragment(Fragment fragment) {
@@ -162,6 +164,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         if (position >= navIds.size()) {
             return;
         }
+        lastPos = position;
         final Item item = navIds.get(position);
         if (item.getId() == LOCAL_INT){
             addFragment(CloudFragment.newInstance(LOCAL_INT));
