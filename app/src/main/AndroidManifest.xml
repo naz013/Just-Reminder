@@ -451,7 +451,7 @@
         <receiver
             android:name=".widgets.AddReminderWidget"
             android:icon="@mipmap/ic_launcher"
-            android:label="@string/add_reminder">
+            android:label="@string/add_reminder_menu">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -487,7 +487,7 @@
         <receiver
             android:name=".widgets.QuickReminderWidget"
             android:icon="@mipmap/ic_launcher"
-            android:label="@string/add_reminder">
+            android:label="@string/add_reminder_menu">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

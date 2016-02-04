@@ -103,6 +103,9 @@ public class CalendarWidgetConfig extends AppCompatActivity implements
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
+        toolbar.setTitle(getString(R.string.calendar));
 
         TextView note = (TextView) findViewById(R.id.note);
         TextView widgetTitle = (TextView) findViewById(R.id.widgetTitle);

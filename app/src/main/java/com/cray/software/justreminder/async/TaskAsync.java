@@ -14,11 +14,11 @@ import java.io.IOException;
 public class TaskAsync extends AsyncTask<Void, Void, Void> {
 
     private Context mContext;
-    private String title, listId, taskId, taskType, note;
+    private String title, listId, taskId, taskType, note, oldList;
     private long time, localId;
 
     public TaskAsync(Context context, String title, String listId, String taskId, String taskType,
-                     long time, String note, long localId){
+                     long time, String note, long localId, String oldList){
         this.mContext = context;
         this.title = title;
         this.time = time;
@@ -27,6 +27,7 @@ public class TaskAsync extends AsyncTask<Void, Void, Void> {
         this.taskType = taskType;
         this.note = note;
         this.localId = localId;
+        this.oldList = oldList;
     }
 
     @Override
@@ -50,8 +51,8 @@ public class TaskAsync extends AsyncTask<Void, Void, Void> {
 
         if (taskType.matches(TasksConstants.MOVE_TASK)){
             if (isConnected){
-                helper.moveTask(listId, taskId);
-            } else data.add(title, listId, TasksConstants.MOVE, 0, taskId, note, 0, time, null);
+                helper.moveTask(listId, taskId, oldList);
+            } else data.add(title, listId, TasksConstants.MOVE, 0, taskId, note, 0, time, oldList);
         }
 
         if (taskType.matches(TasksConstants.UPDATE_TASK)){

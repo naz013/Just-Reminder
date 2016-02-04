@@ -103,6 +103,9 @@ public class CurrentTaskWidgetConfig extends AppCompatActivity {
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
+        toolbar.setTitle(getString(R.string.active_reminders));
 
         headerBg = (LinearLayout) findViewById(R.id.headerBg);
         widgetBg = (LinearLayout) findViewById(R.id.widgetBg);

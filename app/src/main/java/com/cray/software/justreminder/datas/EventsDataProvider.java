@@ -3,7 +3,6 @@ package com.cray.software.justreminder.datas;
 import android.app.AlarmManager;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
@@ -123,7 +122,6 @@ public class EventsDataProvider {
     }
 
     public void loadReminders(){
-        long start = System.currentTimeMillis();
         DataBase DB = new DataBase(mContext);
         DB.open();
         Cursor cat = DB.queryCategories();
@@ -214,6 +212,8 @@ public class EventsDataProvider {
                                 }
                             } while (days < max);
                         } else {
+                            if (repeatTime == 0) continue;
+
                             long days = 0;
                             long max = Configs.MAX_DAYS_COUNT;
                             if (isLimited) max = limit - count;
@@ -238,6 +238,5 @@ public class EventsDataProvider {
         }
         if (c != null) c.close();
         db.close();
-        Log.d(Constants.LOG_TAG, "Calculate time " + (System.currentTimeMillis() - start));
     }
 }

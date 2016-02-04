@@ -318,7 +318,7 @@ public class TaskManager extends AppCompatActivity {
             data.open();
             data.updateTask(id, listId);
             new TaskAsync(TaskManager.this, null, listId, taskId, TasksConstants.MOVE_TASK,
-                    0, null, id).execute();
+                    0, null, id, initListId).execute();
             data.close();
             finish();
         } else {
@@ -392,24 +392,26 @@ public class TaskManager extends AppCompatActivity {
         if (isReminder) remId = saveReminder(taskName);
         TasksData data = new TasksData(TaskManager.this);
         data.open();
-        if (action.matches(TasksConstants.CREATE)){
+        if (action.matches(TasksConstants.CREATE)) {
             long localId = data.addTask(taskName, null, 0, false, due, null, null, note,
                     null, null, null, 0, remId, listId != null ? listId : initListId, GTasksHelper.TASKS_NEED_ACTION, false);
             new TaskAsync(TaskManager.this, taskName, listId != null ? listId : initListId, null, TasksConstants.INSERT_TASK,
-                    due, note, localId).execute();
+                    due, note, localId, null).execute();
         }
         if (action.matches(TasksConstants.EDIT)) {
             if (id != 0) {
-                if (listId != null){
+                if (listId != null) {
                     data.updateTask(id, taskName, due, note, GTasksHelper.TASKS_NEED_ACTION, remId, listId);
                     new TaskAsync(TaskManager.this, taskName, initListId, taskId, TasksConstants.UPDATE_TASK,
-                            due, note, id).execute();
-                    new TaskAsync(TaskManager.this, taskName, listId, taskId, TasksConstants.MOVE_TASK,
-                            due, note, id).execute();
+                            due, note, id, null).execute();
+                    if (!listId.matches(initListId)) {
+                        new TaskAsync(TaskManager.this, taskName, listId, taskId, TasksConstants.MOVE_TASK,
+                                due, note, id, initListId).execute();
+                    }
                 } else {
                     data.updateTask(id, taskName, due, note, GTasksHelper.TASKS_NEED_ACTION, remId);
                     new TaskAsync(TaskManager.this, taskName, initListId, taskId, TasksConstants.UPDATE_TASK,
-                            due, note, id).execute();
+                            due, note, id, null).execute();
                 }
             }
         }
@@ -469,7 +471,7 @@ public class TaskManager extends AppCompatActivity {
             long id = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID));
             data.deleteTask(id);
             new TaskAsync(TaskManager.this, null, initListId, taskId, TasksConstants.DELETE_TASK,
-                    0, null, id).execute();
+                    0, null, id, null).execute();
         }
         if (c != null) c.close();
         data.close();

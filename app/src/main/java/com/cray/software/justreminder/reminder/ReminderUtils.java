@@ -54,7 +54,7 @@ public class ReminderUtils {
         data.close();
 
         new TaskAsync(context, summary, null, null, TasksConstants.INSERT_TASK, startTime,
-                context.getString(R.string.from_reminder), localId).execute();
+                context.getString(R.string.from_reminder), localId, null).execute();
     }
 
     /**

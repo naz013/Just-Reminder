@@ -17,6 +17,7 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.fragments.helpers.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.utils.LocationUtil;
@@ -37,6 +38,14 @@ public class NewPlace extends AppCompatActivity implements MapListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!LocationUtil.checkGooglePlayServicesAvailability(NewPlace.this)) {
+            finish();
+        }
+        if (!Permissions.checkPermission(NewPlace.this, Permissions.ACCESS_FINE_LOCATION)) {
+            finish();
+        }
+
         setTheme(cs.getStyle());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(cs.getColor(cs.colorPrimaryDark()));
