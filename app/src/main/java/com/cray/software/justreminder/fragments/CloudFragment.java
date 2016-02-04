@@ -160,7 +160,12 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
                 if (filesCloudList.getVisibility() != View.VISIBLE) {
                     loadList();
                     ViewUtils.collapse(cloudContainer);
-                    ViewUtils.fadeInAnimation(filesCloudList);
+                    new android.os.Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            ViewUtils.fadeInAnimation(filesCloudList);
+                        }
+                    }, 400);
                 } else {
                     reload();
                 }
@@ -216,8 +221,13 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
         if (isDeleted) {
             new UserInfoAsync(getActivity(), type, this).execute();
         } else {
-            ViewUtils.expand(cloudContainer);
-            isDeleted = false;
+            new android.os.Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ViewUtils.expand(cloudContainer);
+                    isDeleted = false;
+                }
+            }, 400);
         }
     }
 

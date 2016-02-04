@@ -401,7 +401,7 @@ public class Dialogues {
                     if (list != null) {
                         CalendarManager.CalendarItem item = list.get(which);
                         prefs.savePrefs(Prefs.CALENDAR_NAME, item.getName());
-                        prefs.savePrefs(Prefs.CALENDAR_ID, item.getId());
+                        prefs.saveInt(Prefs.CALENDAR_ID, item.getId());
                     }
                 }
             }
@@ -410,6 +410,14 @@ public class Dialogues {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                if (which != -1) {
+                    SharedPrefs prefs = new SharedPrefs(context);
+                    if (list != null) {
+                        CalendarManager.CalendarItem item = list.get(which);
+                        prefs.savePrefs(Prefs.CALENDAR_NAME, item.getName());
+                        prefs.saveInt(Prefs.CALENDAR_ID, item.getId());
+                    }
+                }
             }
         });
         AlertDialog dialog = builder.create();

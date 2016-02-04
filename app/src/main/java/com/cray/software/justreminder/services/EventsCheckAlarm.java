@@ -73,7 +73,7 @@ public class EventsCheckAlarm extends WakefulBroadcastReceiver {
         protected Void doInBackground(Void... params) {
             CalendarManager cm = new CalendarManager(context);
             SharedPrefs prefs = new SharedPrefs(context);
-            String calID = prefs.loadPrefs(Prefs.EVENTS_CALENDAR);
+            int calID = prefs.loadInt(Prefs.EVENTS_CALENDAR);
             ArrayList<CalendarManager.EventItem> eventItems = cm.getEvents(calID);
             if (eventItems != null && eventItems.size() > 0){
                 DataBase db = new DataBase(context);

@@ -19,7 +19,7 @@ package com.cray.software.justreminder.constants;
 public class Prefs {
     public static final String TECH_ONE = "RanGuide";
 
-    public static final String EVENTS_CALENDAR = "events_calendar";
+    public static final String EVENTS_CALENDAR = "events_cal";
     public static final String AUTO_CHECK_FOR_EVENTS = "auto_events";
     public static final String AUTO_CHECK_FOR_EVENTS_INTERVAL = "auto_events_interval";
     public static final String APP_THEME = "theme_";
@@ -41,8 +41,8 @@ public class Prefs {
     public static final String DELAY_TIME = "delay_time";
     public static final String EVENT_DURATION = "event_duration";
     public static final String EXPORT_TO_CALENDAR = "export_to_calendar";
-    public static final String CALENDAR_NAME = "calendar_name";
-    public static final String CALENDAR_ID = "calendar_id";
+    public static final String CALENDAR_NAME = "cal_name";
+    public static final String CALENDAR_ID = "cal_id";
     public static final String AUTO_CHECK_BIRTHDAYS = "birthdays_auto_scan";
     public static final String LED_STATUS = "led_status";
     public static final String LED_COLOR = "led_color";

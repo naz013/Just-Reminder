@@ -62,8 +62,8 @@ public class MessageFragment extends BaseFragment implements
     public MessageFragment() {
     }
 
-    public void setNumber(String number){
-        super.number = number;
+    public void setNumber(String num){
+        number = num;
         phoneNumber.setText(number);
     }
 
@@ -125,6 +125,7 @@ public class MessageFragment extends BaseFragment implements
         CheckBox dateTaskExport = (CheckBox) view.findViewById(R.id.dateTaskExport);
         if (hasTasks) dateTaskExport.setVisibility(View.VISIBLE);
         dateExport.setOnCheckedChangeListener(this);
+        dateTaskExport.setOnCheckedChangeListener(this);
 
         RepeatView repeatView = (RepeatView) view.findViewById(R.id.repeatView);
         repeatView.setListener(mRepeatCallbacks);
@@ -170,10 +171,10 @@ public class MessageFragment extends BaseFragment implements
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()) {
             case R.id.dateExport:
-                super.isCalendar = isChecked;
+                isCalendar = isChecked;
                 break;
             case R.id.dateTaskExport:
-                super.isTasks = isChecked;
+                isTasks = isChecked;
                 break;
         }
     }

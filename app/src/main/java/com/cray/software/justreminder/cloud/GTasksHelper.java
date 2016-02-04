@@ -3,11 +3,11 @@ package com.cray.software.justreminder.cloud;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.constants.TasksConstants;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.HttpTransport;
@@ -41,7 +41,7 @@ public class GTasksHelper {
     private final HttpTransport m_transport = AndroidHttp.newCompatibleTransport();
     private final JsonFactory m_jsonFactory = GsonFactory.getDefaultInstance();
     private Tasks service;
-    private static final String APPLICATION_NAME = "Just Reminder/2.3.4";
+    private static final String APPLICATION_NAME = "Reminder/5.0";
 
     public GTasksHelper(Context context){
         this.mContext = context;
@@ -59,7 +59,7 @@ public class GTasksHelper {
 
     /**
      * Check if user has already login to Google Tasks;
-     * @return
+     * @return Boolean
      */
     public boolean isLinked(){
         prefs = new SharedPrefs(mContext);
@@ -163,7 +163,7 @@ public class GTasksHelper {
             }
             task.setUpdated(new DateTime(System.currentTimeMillis()));
 
-            Task result = service.tasks().update(listId, task.getId(), task).execute();
+            service.tasks().update(listId, task.getId(), task).execute();
         }
     }
 
@@ -200,7 +200,7 @@ public class GTasksHelper {
             if (note != null) task.setNotes(note);
             task.setUpdated(new DateTime(System.currentTimeMillis()));
 
-            Task result = service.tasks().update(listId, task.getId(), task).execute();
+            service.tasks().update(listId, task.getId(), task).execute();
         }
     }
 
@@ -275,7 +275,7 @@ public class GTasksHelper {
             TaskList taskList = service.tasklists().get(listId).execute();
             taskList.setTitle(listTitle);
 
-            TaskList result = service.tasklists().update(listId, taskList).execute();
+            service.tasklists().update(listId, taskList).execute();
         }
     }
 

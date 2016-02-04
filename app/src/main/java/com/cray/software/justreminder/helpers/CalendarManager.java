@@ -38,14 +38,8 @@ public class CalendarManager {
      */
     public void addEvent(String summary, long startTime, long id){
         sPrefs = new SharedPrefs(ctx);
-        String m_selectedCalendarId = sPrefs.loadPrefs(Prefs.CALENDAR_ID);
-        int i = 0;
-        if (m_selectedCalendarId != null){
-            try{
-                i = Integer.parseInt(m_selectedCalendarId);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
+        int mId = sPrefs.loadInt(Prefs.CALENDAR_ID);
+        if (mId != 0){
             TimeZone tz = TimeZone.getDefault();
             String timeZone = tz.getDisplayName();
             ContentResolver cr = ctx.getContentResolver();
@@ -56,7 +50,7 @@ public class CalendarManager {
             if (summary != null) {
                 values.put(CalendarContract.Events.TITLE, summary);
             }
-            values.put(CalendarContract.Events.CALENDAR_ID, i);
+            values.put(CalendarContract.Events.CALENDAR_ID, mId);
             values.put(CalendarContract.Events.EVENT_TIMEZONE, timeZone);
             values.put(CalendarContract.Events.ALL_DAY, 0);
             values.put(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CONFIRMED);
@@ -172,7 +166,7 @@ public class CalendarManager {
         }
         if (c != null && c.moveToFirst()) {
             do {
-                String mID = c.getString(c.getColumnIndex(mProjection[0]));
+                int mID = c.getInt(c.getColumnIndex(mProjection[0]));
                 String title = c.getString(c.getColumnIndex(mProjection[2]));
                 ids.add(new CalendarItem(title, mID));
             } while (c.moveToNext());
@@ -188,7 +182,7 @@ public class CalendarManager {
      * @param id calendar identifier.
      * @return List of EventItem's.
      */
-    public ArrayList<EventItem> getEvents(String id){
+    public ArrayList<EventItem> getEvents(int id){
         ArrayList<EventItem> list = new ArrayList<>();
 
         ContentResolver contentResolver = ctx.getContentResolver();
@@ -279,9 +273,10 @@ public class CalendarManager {
 
     public class CalendarItem{
 
-        private String name, id;
+        private String name;
+        private int id;
 
-        public CalendarItem(String name, String id){
+        public CalendarItem(String name, int id){
             this.name = name;
             this.id = id;
         }
@@ -290,7 +285,7 @@ public class CalendarManager {
             return name;
         }
 
-        public String getId(){
+        public int getId(){
             return id;
         }
     }

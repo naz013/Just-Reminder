@@ -164,7 +164,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
             return;
         }
 
-        HashMap<String, String> map = new HashMap<>();
+        HashMap<String, Integer> map = new HashMap<>();
 
         if (eventsCheck.isChecked()) {
             int selectedPosition = eventCalendar.getSelectedItemPosition() - 1;
@@ -173,9 +173,9 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
             if (!isEnabled) {
                 prefs.saveBoolean(Prefs.EXPORT_TO_CALENDAR, true);
                 prefs.savePrefs(Prefs.CALENDAR_NAME, list.get(selectedPosition).getName());
-                prefs.savePrefs(Prefs.CALENDAR_ID, list.get(selectedPosition).getId());
+                prefs.saveInt(Prefs.CALENDAR_ID, list.get(selectedPosition).getId());
             }
-            prefs.savePrefs(Prefs.EVENTS_CALENDAR, list.get(selectedPosition).getId());
+            prefs.saveInt(Prefs.EVENTS_CALENDAR, list.get(selectedPosition).getId());
         }
 
         new Import(this).execute(map);
@@ -230,7 +230,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
         else alarm.cancelAlarm(this);
     }
 
-    public class Import extends AsyncTask<HashMap<String, String>, Void, Integer>{
+    public class Import extends AsyncTask<HashMap<String, Integer>, Void, Integer>{
 
         private Context context;
         private ProgressDialog dialog;
@@ -247,7 +247,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
 
         @SafeVarargs
         @Override
-        protected final Integer doInBackground(HashMap<String, String>... params) {
+        protected final Integer doInBackground(HashMap<String, Integer>... params) {
             if (params == null){
                 return 0;
             }
@@ -255,7 +255,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
             long currTime = System.currentTimeMillis();
 
             int eventsCount = 0;
-            HashMap <String, String> map = params[0];
+            HashMap <String, Integer> map = params[0];
             if (map.containsKey(EVENT_KEY)){
                 ArrayList<CalendarManager.EventItem> eventItems = cm.getEvents(map.get(EVENT_KEY));
                 if (eventItems != null && eventItems.size() > 0){

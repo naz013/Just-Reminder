@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.app.Fragment;
 
-import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.helpers.Notifier;
@@ -143,9 +142,9 @@ public class Type {
             boolean stock = prefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
             boolean calendar = prefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
             JExport jExport = item.getExport();
-            if (jExport.getCalendar() == 1) ReminderUtils.exportToCalendar(mContext,
-                    item.getSummary(), due, id, calendar, stock);
-            if (jExport.getgTasks() == Constants.SYNC_GTASKS_ONLY)
+            if (jExport.getCalendar() == 1)
+                ReminderUtils.exportToCalendar(mContext, item.getSummary(), due, id, calendar, stock);
+            if (jExport.getgTasks() == 1)
                 ReminderUtils.exportToTasks(mContext, item.getSummary(), due, id);
         }
     }

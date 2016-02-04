@@ -1255,8 +1255,8 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
 
         long repeat = getRepeat();
         int gTaskSync = getSyncCode();
-
         int calendarSync = getExportCode();
+
         if (isMonthDayAttached()) {
             if (type.endsWith("_last")) myDay = 0;
         }
