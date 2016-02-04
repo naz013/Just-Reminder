@@ -35,9 +35,10 @@ import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.MissedCallAlarm;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.views.RoundImageView;
 
 import java.util.Calendar;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MissedCallDialog extends Activity {
 
@@ -149,7 +150,8 @@ public class MissedCallDialog extends Activity {
         FloatingActionButton buttonNotification = (FloatingActionButton) findViewById(R.id.buttonNotification);
         buttonNotification.setVisibility(View.GONE);
         buttonEdit.setVisibility(View.GONE);
-        RoundImageView contactPhoto = (RoundImageView) findViewById(R.id.contactPhoto);
+
+        CircleImageView contactPhoto = (CircleImageView) findViewById(R.id.contactPhoto);
         contactPhoto.setVisibility(View.GONE);
 
         colorify(buttonOk, buttonCall, buttonCancel, buttonDelay, buttonDelayFor, buttonNotification);

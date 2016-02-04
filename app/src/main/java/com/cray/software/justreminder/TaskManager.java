@@ -40,6 +40,7 @@ import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -468,7 +469,6 @@ public class TaskManager extends AppCompatActivity {
         Cursor c = data.getTask(id);
         if (c != null && c.moveToFirst()){
             String taskId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TASK_ID));
-            long id = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID));
             data.deleteTask(id);
             new TaskAsync(TaskManager.this, null, initListId, taskId, TasksConstants.DELETE_TASK,
                     0, null, id, null).execute();
@@ -480,7 +480,7 @@ public class TaskManager extends AppCompatActivity {
     private void setColor(int i){
         color = i;
         toolbar.setBackgroundColor(cSetter.getNoteColor(i));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(cSetter.getNoteDarkColor(i));
         }
     }

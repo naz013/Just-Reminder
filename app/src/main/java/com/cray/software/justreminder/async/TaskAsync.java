@@ -51,7 +51,7 @@ public class TaskAsync extends AsyncTask<Void, Void, Void> {
 
         if (taskType.matches(TasksConstants.MOVE_TASK)){
             if (isConnected){
-                helper.moveTask(listId, taskId, oldList);
+                helper.moveTask(listId, taskId, oldList, localId);
             } else data.add(title, listId, TasksConstants.MOVE, 0, taskId, note, 0, time, oldList);
         }
 

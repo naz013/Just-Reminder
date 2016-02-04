@@ -309,7 +309,7 @@ public class GTasksHelper {
      * @param listId list identifier.
      * @param taskId task identifier.
      */
-    public void moveTask (String listId, String taskId, String oldList){
+    public void moveTask (String listId, String taskId, String oldList, long localId){
         if (isLinked()) {
             authorize();
             try {
@@ -318,7 +318,7 @@ public class GTasksHelper {
                     deleteTask(oldList, taskId);
                     DateTime dateTime = task.getDue();
                     long time = dateTime != null ? dateTime.getValue() : 0;
-                    insertTask(task.getTitle(), listId, time, task.getNotes(), 0);
+                    insertTask(task.getTitle(), listId, time, task.getNotes(), localId);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

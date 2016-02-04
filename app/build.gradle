@@ -112,6 +112,7 @@ dependencies {
     //Github libraries
     compile 'jp.wasabeef:picasso-transformations:1.3.1'
     compile 'com.github.deano2390:MaterialShowcaseView:1.0.5'
+    compile 'de.hdodenhof:circleimageview:2.0.0'
     compile project(':photoPreview')
     compile project(':flextcal')
 

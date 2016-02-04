@@ -64,13 +64,13 @@ import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.services.SendReceiver;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.views.RoundImageView;
 import com.cray.software.justreminder.views.TextDrawable;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.squareup.picasso.Picasso;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import jp.wasabeef.picasso.transformations.BlurTransformation;
 
 public class ReminderDialog extends Activity implements TextToSpeech.OnInitListener, SendListener {
@@ -267,7 +267,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         buttonCall.setImageResource(R.drawable.ic_call_black_24dp);
         buttonNotification.setImageResource(R.drawable.ic_favorite_black_24dp);
 
-        RoundImageView contactPhoto = (RoundImageView) findViewById(R.id.contactPhoto);
+        CircleImageView contactPhoto = (CircleImageView) findViewById(R.id.contactPhoto);
         contactPhoto.setVisibility(View.GONE);
 
         todoList = (RecyclerView) findViewById(R.id.todoList);

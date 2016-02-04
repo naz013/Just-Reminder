@@ -127,6 +127,7 @@ public class DelayedAsync extends AsyncTask<Void, Void, Void> {
                         String taskId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TASK_ID));
                         String note = c.getString(c.getColumnIndex(TasksConstants.COLUMN_NOTES));
                         String oldList = c.getString(c.getColumnIndex(TasksConstants.COLUMN_STATUS));
+                        long localId = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_LOCAL_ID));
                         long time = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_DUE));
                         if (listId != null && taskId != null) {
                             try {
@@ -134,7 +135,7 @@ public class DelayedAsync extends AsyncTask<Void, Void, Void> {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            helper.moveTask(listId, taskId, oldList);
+                            helper.moveTask(listId, taskId, oldList, localId);
                             mData.delete(id);
                         }
                     }

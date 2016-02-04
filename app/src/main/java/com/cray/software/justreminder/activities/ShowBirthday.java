@@ -42,11 +42,11 @@ import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.views.RoundImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import jp.wasabeef.picasso.transformations.BlurTransformation;
 
 public class ShowBirthday extends Activity implements View.OnClickListener,
@@ -191,7 +191,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
         if (number == null || number.matches("")) {
             number = Contacts.getNumber(name, ShowBirthday.this);
         }
-        RoundImageView contactPhoto = (RoundImageView) findViewById(R.id.contactPhoto);
+        CircleImageView contactPhoto = (CircleImageView) findViewById(R.id.contactPhoto);
         Bitmap photo = Contacts.getPhoto(this, contactId);
         if (photo != null) {
             contactPhoto.setImageBitmap(photo);
