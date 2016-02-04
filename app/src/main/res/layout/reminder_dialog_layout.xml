@@ -35,10 +35,8 @@
             android:layout_width="@dimen/reminder_photo_size"
             android:layout_height="@dimen/reminder_photo_size"
             android:layout_gravity="center"
-            app:civ_border="true"
             app:civ_border_width="4dp"
             app:civ_border_color="@color/material_grey_dialog"
-            app:civ_shadow="true"
             android:visibility="visible"
             android:id="@+id/contactPhoto"/>
 

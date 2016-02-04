@@ -322,7 +322,6 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         initArgs();
 
         View view = inflater.inflate(R.layout.fragment_places_map, container, false);
