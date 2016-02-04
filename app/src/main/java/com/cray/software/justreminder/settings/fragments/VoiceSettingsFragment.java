@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.activities.TimesOfDay;
-import com.cray.software.justreminder.activities.VoiceHelp;
+import com.cray.software.justreminder.dialogs.VoiceHelp;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;

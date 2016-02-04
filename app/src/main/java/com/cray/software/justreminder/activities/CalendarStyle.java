@@ -1,7 +1,6 @@
 package com.cray.software.justreminder.activities;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -31,7 +30,7 @@ public class CalendarStyle extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ColorSetter cs = new ColorSetter(CalendarStyle.this);
         setTheme(cs.getStyle());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         setContentView(R.layout.theme_color_layout);

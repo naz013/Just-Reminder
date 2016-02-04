@@ -1,6 +1,5 @@
 package com.cray.software.justreminder.activities;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -34,7 +33,7 @@ public class ThemerDialog extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         cs = new ColorSetter(ThemerDialog.this);
         setTheme(cs.getStyle());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         setContentView(R.layout.theme_color_layout);
@@ -209,7 +208,7 @@ public class ThemerDialog extends AppCompatActivity {
         }
         cs = new ColorSetter(ThemerDialog.this);
         toolbar.setBackgroundColor(ViewUtils.getColor(this, cs.colorPrimary()));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         mFab.setBackgroundTintList(ViewUtils.getFabState(this, cs.colorAccent(), cs.colorPrimary()));

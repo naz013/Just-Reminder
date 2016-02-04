@@ -1,6 +1,5 @@
 package com.cray.software.justreminder.activities;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,9 +9,10 @@ import android.view.MenuItem;
 import android.webkit.WebView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 
@@ -27,7 +27,7 @@ public class Help extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ColorSetter cSetter = new ColorSetter(Help.this);
         setTheme(cSetter.getStyle());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
         setContentView(R.layout.help_layout);

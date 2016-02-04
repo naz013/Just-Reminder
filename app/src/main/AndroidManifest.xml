@@ -127,13 +127,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.NewPlace"
-            android:configChanges="keyboardHidden|orientation">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".activities.QuickSMS"
             android:configChanges="keyboardHidden|orientation">
             <intent-filter>
@@ -233,7 +226,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.VoiceHelp"
+            android:name=".dialogs.VoiceHelp"
             android:configChanges="keyboardHidden|orientation"
             android:theme="@style/HomeWhiteDialog">
             <intent-filter>
@@ -383,6 +376,13 @@
         </activity>
         <activity
             android:name=".activities.QuickAddReminder"
+            android:configChanges="keyboardHidden|orientation">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.AddPlace"
             android:configChanges="keyboardHidden|orientation">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />

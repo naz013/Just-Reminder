@@ -7,7 +7,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -119,7 +118,7 @@ public class MissedCallDialog extends Activity {
         setTheme(cs.getFullscreenStyle());
         setContentView(R.layout.reminder_dialog_layout);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(cs.getStatusBarStyle());
         }
 

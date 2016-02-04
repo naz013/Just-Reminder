@@ -13,7 +13,7 @@ import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.activities.AddBirthday;
 import com.cray.software.justreminder.activities.QuickAddReminder;
 import com.cray.software.justreminder.activities.SplashScreen;
-import com.cray.software.justreminder.activities.VoiceHelp;
+import com.cray.software.justreminder.dialogs.VoiceHelp;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;

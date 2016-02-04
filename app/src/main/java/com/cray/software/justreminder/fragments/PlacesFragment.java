@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
-import com.cray.software.justreminder.activities.NewPlace;
+import com.cray.software.justreminder.activities.AddPlace;
 import com.cray.software.justreminder.adapters.PlaceRecyclerAdapter;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
@@ -148,7 +148,7 @@ public class PlacesFragment extends Fragment implements SimpleListener {
     }
 
     private void editPlace(int position){
-        startActivity(new Intent(getActivity(), NewPlace.class)
+        startActivity(new Intent(getActivity(), AddPlace.class)
                 .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
     }
 

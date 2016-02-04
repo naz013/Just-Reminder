@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -149,7 +148,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
 
         setContentView(R.layout.show_birthday_layout);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(cs.getStatusBarStyle());
         }
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -414,7 +413,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
                         e.printStackTrace();
                     }
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                    if (Module.isLollipop())
                         tts.speak(name, TextToSpeech.QUEUE_FLUSH, null, null);
                     else tts.speak(name, TextToSpeech.QUEUE_FLUSH, null);
                 }

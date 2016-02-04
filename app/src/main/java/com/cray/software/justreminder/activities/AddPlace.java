@@ -1,10 +1,26 @@
+/*
+ * Copyright 2016 Nazar Suhovich
+ * <p/>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.cray.software.justreminder.activities;
 
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,19 +33,19 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.fragments.helpers.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.MapListener;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.google.android.gms.maps.model.LatLng;
 
-public class NewPlace extends AppCompatActivity implements MapListener {
+public class AddPlace extends AppCompatActivity implements MapListener {
 
-    private ColorSetter cs = new ColorSetter(NewPlace.this);
+    private ColorSetter cs = new ColorSetter(AddPlace.this);
     private EditText placeName;
     private MapFragment googleMap;
 
-    private SharedPrefs sPrefs = new SharedPrefs(NewPlace.this);
+    private SharedPrefs sPrefs = new SharedPrefs(AddPlace.this);
 
     private LatLng place;
     private String placeTitle;
@@ -38,16 +54,8 @@ public class NewPlace extends AppCompatActivity implements MapListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (!LocationUtil.checkGooglePlayServicesAvailability(NewPlace.this)) {
-            finish();
-        }
-        if (!Permissions.checkPermission(NewPlace.this, Permissions.ACCESS_FINE_LOCATION)) {
-            finish();
-        }
-
         setTheme(cs.getStyle());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(cs.getColor(cs.colorPrimaryDark()));
         }
         setContentView(R.layout.new_place_activity_layout);
@@ -75,7 +83,7 @@ public class NewPlace extends AppCompatActivity implements MapListener {
 
     private void loadPlace() {
         if (id != 0){
-            DataBase db = new DataBase(NewPlace.this);
+            DataBase db = new DataBase(AddPlace.this);
             db.open();
             Cursor c = db.getPlace(id);
             if (c != null && c.moveToFirst()){
@@ -87,7 +95,7 @@ public class NewPlace extends AppCompatActivity implements MapListener {
             }
             if (c != null) c.close();
             db.close();
-        } else finish();
+        }
     }
 
     private void addPlace(){
@@ -103,7 +111,7 @@ public class NewPlace extends AppCompatActivity implements MapListener {
             Double latitude = place.latitude;
             Double longitude = place.longitude;
 
-            DataBase db = new DataBase(NewPlace.this);
+            DataBase db = new DataBase(AddPlace.this);
             db.open();
             if (id != 0){
                 db.updatePlace(id, task, latitude, longitude);
@@ -114,13 +122,14 @@ public class NewPlace extends AppCompatActivity implements MapListener {
             new SharedPrefs(this).saveBoolean(Prefs.PLACE_CHANGED, true);
             finish();
         } else {
-            Toast.makeText(NewPlace.this, getString(R.string.you_dont_select_place), Toast.LENGTH_SHORT).show();
+            Toast.makeText(AddPlace.this, getString(R.string.you_dont_select_place), Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(Constants.LOG_TAG, "Map is ready");
         loadPlace();
     }
 

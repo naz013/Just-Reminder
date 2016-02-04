@@ -2,7 +2,6 @@ package com.cray.software.justreminder.activities;
 
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,9 +11,10 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
@@ -39,7 +39,7 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         ColorSetter cs = new ColorSetter(TimesOfDay.this);
         setTheme(cs.getStyle());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         setContentView(R.layout.times_of_day_layout);

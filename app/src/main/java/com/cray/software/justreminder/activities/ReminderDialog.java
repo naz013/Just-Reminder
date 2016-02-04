@@ -17,7 +17,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -827,7 +826,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    if (Module.isLollipop()) {
                         tts.speak(task, TextToSpeech.QUEUE_FLUSH, null, null);
                     } else {
                         tts.speak(task, TextToSpeech.QUEUE_FLUSH, null);

@@ -16,7 +16,6 @@
 
 package com.cray.software.justreminder.activities;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -43,6 +42,7 @@ import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.json.JShopping;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -74,7 +74,7 @@ public class ShopsPreview extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         cSetter = new ColorSetter(this);
         setTheme(cSetter.getStyle());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
         setContentView(R.layout.activity_shops_preview);
@@ -174,7 +174,7 @@ public class ShopsPreview extends AppCompatActivity {
             toolbarLayout.setBackgroundColor(mColor);
             toolbarLayout.setContentScrimColor(mColor);
             appBarLayout.setBackgroundColor(mColor);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (Module.isLollipop()) {
                 getWindow().setStatusBarColor(cSetter.getNoteDarkColor(catColor));
             }
             mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorAccent(catColor),
@@ -231,7 +231,7 @@ public class ShopsPreview extends AppCompatActivity {
         new android.os.Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (Module.isLollipop()) {
                     finishAfterTransition();
                 } else {
                     finish();

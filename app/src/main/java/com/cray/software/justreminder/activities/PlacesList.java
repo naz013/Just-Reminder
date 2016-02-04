@@ -2,7 +2,6 @@ package com.cray.software.justreminder.activities;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -27,10 +26,12 @@ import com.cray.software.justreminder.enums.QuickReturnViewType;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
+import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.ReturnScrollListener;
@@ -48,7 +49,7 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(cs.getStyle());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         setContentView(R.layout.places_activity_layout);
@@ -86,8 +87,15 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(PlacesList.this, NewPlace.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                if (LocationUtil.checkGooglePlayServicesAvailability(PlacesList.this)) {
+                    if (Permissions.checkPermission(PlacesList.this, Permissions.ACCESS_FINE_LOCATION)) {
+                        startActivity(new Intent(PlacesList.this, AddPlace.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    } else {
+                        Permissions.requestPermission(PlacesList.this, 101,
+                                Permissions.ACCESS_FINE_LOCATION);
+                    }
+                }
             }
         });
     }
@@ -133,7 +141,7 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
     }
 
     private void editPlace(int position){
-        startActivity(new Intent(this, NewPlace.class)
+        startActivity(new Intent(this, AddPlace.class)
                 .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
     }
 
@@ -180,7 +188,7 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
         switch (requestCode){
             case 101:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    startActivity(new Intent(PlacesList.this, NewPlace.class));
+                    startActivity(new Intent(PlacesList.this, AddPlace.class));
                 }
                 break;
         }

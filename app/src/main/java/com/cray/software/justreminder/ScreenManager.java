@@ -34,8 +34,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
+import com.cray.software.justreminder.activities.AddPlace;
 import com.cray.software.justreminder.activities.Help;
-import com.cray.software.justreminder.activities.NewPlace;
 import com.cray.software.justreminder.activities.NewTemplate;
 import com.cray.software.justreminder.async.DelayedAsync;
 import com.cray.software.justreminder.async.GetTasksListsAsync;
@@ -334,7 +334,7 @@ public class ScreenManager extends AppCompatActivity
                             @Override
                             public void run() {
                                 if (LocationUtil.checkGooglePlayServicesAvailability(ScreenManager.this)) {
-                                    startActivity(new Intent(ScreenManager.this, NewPlace.class));
+                                    startActivity(new Intent(ScreenManager.this, AddPlace.class));
                                 }
                             }
                         }, 150);

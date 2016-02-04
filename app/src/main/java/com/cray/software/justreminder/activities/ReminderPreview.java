@@ -27,7 +27,6 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -111,7 +110,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
         super.onCreate(savedInstanceState);
         ColorSetter cSetter = new ColorSetter(this);
         setTheme(cSetter.getStyle());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
         setContentView(R.layout.activity_reminder_preview);
@@ -327,7 +326,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
             toolbarLayout.setBackgroundColor(mColor);
             toolbarLayout.setContentScrimColor(mColor);
             appBarLayout.setBackgroundColor(mColor);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (Module.isLollipop()) {
                 getWindow().setStatusBarColor(setter.getNoteDarkColor(catColor));
             }
             mFab.setBackgroundTintList(ViewUtils.getFabState(this, setter.colorAccent(catColor),
@@ -349,7 +348,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
 
         if (ids == R.id.action_delete) {
             Reminder.moveToTrash(id, ReminderPreview.this, null);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (Module.isLollipop()) {
                 finishAfterTransition();
             } else {
                 finish();
@@ -357,7 +356,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
             return true;
         }
         if (ids == android.R.id.home) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (Module.isLollipop()) {
                 finishAfterTransition();
             } else {
                 finish();
@@ -590,7 +589,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
     }
 
     private void openNote(long id) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             Intent intent = new Intent(this, NotePreview.class);
             intent.putExtra(Constants.EDIT_ID, id);
             String transitionName = "image";
