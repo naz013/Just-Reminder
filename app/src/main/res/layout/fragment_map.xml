@@ -248,12 +248,12 @@
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:visibility="gone"
+            android:visibility="visible"
             android:id="@+id/styleCard">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:gravity="center"
                 android:orientation="vertical">
 
@@ -261,6 +261,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:layout_gravity="center"
                     android:id="@+id/groupOne"/>
 
                 <LinearLayout
@@ -282,7 +283,7 @@
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="175dp"
-            android:visibility="visible"
+            android:visibility="gone"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_alignParentBottom="true"

@@ -462,9 +462,11 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                     getActivity().getString(R.string.click_when_add_place),
                     getActivity().getString(R.string.got_it));
 
-            sequence.addSequenceItem(markers,
-                    getActivity().getString(R.string.select_style_for_marker),
-                    getActivity().getString(R.string.got_it));
+            if (Module.isPro()) {
+                sequence.addSequenceItem(markers,
+                        getActivity().getString(R.string.select_style_for_marker),
+                        getActivity().getString(R.string.got_it));
+            }
 
             sequence.addSequenceItem(places,
                     getActivity().getString(R.string.select_place_from_list),

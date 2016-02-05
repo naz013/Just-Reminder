@@ -9,7 +9,6 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.SwitchCompat;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,7 +29,6 @@ import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.IntervalUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
-import com.cray.software.justreminder.utils.ViewUtils;
 
 public class VoiceResult extends Activity {
 
@@ -65,31 +63,22 @@ public class VoiceResult extends Activity {
             }
         });
 
-        TextView leftTime, taskTitle, taskDate, reminder_type, reminder_phone,
-                repeatInterval;
-        SwitchCompat check;
-        ImageView taskIcon;
-        CardView itemCard;
-
-        RelativeLayout reminderContainer;
-
-        reminderContainer = (RelativeLayout) findViewById(R.id.reminderContainer);
-        leftTime = (TextView) findViewById(R.id.remainingTime);
-        check = (SwitchCompat) findViewById(R.id.itemCheck);
+        RelativeLayout reminderContainer = (RelativeLayout) findViewById(R.id.reminderContainer);
+        TextView leftTime = (TextView) findViewById(R.id.remainingTime);
+        SwitchCompat check = (SwitchCompat) findViewById(R.id.itemCheck);
         check.setVisibility(View.VISIBLE);
-        taskIcon = (ImageView) findViewById(R.id.taskIcon);
-        taskDate = (TextView) findViewById(R.id.taskDate);
+        TextView taskDate = (TextView) findViewById(R.id.taskDate);
         taskDate.setText("");
-        reminder_type = (TextView) findViewById(R.id.reminder_type);
+        TextView reminder_type = (TextView) findViewById(R.id.reminder_type);
         reminder_type.setText("");
-        reminder_phone = (TextView) findViewById(R.id.reminder_phone);
+        TextView reminder_phone = (TextView) findViewById(R.id.reminder_phone);
         reminder_phone.setText("");
-        repeatInterval = (TextView) findViewById(R.id.repeatInterval);
+        TextView repeatInterval = (TextView) findViewById(R.id.repeatInterval);
         repeatInterval.setText("");
 
-        taskTitle = (TextView) findViewById(R.id.taskText);
+        TextView taskTitle = (TextView) findViewById(R.id.taskText);
         taskTitle.setText("");
-        itemCard = (CardView) findViewById(R.id.itemCard);
+        CardView itemCard = (CardView) findViewById(R.id.itemCard);
         itemCard.setCardBackgroundColor(cs.getCardStyle());
         if (Module.isLollipop()) {
             itemCard.setCardElevation(Configs.CARD_ELEVATION);
@@ -109,19 +98,11 @@ public class VoiceResult extends Activity {
         String repeat = IntervalUtil.getInterval(this, model.getRepeat());
         String exclusion = model.getExclusion();
         int archived = model.getArchived();
-        int categoryColor = model.getCatColor();
 
         reminderContainer.setVisibility(View.VISIBLE);
 
         TimeCount mCount = new TimeCount(this);
 
-        taskTitle.setText("");
-        taskDate.setText("");
-        reminder_type.setText("");
-        reminder_phone.setText("");
-        repeatInterval.setText("");
-
-        taskIcon.setImageDrawable(ViewUtils.getDrawable(this, cs.getCategoryIndicator(categoryColor)));
         taskTitle.setText(title);
         reminder_type.setText(ReminderUtils.getTypeString(this, type));
 
