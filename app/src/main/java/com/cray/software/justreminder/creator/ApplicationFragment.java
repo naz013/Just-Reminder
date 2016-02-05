@@ -107,6 +107,8 @@ public class ApplicationFragment extends BaseFragment implements
         applicationLayout.setVisibility(View.VISIBLE);
         applicationName = (TextView) view.findViewById(R.id.applicationName);
 
+        type = Constants.TYPE_APPLICATION;
+
         ImageButton pickApplication = (ImageButton) view.findViewById(R.id.pickApplication);
         pickApplication.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -177,7 +179,7 @@ public class ApplicationFragment extends BaseFragment implements
             int exp = jExport.getCalendar();
             int expTasks = jExport.getgTasks();
             number = item.getAction().getTarget();
-            String type = item.getType();
+            type = item.getType();
             eventTime = item.getEventTime();
 
             if (exp == 1) dateExport.setChecked(true);

@@ -512,4 +512,6 @@
     <string name="x_minutezz">"%s minut"</string>
     <string name="x_year">"%s rok"</string>
     <string name="x_yearzz">"%s lat"</string>
+    <string name="application_not_selected">Aplikacja nie wybrano</string>
+    <string name="app_title">"Przypomnienie PRO"</string>
 </resources>

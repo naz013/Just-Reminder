@@ -414,6 +414,16 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             repeats = item.getRecurrence().getLimit();
             String catId = item.getCategory();
 
+            long time = item.getEventTime();
+            Calendar calendar = Calendar.getInstance();
+            if (time > 0) calendar.setTimeInMillis(time);
+            else calendar.setTimeInMillis(System.currentTimeMillis());
+            myDay = calendar.get(Calendar.DAY_OF_MONTH);
+            myMonth = calendar.get(Calendar.MONTH);
+            myYear = calendar.get(Calendar.YEAR);
+            myHour = calendar.get(Calendar.HOUR_OF_DAY);
+            myMinute = calendar.get(Calendar.MINUTE);
+
             if (radius == 0) radius = -1;
 
             if (catId != null && !catId.matches("")) categoryId = catId;

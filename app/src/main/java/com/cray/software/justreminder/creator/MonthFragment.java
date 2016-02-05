@@ -35,6 +35,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.interfaces.ActionCallbacks;
 import com.cray.software.justreminder.json.JExport;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.utils.AssetsUtil;
@@ -51,6 +52,7 @@ public class MonthFragment extends BaseFragment implements
 
     private ActionView.OnActionListener mCallbacks;
     private DateTimeView.OnSelectListener mListener;
+    private ActionCallbacks mActionCallbacks;
 
     private TextView monthDayField;
     private RadioButton dayCheck, lastCheck;
@@ -214,6 +216,7 @@ public class MonthFragment extends BaseFragment implements
         try {
             mCallbacks = (ActionView.OnActionListener) activity;
             mListener = (DateTimeView.OnSelectListener) activity;
+            mActionCallbacks = (ActionCallbacks) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement listeners.");
         }
@@ -223,6 +226,8 @@ public class MonthFragment extends BaseFragment implements
     public void onDetach() {
         super.onDetach();
         mCallbacks = null;
+        mListener = null;
+        mActionCallbacks = null;
     }
 
     @Override
@@ -238,7 +243,10 @@ public class MonthFragment extends BaseFragment implements
                 if (dayCheck.isChecked()) {
                     lastCheck.setChecked(false);
                     ViewUtils.expand(monthDayField);
-                    myDay = 1;
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(System.currentTimeMillis());
+                    myDay = calendar.get(Calendar.DAY_OF_MONTH);
+                    if (myDay > 28) myDay = 1;
                 }
                 break;
             case R.id.lastCheck:
@@ -258,6 +266,9 @@ public class MonthFragment extends BaseFragment implements
         myYear = year;
         final Calendar cal = Calendar.getInstance();
         cal.set(year, monthOfYear, dayOfMonth);
+
+        if (myDay > 28 && mActionCallbacks != null)
+            mActionCallbacks.showSnackbar(R.string.max_day_supported);
 
         String dayStr;
         if (myDay > 28) myDay = 28;

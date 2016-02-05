@@ -512,4 +512,5 @@
     <string name="x_minutezz">"%s Minuten"</string>
     <string name="x_year">"%s Jahr"</string>
     <string name="x_yearzz">"%s Jahren"</string>
+    <string name="application_not_selected">Anwendung nicht ausgewählt</string>
 </resources>

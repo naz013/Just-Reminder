@@ -512,4 +512,6 @@
     <string name="x_minutezz">"%s minut"</string>
     <string name="x_year">"%s rokem"</string>
     <string name="x_yearzz">"%s roky"</string>
+    <string name="application_not_selected">Aplikace není vybrána</string>
+    <string name="app_title">Připomenutí PRO</string>
 </resources>

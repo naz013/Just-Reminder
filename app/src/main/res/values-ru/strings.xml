@@ -528,4 +528,5 @@
     <string name="x_minutezz">%s минут</string>
     <string name="x_year">%s год</string>
     <string name="x_yearzz">%s года</string>
+    <string name="application_not_selected">Приложение не выбрано</string>
 </resources>

@@ -73,14 +73,12 @@ public class TimeCount {
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
         if (type.startsWith(Constants.TYPE_WEEKDAY)){
             return getNextWeekdayTime(calendar.getTimeInMillis(), weekdays, 0);
         } else if (type.startsWith(Constants.TYPE_MONTHDAY)){
-            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            if (type.endsWith("_last"))
-                return getLastMonthDayTime(calendar.getTimeInMillis());
-            else
-                return getNextMonthDayTime(dayOfMonth, calendar.getTimeInMillis());
+            return getNextMonthDayTime(dayOfMonth, calendar.getTimeInMillis());
         } else {
             calendar.set(year, month, dayOfMonth, hour, minute, seconds);
             if (type.matches(Constants.TYPE_TIME))
@@ -109,11 +107,7 @@ public class TimeCount {
             if (type.startsWith(Constants.TYPE_WEEKDAY)){
                 dateTime = getNextWeekdayTime(startTime, weekdays, delay);
             } else if (type.startsWith(Constants.TYPE_MONTHDAY)){
-                if (type.endsWith("_last")){
-                    dateTime = getLastMonthDayTime(startTime);
-                } else {
-                    dateTime = getNextMonthDayTime(dayOfMonth, startTime);
-                }
+                dateTime = getNextMonthDayTime(dayOfMonth, startTime);
             } else {
                 dateTime = startTime + (repeat * count) + (delay * MINUTE);
             }
@@ -269,8 +263,7 @@ public class TimeCount {
         }
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(fromTime);
-        cc.set(Calendar.SECOND, 0);
-        cc.set(Calendar.MILLISECOND, 0);
+        cc.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
         if (cc.getTimeInMillis() > System.currentTimeMillis())
             return cc.getTimeInMillis();
@@ -290,14 +283,14 @@ public class TimeCount {
     public static long getLastMonthDayTime(long fromTime) {
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(fromTime);
-        if (fromTime < System.currentTimeMillis()) {
+        while (fromTime < System.currentTimeMillis()) {
+            int lastDay = cc.getActualMaximum(Calendar.DAY_OF_MONTH);
+            cc.set(Calendar.DAY_OF_MONTH, lastDay);
+            fromTime = cc.getTimeInMillis();
+            if (fromTime > System.currentTimeMillis())
+                break;
             cc.set(Calendar.DAY_OF_MONTH, 15);
             cc.setTimeInMillis(cc.getTimeInMillis() + (30 * DAY));
-            int lastDay = cc.getActualMaximum(Calendar.DAY_OF_MONTH);
-            cc.set(Calendar.DAY_OF_MONTH, lastDay);
-        } else {
-            int lastDay = cc.getActualMaximum(Calendar.DAY_OF_MONTH);
-            cc.set(Calendar.DAY_OF_MONTH, lastDay);
         }
         cc.set(Calendar.SECOND, 0);
         cc.set(Calendar.MILLISECOND, 0);

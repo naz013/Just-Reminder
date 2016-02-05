@@ -169,7 +169,7 @@ public class SkypeFragment extends BaseFragment implements
             int exp = jExport.getCalendar();
             int expTasks = jExport.getgTasks();
             number = item.getAction().getTarget();
-            String type = item.getType();
+            type = item.getType();
             eventTime = item.getEventTime();
 
             if (exp == 1) dateExport.setChecked(true);

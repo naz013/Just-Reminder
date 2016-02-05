@@ -58,7 +58,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_toRightOf="@+id/pickApplication"
                     android:layout_centerVertical="true"
-                    android:text="@string/no_application"
+                    android:text="@string/application_not_selected"
                     android:textSize="@dimen/create_text_size_normal"
                     android:gravity="center"
                     android:ems="10"

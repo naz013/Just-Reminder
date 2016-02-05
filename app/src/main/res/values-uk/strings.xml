@@ -528,4 +528,5 @@
     <string name="x_minutezz">%s хвилини</string>
     <string name="x_year">%s рік</string>
     <string name="x_yearzz">%s роки</string>
+    <string name="application_not_selected">Додаток не обрано</string>
 </resources>

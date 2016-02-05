@@ -512,4 +512,6 @@
     <string name="x_minutezz">%s minutes</string>
     <string name="x_year">%s year</string>
     <string name="x_yearzz">%s years</string>
+    <string name="application_not_selected">Application not selected</string>
+    <string name="app_title">Reminder PRO</string>
 </resources>
