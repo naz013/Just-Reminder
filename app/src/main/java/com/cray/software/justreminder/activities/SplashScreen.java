@@ -102,6 +102,7 @@ public class SplashScreen extends Activity{
             uiEd.putInt(Prefs.LED_COLOR, LED.BLUE);
             uiEd.putInt(Prefs.BIRTHDAY_LED_COLOR, LED.BLUE);
             uiEd.putInt(Prefs.LOCATION_RADIUS, 25);
+            uiEd.putInt(Prefs.MARKER_STYLE, 5);
             uiEd.putInt(Prefs.TRACK_DISTANCE, 1);
             uiEd.putInt(Prefs.TRACK_TIME, 1);
             uiEd.putInt(Prefs.QUICK_NOTE_REMINDER_TIME, 10);
@@ -596,6 +597,8 @@ public class SplashScreen extends Activity{
             if (!prefs.isString(Prefs.BIRTHDAY_USE_GLOBAL)) {
                 prefs.saveBoolean(Prefs.BIRTHDAY_USE_GLOBAL, true);
             }
+        } else {
+            prefs.saveInt(Prefs.MARKER_STYLE, 5);
         }
     }
 

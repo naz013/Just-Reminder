@@ -237,19 +237,13 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     public void addMarker(LatLng pos, String title, boolean clear, boolean animate, int radius) {
         if (map != null) {
             markerRadius = radius;
-            if (markerRadius == -1) {
+            if (markerRadius == -1)
                 markerRadius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
-            }
-            if (clear) {
-                map.clear();
-            }
-            if (title == null || title.matches("")) {
-                title = pos.toString();
-            }
+            if (clear) map.clear();
+            if (title == null || title.matches("")) title = pos.toString();
+            if (!Module.isPro()) markerStyle = 5;
             lastPos = pos;
-            if (listener != null) {
-                listener.placeChanged(pos);
-            }
+            if (listener != null) listener.placeChanged(pos);
             map.addMarker(new MarkerOptions()
                     .position(pos)
                     .title(title)
@@ -262,9 +256,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                     .strokeWidth(strokeWidth)
                     .fillColor(ViewUtils.getColor(getActivity(), circleColors[0]))
                     .strokeColor(ViewUtils.getColor(getActivity(), circleColors[1])));
-            if (animate) {
-                animate(pos);
-            }
+            if (animate) animate(pos);
         }
     }
 
@@ -283,17 +275,13 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             if (markerRadius == -1) {
                 markerRadius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
             }
+            if (!Module.isPro()) markerStyle = 5;
             this.markerStyle = markerStyle;
-            if (clear) {
-                map.clear();
-            }
-            if (title == null || title.matches("")) {
+            if (clear) map.clear();
+            if (title == null || title.matches(""))
                 title = pos.toString();
-            }
             lastPos = pos;
-            if (listener != null) {
-                listener.placeChanged(pos);
-            }
+            if (listener != null) listener.placeChanged(pos);
             map.addMarker(new MarkerOptions()
                     .position(pos)
                     .title(title)
@@ -306,9 +294,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                     .strokeWidth(strokeWidth)
                     .fillColor(ViewUtils.getColor(getActivity(), circleColors[0]))
                     .strokeColor(ViewUtils.getColor(getActivity(), circleColors[1])));
-            if (animate) {
-                animate(pos);
-            }
+            if (animate) animate(pos);
         } else {
             Log.d(Constants.LOG_TAG, "map is null");
         }
@@ -320,17 +306,14 @@ public class MapFragment extends Fragment implements View.OnClickListener {
      */
     public void recreateMarker(int radius) {
         markerRadius = radius;
-        if (markerRadius == -1) {
+        if (markerRadius == -1)
             markerRadius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
-        }
         if (map != null && lastPos != null) {
             map.clear();
-            if (markerTitle == null || markerTitle.matches("")) {
+            if (markerTitle == null || markerTitle.matches(""))
                 markerTitle = lastPos.toString();
-            }
-            if (listener != null) {
-                listener.placeChanged(lastPos);
-            }
+            if (listener != null) listener.placeChanged(lastPos);
+            if (!Module.isPro()) markerStyle = 5;
             map.addMarker(new MarkerOptions()
                     .position(lastPos)
                     .title(markerTitle)
@@ -355,19 +338,17 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         markerStyle = style;
         if (map != null && lastPos != null) {
             map.clear();
-            if (markerTitle == null || markerTitle.matches("")) {
+            if (markerTitle == null || markerTitle.matches(""))
                 markerTitle = lastPos.toString();
-            }
-            if (listener != null) {
-                listener.placeChanged(lastPos);
-            }
+            if (listener != null) listener.placeChanged(lastPos);
+            if (!Module.isPro()) markerStyle = 5;
             map.addMarker(new MarkerOptions()
                     .position(lastPos)
                     .title(markerTitle)
-                    .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle(style)))
+                    .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle(markerStyle)))
                     .draggable(true));
-            if (style >= 0) {
-                int[] circleColors = cSetter.getMarkerRadiusStyle(style);
+            if (markerStyle >= 0) {
+                int[] circleColors = cSetter.getMarkerRadiusStyle(markerStyle);
                 if (markerRadius == -1) {
                     markerRadius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
                 }
@@ -387,9 +368,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
      * @param pos coordinates
      */
     public void moveCamera(LatLng pos) {
-        if (map != null) {
-            animate(pos);
-        }
+        if (map != null) animate(pos);
     }
 
     /**
@@ -398,9 +377,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
      */
     public void animate(LatLng latLng) {
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latLng, 13);
-        if (map != null) {
-            map.animateCamera(update);
-        }
+        if (map != null) map.animateCamera(update);
     }
 
     /**
