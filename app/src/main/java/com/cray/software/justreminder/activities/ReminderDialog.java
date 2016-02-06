@@ -366,11 +366,11 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             }
             final String nameA = (String) ((applicationInfo != null) ?
                     packageManager.getApplicationLabel(applicationInfo) : "???");
-            remText.setText(nameA);
+            remText.setText(task + "\n" + nameA);
             buttonCall.setVisibility(View.VISIBLE);
             buttonCall.setImageResource(R.drawable.ic_open_in_browser_black_24dp);
         } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)) {
-            remText.setText(number);
+            remText.setText(task + "\n" + number);
             buttonCall.setVisibility(View.VISIBLE);
             buttonCall.setImageResource(R.drawable.ic_open_in_browser_black_24dp);
         } else if (type.matches(Constants.TYPE_SHOPPING_LIST)) {

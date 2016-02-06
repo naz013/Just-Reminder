@@ -2,26 +2,19 @@ package com.cray.software.justreminder.utils;
 
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.speech.RecognizerIntent;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.activities.ContactsList;
 import com.cray.software.justreminder.activities.SelectApplication;
-import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Copyright 2015 Nazar Suhovich
@@ -75,41 +68,7 @@ public class SuperUtil {
      * @param requestCode result request code.
      */
     public static void selectApplication(final Activity activity, final int requestCode){
-        class Async extends AsyncTask<Void, Void, Void>{
-
-            private ProgressDialog pd;
-            private ArrayList<String> contacts;
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                pd = ProgressDialog.show(activity, null, activity.getString(R.string.please_wait), true);
-            }
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                contacts = new ArrayList<>();
-                contacts.clear();
-                final PackageManager pm = activity.getPackageManager();
-                List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
-
-                for (ApplicationInfo packageInfo : packages) {
-                    contacts.add(packageInfo.packageName);
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                if (pd != null && pd.isShowing()) pd.dismiss();
-                Intent i = new Intent(activity, SelectApplication.class);
-                i.putStringArrayListExtra(Constants.SELECTED_CONTACT_ARRAY, contacts);
-                activity.startActivityForResult(i, requestCode);
-            }
-        }
-
-        new Async().execute();
+        activity.startActivityForResult(new Intent(activity, SelectApplication.class), requestCode);
     }
 
     /**

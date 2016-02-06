@@ -21,6 +21,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.cloud.DropboxHelper;
@@ -103,7 +104,16 @@ public class LogInActivity extends Activity {
         connectGDrive = (PaperButton) findViewById(R.id.connectGDrive);
         connectDropbox = (PaperButton) findViewById(R.id.connectDropbox);
         checkBox = (CheckBox) findViewById(R.id.checkBox);
-        checkBox.setChecked(true);
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (!Permissions.checkPermission(LogInActivity.this, Permissions.READ_CONTACTS)) {
+                    Permissions.requestPermission(LogInActivity.this, 115, Permissions.READ_CONTACTS);
+                } else {
+                    checkBox.setChecked(isChecked);
+                }
+            }
+        });
         skipButton = (TextView) findViewById(R.id.skipButton);
         String text = skipButton.getText().toString();
         skipButton.setText(SuperUtil.appendString(text, " (", getString(R.string.local_sync), ")"));
@@ -207,6 +217,13 @@ public class LogInActivity extends Activity {
                     checkGroups();
                     startActivity(new Intent(LogInActivity.this, ScreenManager.class));
                     finish();
+                }
+                break;
+            case 115:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    checkBox.setChecked(true);
+                } else {
+                    checkBox.setChecked(false);
                 }
                 break;
         }

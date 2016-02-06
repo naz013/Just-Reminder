@@ -1,8 +1,10 @@
 package com.cray.software.justreminder.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -21,10 +23,14 @@ import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SelectApplication extends AppCompatActivity {
 
     private ArrayAdapter<String> adapter;
+    private ArrayList<String> packageList;
+    private ArrayList<String> contacts;
+    private ListView contactsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,20 +51,6 @@ public class SelectApplication extends AppCompatActivity {
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
-        Intent intent = getIntent();
-        final ArrayList<String> packages = intent.getStringArrayListExtra(Constants.SELECTED_CONTACT_ARRAY);
-        final ArrayList<String> contacts = new ArrayList<>();
-        contacts.clear();
-        for (String name : packages){
-            PackageManager packageManager = getPackageManager();
-            ApplicationInfo applicationInfo = null;
-            try {
-                applicationInfo = packageManager.getApplicationInfo(name, 0);
-            } catch (final PackageManager.NameNotFoundException ignored) {}
-            final String title = (String)((applicationInfo != null) ? packageManager.getApplicationLabel(applicationInfo) : "???");
-            contacts.add(title);
-        }
-
         FloatingEditText searchField = (FloatingEditText) findViewById(R.id.searchField);
         searchField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -78,9 +70,8 @@ public class SelectApplication extends AppCompatActivity {
             }
         });
 
-        ListView contactsList = (ListView) findViewById(R.id.contactsList);
-        adapter = new ArrayAdapter<>(SelectApplication.this,
-                android.R.layout.simple_list_item_1, contacts);
+        contactsList = (ListView) findViewById(R.id.contactsList);
+
         contactsList.setAdapter(adapter);
 
         contactsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -92,7 +83,7 @@ public class SelectApplication extends AppCompatActivity {
                     String pName = null;
                     for (int i = 0; i < contacts.size(); i++) {
                         if (name.matches(contacts.get(i))) {
-                            pName = packages.get(i);
+                            pName = packageList.get(i);
                         }
                     }
                     intent.putExtra(Constants.SELECTED_APPLICATION, pName);
@@ -101,5 +92,57 @@ public class SelectApplication extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new Load().execute();
+    }
+
+    class Load extends AsyncTask<Void, Void, Void> {
+        private ProgressDialog pd;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = ProgressDialog.show(SelectApplication.this, null, getString(R.string.please_wait), true);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            packageList = new ArrayList<>();
+            packageList.clear();
+            final PackageManager pm = getPackageManager();
+            List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+
+            for (ApplicationInfo packageInfo : packages) {
+                packageList.add(packageInfo.packageName);
+            }
+
+            contacts = new ArrayList<>();
+            contacts.clear();
+            for (String name : packageList){
+                PackageManager packageManager = getPackageManager();
+                ApplicationInfo applicationInfo = null;
+                try {
+                    applicationInfo = packageManager.getApplicationInfo(name, 0);
+                } catch (final PackageManager.NameNotFoundException ignored) {}
+                final String title = (String)((applicationInfo != null) ?
+                        packageManager.getApplicationLabel(applicationInfo) : "???");
+                contacts.add(title);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (pd != null && pd.isShowing()) pd.dismiss();
+
+            adapter = new ArrayAdapter<>(SelectApplication.this,
+                    android.R.layout.simple_list_item_1, contacts);
+            contactsList.setAdapter(adapter);
+        }
     }
 }
