@@ -75,12 +75,13 @@
                 android:textSize="@dimen/create_text_size_normal"
                 android:padding="10dp"
                 android:ems="10"
+                android:maxLength="50"
                 android:layout_marginTop="@dimen/create_margin"
                 android:background="@android:color/transparent"
                 android:singleLine="true"
                 android:layout_gravity="center"
                 android:id="@+id/subject"
-                android:inputType="textEmailAddress" />
+                android:inputType="text" />
 
             <RelativeLayout
                 android:layout_width="match_parent"

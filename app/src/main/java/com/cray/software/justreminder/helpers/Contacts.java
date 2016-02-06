@@ -3,14 +3,9 @@ package com.cray.software.justreminder.helpers;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.ContactsContract;
-
-import java.io.IOException;
 
 /**
  * Helper class for accessing to contacts.
@@ -25,24 +20,12 @@ public class Contacts {
 
     /**
      * Get photo of contact.
-     * @param context application context.
      * @param contactId contact identifier.
      * @return Contact photo
      */
-    public static Bitmap getPhoto(Context context, long contactId) {
-        Bitmap bmp = null;
-        if (contactId != 0) {
-            Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
-            Uri displayPhotoUri = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
-            try {
-                AssetFileDescriptor fd =
-                        context.getContentResolver().openAssetFileDescriptor(displayPhotoUri, "r");
-                bmp = BitmapFactory.decodeStream(fd.createInputStream());
-            } catch (IOException e) {
-                return null;
-            }
-        }
-        return bmp;
+    public static Uri getPhoto(long contactId) {
+        Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
+        return Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.DISPLAY_PHOTO);
     }
 
     /**

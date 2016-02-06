@@ -124,12 +124,7 @@ public class TimerFragment extends BaseFragment implements
         secondsView = (TextView) view.findViewById(R.id.secondsView);
         selectExclusion = (TextView) view.findViewById(R.id.selectExclusion);
         ViewUtils.setTypeFont(getActivity(), hoursView, minutesView, secondsView, selectExclusion);
-        selectExclusion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityForResult(new Intent(getActivity(), ExclusionPickerDialog.class), 1111);
-            }
-        });
+        selectExclusion.setOnClickListener(exclusionClick);
 
         deleteButton = (ImageButton) view.findViewById(R.id.deleteButton);
         exclusionClear = (ImageButton) view.findViewById(R.id.exclusionClear);

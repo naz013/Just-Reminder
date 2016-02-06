@@ -26,7 +26,7 @@
         android:orientation="vertical"
         android:layout_gravity="center"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:layout_centerHorizontal="true"
         android:gravity="center"
         android:id="@+id/single_container">
@@ -35,9 +35,11 @@
             android:layout_width="@dimen/reminder_photo_size"
             android:layout_height="@dimen/reminder_photo_size"
             android:layout_gravity="center"
-            app:civ_border_width="4dp"
-            app:civ_border_color="@color/material_grey_dialog"
             android:visibility="visible"
+            android:scaleType="centerCrop"
+            app:civ_border_color="@color/material_grey_dialog"
+            app:civ_border_width="5dp"
+            android:src="@drawable/photo"
             android:id="@+id/contactPhoto"/>
 
         <android.support.v7.widget.CardView
@@ -68,19 +70,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
+                    android:visibility="visible"
                     android:layout_marginTop="10dp"
                     android:id="@+id/container">
 
-                    <LinearLayout
+                    <RelativeLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:layout_height="wrap_content">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="25dp"
                             android:textSize="17sp"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="center_vertical"
+                            android:layout_alignParentLeft="true"
                             android:id="@+id/actionDirect"
                             android:text="@string/to"/>
 
@@ -88,37 +93,41 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="17sp"
+                            android:layout_toRightOf="@+id/actionDirect"
                             android:id="@+id/contactInfo"/>
 
-                    </LinearLayout>
+                    </RelativeLayout>
 
-                    <LinearLayout
+                    <RelativeLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:id="@+id/subjectContainer"
-                        android:orientation="horizontal">
+                        android:layout_marginTop="10dp"
+                        android:id="@+id/subjectContainer">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="25dp"
                             android:textSize="17sp"
+                            android:id="@+id/subjectDirect"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="center_vertical"
+                            android:layout_alignParentLeft="true"
                             android:text="@string/subject"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="17sp"
+                            android:layout_toRightOf="@+id/subjectDirect"
                             android:id="@+id/subjectView"/>
 
-                    </LinearLayout>
+                    </RelativeLayout>
 
-                    <LinearLayout
+                    <RelativeLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:orientation="horizontal">
+                        android:layout_marginTop="10dp">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -126,15 +135,19 @@
                             android:layout_marginRight="25dp"
                             android:textSize="17sp"
                             android:id="@+id/someView"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="center_vertical"
+                            android:layout_alignParentLeft="true"
                             android:text="@string/message"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="17sp"
+                            android:layout_toRightOf="@+id/someView"
                             android:id="@+id/messageView"/>
 
-                    </LinearLayout>
+                    </RelativeLayout>
 
                 </LinearLayout>
 
@@ -143,7 +156,8 @@
                     android:layout_width="250dp"
                     android:overScrollMode="never"
                     android:visibility="gone"
-                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_height="250dp"
                     android:scrollbars="none"/>
 
             </LinearLayout>

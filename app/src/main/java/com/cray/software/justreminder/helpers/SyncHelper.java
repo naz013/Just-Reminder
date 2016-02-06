@@ -552,7 +552,7 @@ public class SyncHelper {
         JModel jModel = new JParser(jsonObj).parse();
         String uuID = jModel.getUuId();
         String type = jModel.getType();
-        if (!Reminder.isUuId(mContext, uuID) && type != null) {
+        if (uuID != null && !Reminder.isUuId(mContext, uuID) && type != null) {
             if (type.contains(Constants.TYPE_LOCATION)){
                 new LocationType(mContext, type).save(jModel);
             } else {

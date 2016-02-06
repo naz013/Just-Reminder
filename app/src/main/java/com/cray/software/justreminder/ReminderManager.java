@@ -1166,6 +1166,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             String email = baseFragment.getNumber();
             if (email.matches("") || !email.matches(".*@.*..*")) {
                 showSnackbar(getString(R.string.email_is_incorrect));
+                return null;
             } else number = email;
 
             String subString = baseFragment.getMessage();
@@ -1609,7 +1610,9 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         }
 
         if (requestCode == FILE_REQUEST) {
+            Log.d(Constants.LOG_TAG, "Request file");
             if (resultCode == RESULT_OK){
+                Log.d(Constants.LOG_TAG, "Request OK");
                 attachment = data.getStringExtra(Constants.FILE_PICKED);
                 if (attachment != null) {
                     File file = new File(attachment);

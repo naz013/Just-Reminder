@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -192,12 +191,10 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
             number = Contacts.getNumber(name, ShowBirthday.this);
         }
         CircleImageView contactPhoto = (CircleImageView) findViewById(R.id.contactPhoto);
-        Bitmap photo = Contacts.getPhoto(this, contactId);
-        if (photo != null) {
-            contactPhoto.setImageBitmap(photo);
-        } else {
-            contactPhoto.setVisibility(View.GONE);
-        }
+        Uri photo = Contacts.getPhoto(contactId);
+        if (photo != null)
+            contactPhoto.setImageURI(photo);
+        else contactPhoto.setVisibility(View.GONE);
 
         String years =  TimeUtil.getAgeFormatted(this, birthDate);
 

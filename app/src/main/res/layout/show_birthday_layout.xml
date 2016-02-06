@@ -20,14 +20,16 @@
         android:orientation="vertical"
         android:id="@+id/single_container">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="@dimen/reminder_photo_size"
-        android:layout_height="@dimen/reminder_photo_size"
-        android:layout_gravity="center"
-        app:civ_border_color="#EEEEEE"
-        app:civ_border_width="4dp"
-        android:background="@drawable/drawable_cyan"
-        android:id="@+id/contactPhoto"/>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="@dimen/reminder_photo_size"
+            android:layout_height="@dimen/reminder_photo_size"
+            android:layout_gravity="center"
+            android:visibility="visible"
+            android:scaleType="centerCrop"
+            app:civ_border_color="@color/material_grey_dialog"
+            app:civ_border_width="5dp"
+            android:src="@drawable/photo"
+            android:id="@+id/contactPhoto"/>
 
     <TextView
         android:layout_width="match_parent"

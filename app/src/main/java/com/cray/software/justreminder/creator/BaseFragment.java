@@ -16,11 +16,15 @@
 
 package com.cray.software.justreminder.creator;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
+import com.cray.software.justreminder.ReminderManager;
+import com.cray.software.justreminder.activities.FileExplore;
 import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.dialogs.ExclusionPickerDialog;
 import com.cray.software.justreminder.fragments.helpers.MapFragment;
 import com.cray.software.justreminder.fragments.helpers.PlacesMap;
 import com.cray.software.justreminder.helpers.Permissions;
@@ -78,12 +82,52 @@ public class BaseFragment extends Fragment {
         }
     };
 
+    /**
+     * Select file button click listener.
+     */
+    public View.OnClickListener fileClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (Permissions.checkPermission(getActivity(), Permissions.READ_EXTERNAL)) {
+                getActivity().startActivityForResult(new Intent(getActivity(), FileExplore.class)
+                        .putExtra(Constants.FILE_TYPE, "any"), ReminderManager.FILE_REQUEST);
+            } else {
+                Permissions.requestPermission(getActivity(), 331,
+                        Permissions.READ_EXTERNAL);
+            }
+        }
+    };
+
+    /**
+     * Select exclusion button click listener.
+     */
+    public View.OnClickListener exclusionClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            getActivity().startActivityForResult(new Intent(getActivity(), ExclusionPickerDialog.class), 1111);
+        }
+    };
+
+    /**
+     * Select application button click listener.
+     */
+    public View.OnClickListener appClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            SuperUtil.selectApplication(getActivity(), Constants.REQUEST_CODE_APPLICATION);
+        }
+    };
+
     public void setEventTask(String eventTask) {
         this.eventTask = eventTask;
     }
 
     public String getNumber() {
         return number;
+    }
+
+    public String getFilePath() {
+        return filePath;
     }
 
     public JModel getItem() {

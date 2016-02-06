@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
@@ -134,7 +135,7 @@ public class MissedCallDialog extends Activity {
 
         LinearLayout single_container = (LinearLayout) findViewById(R.id.single_container);
         LinearLayout container = (LinearLayout) findViewById(R.id.container);
-        LinearLayout subjectContainer = (LinearLayout) findViewById(R.id.subjectContainer);
+        RelativeLayout subjectContainer = (RelativeLayout) findViewById(R.id.subjectContainer);
         single_container.setVisibility(View.VISIBLE);
         container.setVisibility(View.GONE);
         subjectContainer.setVisibility(View.GONE);
@@ -174,12 +175,11 @@ public class MissedCallDialog extends Activity {
 
         if (number != null) {
             long conID = Contacts.getIdFromNumber(number, MissedCallDialog.this);
-            Bitmap photo = Contacts.getPhoto(this, conID);
-            if (photo != null) {
-                contactPhoto.setImageBitmap(photo);
-            } else {
-                contactPhoto.setVisibility(View.GONE);
-            }
+            Uri photo = Contacts.getPhoto(conID);
+            if (photo != null)
+                contactPhoto.setImageURI(photo);
+            else contactPhoto.setVisibility(View.GONE);
+
             if (name == null) name = "";
             remText.setText(R.string.missed_call);
             contactInfo.setText(name + "\n" + number);
@@ -189,12 +189,7 @@ public class MissedCallDialog extends Activity {
         }
 
         buttonCancel.setImageResource(R.drawable.ic_send_black_24dp);
-
         contactPhoto.setVisibility(View.VISIBLE);
-        Bitmap photo = Contacts.getPhoto(this, id);
-        if (photo != null) contactPhoto.setImageBitmap(photo);
-        else contactPhoto.setVisibility(View.GONE);
-
         wakeScreen();
 
         buttonCancel.setOnClickListener(new View.OnClickListener() {

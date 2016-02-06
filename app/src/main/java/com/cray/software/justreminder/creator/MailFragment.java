@@ -17,7 +17,6 @@
 package com.cray.software.justreminder.creator;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
@@ -32,11 +31,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ReminderManager;
-import com.cray.software.justreminder.activities.FileExplore;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.json.JAction;
 import com.cray.software.justreminder.json.JExport;
 import com.cray.software.justreminder.json.JModel;
@@ -70,17 +66,17 @@ public class MailFragment extends BaseFragment implements
     }
 
     public void setMail(String email){
-        super.number = email;
+        number = email;
         mail.setText(email);
     }
 
-    public void setMessage(String message){
-        super.message = message;
+    public void setMessage(String mess){
+        message = mess;
         subject.setText(message);
     }
 
     public void setFileName(String file) {
-        super.filePath = file;
+        filePath = file;
         showAttachment();
     }
 
@@ -144,18 +140,7 @@ public class MailFragment extends BaseFragment implements
         });
 
         ImageButton chooseFile = (ImageButton) view.findViewById(R.id.chooseFile);
-        chooseFile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Permissions.checkPermission(getActivity(), Permissions.READ_EXTERNAL)) {
-                    startActivityForResult(new Intent(getActivity(), FileExplore.class)
-                            .putExtra(Constants.FILE_TYPE, "any"), ReminderManager.FILE_REQUEST);
-                } else {
-                    Permissions.requestPermission(getActivity(), 331,
-                            Permissions.READ_EXTERNAL);
-                }
-            }
-        });
+        chooseFile.setOnClickListener(fileClick);
         if (isDark) chooseFile.setImageResource(R.drawable.ic_attach_file_white_24dp);
         else chooseFile.setImageResource(R.drawable.ic_attach_file_black_24dp);
 
@@ -192,7 +177,7 @@ public class MailFragment extends BaseFragment implements
             int expTasks = jExport.getgTasks();
             JAction jAction = item.getAction();
             number = jAction.getTarget();
-            message = jAction.getSubject();
+            message = item.getSummary();
             filePath = jAction.getAttachment();
 
             if (exp == 1) dateExport.setChecked(true);
@@ -203,6 +188,7 @@ public class MailFragment extends BaseFragment implements
             subject.setText(message);
             dateView.setDateTime(updateCalendar(item.getEventTime(), true));
             repeatView.setProgress(item.getRecurrence().getRepeat());
+            showAttachment();
         }
         return view;
     }

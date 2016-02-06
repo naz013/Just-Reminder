@@ -110,12 +110,7 @@ public class ApplicationFragment extends BaseFragment implements
         type = Constants.TYPE_APPLICATION;
 
         ImageButton pickApplication = (ImageButton) view.findViewById(R.id.pickApplication);
-        pickApplication.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SuperUtil.selectApplication(getActivity(), Constants.REQUEST_CODE_APPLICATION);
-            }
-        });
+        pickApplication.setOnClickListener(appClick);
 
         if (isDark) pickApplication.setImageResource(R.drawable.ic_launch_white_24dp);
         else pickApplication.setImageResource(R.drawable.ic_launch_black_24dp);

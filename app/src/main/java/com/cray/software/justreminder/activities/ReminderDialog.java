@@ -12,7 +12,6 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.AudioManager;
@@ -33,6 +32,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
@@ -56,6 +56,7 @@ import com.cray.software.justreminder.json.JLed;
 import com.cray.software.justreminder.json.JMelody;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JRecurrence;
+import com.cray.software.justreminder.json.JShopping;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.Type;
@@ -69,6 +70,8 @@ import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import jp.wasabeef.picasso.transformations.BlurTransformation;
@@ -97,6 +100,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
 
     private Type reminder;
     private JModel item;
+    private ArrayList<JShopping> shoppings;
 
     private ShoppingListDataProvider provider;
 
@@ -242,7 +246,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
 
         LinearLayout single_container = (LinearLayout) findViewById(R.id.single_container);
         LinearLayout container = (LinearLayout) findViewById(R.id.container);
-        LinearLayout subjectContainer = (LinearLayout) findViewById(R.id.subjectContainer);
+        RelativeLayout subjectContainer = (RelativeLayout) findViewById(R.id.subjectContainer);
         single_container.setVisibility(View.VISIBLE);
         container.setVisibility(View.GONE);
         subjectContainer.setVisibility(View.GONE);
@@ -268,6 +272,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         buttonNotification.setImageResource(R.drawable.ic_favorite_black_24dp);
 
         CircleImageView contactPhoto = (CircleImageView) findViewById(R.id.contactPhoto);
+        contactPhoto.setBorderColor(cs.getColor(cs.colorPrimary()));
         contactPhoto.setVisibility(View.GONE);
 
         todoList = (RecyclerView) findViewById(R.id.todoList);
@@ -286,12 +291,10 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             if (!type.startsWith(Constants.TYPE_SKYPE)) {
                 contactPhoto.setVisibility(View.VISIBLE);
                 long conID = Contacts.getIdFromNumber(number, ReminderDialog.this);
-                Bitmap photo = Contacts.getPhoto(this, conID);
-                if (photo != null) {
-                    contactPhoto.setImageBitmap(photo);
-                } else {
-                    contactPhoto.setVisibility(View.GONE);
-                }
+                Uri photo = Contacts.getPhoto(conID);
+                if (photo != null)
+                    contactPhoto.setImageURI(photo);
+                else contactPhoto.setVisibility(View.GONE);
                 name = Contacts.getNameFromNumber(number, ReminderDialog.this);
                 if (name == null) name = "";
                 remText.setText(R.string.make_call);
@@ -310,12 +313,10 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             if (type.contains(Constants.TYPE_MESSAGE)) {
                 contactPhoto.setVisibility(View.VISIBLE);
                 long conID = Contacts.getIdFromNumber(number, ReminderDialog.this);
-                Bitmap photo = Contacts.getPhoto(this, conID);
-                if (photo != null) {
-                    contactPhoto.setImageBitmap(photo);
-                } else {
-                    contactPhoto.setVisibility(View.GONE);
-                }
+                Uri photo = Contacts.getPhoto(conID);
+                if (photo != null)
+                    contactPhoto.setImageURI(photo);
+                else contactPhoto.setVisibility(View.GONE);
                 name = Contacts.getNameFromNumber(number, ReminderDialog.this);
                 if (name == null) name = "";
                 remText.setText(R.string.send_sms);
@@ -341,12 +342,10 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             remText.setText(R.string.e_mail);
             int conID = Contacts.getIdFromMail(number, this);
             if (conID != 0) {
-                Bitmap photo = Contacts.getPhoto(this, conID);
-                if (photo != null) {
-                    contactPhoto.setImageBitmap(photo);
-                } else {
-                    contactPhoto.setVisibility(View.GONE);
-                }
+                Uri photo = Contacts.getPhoto(conID);
+                if (photo != null)
+                    contactPhoto.setImageURI(photo);
+                else contactPhoto.setVisibility(View.GONE);
                 name = Contacts.getNameFromMail(number, ReminderDialog.this);
                 if (name == null) name = "";
                 contactInfo.setText(name + "\n" + number);
@@ -567,24 +566,26 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     }
 
     private void loadData() {
-        provider = new ShoppingListDataProvider(item.getShoppings(), false);
-        TaskListRecyclerAdapter shoppingAdapter = new TaskListRecyclerAdapter(this, provider, new TaskListRecyclerAdapter.ActionListener() {
+        shoppings = item.getShoppings();
+        provider = new ShoppingListDataProvider(shoppings, true);
+        TaskListRecyclerAdapter shoppingAdapter = new TaskListRecyclerAdapter(this, provider,
+                new TaskListRecyclerAdapter.ActionListener() {
             @Override
             public void onItemCheck(int position, boolean isChecked) {
+                shoppings.get(position).setStatus(isChecked ? 1 : 0);
                 ShoppingList.switchItem(ReminderDialog.this, id, isChecked, provider.getItem(position).getUuId());
                 loadData();
             }
 
             @Override
             public void onItemDelete(int position) {
+                shoppings.remove(position);
                 ShoppingList.hideItem(ReminderDialog.this, id, provider.getItem(position).getUuId());
                 loadData();
             }
 
             @Override
             public void onItemChange(int position) {
-                ShoppingList.showItem(ReminderDialog.this, id, provider.getItem(position).getUuId());
-                loadData();
             }
         });
         todoList.setAdapter(shoppingAdapter);

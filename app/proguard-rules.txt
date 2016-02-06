@@ -10,6 +10,7 @@
 -keep class android.support.v8.renderscript.** { *; }
 -keep class android.support.design.** { *; }
 -keep interface android.support.design.** { *; }
+-keep class com.meg7.widget.** { *; }
 -keep public class android.support.design.R$* { *; }
 
 -dontwarn org.apache.**
