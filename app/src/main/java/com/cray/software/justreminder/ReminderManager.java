@@ -1737,6 +1737,8 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         inflater.inflate(R.menu.create_menu, menu);
         if (isLocationAttached()){
             menu.getItem(2).setVisible(true);
+        } else {
+            menu.getItem(2).setVisible(false);
         }
         if (isLocationAttached() || isLocationOutAttached()
                 || isShoppingAttached() || isPlacesAttached()){
@@ -1747,6 +1749,8 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         sPrefs = new SharedPrefs(ReminderManager.this);
         if (Module.isPro() && sPrefs.loadBoolean(Prefs.LED_STATUS)){
             menu.getItem(3).setVisible(true);
+        } else {
+            menu.getItem(3).setVisible(false);
         }
         if (id != 0) {
             menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.delete));
@@ -1757,7 +1761,9 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (isLocationAttached()){
-            menu.getItem(1).setVisible(true);
+            menu.getItem(2).setVisible(true);
+        } else {
+            menu.getItem(2).setVisible(false);
         }
         if (isLocationAttached() || isLocationOutAttached()
                 || isShoppingAttached() || isPlacesAttached()){
@@ -1767,7 +1773,9 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         }
         sPrefs = new SharedPrefs(ReminderManager.this);
         if (Module.isPro() && sPrefs.loadBoolean(Prefs.LED_STATUS)){
-            menu.getItem(2).setVisible(true);
+            menu.getItem(3).setVisible(true);
+        } else {
+            menu.getItem(3).setVisible(false);
         }
         return super.onPrepareOptionsMenu(menu);
     }
