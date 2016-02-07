@@ -596,7 +596,7 @@ public class ScreenManager extends AppCompatActivity
         args.putBoolean(FlextCal.ENABLE_IMAGES, mPrefs.loadBoolean(Prefs.CALENDAR_IMAGE));
         args.putBoolean(FlextCal.DARK_THEME, mPrefs.loadBoolean(Prefs.USE_DARK_THEME));
         calendarView.setArguments(args);
-        calendarView.setBackgroundForToday(ViewUtils.getColor(this, cSetter.colorCurrentCalendar()));
+        calendarView.setBackgroundForToday(cSetter.getColor(cSetter.colorCurrentCalendar()));
         replace(calendarView, mTag);
 
         final FlextListener listener = new FlextListener() {

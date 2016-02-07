@@ -206,8 +206,7 @@ public class NotePreview extends AppCompatActivity {
             }
             if (isDirectory) {
                 String fileName = SyncHelper.generateID() + FileConfig.FILE_NAME_IMAGE;
-                File f = new File(sdPathDr
-                        + File.separator + fileName);
+                File f = new File(sdPathDr + File.separator + fileName);
                 boolean isFile = false;
                 try {
                     isFile = f.createNewFile();

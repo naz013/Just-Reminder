@@ -275,8 +275,8 @@ public class NextBase {
     public Cursor getActiveReminders() throws SQLException {
         openGuard();
         String order = DB_STATUS + " ASC, " + EVENT_TIME + " ASC";
-        return db.query(TABLE_NAME, null, DB_STATUS + "='" + 0 + "'" + " AND "+ DB_LIST + "='"
-                + 0 + "'", null, null, null, order);
+        return db.query(TABLE_NAME, null, DB_STATUS + "=" + 0 + " AND "+ DB_LIST + "="
+                + 0 + "", null, null, null, order);
     }
 
     public Cursor getReminder(long rowId) throws SQLException {

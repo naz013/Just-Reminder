@@ -3,6 +3,7 @@ package com.cray.software.justreminder.reminder;
 import android.app.AlarmManager;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
@@ -157,12 +158,12 @@ public class ReminderDataProvider {
             db.open();
             Cursor c = db.getActiveReminders();
             if (c != null && c.moveToNext()){
+                Log.d(Constants.LOG_TAG, "Count " + c.getCount());
                 do {
                     String json = c.getString(c.getColumnIndex(NextBase.JSON));
                     String mType = c.getString(c.getColumnIndex(NextBase.TYPE));
                     String summary = c.getString(c.getColumnIndex(NextBase.SUMMARY));
                     long eventTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
-
                     if (!mType.contains(Constants.TYPE_LOCATION)) {
                         JModel jModel = new JParser(json).parse();
                         JRecurrence jRecurrence = jModel.getRecurrence();
@@ -174,7 +175,7 @@ public class ReminderDataProvider {
 
                         if (eventTime > 0) {
                             setEvent(eventTime, summary, rColor);
-                        }
+                        } else continue;
 
                         if (isFeature) {
                             Calendar calendar1 = Calendar.getInstance();
@@ -208,16 +209,15 @@ public class ReminderDataProvider {
                                     }
                                 } while (days < max);
                             } else {
+                                if (repeatTime == 0) continue;
                                 long days = 0;
                                 long max = Configs.MAX_DAYS_COUNT;
                                 if (isLimited) max = limit - count;
                                 do {
                                     calendar1.setTimeInMillis(calendar1.getTimeInMillis() + repeatTime);
                                     eventTime = calendar1.getTimeInMillis();
-                                    if (eventTime > 0) {
-                                        days++;
-                                        setEvent(eventTime, summary, rColor);
-                                    }
+                                    days++;
+                                    setEvent(eventTime, summary, rColor);
                                 } while (days < max);
 
                             }
@@ -234,6 +234,7 @@ public class ReminderDataProvider {
         db.open();
         Cursor c = db.getBirthdays();
         if (c != null && c.moveToFirst()){
+            Log.d(Constants.LOG_TAG, "Count BD" + c.getCount());
             do {
                 String birthday = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
                 String name = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
