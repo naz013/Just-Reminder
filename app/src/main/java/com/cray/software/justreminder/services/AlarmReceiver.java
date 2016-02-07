@@ -13,8 +13,10 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.enums.NewMethod;
 import com.cray.software.justreminder.helpers.Recurrence;
+import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JParser;
+import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.Type;
@@ -67,7 +69,23 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         if (c != null && c.moveToNext()) {
             due = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
-            repeat = new JParser(json).getRecurrence().getRepeat();
+            JParser jModel = new JParser(json);
+            JRecurrence jRecurrence =  jModel.getRecurrence();
+            repeat = jRecurrence.getRepeat();
+            String type = c.getString(c.getColumnIndex(NextBase.TYPE));
+            if (due < System.currentTimeMillis()) {
+                if (type != null) {
+                    if (type.startsWith(Constants.TYPE_WEEKDAY) ||
+                            type.startsWith(Constants.TYPE_MONTHDAY)) {
+                        due = new TimeCount(context).generateDateTime(type,
+                                jRecurrence.getMonthday(), System.currentTimeMillis(), repeat,
+                                jRecurrence.getWeekdays(), jModel.getCount(), 0);
+                        jModel.setEventTime(due);
+                        db.updateReminderTime(id, due);
+                        db.updateCount(id, jModel.toJsonString());
+                    }
+                }
+            }
         }
         if (c != null) c.close();
         db.close();

@@ -22,7 +22,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -88,7 +87,7 @@ public class NotePreview extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         cSetter = new ColorSetter(this);
         setTheme(cSetter.getStyle());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
         setContentView(R.layout.activity_note_preview);
@@ -270,22 +269,7 @@ public class NotePreview extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.scale_zoom_out);
-                mFab.startAnimation(slide);
-                mFab.setVisibility(View.GONE);
-            }
-        });
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    finishAfterTransition();
-                } else finish();
-            }
-        }, 300);
+        closeWindow();
     }
 
     private void loadData(){
@@ -307,7 +291,7 @@ public class NotePreview extends AppCompatActivity {
             remId = c.getLong(c.getColumnIndex(Constants.COLUMN_LINK_ID));
             imageByte = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
             noteText.setTypeface(cSetter.getTypeface(style));
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (Module.isLollipop()) {
                 getWindow().setStatusBarColor(cSetter.getNoteDarkColor(color));
             }
 
@@ -354,11 +338,7 @@ public class NotePreview extends AppCompatActivity {
     private void shareNote(){
         if (!NoteModel.shareNote(mParam1, this)) {
             Messages.toast(this, getString(R.string.error_sending));
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                finishAfterTransition();
-            } else {
-                finish();
-            }
+            closeWindow();
         }
     }
 
@@ -373,28 +353,32 @@ public class NotePreview extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.scale_zoom_out);
-                        mFab.startAnimation(slide);
-                        mFab.setVisibility(View.GONE);
-                    }
-                });
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            finishAfterTransition();
-                        } else {
-                            finish();
-                        }
-                    }
-                }, 300);
+                closeWindow();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void closeWindow() {
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.scale_zoom_out);
+                mFab.startAnimation(slide);
+                mFab.setVisibility(View.GONE);
+            }
+        });
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (Module.isLollipop()) {
+                    finishAfterTransition();
+                } else {
+                    finish();
+                }
+            }
+        }, 300);
     }
 
     private void deleteDialog() {
@@ -412,11 +396,7 @@ public class NotePreview extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 deleteNote();
                 dialog.dismiss();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    finishAfterTransition();
-                } else {
-                    finish();
-                }
+                closeWindow();
             }
         });
 

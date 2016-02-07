@@ -348,19 +348,11 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
 
         if (ids == R.id.action_delete) {
             Reminder.moveToTrash(id, ReminderPreview.this, null);
-            if (Module.isLollipop()) {
-                finishAfterTransition();
-            } else {
-                finish();
-            }
+            closeWindow();
             return true;
         }
         if (ids == android.R.id.home) {
-            if (Module.isLollipop()) {
-                finishAfterTransition();
-            } else {
-                finish();
-            }
+            closeWindow();
         }
         if (ids == R.id.action_make_copy) {
             NextBase db = new NextBase(this);
@@ -380,6 +372,15 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void closeWindow() {
+        if (Module.isLollipop()) {
+            finishAfterTransition();
+        } else {
+            finish();
+        }
+    }
+
 
     public void showDialog() {
         Calendar calendar = Calendar.getInstance();
