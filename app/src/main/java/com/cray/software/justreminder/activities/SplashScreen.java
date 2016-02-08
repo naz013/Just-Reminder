@@ -173,7 +173,9 @@ public class SplashScreen extends Activity{
 
             if (Module.isPro()) {
                 uiEd.putBoolean(Prefs.BIRTHDAY_LED_STATUS, false);
-                uiEd.putBoolean(Prefs.BIRTHDAY_LED_STATUS, false);
+                uiEd.putBoolean(Prefs.LED_STATUS, true);
+                uiEd.putInt(Prefs.BIRTHDAY_LED_COLOR, 6);
+                uiEd.putInt(Prefs.LED_COLOR, 11);
                 uiEd.putBoolean(Prefs.BIRTHDAY_USE_GLOBAL, true);
                 uiEd.putBoolean(Prefs.BIRTHDAY_INFINITE_VIBRATION, false);
                 uiEd.putBoolean(Prefs.BIRTHDAY_VIBRATION_STATUS, false);
@@ -215,6 +217,7 @@ public class SplashScreen extends Activity{
             } catch (SQLiteException e) {
                 e.printStackTrace();
             }
+            checkGroups();
             prefs.saveBoolean(Prefs.IS_MIGRATION, true);
         }
 
@@ -227,6 +230,34 @@ public class SplashScreen extends Activity{
         }
 
         finish();
+    }
+
+    private void checkGroups() {
+        DataBase DB = new DataBase(this);
+        DB.open();
+        Cursor cat = DB.queryCategories();
+        if (cat == null || cat.getCount() == 0){
+            long time = System.currentTimeMillis();
+            String defUiID = SyncHelper.generateID();
+            DB.addCategory("General", time, defUiID, 5);
+            DB.addCategory("Work", time, SyncHelper.generateID(), 3);
+            DB.addCategory("Personal", time, SyncHelper.generateID(), 0);
+
+            NextBase db = new NextBase(this);
+            db.open();
+            Cursor c = db.getReminders();
+            if (c != null && c.moveToFirst()){
+                do {
+                    db.setGroup(c.getLong(c.getColumnIndex(NextBase._ID)), defUiID);
+                } while (c.moveToNext());
+            }
+            if (c != null) {
+                c.close();
+            }
+            db.close();
+        }
+        if (cat != null) cat.close();
+        DB.close();
     }
 
     private void migrateToNewDb() throws SQLiteException{
@@ -568,16 +599,16 @@ public class SplashScreen extends Activity{
 
         if (Module.isPro()) {
             if (!prefs.isString(Prefs.LED_STATUS)) {
-                prefs.saveBoolean(Prefs.LED_STATUS, false);
+                prefs.saveBoolean(Prefs.LED_STATUS, true);
             }
             if (!prefs.isString(Prefs.LED_COLOR)) {
-                prefs.saveInt(Prefs.LED_COLOR, LED.BLUE);
+                prefs.saveInt(Prefs.LED_COLOR, 11);
             }
             if (!prefs.isString(Prefs.BIRTHDAY_LED_STATUS)) {
                 prefs.saveBoolean(Prefs.BIRTHDAY_LED_STATUS, false);
             }
             if (!prefs.isString(Prefs.BIRTHDAY_LED_COLOR)) {
-                prefs.saveInt(Prefs.BIRTHDAY_LED_COLOR, LED.BLUE);
+                prefs.saveInt(Prefs.BIRTHDAY_LED_COLOR, 6);
             }
             if (!prefs.isString(Prefs.BIRTHDAY_VIBRATION_STATUS)) {
                 prefs.saveBoolean(Prefs.BIRTHDAY_VIBRATION_STATUS, false);

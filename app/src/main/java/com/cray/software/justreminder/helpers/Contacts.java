@@ -65,19 +65,18 @@ public class Contacts {
 
         ContentResolver contentResolver = context.getContentResolver();
         Cursor contactLookup = contentResolver.query(uri, new String[] {
-                ContactsContract.Data.CONTACT_ID}, null, null, null);
+                ContactsContract.PhoneLookup._ID}, null, null, null);
 
         try {
             if (contactLookup != null && contactLookup.getCount() > 0) {
                 contactLookup.moveToNext();
-                contactId = contactLookup.getInt(contactLookup.getColumnIndex(ContactsContract.Data.CONTACT_ID));
+                contactId = contactLookup.getInt(contactLookup.getColumnIndex(ContactsContract.PhoneLookup._ID));
             }
         } finally {
             if (contactLookup != null) {
                 contactLookup.close();
             }
         }
-
         return contactId;
     }
 
@@ -105,7 +104,6 @@ public class Contacts {
                 contactLookup.close();
             }
         }
-
         return name;
     }
 

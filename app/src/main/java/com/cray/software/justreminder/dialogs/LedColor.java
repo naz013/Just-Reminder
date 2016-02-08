@@ -15,21 +15,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.Messages;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.LED;
-import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Messages;
 
 public class LedColor extends Activity{
 
-    private SharedPrefs sPrefs;
     private ListView musicList;
     private TextView musicDialogOk;
     private NotificationManagerCompat mNotifyMgr;
     private NotificationCompat.Builder builder;
-    private int id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +49,6 @@ public class LedColor extends Activity{
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(LedColor.this,
                 android.R.layout.simple_list_item_single_choice, colors);
         musicList.setAdapter(adapter);
-
-        sPrefs = new SharedPrefs(LedColor.this);
 
         musicList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -89,14 +83,15 @@ public class LedColor extends Activity{
         musicDialogOk.setEnabled(false);
         mNotifyMgr = NotificationManagerCompat.from(LedColor.this);
         mNotifyMgr.cancel(1);
+        builder = new NotificationCompat.Builder(LedColor.this);
         builder.setLights(color, 500, 1000);
-        mNotifyMgr = NotificationManagerCompat.from(LedColor.this);
+        builder.setSmallIcon(R.drawable.ic_lightbulb_outline_white_24dp);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 mNotifyMgr.notify(1, builder.build());
                 musicDialogOk.setEnabled(true);
             }
-        }, 3000);
+        }, 2000);
     }
 }
