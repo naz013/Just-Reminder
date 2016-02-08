@@ -1,1 +1,1 @@
-include ':app', ':photoPreview', ':flextcal', ':shared', ':wear'
+include ':app', ':photoPreview', ':flextcal', ':shared'
