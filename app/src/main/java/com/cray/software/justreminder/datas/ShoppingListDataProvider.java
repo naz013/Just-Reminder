@@ -12,13 +12,11 @@ import java.util.ArrayList;
 
 public class ShoppingListDataProvider {
     private ArrayList<ShoppingList> data;
-    private Context mContext;
     private int flag;
     private boolean hidden;
 
-    public ShoppingListDataProvider(Context mContext){
+    public ShoppingListDataProvider(){
         data = new ArrayList<>();
-        this.mContext = mContext;
     }
 
     public ShoppingListDataProvider(ArrayList<JShopping> datas, boolean hidden){
@@ -75,7 +73,6 @@ public class ShoppingListDataProvider {
         if (index < 0 || index >= getCount()) {
             return null;
         }
-
         return data.get(index);
     }
 

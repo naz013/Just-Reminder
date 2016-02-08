@@ -3,7 +3,6 @@ package com.cray.software.justreminder.settings;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
@@ -19,6 +18,7 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.fragments.helpers.TimePickerFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.settings.fragments.BirthdaysSettingsFragment;
 import com.cray.software.justreminder.settings.fragments.CalendarSettingsFragment;
 import com.cray.software.justreminder.settings.fragments.ExportSettingsFragment;
@@ -49,7 +49,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
         super.onCreate(savedInstanceState);
         cSetter = new ColorSetter(SettingsActivity.this);
         setTheme(cSetter.getStyle());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
         setContentView(R.layout.category_layout);
@@ -91,7 +91,6 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
         setRequestedOrientation(cSetter.getRequestOrientation());
         if (new SharedPrefs(this).loadBoolean(Prefs.UI_CHANGED) && !isCreate) recreate();
         isCreate = false;
-        //new SharedPrefs(this).saveBoolean(Prefs.UI_CHANGED, false);
     }
 
     /**

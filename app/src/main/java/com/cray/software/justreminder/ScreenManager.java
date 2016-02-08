@@ -156,8 +156,8 @@ public class ScreenManager extends AppCompatActivity
         setContentView(R.layout.activity_screen_manager);
         setRequestedOrientation(cSetter.getRequestOrientation());
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
+        if (Module.isLollipop()) {
+            getWindow().setStatusBarColor(cSetter.getColor(cSetter.colorPrimaryDark()));
         }
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_main);
@@ -572,7 +572,7 @@ public class ScreenManager extends AppCompatActivity
         int colorAccent = cSetter.getColor(cSetter.colorAccent());
         int colorDark = cSetter.getColor(cSetter.colorPrimaryDark());
         toolbar.setBackgroundColor(colorPrimary);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(colorDark);
         }
         if (colorPrimary != 0 && colorAccent != 0) {
@@ -726,8 +726,8 @@ public class ScreenManager extends AppCompatActivity
             thanksDialog().show();
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
+        if (Module.isLollipop()) {
+            getWindow().setStatusBarColor(cSetter.getColor(cSetter.colorPrimaryDark()));
         }
 
         if (mTag != null) onItemSelected(mTag);

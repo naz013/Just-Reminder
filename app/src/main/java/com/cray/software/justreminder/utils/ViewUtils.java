@@ -11,7 +11,6 @@ import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -60,14 +59,8 @@ public class ViewUtils {
                 new int[] {android.R.attr.state_pressed},
                 new int[] {android.R.attr.state_focused}, new int[] {}
         };
-        int colorP = colorPressed;
-        int colorN = colorNormal;
-        try {
-            colorP = getColor(context, colorPressed);
-            colorN = getColor(context, colorNormal);
-        } catch (Resources.NotFoundException e) {
-            Log.d("ResourceNotFound", "Use default");
-        }
+        int colorP = getColor(context, colorPressed);
+        int colorN = getColor(context, colorNormal);
         int colors[] = {colorP, colorN, colorN};
         return new ColorStateList(states, colors);
     }
@@ -93,9 +86,15 @@ public class ViewUtils {
      * @return Color
      */
     @ColorInt
-    public static int getColor(Context context, @ColorRes int resource){
-        if (Module.isMarshmallow()) return context.getResources().getColor(resource, null);
-        return context.getResources().getColor(resource);
+    public static int getColor(Context context, @ColorRes int resource) {
+        try {
+            if (Module.isMarshmallow())
+                return context.getResources().getColor(resource, null);
+            else
+                return context.getResources().getColor(resource);
+        } catch (Resources.NotFoundException e) {
+            return resource;
+        }
     }
 
     public static void slideInUp(Context context, View view){

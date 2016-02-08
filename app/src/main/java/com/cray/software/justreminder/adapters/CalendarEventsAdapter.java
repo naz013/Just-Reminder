@@ -20,7 +20,6 @@ import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
-import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -146,8 +145,7 @@ public class CalendarEventsAdapter extends RecyclerView.Adapter<CalendarEventsAd
         boolean is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
 
         if (type == EventType.birthday) {
-            holder.eventColor.setBackgroundColor(ViewUtils.getColor(mContext,
-                    cs.colorBirthdayCalendar()));
+            holder.eventColor.setBackgroundColor(cs.getColor(cs.colorBirthdayCalendar()));
             holder.eventType.setText(R.string.birthday);
             String title = item.getName();
             String phone = item.getNumber();
@@ -167,8 +165,7 @@ public class CalendarEventsAdapter extends RecyclerView.Adapter<CalendarEventsAd
             holder.eventDate.setText(SuperUtil.appendString(TimeUtil.getDateTime(time, is24),
                     "\n", TimeUtil.getAgeFormatted(mContext, item.getYear())));
         } else {
-            holder.eventColor.setBackgroundColor(ViewUtils.getColor(mContext,
-                    cs.getCategoryColor(item.getColor())));
+            holder.eventColor.setBackgroundColor(cs.getColor(cs.getCategoryColor(item.getColor())));
             holder.eventType.setText(mContext.getString(R.string.type));
 
             String number = item.getNumber();

@@ -5,7 +5,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.cray.software.justreminder.datas.models.TaskListData;
-import com.cray.software.justreminder.fragments.NavigationDrawerFragment;
 import com.cray.software.justreminder.fragments.TaskListFragment;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 

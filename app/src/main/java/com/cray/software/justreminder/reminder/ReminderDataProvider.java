@@ -45,11 +45,6 @@ public class ReminderDataProvider {
 
     private HashMap<DateTime, Events> map = new HashMap<>();
 
-    public ReminderDataProvider(Context mContext){
-        data = new ArrayList<>();
-        this.mContext = mContext;
-    }
-
     public ReminderDataProvider(Context mContext, boolean isReminder, boolean isFeature){
         this.mContext = mContext;
         this.isReminder = isReminder;
@@ -265,85 +260,6 @@ public class ReminderDataProvider {
         if (c != null) c.close();
         db.close();
 
-        return map;
-    }
-
-    public static HashMap<DateTime, String> getReminders(Context context, boolean isFeature) {
-        NextBase db = new NextBase(context);
-        db.open();
-        HashMap<DateTime, String> map = new HashMap<>();
-        Cursor c = db.getActiveReminders();
-        if (c != null && c.moveToNext()){
-            do {
-                String json = c.getString(c.getColumnIndex(NextBase.JSON));
-                String mType = c.getString(c.getColumnIndex(NextBase.TYPE));
-                String summary = c.getString(c.getColumnIndex(NextBase.SUMMARY));
-                long eventTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
-
-                if (!mType.contains(Constants.TYPE_LOCATION)) {
-                    JModel jModel = new JParser(json).parse();
-                    JRecurrence jRecurrence = jModel.getRecurrence();
-                    long repeatTime = jRecurrence.getRepeat();
-                    long limit = jRecurrence.getLimit();
-                    long count = jModel.getCount();
-                    int myDay = jRecurrence.getMonthday();
-                    boolean isLimited = limit > 0;
-
-                    Calendar calendar1 = Calendar.getInstance();
-                    calendar1.setTimeInMillis(eventTime);
-                    if (eventTime > 0) {
-                        map.put(FlextHelper.convertDateToDateTime(calendar1.getTime()), summary);
-                    }
-
-                    if (isFeature) {
-                        if (mType.startsWith(Constants.TYPE_WEEKDAY)) {
-                            long days = 0;
-                            long max = Configs.MAX_DAYS_COUNT;
-                            if (isLimited) max = limit - count;
-                            ArrayList<Integer> list = jRecurrence.getWeekdays();
-                            do {
-                                calendar1.setTimeInMillis(calendar1.getTimeInMillis() +
-                                        AlarmManager.INTERVAL_DAY);
-                                eventTime = calendar1.getTimeInMillis();
-                                int weekDay = calendar1.get(Calendar.DAY_OF_WEEK);
-                                if (list.get(weekDay - 1) == 1 && eventTime > 0) {
-                                    days++;
-                                    map.put(FlextHelper.convertDateToDateTime(calendar1.getTime()), summary);
-                                }
-                            } while (days < max);
-                        } else if (mType.startsWith(Constants.TYPE_MONTHDAY)) {
-                            long days = 0;
-                            long max = Configs.MAX_DAYS_COUNT;
-                            if (isLimited) max = limit - count;
-                            do {
-                                eventTime = TimeCount.getNextMonthDayTime(myDay,
-                                        calendar1.getTimeInMillis() + TimeCount.DAY);
-                                calendar1.setTimeInMillis(eventTime);
-                                if (eventTime > 0) {
-                                    days++;
-                                    map.put(FlextHelper.convertDateToDateTime(calendar1.getTime()), summary);
-                                }
-                            } while (days < max);
-                        } else {
-                            long days = 0;
-                            long max = Configs.MAX_DAYS_COUNT;
-                            if (isLimited) max = limit - count;
-                            do {
-                                calendar1.setTimeInMillis(calendar1.getTimeInMillis() + repeatTime);
-                                eventTime = calendar1.getTimeInMillis();
-                                if (eventTime > 0) {
-                                    days++;
-                                    map.put(FlextHelper.convertDateToDateTime(calendar1.getTime()), summary);
-                                }
-                            } while (days < max);
-
-                        }
-                    }
-                }
-            } while (c.moveToNext());
-        }
-        if (c != null) c.close();
-        db.close();
         return map;
     }
 

@@ -24,14 +24,12 @@ import com.cray.software.justreminder.modules.Module;
 
 public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapter.ViewHolder> {
 
-    private Context mContext;
     private ColorSetter cs;
     private NoteDataProvider provider;
     private SharedPrefs prefs;
     private SimpleListener mEventListener;
 
     public NoteRecyclerAdapter(Context context, NoteDataProvider provider) {
-        this.mContext = context;
         this.provider = provider;
         prefs = new SharedPrefs(context);
         cs = new ColorSetter(context);
@@ -130,10 +128,6 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
     @Override
     public int getItemCount() {
         return provider.getData().size();
-    }
-
-    public SimpleListener getEventListener() {
-        return mEventListener;
     }
 
     public void setEventListener(SimpleListener eventListener) {

@@ -4,7 +4,6 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.util.Log;
 import android.view.View;
 
 import com.cray.software.justreminder.R;
@@ -35,7 +34,6 @@ import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
-import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
 import java.util.ArrayList;
@@ -113,7 +111,6 @@ public class Reminder {
                 int exp = parser.getExport().getCalendar();
 
                 if (Module.isMarshmallow()) {
-                    Log.d("----CALCULATED-----", TimeUtil.getFullDateTime(eventTime, true));
                     new AlarmReceiver().enableReminder(context, id);
                 }
 
@@ -272,9 +269,10 @@ public class Reminder {
             int code = jExport.getgTasks();
             jModel.setEventTime(eventTime);
             jModel.setStartTime(eventTime);
-            jParser.toJsonString(jModel);
 
             String uuID = SyncHelper.generateID();
+            jModel.setUuId(uuID);
+            jParser.toJsonString(jModel);
             long idN = db.insertReminder(summary, type, eventTime, uuID, categoryId, jParser.toJsonString());
 
             if (type.contains(Constants.TYPE_LOCATION)){

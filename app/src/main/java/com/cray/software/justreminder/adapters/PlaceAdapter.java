@@ -118,14 +118,6 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> 
     }
 
     /**
-     * Get current action listener.
-     * @return Action listener.
-     */
-    public SimpleListener getEventListener() {
-        return mEventListener;
-    }
-
-    /**
      * Set action listener for adapter.
      * @param eventListener action listener.
      */

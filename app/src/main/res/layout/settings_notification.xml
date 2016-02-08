@@ -199,7 +199,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/ttsPrefs"
             app:prefs_primary_text="@string/voice_notification"
-            app:prefs_divider_top="true"
+            app:prefs_divider_top="false"
             app:prefs_divider_bottom="true"/>
 
         <TextView

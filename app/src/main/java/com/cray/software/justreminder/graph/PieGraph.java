@@ -40,7 +40,7 @@ import java.util.ArrayList;
 
 public class PieGraph extends View {
 
-	private ArrayList<PieSlice> slices = new ArrayList<PieSlice>();
+	private ArrayList<PieSlice> slices = new ArrayList<>();
 	private Paint paint = new Paint();
 	private Path path = new Path();
 	

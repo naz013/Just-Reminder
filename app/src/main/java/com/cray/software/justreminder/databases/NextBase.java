@@ -80,9 +80,7 @@ public class NextBase {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            switch (oldVersion){
 
-            }
         }
     }
 
@@ -212,20 +210,6 @@ public class NextBase {
         openGuard();
         ContentValues cv = new ContentValues();
         cv.put(LOCATION_STATUS, status);
-        return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
-    }
-
-    public boolean setNotificationShown(long rowId) {
-        openGuard();
-        ContentValues cv = new ContentValues();
-        cv.put(NOTIFICATION_STATUS, 1);
-        return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
-    }
-
-    public boolean setReminderShown(long rowId) {
-        openGuard();
-        ContentValues cv = new ContentValues();
-        cv.put(REMINDER_STATUS, 1);
         return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
     }
 

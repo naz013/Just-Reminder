@@ -7,13 +7,6 @@ public class EventsPagerItem {
     private ArrayList<EventsItem> datas;
     private int day, month, year;
 
-    public EventsPagerItem(ArrayList<EventsItem> datas, int position, int current, int day){
-        this.datas = datas;
-        this.current = current;
-        this.position = position;
-        this.day = day;
-    }
-
     public EventsPagerItem(ArrayList<EventsItem> datas, int position, int current, int day, int month, int year){
         this.datas = datas;
         this.current = current;

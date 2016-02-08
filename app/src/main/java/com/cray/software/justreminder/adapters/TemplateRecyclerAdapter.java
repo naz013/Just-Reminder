@@ -20,14 +20,12 @@ import com.cray.software.justreminder.utils.AssetsUtil;
 
 public class TemplateRecyclerAdapter extends RecyclerView.Adapter<TemplateRecyclerAdapter.ViewHolder> {
 
-    private Context mContext;
     private ColorSetter cs;
     private TemplateDataProvider provider;
     private Typeface typeface;
     private SimpleListener mEventListener;
 
     public TemplateRecyclerAdapter(Context context, TemplateDataProvider provider) {
-        this.mContext = context;
         this.provider = provider;
         cs = new ColorSetter(context);
         typeface = AssetsUtil.getLightTypeface(context);
@@ -100,10 +98,6 @@ public class TemplateRecyclerAdapter extends RecyclerView.Adapter<TemplateRecycl
     @Override
     public int getItemCount() {
         return provider.getData().size();
-    }
-
-    public SimpleListener getEventListener() {
-        return mEventListener;
     }
 
     public void setEventListener(SimpleListener eventListener) {

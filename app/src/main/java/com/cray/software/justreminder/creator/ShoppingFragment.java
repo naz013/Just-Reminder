@@ -197,7 +197,7 @@ public class ShoppingFragment extends BaseFragment {
             }
         });
 
-        shoppingLists = new ShoppingListDataProvider(getActivity());
+        shoppingLists = new ShoppingListDataProvider();
         loadShoppings();
 
         if (item != null) {

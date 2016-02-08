@@ -254,14 +254,6 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
     }
 
     /**
-     * Get current action listener.
-     * @return Action listener.
-     */
-    public SimpleListener getEventListener() {
-        return mEventListener;
-    }
-
-    /**
      * Set action listener for adapter.
      * @param eventListener action listener.
      */

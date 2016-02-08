@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
-import com.cray.software.justreminder.interfaces.CollapseListener;
 import com.cray.software.justreminder.enums.QuickReturnViewType;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 
@@ -27,7 +26,6 @@ public class ReturnScrollListener extends RecyclerView.OnScrollListener {
     private int mHeaderDiffTotal = 0;
     private int mFooterDiffTotal = 0;
     private final int mColumnCount;
-    private CollapseListener mListener = null;
     private List<RecyclerView.OnScrollListener> mExtraOnScrollListenerList = new ArrayList<>();
     // endregion
 
@@ -37,7 +35,6 @@ public class ReturnScrollListener extends RecyclerView.OnScrollListener {
         mHeader = builder.mHeader;
         mMinHeaderTranslation = builder.mMinHeaderTranslation;
         mFooter = builder.mFooter;
-        mListener = builder.mListener;
         mColumnCount = builder.mColumnCount;
         mMinFooterTranslation = builder.mMinFooterTranslation;
         mIsSnappable = builder.mIsSnappable;
@@ -53,7 +50,6 @@ public class ReturnScrollListener extends RecyclerView.OnScrollListener {
             listener.onScrollStateChanged(recyclerView, newState);
         }
 
-        if (mListener != null) mListener.onStartScroll(true);
         if(newState == RecyclerView.SCROLL_STATE_IDLE && mIsSnappable){
 
             int midHeader = -mMinHeaderTranslation/2;
@@ -236,7 +232,6 @@ public class ReturnScrollListener extends RecyclerView.OnScrollListener {
         private int mMinFooterTranslation = 0;
         private boolean mIsSnappable = false;
         private int mColumnCount = 1;
-        private CollapseListener mListener = null;
         private boolean isGrid = false;
 
         public Builder(QuickReturnViewType quickReturnViewType) {
@@ -260,11 +255,6 @@ public class ReturnScrollListener extends RecyclerView.OnScrollListener {
 
         public Builder minFooterTranslation(int minFooterTranslation){
             mMinFooterTranslation = minFooterTranslation;
-            return this;
-        }
-
-        public Builder listener(CollapseListener listener){
-            mListener = listener;
             return this;
         }
 

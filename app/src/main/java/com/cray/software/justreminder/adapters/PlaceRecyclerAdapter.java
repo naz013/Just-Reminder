@@ -12,8 +12,8 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
-import com.cray.software.justreminder.datas.models.MarkerModel;
 import com.cray.software.justreminder.datas.PlaceDataProvider;
+import com.cray.software.justreminder.datas.models.MarkerModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
@@ -23,11 +23,6 @@ import com.cray.software.justreminder.utils.AssetsUtil;
  * Recycler view adapter for frequently used places.
  */
 public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdapter.ViewHolder> {
-
-    /**
-     * Application context field.
-     */
-    private Context mContext;
 
     /**
      * ColorSetter helper class field.
@@ -58,7 +53,6 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
      */
     public PlaceRecyclerAdapter(final Context context, final PlaceDataProvider provider,
                                 boolean showMarker) {
-        this.mContext = context;
         this.provider = provider;
         this.showMarker = showMarker;
         cs = new ColorSetter(context);
@@ -148,14 +142,6 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
     @Override
     public int getItemCount() {
         return provider.getData().size();
-    }
-
-    /**
-     * Get current action listener.
-     * @return Action listener.
-     */
-    public SimpleListener getEventListener() {
-        return mEventListener;
     }
 
     /**

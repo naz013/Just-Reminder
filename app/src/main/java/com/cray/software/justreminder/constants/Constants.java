@@ -84,7 +84,6 @@ public class Constants {
 
     public final static String SELECTED_CONTACT_NUMBER = "selected_number";
     public final static String SELECTED_CONTACT_NAME = "selected_name";
-    public final static String SELECTED_CONTACT_ARRAY = "contactNames";
     public final static String SELECTED_FONT_STYLE = "selected_style";
     public final static String SELECTED_RADIUS = "selected_radius";
     public final static String SELECTED_LED_COLOR = "selected_led_color";

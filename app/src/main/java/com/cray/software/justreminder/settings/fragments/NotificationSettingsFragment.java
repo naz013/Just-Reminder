@@ -19,6 +19,7 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Notifier;
+import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.views.PrefsView;
@@ -56,7 +57,11 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         selectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Dialogues.imageDialog(getActivity(), null);
+                if (Permissions.checkPermission(getActivity(), Permissions.MANAGE_DOCUMENTS)) {
+                    Dialogues.imageDialog(getActivity(), null);
+                } else {
+                    Permissions.requestPermission(getActivity(), 117, Permissions.MANAGE_DOCUMENTS);
+                }
             }
         });
 

@@ -178,7 +178,6 @@ public class SyncHelper {
                     File dir = MemoryUtil.getRDir();
                     if (dir != null) {
                         String exportFileName = uuID + FileConfig.FILE_NAME_REMINDER;
-
                         File file = new File(dir, exportFileName);
                         try {
                             writeFile(file, json);

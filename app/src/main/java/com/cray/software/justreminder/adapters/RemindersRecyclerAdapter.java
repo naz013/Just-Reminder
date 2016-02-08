@@ -324,7 +324,6 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                         }
                     }
                 });
-                //textView.setTextColor(ViewUtils.getColor(mContext, R.color.blackPrimary));
                 if (list.isChecked() == 1) {
                     if (isDark) checkView.setImageResource(R.drawable.ic_check_box_white_24dp);
                     else checkView.setImageResource(R.drawable.ic_check_box_black_24dp);
