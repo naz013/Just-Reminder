@@ -48,7 +48,7 @@
             android:text="-"
             android:textSize="30sp"
             android:gravity="center"
-            android:background="?android:attr/selectableItemBackground"
+            style="@style/Widget.AppCompat.ActionButton"
             android:id="@+id/minusButton"/>
 
         <Button
@@ -58,7 +58,7 @@
             android:text="+"
             android:textSize="30sp"
             android:gravity="center"
-            android:background="?android:attr/selectableItemBackground"
+            style="@style/Widget.AppCompat.ActionButton"
             android:id="@+id/plusButton"/>
 
         </LinearLayout>

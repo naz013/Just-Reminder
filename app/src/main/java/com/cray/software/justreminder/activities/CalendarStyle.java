@@ -75,6 +75,8 @@ public class CalendarStyle extends AppCompatActivity {
             themeGroupPro.setVisibility(View.VISIBLE);
         } else themeGroupPro.setVisibility(View.GONE);
 
+        findViewById(R.id.fab).setVisibility(View.GONE);
+
         setOnClickListener(red, green, blue, yellow, greenLight, blueLight, cyan, purple,
                 amber, orange, pink, teal, deepPurple, deepOrange, indigo, lime);
 

@@ -3,6 +3,8 @@ package com.cray.software.justreminder.dialogs;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,12 +19,15 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 
-public class TargetRadius extends Activity {
+public class TargetRadius extends Activity implements View.OnTouchListener {
 
     private SeekBar radiusBar;
     private TextView radiusValue;
     private SharedPrefs sPrefs;
     private int progressInt, i;
+    private long touchTime;
+    private static final long TRIGGER_TIME = 500;
+    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,44 +65,21 @@ public class TargetRadius extends Activity {
         });
 
         Button plusButton = (Button) findViewById(R.id.plusButton);
-        plusButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                radiusBar.setProgress(progressInt + 1);
-            }
-        });
-
         Button minusButton = (Button) findViewById(R.id.minusButton);
-        minusButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                radiusBar.setProgress(progressInt - 1);
-            }
-        });
+        plusButton.setOnTouchListener(this);
+        minusButton.setOnTouchListener(this);
 
         CheckBox transportCheck = (CheckBox) findViewById(R.id.transportCheck);
         transportCheck.setVisibility(View.VISIBLE);
         if (progressInt > 2000){
             transportCheck.setChecked(true);
         }
-        if (transportCheck.isChecked()){
-            radiusBar.setMax(5000);
-            radiusBar.setProgress(progressInt);
-        } else {
-            radiusBar.setMax(2000);
-            radiusBar.setProgress(progressInt);
-        }
+        changeMax(transportCheck.isChecked());
 
         transportCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    radiusBar.setMax(5000);
-                    radiusBar.setProgress(progressInt);
-                } else {
-                    radiusBar.setMax(2000);
-                    radiusBar.setProgress(progressInt);
-                }
+                changeMax(isChecked);
             }
         });
 
@@ -117,5 +99,62 @@ public class TargetRadius extends Activity {
                 }
             }
         });
+    }
+
+    private void changeMax(boolean isChecked) {
+        if (isChecked){
+            radiusBar.setMax(5000);
+            radiusBar.setProgress(progressInt);
+        } else {
+            radiusBar.setMax(2000);
+            radiusBar.setProgress(progressInt);
+        }
+    }
+
+    private Runnable plus = new Runnable() {
+        @Override
+        public void run() {
+            radiusBar.setProgress(radiusBar.getProgress() + 1);
+            handler.postDelayed(plus, 5);
+        }
+    };
+
+    private Runnable minus = new Runnable() {
+        @Override
+        public void run() {
+            radiusBar.setProgress(radiusBar.getProgress() - 1);
+            handler.postDelayed(minus, 5);
+        }
+    };
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        switch (v.getId()) {
+            case R.id.minusButton:
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    touchTime = System.currentTimeMillis();
+                    handler.postDelayed(minus, TRIGGER_TIME);
+                }
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    handler.removeCallbacks(minus);
+                    if (System.currentTimeMillis() - touchTime < TRIGGER_TIME) {
+                        radiusBar.setProgress(radiusBar.getProgress() - 1);
+                    }
+                }
+                break;
+            case R.id.plusButton:
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    touchTime = System.currentTimeMillis();
+                    handler.postDelayed(plus, TRIGGER_TIME);
+                }
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    handler.removeCallbacks(plus);
+                    if (System.currentTimeMillis() - touchTime < TRIGGER_TIME) {
+                        radiusBar.setProgress(radiusBar.getProgress() + 1);
+                    }
+                }
+                break;
+        }
+        return false;
     }
 }
