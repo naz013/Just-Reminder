@@ -76,7 +76,7 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
             emptyImage.setImageResource(R.drawable.place);
         }
 
-        if (Module.isLollipop()) {
+        if (Module.isMarshmallow()) {
             emptyImage.setImageDrawable(ViewUtils.getVector(this, cs.colorAccent(),
                             R.drawable.ic_place_black_24dp1));
         }

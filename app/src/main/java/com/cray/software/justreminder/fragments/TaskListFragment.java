@@ -71,7 +71,7 @@ public class TaskListFragment extends Fragment implements SyncListener {
             emptyImage.setImageResource(R.drawable.clear);
         }
 
-        if (Module.isLollipop()) {
+        if (Module.isMarshmallow()) {
             emptyImage.setImageDrawable(ViewUtils.getVector(getActivity(),
                     new ColorSetter(getActivity()).colorAccent(),
                     R.drawable.ic_assignment_turned_in_black_24dp));

@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
@@ -42,6 +43,7 @@ public class ViewUtils {
                                            @DrawableRes int drawable) {
         VectorDrawable vectorDrawable = (VectorDrawable) getDrawable(context, drawable);
         if (vectorDrawable != null) {
+            vectorDrawable.setTintMode(PorterDuff.Mode.SRC_ATOP);
             vectorDrawable.setTint(getColor(context, color));
         }
         return vectorDrawable;

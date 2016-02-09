@@ -98,7 +98,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
         } else {
             emptyImage.setImageResource(R.drawable.delete);
         }
-        if (Module.isLollipop()) {
+        if (Module.isMarshmallow()) {
             emptyImage.setImageDrawable(ViewUtils.getVector(getActivity(),
                     new ColorSetter(getActivity()).colorAccent(),
                     R.drawable.ic_delete_black_24dp1));

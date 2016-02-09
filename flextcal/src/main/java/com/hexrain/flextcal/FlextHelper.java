@@ -38,21 +38,14 @@ public class FlextHelper {
     }
 
     /**
-     * Check if application running on Android 5.0 and above.
-     * @return boolean
-     */
-    public static boolean is21(){
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
-    }
-
-    /**
      * Get color from resource.
      * @param context application context.
      * @param res resource identifier
      * @return Color
      */
     public static int getColor(Context context, @ColorRes int res){
-        if (is21()) return context.getResources().getColor(res, null);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            return context.getResources().getColor(res, null);
         else return context.getResources().getColor(res);
     }
 
@@ -218,5 +211,9 @@ public class FlextHelper {
 
         // javaMonth start at 0. Need to plus 1 to get datetimeMonth
         return new DateTime(year, javaMonth + 1, day, 0, 0, 0, 0);
+    }
+
+    public static boolean is21() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
     }
 }

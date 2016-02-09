@@ -1,11 +1,9 @@
 package com.cray.software.justreminder;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -17,16 +15,19 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.cray.software.justreminder.async.TaskListAsync;
-import com.cray.software.justreminder.databases.TasksData;
-import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
+import com.cray.software.justreminder.databases.TasksData;
+import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 
 
 public class TaskListManager extends AppCompatActivity {
@@ -51,7 +52,7 @@ public class TaskListManager extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         cSetter = new ColorSetter(TaskListManager.this);
         setTheme(cSetter.getStyle());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
         setContentView(R.layout.task_list_manager_layout);
@@ -223,25 +224,25 @@ public class TaskListManager extends AppCompatActivity {
     }
 
     private void deleteDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(true);
-        builder.setMessage(R.string.delete_this_list);
-        builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                deleteList();
-                dialog.dismiss();
-                finish();
-            }
-        });
-
-        AlertDialog dialog = builder.create();
+        MaterialStyledDialog dialog = new MaterialStyledDialog(this)
+                .setDescription(getString(R.string.delete_this_list))
+                .setHeaderColor(cSetter.getColor(cSetter.colorAccent()))
+                .setIcon(ViewUtils.getDrawable(this, R.drawable.ic_view_list_white_24dp))
+                .setPositive(getString(R.string.yes), new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                        deleteList();
+                        finish();
+                    }
+                })
+                .setNegative(getString(R.string.no), new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                })
+                .build();
         dialog.show();
     }
 
@@ -372,7 +373,7 @@ public class TaskListManager extends AppCompatActivity {
     private void setColor(int i){
         color = i;
         toolbar.setBackgroundColor(cSetter.getNoteColor(i));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(cSetter.getNoteDarkColor(i));
         }
     }

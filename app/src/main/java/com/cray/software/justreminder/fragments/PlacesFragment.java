@@ -70,7 +70,7 @@ public class PlacesFragment extends Fragment implements SimpleListener {
             emptyImage.setImageResource(R.drawable.place);
         }
 
-        if (Module.isLollipop()) {
+        if (Module.isMarshmallow()) {
             emptyImage.setImageDrawable(ViewUtils.getVector(getActivity(),
                     new ColorSetter(getActivity()).colorAccent(),
                     R.drawable.ic_place_black_24dp1));

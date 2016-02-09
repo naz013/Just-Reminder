@@ -16,8 +16,6 @@
 
 package com.cray.software.justreminder.activities;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -25,6 +23,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -40,6 +39,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.cray.software.justreminder.NotesManager;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
@@ -57,6 +58,7 @@ import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -381,25 +383,25 @@ public class NotePreview extends AppCompatActivity {
     }
 
     private void deleteDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(true);
-        builder.setTitle(R.string.delete_this_note);
-        builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                deleteNote();
-                dialog.dismiss();
-                closeWindow();
-            }
-        });
-
-        AlertDialog dialog = builder.create();
+        MaterialStyledDialog dialog = new MaterialStyledDialog(this)
+                .setDescription(getString(R.string.delete_this_note))
+                .setHeaderColor(cSetter.getColor(cSetter.colorAccent()))
+                .setIcon(ViewUtils.getDrawable(this, R.drawable.ic_event_note_white_24dp))
+                .setPositive(getString(R.string.yes), new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                        deleteNote();
+                        closeWindow();
+                    }
+                })
+                .setNegative(getString(R.string.no), new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                })
+                .build();
         dialog.show();
     }
 

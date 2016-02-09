@@ -13,10 +13,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -33,6 +33,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.cray.software.justreminder.activities.ImagePreview;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
@@ -48,6 +50,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.Telephony;
 import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
@@ -55,6 +58,7 @@ import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -107,7 +111,7 @@ public class NotesManager extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         cSetter = new ColorSetter(NotesManager.this);
         setTheme(cSetter.getStyle());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
         setContentView(R.layout.create_note_layout);
@@ -399,7 +403,7 @@ public class NotesManager extends AppCompatActivity {
         taskField.setTypeface(cSetter.getTypeface(style));
         toolbar.setBackgroundColor(cSetter.getNoteLightColor(color));
         layoutContainer.setBackgroundColor(cSetter.getNoteLightColor(color));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(cSetter.getNoteDarkColor(color));
         }
         mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorPrimary(color),
@@ -552,26 +556,26 @@ public class NotesManager extends AppCompatActivity {
     }
 
     private void deleteDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(true);
-        builder.setTitle(getString(R.string.delete_this_note));
-        builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                NoteModel.deleteNote(id, NotesManager.this, null);
-                new SharedPrefs(NotesManager.this).saveBoolean("isNew", true);
-                finish();
-            }
-        });
-
-        AlertDialog dialog = builder.create();
+        MaterialStyledDialog dialog = new MaterialStyledDialog(this)
+                .setDescription(getString(R.string.delete_this_note))
+                .setHeaderColor(cSetter.getColor(cSetter.colorAccent()))
+                .setIcon(ViewUtils.getDrawable(this, R.drawable.ic_event_note_white_24dp))
+                .setPositive(getString(R.string.yes), new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                        NoteModel.deleteNote(id, NotesManager.this, null);
+                        new SharedPrefs(NotesManager.this).saveBoolean("isNew", true);
+                        finish();
+                    }
+                })
+                .setNegative(getString(R.string.no), new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                })
+                .build();
         dialog.show();
     }
 
@@ -664,7 +668,7 @@ public class NotesManager extends AppCompatActivity {
                     color = data.getIntExtra(Constants.SELECTED_COLOR, 12);
                     layoutContainer.setBackgroundColor(cSetter.getNoteLightColor(color));
                     toolbar.setBackgroundColor(cSetter.getNoteLightColor(color));
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    if (Module.isLollipop()) {
                         getWindow().setStatusBarColor(cSetter.getNoteDarkColor(color));
                     }
                     mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorPrimary(color),

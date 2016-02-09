@@ -70,7 +70,7 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
             emptyImage.setImageResource(R.drawable.textsms);
         }
 
-        if (Module.isLollipop()) {
+        if (Module.isMarshmallow()) {
             emptyImage.setImageDrawable(ViewUtils.getVector(getActivity(),
                     new ColorSetter(getActivity()).colorAccent(),
                     R.drawable.ic_textsms_black_24dp1));

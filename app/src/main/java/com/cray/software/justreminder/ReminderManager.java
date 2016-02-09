@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
@@ -185,7 +184,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         super.onCreate(savedInstanceState);
         ColorSetter colorSetter = new ColorSetter(ReminderManager.this);
         setTheme(colorSetter.getStyle());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, colorSetter.colorPrimaryDark()));
         }
         setContentView(R.layout.create_edit_layout);

@@ -72,7 +72,7 @@ public class EventsListFragment extends Fragment implements SimpleListener {
         else
             emptyImage.setImageResource(R.drawable.today);
 
-        if (Module.isLollipop()) {
+        if (Module.isMarshmallow()) {
             emptyImage.setImageDrawable(ViewUtils.getVector(getActivity(),
                     new ColorSetter(getActivity()).colorAccent(),
                     R.drawable.ic_today_black_24dp1));

@@ -184,7 +184,7 @@ public class ActiveFragment extends Fragment implements
         } else {
             emptyImage.setImageResource(R.drawable.ic_alarm_off_48px);
         }
-        if (Module.isLollipop()) {
+        if (Module.isMarshmallow()) {
             emptyImage.setImageDrawable(ViewUtils.getVector(getActivity(),
                     new ColorSetter(getActivity()).colorAccent(),
                     R.drawable.ic_alarm_off_black_24dp));
