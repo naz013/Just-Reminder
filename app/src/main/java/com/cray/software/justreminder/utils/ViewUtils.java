@@ -43,7 +43,6 @@ public class ViewUtils {
                                            @DrawableRes int drawable) {
         VectorDrawable vectorDrawable = (VectorDrawable) getDrawable(context, drawable);
         if (vectorDrawable != null) {
-            vectorDrawable.setTintMode(PorterDuff.Mode.SRC_ATOP);
             vectorDrawable.setTint(getColor(context, color));
         }
         return vectorDrawable;

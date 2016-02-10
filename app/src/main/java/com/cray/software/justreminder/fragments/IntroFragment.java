@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.datas.models.IntroModel;
-import com.cray.software.justreminder.utils.ViewUtils;
+import com.squareup.picasso.Picasso;
 
 /**
  * Copyright 2015 Nazar Suhovich
@@ -108,8 +108,10 @@ public class IntroFragment extends Fragment {
         if (descColor != 0) {
             d.setTextColor(descColor);
         }
-        i.setImageDrawable(ViewUtils.getDrawable(getActivity(), drawable));
         m.setBackgroundColor(bgColor);
+        Picasso.with(getActivity())
+                .load(drawable)
+                .into(i);
         return v;
     }
 

@@ -115,8 +115,12 @@ public class StartHelp extends AppCompatActivity {
                 R.drawable.note_tr,
                 getColorRes(R.color.redPrimary)));
 
-        adapter = new IntroPagerAdapter(getSupportFragmentManager(), list);
-        introPager.setAdapter(adapter);
+        try {
+            adapter = new IntroPagerAdapter(getSupportFragmentManager(), list);
+            introPager.setAdapter(adapter);
+        } catch (OutOfMemoryError e) {
+            startActivity(new Intent(this, LogInActivity.class));
+        }
     }
 
     private int getColorRes(int resId){
