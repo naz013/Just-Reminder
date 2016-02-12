@@ -390,7 +390,7 @@ public class JParser {
     public void setExport(JExport export) {
         try {
             if (export != null) jsonObject.put(EXPORT, export.getJsonObject());
-            else jsonObject.put(EXPORT, new JExport());
+            else jsonObject.put(EXPORT, new JExport().getJsonObject());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -413,7 +413,7 @@ public class JParser {
     public void setRecurrence(JRecurrence recurrence) {
         try {
             if (recurrence != null) jsonObject.put(RECURRENCE, recurrence.getJsonObject());
-            else jsonObject.put(RECURRENCE, new JRecurrence());
+            else jsonObject.put(RECURRENCE, new JRecurrence().getJsonObject());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -422,7 +422,7 @@ public class JParser {
     public void setMelody(JMelody melody) {
         try {
             if (melody != null) jsonObject.put(MELODY, melody.getJsonObject());
-            else jsonObject.put(MELODY, new JMelody());
+            else jsonObject.put(MELODY, new JMelody().getJsonObject());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -431,7 +431,7 @@ public class JParser {
     public void setExclusion(JExclusion exclusion) {
         try {
             if (exclusion != null) jsonObject.put(EXCLUSION, exclusion.getJsonObject());
-            else jsonObject.put(EXCLUSION, new JExclusion());
+            else jsonObject.put(EXCLUSION, new JExclusion().getJsonObject());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -440,7 +440,7 @@ public class JParser {
     public void setLed(JLed led) {
         try {
             if (led != null) jsonObject.put(LED, led.getJsonObject());
-            else jsonObject.put(LED, new JLed());
+            else jsonObject.put(LED, new JLed().getJsonObject());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -449,7 +449,7 @@ public class JParser {
     public void setAction(JAction action) {
         try {
             if (action != null) jsonObject.put(ACTION, action.getJsonObject());
-            else jsonObject.put(ACTION, new JAction());
+            else jsonObject.put(ACTION, new JAction().getJsonObject());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -458,7 +458,7 @@ public class JParser {
     public void setPlace(JPlace jPlace) {
         try {
             if (jPlace != null) jsonObject.put(PLACE, jPlace.getJsonObject());
-            else jsonObject.put(PLACE, new JPlace());
+            else jsonObject.put(PLACE, new JPlace().getJsonObject());
         } catch (JSONException e) {
             e.printStackTrace();
         }

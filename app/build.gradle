@@ -60,7 +60,8 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            productFlavors.pro.proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            productFlavors.free.proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-free.pro'
             debuggable false
             zipAlignEnabled true
             jniDebuggable false

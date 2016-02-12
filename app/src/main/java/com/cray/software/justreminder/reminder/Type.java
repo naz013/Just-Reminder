@@ -142,10 +142,12 @@ public class Type {
             boolean stock = prefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
             boolean calendar = prefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
             JExport jExport = item.getExport();
-            if (jExport.getCalendar() == 1)
-                ReminderUtils.exportToCalendar(mContext, item.getSummary(), due, id, calendar, stock);
-            if (jExport.getgTasks() == 1)
-                ReminderUtils.exportToTasks(mContext, item.getSummary(), due, id);
+            if (jExport != null) {
+                if (jExport.getCalendar() == 1)
+                    ReminderUtils.exportToCalendar(mContext, item.getSummary(), due, id, calendar, stock);
+                if (jExport.getgTasks() == 1)
+                    ReminderUtils.exportToTasks(mContext, item.getSummary(), due, id);
+            }
         }
     }
 

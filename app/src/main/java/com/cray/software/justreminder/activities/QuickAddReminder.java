@@ -30,6 +30,7 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.json.JExport;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.modules.Module;
@@ -219,14 +220,17 @@ public class QuickAddReminder extends AppCompatActivity {
         long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
         boolean isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
         boolean isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
+        boolean isTasks = gtx.isLinked() && taskExport.isChecked();
+        int isCal = isCalendar || isStock ? 1 : 0;
+        JExport jExport = new JExport(isTasks ? 1 : 0, isCal, null);
         JRecurrence jRecurrence = new JRecurrence(0, repeat * AlarmManager.INTERVAL_DAY, -1, null, 0);
         JModel jModel = new JModel(text, type, categoryId,
-                SyncHelper.generateID(), startTime, startTime, jRecurrence, null, null);
+                SyncHelper.generateID(), startTime, startTime, jRecurrence, null, jExport);
         long remId = new DateType(QuickAddReminder.this, Constants.TYPE_REMINDER).save(jModel);
         if (isCalendar || isStock) {
             ReminderUtils.exportToCalendar(this, text, startTime, remId, isCalendar, isStock);
         }
-        if (gtx.isLinked() && taskExport.isChecked()) {
+        if (isTasks) {
             ReminderUtils.exportToTasks(this, text, startTime, remId);
         }
         new SharedPrefs(this).saveBoolean(Prefs.REMINDER_CHANGED, true);
