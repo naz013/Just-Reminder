@@ -3,7 +3,7 @@
 -renamesourcefileattribute SourceFile
 -keepattributes SourceFile,LineNumberTable
 
--printmapping mapping.txt
+-printmapping /proguard/mapping.txt
 
 -keep class android.support.v4.app.** { *; }
 -keep interface android.support.v4.app.** { *; }
