@@ -1,10 +1,8 @@
 package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -16,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,11 +27,11 @@ import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.squareup.picasso.Picasso;
 
@@ -221,9 +220,13 @@ public class NavigationDrawerFragment extends Fragment implements
 
     private void reloadItems(){
         appNameBanner.setTextColor(ViewUtils.getColor(getActivity(), R.color.whitePrimary));
+        DisplayMetrics metrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        double width = metrics.widthPixels * 0.8;
+        int height = QuickReturnUtils.dp2px(getActivity(), 275);
         Picasso.with(getActivity())
                 .load(R.drawable.photo_main)
-                .resize(1600, 900)
+                .resize((int) width, height)
                 .transform(new BlurTransformation(getActivity(), 20, 2))
                 .into(image);
         image.setVisibility(View.VISIBLE);
@@ -499,41 +502,9 @@ public class NavigationDrawerFragment extends Fragment implements
     public void onResume() {
         super.onResume();
         reloadItems();
-        SharedPrefs sPrefs = new SharedPrefs(getActivity());
-        NextBase db = new NextBase(getActivity());
-        if (!db.isOpen()) db.open();
-        if (db.getCountActive() > 0){
-            if (isListFirstTime() && sPrefs.loadBoolean(Prefs.THANKS_SHOWN)){
-                // TODO: 17.01.2016 Add showcase.
-            }
-        }
-        db.close();
 
         if (mCallbacks != null) {
             mCallbacks.onItemSelected(mCurrentSelectedPosition);
         }
-    }
-
-    private boolean isListFirstTime() {
-        SharedPrefs sPrefs = new SharedPrefs(getActivity());
-        PackageInfo pInfo = null;
-        try {
-            pInfo = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        String version = null;
-        if (pInfo != null) {
-            version = pInfo.versionName;
-        }
-        boolean isShown = sPrefs.loadVersionBoolean(version);
-        SharedPreferences preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-        boolean ranBefore = preferences.getBoolean("JustListBefore", false);
-        if (!ranBefore && isShown) {
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("JustListBefore", true);
-            editor.commit();
-        }
-        return !ranBefore;
     }
 }

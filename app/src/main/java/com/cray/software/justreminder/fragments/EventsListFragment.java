@@ -20,13 +20,10 @@ import com.cray.software.justreminder.adapters.CalendarEventsAdapter;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.models.EventsItem;
-import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
-import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
-import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.ArrayList;
 
@@ -71,12 +68,6 @@ public class EventsListFragment extends Fragment implements SimpleListener {
             emptyImage.setImageResource(R.drawable.today_white);
         else
             emptyImage.setImageResource(R.drawable.today);
-
-        if (Module.isMarshmallow()) {
-            emptyImage.setImageDrawable(ViewUtils.getVector(getActivity(),
-                    new ColorSetter(getActivity()).colorAccent(),
-                    R.drawable.ic_today_black_24dp1));
-        }
 
         listView = (RecyclerView) view.findViewById(R.id.currentList);
 

@@ -531,7 +531,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int width = metrics.widthPixels;
-        int height = metrics.heightPixels;
+        int height = (int) (metrics.heightPixels * 0.75);
         if (imagePrefs.matches(Constants.DEFAULT)){
             if (blur && Module.isPro()) {
                 Picasso.with(ReminderDialog.this)

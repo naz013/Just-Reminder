@@ -17,12 +17,9 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.TasksRecyclerAdapter;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.models.Task;
-import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SyncListener;
-import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.ArrayList;
 
@@ -69,12 +66,6 @@ public class TaskListFragment extends Fragment implements SyncListener {
             emptyImage.setImageResource(R.drawable.clear_white);
         } else {
             emptyImage.setImageResource(R.drawable.clear);
-        }
-
-        if (Module.isMarshmallow()) {
-            emptyImage.setImageDrawable(ViewUtils.getVector(getActivity(),
-                    new ColorSetter(getActivity()).colorAccent(),
-                    R.drawable.ic_assignment_turned_in_black_24dp));
         }
 
         currentList = (RecyclerView) view.findViewById(R.id.currentList);

@@ -17,11 +17,12 @@
 package com.cray.software.justreminder;
 
 import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
-public class ReminderApp extends Application {
+public class ReminderApp extends MultiDexApplication {
     private Tracker mTracker;
 
     /**

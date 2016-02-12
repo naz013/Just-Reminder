@@ -255,6 +255,7 @@ public class TasksFragment extends Fragment {
         taskListDatum.clear();
 
         ArrayList<TaskList> taskLists = getTaskLists();
+        if (taskLists == null || taskLists.size() == 0) return;
         taskListDatum.add(new TaskListData(taskLists.get(0), getList(null), 0));
         for (int position = 1; position < taskLists.size(); position++){
             taskListDatum.add(new TaskListData(taskLists.get(position), getList(taskLists.get(position)), position));
@@ -330,6 +331,7 @@ public class TasksFragment extends Fragment {
     private ArrayList<TaskList> getTaskLists() {
         ArrayList<TaskList> lists = new ArrayList<>();
         lists.clear();
+        map = new HashMap<>();
         map.clear();
         lists.add(new TaskList(getString(R.string.all), 0, GTasksHelper.TASKS_ALL, 25));
         TasksData db = new TasksData(activity);
@@ -367,7 +369,9 @@ public class TasksFragment extends Fragment {
                         String checks = c.getString(c.getColumnIndex(TasksConstants.COLUMN_STATUS));
                         String note = c.getString(c.getColumnIndex(TasksConstants.COLUMN_NOTES));
                         long mId = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID));
-                        mData.add(new Task(title, mId, checks, taskId, date, listID, note, map.get(listID)));
+                        int color = 0;
+                        if (map.containsKey(listID)) color = map.get(listID);
+                        mData.add(new Task(title, mId, checks, taskId, date, listID, note, color));
                     }
                 } while (c.moveToNext());
             }
@@ -380,7 +384,6 @@ public class TasksFragment extends Fragment {
                     if (title != null && !title.matches("")) {
                         long date = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_DUE));
                         String taskId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TASK_ID));
-                        String listID = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
                         String checks = c.getString(c.getColumnIndex(TasksConstants.COLUMN_STATUS));
                         String note = c.getString(c.getColumnIndex(TasksConstants.COLUMN_NOTES));
                         long mId = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID));

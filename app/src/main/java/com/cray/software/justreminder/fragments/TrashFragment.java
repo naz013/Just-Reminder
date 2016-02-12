@@ -23,16 +23,13 @@ import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.ReminderModel;
-import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
-import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
-import com.cray.software.justreminder.utils.ViewUtils;
 
 public class TrashFragment extends Fragment implements RecyclerListener{
 
@@ -97,11 +94,6 @@ public class TrashFragment extends Fragment implements RecyclerListener{
             emptyImage.setImageResource(R.drawable.delete_white);
         } else {
             emptyImage.setImageResource(R.drawable.delete);
-        }
-        if (Module.isMarshmallow()) {
-            emptyImage.setImageDrawable(ViewUtils.getVector(getActivity(),
-                    new ColorSetter(getActivity()).colorAccent(),
-                    R.drawable.ic_delete_black_24dp1));
         }
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);

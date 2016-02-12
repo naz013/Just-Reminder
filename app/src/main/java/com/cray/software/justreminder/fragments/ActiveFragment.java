@@ -35,7 +35,6 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.models.ReminderModel;
-import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -44,7 +43,6 @@ import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
-import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -183,11 +181,6 @@ public class ActiveFragment extends Fragment implements
             emptyImage.setImageResource(R.drawable.ic_alarm_off_48px_white);
         } else {
             emptyImage.setImageResource(R.drawable.ic_alarm_off_48px);
-        }
-        if (Module.isMarshmallow()) {
-            emptyImage.setImageDrawable(ViewUtils.getVector(getActivity(),
-                    new ColorSetter(getActivity()).colorAccent(),
-                    R.drawable.ic_alarm_off_black_24dp));
         }
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);

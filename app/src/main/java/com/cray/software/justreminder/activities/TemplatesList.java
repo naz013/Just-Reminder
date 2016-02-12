@@ -71,11 +71,6 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
             emptyImage.setImageResource(R.drawable.textsms);
         }
 
-        if (Module.isMarshmallow()) {
-            emptyImage.setImageDrawable(ViewUtils.getVector(this, cs.colorAccent(),
-                    R.drawable.ic_textsms_black_24dp1));
-        }
-
         listView = (RecyclerView) findViewById(R.id.currentList);
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);

@@ -74,7 +74,7 @@ public class SplashScreen extends Activity{
         textView.setTextColor(getResources().getColor(R.color.whitePrimary));
 
         LinearLayout splashBg = (LinearLayout) findViewById(R.id.splashBg);
-        splashBg.setBackgroundColor(cs.colorPrimary());
+        splashBg.setBackgroundColor(cs.getColor(cs.colorPrimary()));
 
         SharedPrefs prefs = new SharedPrefs(SplashScreen.this);
         if (prefs.loadBoolean(Prefs.EXPORT_SETTINGS)){
