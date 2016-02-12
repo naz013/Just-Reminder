@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 23
@@ -8,8 +7,8 @@ android {
         applicationId 'com.cray.software.justreminder'
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 120
-        versionName '5.0.1'
+        versionCode 121
+        versionName '5.0.2'
         multiDexEnabled true
         renderscriptTargetApi 20
         renderscriptSupportModeEnabled true
@@ -47,7 +46,7 @@ android {
         pro {
             applicationId 'com.cray.software.justreminderpro'
             buildConfigField "boolean", "IS_PRO", "true"
-            versionCode 92
+            versionCode 93
         }
     }
 
@@ -97,13 +96,13 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.android.support:recyclerview-v7:23.1.1'
     compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.google.android.gms:play-services-auth:8.3.0'
-    compile 'com.google.android.gms:play-services-appindexing:8.3.0'
-    compile 'com.google.android.gms:play-services-drive:8.3.0'
-    compile 'com.google.android.gms:play-services-location:8.3.0'
-    compile 'com.google.android.gms:play-services-maps:8.3.0'
-    compile 'com.google.android.gms:play-services-analytics:8.3.0'
-    compile 'com.google.android.gms:play-services-wearable:8.3.0'
+    compile 'com.google.android.gms:play-services-auth:8.4.0'
+    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
+    compile 'com.google.android.gms:play-services-drive:8.4.0'
+    compile 'com.google.android.gms:play-services-location:8.4.0'
+    compile 'com.google.android.gms:play-services-maps:8.4.0'
+    compile 'com.google.android.gms:play-services-analytics:8.4.0'
+    compile 'com.google.android.gms:play-services-wearable:8.4.0'
     compile 'com.android.support:design:23.1.1'
     //Github libraries
     compile project(':photoPreview')
@@ -117,3 +116,5 @@ dependencies {
     compile project(':shared')
     //wearApp project(':wear')
 }
+
+apply plugin: 'com.google.gms.google-services'
