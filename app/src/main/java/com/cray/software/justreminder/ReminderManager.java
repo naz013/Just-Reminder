@@ -284,7 +284,8 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                baseFragment.setEventTask(s.toString());
+                if (baseFragment != null)
+                    baseFragment.setEventTask(s.toString().trim());
             }
 
             @Override
