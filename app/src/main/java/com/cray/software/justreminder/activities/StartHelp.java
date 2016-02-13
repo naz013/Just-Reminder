@@ -15,6 +15,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.IntroPagerAdapter;
 import com.cray.software.justreminder.datas.models.IntroModel;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.ArrayList;
 
@@ -93,41 +94,22 @@ public class StartHelp extends AppCompatActivity {
         list.add(new IntroModel(
                 getString(R.string.flexible),
                 R.drawable.flexible_tr,
-                getColorRes(R.color.bluePrimaryDark)));
+                ViewUtils.getColor(this, R.color.bluePrimaryDark)));
         list.add(new IntroModel(
                 getString(R.string.smart),
                 R.drawable.smart_tr,
-                getColorRes(R.color.indigoPrimary)));
+                ViewUtils.getColor(this, R.color.indigoPrimary)));
         list.add(new IntroModel(
                 getString(R.string.widgets_support),
                 R.drawable.widgets_tr,
-                getColorRes(R.color.purpleDeepPrimary)));
-        list.add(new IntroModel(
-                getString(R.string.dark_theme_support),
-                R.drawable.dark_tr,
-                getColorRes(R.color.purplePrimary)));
-        list.add(new IntroModel(
-                getString(R.string.cloud_sync),
-                R.drawable.cloud_tr,
-                getColorRes(R.color.pinkPrimary)));
-        list.add(new IntroModel(
-                getString(R.string.notes_support),
-                R.drawable.note_tr,
-                getColorRes(R.color.redPrimary)));
+                ViewUtils.getColor(this, R.color.purpleDeepPrimary)));
 
         try {
-            adapter = new IntroPagerAdapter(getSupportFragmentManager(), list);
+            adapter = new IntroPagerAdapter(this, list);
             introPager.setAdapter(adapter);
         } catch (OutOfMemoryError e) {
             startActivity(new Intent(this, LogInActivity.class));
         }
-    }
-
-    private int getColorRes(int resId){
-        if (Module.isMarshmallow()) {
-            return getResources().getColor(resId, null);
-        }
-        return getResources().getColor(resId);
     }
 
     @Override

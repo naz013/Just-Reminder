@@ -225,7 +225,7 @@ public class SplashScreen extends Activity{
         checkPrefs();
 
         if (isFirstTime() && !prefs.loadBoolean(Prefs.CONTACTS_IMPORT_DIALOG)) {
-            startActivity(new Intent(SplashScreen.this, LogInActivity.class));
+            startActivity(new Intent(SplashScreen.this, StartHelp.class));
         } else {
             startActivity(new Intent(SplashScreen.this, ScreenManager.class));
         }
