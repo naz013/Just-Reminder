@@ -59,7 +59,6 @@ public class SplashScreen extends Activity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(cs.getFullscreenStyle());
         setContentView(R.layout.splash_layout);
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
@@ -71,11 +70,7 @@ public class SplashScreen extends Activity{
         if (Module.isPro()){
             name = getString(R.string.app_name_pro);
         } else name = getString(R.string.app_name);
-        textView.setText(name.toUpperCase());
-        textView.setTextColor(getResources().getColor(R.color.whitePrimary));
-
-        LinearLayout splashBg = (LinearLayout) findViewById(R.id.splashBg);
-        splashBg.setBackgroundColor(cs.getColor(cs.colorPrimary()));
+        textView.setText(name);
 
         SharedPrefs prefs = new SharedPrefs(SplashScreen.this);
         if (prefs.loadBoolean(Prefs.EXPORT_SETTINGS)){

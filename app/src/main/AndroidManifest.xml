@@ -52,7 +52,7 @@
         tools:replace="label, allowBackup">
         <activity
             android:name=".activities.SplashScreen"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar">
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
