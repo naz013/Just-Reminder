@@ -13,7 +13,6 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.enums.NewMethod;
 import com.cray.software.justreminder.helpers.Recurrence;
-import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JParser;
 import com.cray.software.justreminder.json.JRecurrence;
@@ -72,7 +71,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
             JParser jModel = new JParser(json);
             JRecurrence jRecurrence =  jModel.getRecurrence();
             repeat = jRecurrence.getRepeat();
-            String type = c.getString(c.getColumnIndex(NextBase.TYPE));
+            /*String type = c.getString(c.getColumnIndex(NextBase.TYPE));
             if (due < System.currentTimeMillis()) {
                 if (type != null) {
                     if (type.startsWith(Constants.TYPE_WEEKDAY) ||
@@ -85,7 +84,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
                         db.updateCount(id, jModel.toJsonString());
                     }
                 }
-            }
+            }*/
         }
         if (c != null) c.close();
         db.close();

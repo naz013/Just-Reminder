@@ -422,7 +422,7 @@ public class ScreenManager extends AppCompatActivity
             toolbar.setBackgroundColor(colorPrimary);
         }
         if (colorPrimaryDark != 0){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (Module.isLollipop()) {
                 getWindow().setStatusBarColor(colorPrimaryDark);
             }
         }

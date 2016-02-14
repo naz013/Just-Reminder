@@ -1,5 +1,7 @@
 package com.cray.software.justreminder.json;
 
+import android.util.Log;
+
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.TimeCount;
@@ -790,6 +792,7 @@ public class JParser {
     }
 
     public String toJsonString() {
+        if (jsonObject != null) Log.d(Constants.LOG_TAG, "JSON " + jsonObject.toString());
         if (jsonObject != null) return jsonObject.toString();
         else return null;
     }

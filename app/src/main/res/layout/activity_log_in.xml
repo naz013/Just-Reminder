@@ -15,7 +15,6 @@
         android:textSize="@dimen/log_in_title_text_size"
         android:layout_gravity="center_horizontal" />
 
-
     <com.cray.software.justreminder.views.PaperButton
         widget:paper_text="@string/google_drive"
         android:layout_width="wrap_content"

@@ -9,8 +9,7 @@
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">@drawable/splash</item>
-        <item name="android:text">@string/app_name</item>
-        <item name="colorPrimaryDark">@color/material_divider</item>
+        <item name="colorPrimaryDark">@color/material_white</item>
     </style>
 
     <style name="HomeWhiteActionbar" parent="Theme.AppCompat.Light.NoActionBar">

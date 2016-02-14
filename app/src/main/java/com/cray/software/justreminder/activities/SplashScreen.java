@@ -8,10 +8,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.cray.software.justreminder.LogInActivity;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.constants.Configs;
@@ -23,7 +20,6 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.datas.models.ShoppingList;
-import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
@@ -41,7 +37,6 @@ import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.CheckPosition;
 import com.cray.software.justreminder.services.GeolocationService;
-import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,27 +47,13 @@ import java.util.Locale;
  */
 public class SplashScreen extends Activity{
 
-    private ColorSetter cs = new ColorSetter(SplashScreen.this);
-
     public static final String APP_UI_PREFERENCES = "ui_settings";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.splash_layout);
-        if (Module.isLollipop()) {
-            getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
-        }
-        setRequestedOrientation(cs.getRequestOrientation());
-
-        TextView textView = (TextView) findViewById(R.id.textView);
-        String name;
-        if (Module.isPro()){
-            name = getString(R.string.app_name_pro);
-        } else name = getString(R.string.app_name);
-        textView.setText(name);
-
         SharedPrefs prefs = new SharedPrefs(SplashScreen.this);
+
         if (prefs.loadBoolean(Prefs.EXPORT_SETTINGS)){
             prefs.loadPrefsFromFile();
         }

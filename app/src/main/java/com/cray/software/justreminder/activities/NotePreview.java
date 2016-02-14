@@ -304,13 +304,9 @@ public class NotePreview extends AppCompatActivity {
                         imageByte.length);
                 img = imgB;
                 imageView.setImageBitmap(imgB);
-                toolbar.setBackgroundColor(noteColor);
-                //toolbar.getBackground().setAlpha(50);
-            } else {
-                imageView.setBackgroundColor(noteColor);
-                toolbar.setBackgroundColor(noteColor);
-                //toolbar.getBackground().setAlpha(255);
             }
+            imageView.setBackgroundColor(noteColor);
+            toolbar.setBackgroundColor(noteColor);
 
             if (remId != 0){
                 NextBase dataBase = new NextBase(NotePreview.this);

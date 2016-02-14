@@ -2,12 +2,18 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:drawable="@color/material_divider"/>
+        android:drawable="@color/material_white"/>
 
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@mipmap/ic_launcher"/>
+            android:src="@drawable/app_icon"/>
+    </item>
+
+    <item android:bottom="150dp">
+        <bitmap
+            android:gravity="bottom"
+            android:src="@drawable/reminder_title"/>
     </item>
 
 </layer-list>
