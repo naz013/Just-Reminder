@@ -16,7 +16,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -33,8 +32,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.cray.software.justreminder.activities.ImagePreview;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
@@ -53,12 +50,12 @@ import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.utils.AssetsUtil;
+import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
-import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -409,8 +406,10 @@ public class NotesManager extends AppCompatActivity {
         mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorPrimary(color),
                 cSetter.colorPrimaryDark(color)));
 
-        ReminderApp application = (ReminderApp) getApplication();
-        mTracker = application.getDefaultTracker();
+        if (LocationUtil.isGooglePlayServicesAvailable(this)) {
+            ReminderApp application = (ReminderApp) getApplication();
+            mTracker = application.getDefaultTracker();
+        }
     }
 
     private void shareNote() {
@@ -556,26 +555,24 @@ public class NotesManager extends AppCompatActivity {
     }
 
     private void deleteDialog() {
-        MaterialStyledDialog dialog = new MaterialStyledDialog(this)
-                .setDescription(getString(R.string.delete_this_note))
-                .setHeaderColor(cSetter.getColor(cSetter.colorAccent()))
-                .setIcon(ViewUtils.getDrawable(this, R.drawable.ic_event_note_white_24dp))
-                .setPositive(getString(R.string.yes), new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.dismiss();
-                        NoteModel.deleteNote(id, NotesManager.this, null);
-                        new SharedPrefs(NotesManager.this).saveBoolean("isNew", true);
-                        finish();
-                    }
-                })
-                .setNegative(getString(R.string.no), new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.dismiss();
-                    }
-                })
-                .build();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.delete_this_note));
+        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                NoteModel.deleteNote(id, NotesManager.this, null);
+                new SharedPrefs(NotesManager.this).saveBoolean("isNew", true);
+                finish();
+            }
+        });
+        builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
         dialog.show();
     }
 
@@ -767,8 +764,10 @@ public class NotesManager extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mTracker.setScreenName("Create note screen");
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        if (LocationUtil.isGooglePlayServicesAvailable(this)) {
+            mTracker.setScreenName("Create note screen");
+            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        }
     }
 
     @Override

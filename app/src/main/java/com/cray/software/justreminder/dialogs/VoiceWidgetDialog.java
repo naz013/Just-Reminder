@@ -13,6 +13,7 @@ import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Recognizer;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.utils.LocationUtil;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -27,18 +28,22 @@ public class VoiceWidgetDialog extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ReminderApp application = (ReminderApp) getApplication();
-        mTracker = application.getDefaultTracker();
+        if (LocationUtil.isGooglePlayServicesAvailable(this)) {
+            ReminderApp application = (ReminderApp) getApplication();
+            mTracker = application.getDefaultTracker();
+        }
         startVoiceRecognitionActivity();
     }
 
     public void startVoiceRecognitionActivity() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        mTracker.send(new HitBuilders.EventBuilder()
-                .setCategory("Voice control")
-                .setAction("Widget")
-                .setLabel("Widget")
-                .build());
+        if (LocationUtil.isGooglePlayServicesAvailable(this)) {
+            mTracker.send(new HitBuilders.EventBuilder()
+                    .setCategory("Voice control")
+                    .setAction("Widget")
+                    .setLabel("Widget")
+                    .build());
+        }
         SharedPrefs sPrefs = new SharedPrefs(VoiceWidgetDialog.this);
         if (!sPrefs.loadBoolean(Prefs.AUTO_LANGUAGE)) {
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, sPrefs.loadPrefs(Prefs.VOICE_LANGUAGE));

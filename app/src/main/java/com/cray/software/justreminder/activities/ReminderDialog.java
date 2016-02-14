@@ -63,6 +63,7 @@ import com.cray.software.justreminder.reminder.Type;
 import com.cray.software.justreminder.services.DeliveredReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.services.SendReceiver;
+import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.TextDrawable;
@@ -517,8 +518,10 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             }
         }
 
-        ReminderApp application = (ReminderApp) getApplication();
-        mTracker = application.getDefaultTracker();
+        if (LocationUtil.isGooglePlayServicesAvailable(this)) {
+            ReminderApp application = (ReminderApp) getApplication();
+            mTracker = application.getDefaultTracker();
+        }
     }
 
     private void loadImage() {
@@ -779,8 +782,10 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     @Override
     protected void onResume() {
         super.onResume();
-        mTracker.setScreenName("Reminder " + getType());
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        if (LocationUtil.isGooglePlayServicesAvailable(this)) {
+            mTracker.setScreenName("Reminder " + getType());
+            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        }
     }
 
     @Override

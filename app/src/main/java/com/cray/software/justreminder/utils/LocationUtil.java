@@ -86,6 +86,24 @@ public class LocationUtil {
     }
 
     /**
+     * Check if user has installed Google Play Services.
+     * @param a activity.
+     * @return boolean
+     */
+    public static boolean isGooglePlayServicesAvailable(Activity a) {
+        try {
+            int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(a.getApplicationContext());
+            if (resultCode != ConnectionResult.SUCCESS) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (NoSuchMethodError e) {
+            return false;
+        }
+    }
+
+    /**
      * Get shorter string coordinates.
      * @param currentLat latitude.
      * @param currentLong longitude.

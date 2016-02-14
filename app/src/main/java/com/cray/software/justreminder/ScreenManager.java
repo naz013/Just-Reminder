@@ -14,7 +14,6 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
@@ -203,8 +202,10 @@ public class ScreenManager extends AppCompatActivity
             mPrefs.saveBoolean(Prefs.UI_CHANGED, false);
         }
 
-        ReminderApp application = (ReminderApp) getApplication();
-        mTracker = application.getDefaultTracker();
+        if (LocationUtil.isGooglePlayServicesAvailable(this)) {
+            ReminderApp application = (ReminderApp) getApplication();
+            mTracker = application.getDefaultTracker();
+        }
     }
 
     private void initButton() {
@@ -487,11 +488,13 @@ public class ScreenManager extends AppCompatActivity
                 startActivity(intentS);
             } else if (tag.matches(VOICE_RECOGNIZER)) {
                 SuperUtil.startVoiceRecognitionActivity(ScreenManager.this, VOICE_RECOGNITION_REQUEST_CODE);
-                mTracker.send(new HitBuilders.EventBuilder()
-                        .setCategory("Voice control")
-                        .setAction("Main")
-                        .setLabel("Main")
-                        .build());
+                if (LocationUtil.isGooglePlayServicesAvailable(this)) {
+                    mTracker.send(new HitBuilders.EventBuilder()
+                            .setCategory("Voice control")
+                            .setAction("Main")
+                            .setLabel("Main")
+                            .build());
+                }
             } else if (tag.matches(TASKS_AUTHORIZATION)) {
                 if (!new GTasksHelper(this).isLinked()) {
                     if (Permissions.checkPermission(ScreenManager.this,
@@ -736,8 +739,10 @@ public class ScreenManager extends AppCompatActivity
         isChangesShown();
         new DelayedAsync(this, null).execute();
 
-        mTracker.setScreenName("Main activity");
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        if (LocationUtil.isGooglePlayServicesAvailable(this)) {
+            mTracker.setScreenName("Main activity");
+            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        }
     }
 
     @Override

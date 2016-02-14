@@ -389,8 +389,10 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             }
         }
 
-        ReminderApp application = (ReminderApp) getApplication();
-        mTracker = application.getDefaultTracker();
+        if (LocationUtil.isGooglePlayServicesAvailable(this)) {
+            ReminderApp application = (ReminderApp) getApplication();
+            mTracker = application.getDefaultTracker();
+        }
     }
 
     private void selectVolume() {
@@ -1784,8 +1786,10 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     protected void onResume() {
         super.onResume();
         showShowcase();
-        mTracker.setScreenName("Create reminder screen");
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        if (LocationUtil.isGooglePlayServicesAvailable(this)) {
+            mTracker.setScreenName("Create reminder screen");
+            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        }
     }
 
     public void showShowcase() {
