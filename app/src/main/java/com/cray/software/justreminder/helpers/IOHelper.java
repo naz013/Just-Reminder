@@ -97,18 +97,13 @@ public class IOHelper {
      */
     public void restoreGroup(boolean isCloud){
         File dir = MemoryUtil.getGroupsDir();
-        if (dir != null) {
-            if (dir.exists()) {
-                File[] files = dir.listFiles();
-                if (files != null) {
-                    final int x = files.length;
-                    if (x > 0) {
-                        try {
-                            new SyncHelper(mContext).groupFromJson(null, null);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
+        if (dir != null && dir.exists()) {
+            File[] files = dir.listFiles();
+            if (files != null && files.length > 0) {
+                try {
+                    new SyncHelper(mContext).groupFromJson(null);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -228,7 +223,7 @@ public class IOHelper {
      */
     public void restoreBirthday(boolean isCloud, boolean deleteFile){
         try {
-            new SyncHelper(mContext).birthdayFromJson(null, null);
+            new SyncHelper(mContext).birthdayFromJson(null);
         } catch (JSONException e) {
             e.printStackTrace();
         }

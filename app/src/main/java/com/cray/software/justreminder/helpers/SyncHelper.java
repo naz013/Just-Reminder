@@ -522,7 +522,7 @@ public class SyncHelper {
      */
     public void reminderFromJson(String file) throws JSONException {
         File dir = MemoryUtil.getRDir();
-        if (dir != null) {
+        if (dir != null && dir.exists()) {
             if (file != null){
                 String jsonText = readFile(file);
                 JSONObject jsonObj = new JSONObject(jsonText);
@@ -600,45 +600,43 @@ public class SyncHelper {
     /**
      * Restore group from JSON file to application.
      * @param file group file path.
-     * @param fileNameR file name.
      * @throws JSONException
      */
-    public void groupFromJson(String file, String fileNameR) throws JSONException {
-        File dir = MemoryUtil.getGroupsDir();
-        if (dir != null) {
-            DataBase db = new DataBase(mContext);
-            db.open();
-            List<String> namesPass = new ArrayList<>();
-            Cursor e = db.queryCategories();
-            while (e.moveToNext()) {
-                for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
-                    namesPass.add(e.getString(e.getColumnIndex(Constants.COLUMN_TECH_VAR)));
-                }
+    public void groupFromJson(File file) throws JSONException {
+        DataBase db = new DataBase(mContext);
+        db.open();
+        List<String> namesPass = new ArrayList<>();
+        Cursor e = db.queryCategories();
+        while (e.moveToNext()) {
+            for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
+                namesPass.add(e.getString(e.getColumnIndex(Constants.COLUMN_TECH_VAR)));
             }
-            e.close();
-            db.close();
+        }
+        e.close();
+        db.close();
 
-            if (file != null){
-                int pos = fileNameR.lastIndexOf(".");
-                String fileNameS = fileNameR.substring(0, pos);
-                if (!namesPass.contains(fileNameS)) {
-                    String jsonText = readFile(file);
-                    JSONObject jsonObj = new JSONObject(jsonText);
-                    groupObject(jsonObj);
-                }
-            } else {
-                File[] files = dir.listFiles();
-                if (files != null){
-                    for (File file1 : files) {
-                        String fileName = file1.getName();
-                        int pos = fileName.lastIndexOf(".");
-                        String fileLoc = dir + "/" + fileName;
-                        String fileNameS = fileName.substring(0, pos);
-                        if (!namesPass.contains(fileNameS)) {
-                            String jsonText = readFile(fileLoc);
-                            JSONObject jsonObj = new JSONObject(jsonText);
-                            groupObject(jsonObj);
-                        }
+        if (file != null){
+            String fileNameR = file.getName();
+            int pos = fileNameR.lastIndexOf(".");
+            String fileNameS = fileNameR.substring(0, pos);
+            if (!namesPass.contains(fileNameS)) {
+                String jsonText = readFile(file.toString());
+                JSONObject jsonObj = new JSONObject(jsonText);
+                groupObject(jsonObj);
+            }
+        } else {
+            File dir = MemoryUtil.getGroupsDir();
+            File[] files = dir.listFiles();
+            if (files != null){
+                for (File file1 : files) {
+                    String fileName = file1.getName();
+                    int pos = fileName.lastIndexOf(".");
+                    String fileLoc = dir + "/" + fileName;
+                    String fileNameS = fileName.substring(0, pos);
+                    if (!namesPass.contains(fileNameS)) {
+                        String jsonText = readFile(fileLoc);
+                        JSONObject jsonObj = new JSONObject(jsonText);
+                        groupObject(jsonObj);
                     }
                 }
             }
@@ -716,42 +714,41 @@ public class SyncHelper {
      * @param fileNameR file name.
      * @throws JSONException
      */
-    public void birthdayFromJson(String file, String fileNameR) throws JSONException {
-        File dir = MemoryUtil.getBDir();
-        if (dir != null) {
-            DataBase db = new DataBase(mContext);
-            db.open();
-            List<String> namesPass = new ArrayList<>();
-            Cursor e = db.getBirthdays();
-            while (e.moveToNext()) {
-                for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
-                    namesPass.add(e.getString(e.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_UUID)));
-                }
+    public void birthdayFromJson(File file) throws JSONException {
+        DataBase db = new DataBase(mContext);
+        db.open();
+        List<String> namesPass = new ArrayList<>();
+        Cursor e = db.getBirthdays();
+        while (e.moveToNext()) {
+            for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
+                namesPass.add(e.getString(e.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_UUID)));
             }
-            e.close();
-            db.close();
+        }
+        e.close();
+        db.close();
 
-            if (file != null){
-                int pos = fileNameR.lastIndexOf(".");
-                String fileNameS = fileNameR.substring(0, pos);
-                if (!namesPass.contains(fileNameS)) {
-                    String jsonText = readFile(file);
-                    JSONObject jsonObj = new JSONObject(jsonText);
-                    birthdayObject(jsonObj);
-                }
-            } else {
-                File[] files = dir.listFiles();
-                if (files != null && files.length > 0) {
-                    for (File file1 : files) {
-                        String fileName = file1.getName();
-                        int pos = fileName.lastIndexOf(".");
-                        String fileLoc = dir + "/" + fileName;
-                        String fileNameS = fileName.substring(0, pos);
-                        if (!namesPass.contains(fileNameS)) {
-                            String jsonText = readFile(fileLoc);
-                            JSONObject jsonObj = new JSONObject(jsonText);
-                            birthdayObject(jsonObj);
-                        }
+        if (file != null){
+            String fileNameR = file.getName();
+            int pos = fileNameR.lastIndexOf(".");
+            String fileNameS = fileNameR.substring(0, pos);
+            if (!namesPass.contains(fileNameS)) {
+                String jsonText = readFile(file.toString());
+                JSONObject jsonObj = new JSONObject(jsonText);
+                birthdayObject(jsonObj);
+            }
+        } else {
+            File dir = MemoryUtil.getBDir();
+            File[] files = dir.listFiles();
+            if (files != null && files.length > 0) {
+                for (File file1 : files) {
+                    String fileName = file1.getName();
+                    int pos = fileName.lastIndexOf(".");
+                    String fileLoc = dir + "/" + fileName;
+                    String fileNameS = fileName.substring(0, pos);
+                    if (!namesPass.contains(fileNameS)) {
+                        String jsonText = readFile(fileLoc);
+                        JSONObject jsonObj = new JSONObject(jsonText);
+                        birthdayObject(jsonObj);
                     }
                 }
             }

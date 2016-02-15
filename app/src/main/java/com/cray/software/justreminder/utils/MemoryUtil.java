@@ -176,14 +176,7 @@ public class MemoryUtil {
      * @return file object or null if cant access external storage.
      */
     public static File getImagesDir() {
-        if (isSdPresent()) {
-            File sdPath = Environment.getExternalStorageDirectory();
-            File dir = new File(sdPath.toString() + "/JustReminder/" + "image_cache");
-            if (!dir.exists()) {
-                if (dir.mkdirs()) return dir;
-            }
-            return dir;
-        } else return null;
+        return getDir("image_cache");
     }
 
     public static String humanReadableByte(long bytes, boolean si) {

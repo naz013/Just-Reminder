@@ -526,7 +526,7 @@ public class DropboxHelper {
                         downloadFile(localFile, cloudFile);
 
                         try {
-                            new SyncHelper(mContext).groupFromJson(localFile.toString(), fileName);
+                            new SyncHelper(mContext).groupFromJson(localFile);
                         } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
@@ -561,7 +561,7 @@ public class DropboxHelper {
                         if (deleteFile) deleteBirthday(fileName);
 
                         try {
-                            new SyncHelper(mContext).birthdayFromJson(localFile.toString(), fileName);
+                            new SyncHelper(mContext).birthdayFromJson(localFile);
                         } catch (JSONException e1) {
                             e1.printStackTrace();
                         }

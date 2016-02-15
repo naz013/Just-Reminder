@@ -1,7 +1,4 @@
 -libraryjars libs
--injars libs/dropbox-android-sdk-1.6.3.jar
--injars libs/lib-recur-0.9.3.jar
--injars libs/rfc5545-datetime-0.2.4.jar
 
 -renamesourcefileattribute SourceFile
 -keepattributes SourceFile,LineNumberTable

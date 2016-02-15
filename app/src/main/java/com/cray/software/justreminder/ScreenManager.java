@@ -79,8 +79,6 @@ import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.views.ReturnScrollListener;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -146,7 +144,7 @@ public class ScreenManager extends AppCompatActivity
     private Activity a = this;
     private Date eventsDate = null;
 
-    private Tracker mTracker;
+    //private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -204,7 +202,7 @@ public class ScreenManager extends AppCompatActivity
 
         if (LocationUtil.isGooglePlayServicesAvailable(this)) {
             ReminderApp application = (ReminderApp) getApplication();
-            mTracker = application.getDefaultTracker();
+            //mTracker = application.getDefaultTracker();
         }
     }
 
@@ -489,11 +487,11 @@ public class ScreenManager extends AppCompatActivity
             } else if (tag.matches(VOICE_RECOGNIZER)) {
                 SuperUtil.startVoiceRecognitionActivity(ScreenManager.this, VOICE_RECOGNITION_REQUEST_CODE);
                 if (LocationUtil.isGooglePlayServicesAvailable(this)) {
-                    mTracker.send(new HitBuilders.EventBuilder()
+                    /*mTracker.send(new HitBuilders.EventBuilder()
                             .setCategory("Voice control")
                             .setAction("Main")
                             .setLabel("Main")
-                            .build());
+                            .build());*/
                 }
             } else if (tag.matches(TASKS_AUTHORIZATION)) {
                 if (!new GTasksHelper(this).isLinked()) {
@@ -740,8 +738,8 @@ public class ScreenManager extends AppCompatActivity
         new DelayedAsync(this, null).execute();
 
         if (LocationUtil.isGooglePlayServicesAvailable(this)) {
-            mTracker.setScreenName("Main activity");
-            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+            /*mTracker.setScreenName("Main activity");
+            mTracker.send(new HitBuilders.ScreenViewBuilder().build());*/
         }
     }
 

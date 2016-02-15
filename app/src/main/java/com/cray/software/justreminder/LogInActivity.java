@@ -13,7 +13,6 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.ContactsContract;
@@ -73,7 +72,7 @@ public class LogInActivity extends Activity {
     private TextView skipButton, progressMesage;
     private CircularProgress progress;
 
-    private DropboxHelper dbx = new DropboxHelper(LogInActivity.this);
+    private DropboxHelper dbx;
     private static final int REQUEST_AUTHORIZATION = 1;
     private static final int REQUEST_ACCOUNT_PICKER = 3;
 
@@ -91,7 +90,7 @@ public class LogInActivity extends Activity {
         super.onCreate(savedInstanceState);
         setTheme(cs.getFullscreenStyle());
         setContentView(R.layout.activity_log_in);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         setRequestedOrientation(cs.getRequestOrientation());
@@ -99,7 +98,7 @@ public class LogInActivity extends Activity {
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
         sPrefs = new SharedPrefs(LogInActivity.this);
-        dbx.startSession();
+        dbx = new DropboxHelper(LogInActivity.this);
 
         connectGDrive = (PaperButton) findViewById(R.id.connectGDrive);
         connectDropbox = (PaperButton) findViewById(R.id.connectDropbox);
@@ -232,8 +231,6 @@ public class LogInActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        dbx = new DropboxHelper(LogInActivity.this);
-        sPrefs = new SharedPrefs(LogInActivity.this);
         dbx.startSession();
         if (!dbx.isLinked()) {
             if (dbx.checkLink()) {
@@ -443,7 +440,7 @@ public class LogInActivity extends Activity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            sPrefs = new SharedPrefs(LogInActivity.this);
+            SharedPrefs sPrefs = new SharedPrefs(mContext);
             if (checkBox.isChecked()) {
                 sPrefs.saveBoolean(Prefs.CONTACT_BIRTHDAYS, true);
                 sPrefs.saveBoolean(Prefs.CONTACTS_IMPORT_DIALOG, true);
@@ -465,7 +462,7 @@ public class LogInActivity extends Activity {
             }
             mProgress.setVisibility(View.INVISIBLE);
             mText.setText(R.string.done);
-            startActivity(new Intent(LogInActivity.this, ScreenManager.class));
+            startActivity(new Intent(mContext, ScreenManager.class));
             finish();
         }
     }
@@ -688,7 +685,7 @@ public class LogInActivity extends Activity {
             }
             mProgress.setVisibility(View.INVISIBLE);
             mText.setText(getString(R.string.done));
-            startActivity(new Intent(LogInActivity.this, ScreenManager.class));
+            startActivity(new Intent(mContext, ScreenManager.class));
             finish();
         }
     }

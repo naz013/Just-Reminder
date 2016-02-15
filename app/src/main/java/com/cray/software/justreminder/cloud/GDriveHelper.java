@@ -415,7 +415,7 @@ public class GDriveHelper {
                         OutputStream out = new FileOutputStream(file);
                         driveService.files().get(f.getId()).executeMediaAndDownloadTo(out);
                         try {
-                            new SyncHelper(mContext).groupFromJson(file.toString(), title);
+                            new SyncHelper(mContext).groupFromJson(file);
                         } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
@@ -472,7 +472,7 @@ public class GDriveHelper {
 
                         if (deleteFile) deleteBirthday(title);
                         try {
-                            new SyncHelper(mContext).birthdayFromJson(file.toString(), title);
+                            new SyncHelper(mContext).birthdayFromJson(file);
                         } catch (JSONException e1) {
                             e1.printStackTrace();
                         }

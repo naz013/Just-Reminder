@@ -101,7 +101,7 @@ public class NotesManager extends AppCompatActivity {
     private FloatingEditText taskField;
     private FloatingActionButton mFab;
 
-    private Tracker mTracker;
+    //private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -408,7 +408,7 @@ public class NotesManager extends AppCompatActivity {
 
         if (LocationUtil.isGooglePlayServicesAvailable(this)) {
             ReminderApp application = (ReminderApp) getApplication();
-            mTracker = application.getDefaultTracker();
+            //mTracker = application.getDefaultTracker();
         }
     }
 
@@ -765,8 +765,8 @@ public class NotesManager extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (LocationUtil.isGooglePlayServicesAvailable(this)) {
-            mTracker.setScreenName("Create note screen");
-            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+            //mTracker.setScreenName("Create note screen");
+            //mTracker.send(new HitBuilders.ScreenViewBuilder().build());
         }
     }
 

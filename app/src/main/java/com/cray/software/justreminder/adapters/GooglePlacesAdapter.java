@@ -176,9 +176,27 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
         if (tag.contains("florist")) {
             if (isDark) return R.drawable.ic_local_florist_white_24dp;
             else return R.drawable.ic_local_florist_black_24dp;
-        } else if (tag.contains("food") || tag.contains("restaurant")) {
+        } else if (tag.contains("food")) {
             if (isDark) return R.drawable.ic_local_dining_white_24dp;
             else return R.drawable.ic_local_dining_black_24dp;
+        } else if (tag.contains("restaurant")) {
+            if (isDark) return R.drawable.ic_restaurant_white_24dp;
+            else return R.drawable.ic_restaurant_black_24dp;
+        } else if (tag.contains("bus_station")) {
+            if (isDark) return R.drawable.ic_directions_bus_white_24dp;
+            else return R.drawable.ic_directions_bus_black_24dp;
+        } else if (tag.contains("subway_station")) {
+            if (isDark) return R.drawable.ic_subway_white_24dp;
+            else return R.drawable.ic_subway_black_24dp;
+        } else if (tag.contains("train_station")) {
+            if (isDark) return R.drawable.ic_train_white_24dp;
+            else return R.drawable.ic_train_black_24dp;
+        } else if (tag.contains("bicycle_store")) {
+            if (isDark) return R.drawable.ic_directions_bike_white_24dp;
+            else return R.drawable.ic_directions_bike_black_24dp;
+        } else if (tag.contains("car_repair") || tag.contains("car_rental") || tag.contains("car_dealer")) {
+            if (isDark) return R.drawable.ic_directions_car_white_24dp;
+            else return R.drawable.ic_directions_car_black_24dp;
         } else if (tag.contains("cafe")) {
             if (isDark) return R.drawable.ic_local_cafe_white_24dp;
             else return R.drawable.ic_local_cafe_black_24dp;

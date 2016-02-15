@@ -177,7 +177,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
 
     private Handler handler = new Handler();
 
-    private Tracker mTracker;
+    //private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -391,7 +391,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
 
         if (LocationUtil.isGooglePlayServicesAvailable(this)) {
             ReminderApp application = (ReminderApp) getApplication();
-            mTracker = application.getDefaultTracker();
+            //mTracker = application.getDefaultTracker();
         }
     }
 
@@ -1787,8 +1787,8 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         super.onResume();
         showShowcase();
         if (LocationUtil.isGooglePlayServicesAvailable(this)) {
-            mTracker.setScreenName("Create reminder screen");
-            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+            //mTracker.setScreenName("Create reminder screen");
+            //mTracker.send(new HitBuilders.ScreenViewBuilder().build());
         }
     }
 
