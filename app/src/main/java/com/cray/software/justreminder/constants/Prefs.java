@@ -69,7 +69,6 @@ public class Prefs {
     public static final String SYNC_NOTES = "sync_notes";
     public static final String SYNC_BIRTHDAYS = "sync_birthdays";
     public static final String DELETE_NOTE_FILE = "delete_note_file";
-    public static final String AUTO_LANGUAGE = "auto_language";
     public static final String VOICE_LANGUAGE = "voice_language";
     public static final String TIME_MORNING = "time_morning";
     public static final String TIME_DAY = "time_day";

@@ -1,88 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:scrollbars="none">
 
-<LinearLayout
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_marginLeft="@dimen/settings_margin"
-    android:layout_marginRight="@dimen/settings_margin"
-    android:layout_height="wrap_content">
-
-    <com.cray.software.justreminder.views.PrefsView
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/autoLanguagePrefs"
-        app:prefs_primary_text="@string/auto_language"
-        app:prefs_divider_top="false"
-        app:prefs_type="check"
-        app:prefs_divider_bottom="true"/>
+        android:layout_marginLeft="@dimen/settings_margin"
+        android:layout_marginRight="@dimen/settings_margin"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/language"
-        android:id="@+id/voiceLanguage"
-        android:paddingRight="15dp"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_vertical"
-        android:textSize="@dimen/settings_text_size_primary" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/language"
+            android:id="@+id/voiceLanguage"
+            android:paddingRight="15dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/settings_text_size_primary" />
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/time"
-        android:id="@+id/voiceTime"
-        android:paddingRight="15dp"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:visibility="visible"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_vertical"
-        android:textSize="@dimen/settings_text_size_primary" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/time"
+            android:id="@+id/voiceTime"
+            android:paddingRight="15dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:visibility="visible"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/settings_text_size_primary" />
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:visibility="visible"
-        android:background="@android:color/darker_gray"/>
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:visibility="visible"
+            android:background="@android:color/darker_gray"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/help"
-        android:id="@+id/voiceCommands"
-        android:paddingRight="15dp"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_vertical"
-        android:textSize="@dimen/settings_text_size_primary" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/help"
+            android:id="@+id/voiceCommands"
+            android:paddingRight="15dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical"
+            android:textSize="@dimen/settings_text_size_primary" />
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"/>
 
-</LinearLayout>
+    </LinearLayout>
     </ScrollView>
