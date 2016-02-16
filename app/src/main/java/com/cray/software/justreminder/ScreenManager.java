@@ -1038,7 +1038,7 @@ public class ScreenManager extends AppCompatActivity
         if (requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_OK) {
             getIntent().setAction("JustActivity Created");
             ArrayList matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            new Recognizer(this).selectTask(matches, false);
+            new Recognizer(this).parseResults(matches, false);
             super.onActivityResult(requestCode, resultCode, data);
         }
 

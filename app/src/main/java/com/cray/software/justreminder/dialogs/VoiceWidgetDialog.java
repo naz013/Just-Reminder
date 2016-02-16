@@ -63,7 +63,7 @@ public class VoiceWidgetDialog extends Activity {
 
             ArrayList matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
-            new Recognizer(VoiceWidgetDialog.this).selectTask(matches, true);
+            new Recognizer(VoiceWidgetDialog.this).parseResults(matches, true);
             super.onActivityResult(requestCode, resultCode, data);
         }
         new Notifier(VoiceWidgetDialog.this).recreatePermanent();
