@@ -14,7 +14,6 @@ import com.cray.software.justreminder.LogInActivity;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.IntroPagerAdapter;
 import com.cray.software.justreminder.datas.models.IntroModel;
-import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.ArrayList;
@@ -28,11 +27,11 @@ public class StartHelp extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-
         super.onCreate(savedInstanceState);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_start_help);
 
         introPager = (ViewPager) findViewById(R.id.introPager);
@@ -44,11 +43,11 @@ public class StartHelp extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                if (position > 0){
+                if (position == adapter.getCount() - 1){
+                    doneButton.setText(R.string.done);
+                } else if (position > 0){
                     skipButton.setText(R.string.previous);
                     doneButton.setText(R.string.next);
-                } else if (position == adapter.getCount() - 1){
-                    doneButton.setText(R.string.done);
                 } else {
                     skipButton.setText(R.string.skip);
                     doneButton.setText(R.string.next);

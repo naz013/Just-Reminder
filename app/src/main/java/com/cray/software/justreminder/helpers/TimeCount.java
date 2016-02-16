@@ -296,4 +296,18 @@ public class TimeCount {
         cc.set(Calendar.MILLISECOND, 0);
         return cc.getTimeInMillis();
     }
+
+    public static boolean isWeeekDay(ArrayList<Integer> days) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
+        return days.get(day) == 1;
+    }
+
+    public static boolean isDayOfMonth(int dayOfMonth) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        return dayOfMonth == day;
+    }
 }

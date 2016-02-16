@@ -171,118 +171,124 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
         float itemTextSize = sp.getFloat(CurrentTaskWidgetConfig.CURRENT_WIDGET_TEXT_SIZE + widgetID, 0);
         int widgetButton = sp.getInt(CurrentTaskWidgetConfig.CURRENT_WIDGET_BUTTON_COLOR + widgetID, 0);
 
-        CalendarModel item = data.get(i);
         RemoteViews rView = null;
-        if (item.getViewType() == 1) {
-            rView = new RemoteViews(mContext.getPackageName(),
-                    R.layout.list_item_current_widget);
-            rView.setInt(R.id.itemBg, "setBackgroundColor", itemColor);
+        if (i < getCount()) {
+            CalendarModel item = data.get(i);
+            if (item.getViewType() == 1) {
+                rView = new RemoteViews(mContext.getPackageName(),
+                        R.layout.list_item_current_widget);
+                rView.setInt(R.id.itemBg, "setBackgroundColor", itemColor);
 
-            String task = item.getName();
-            if (task == null || task.matches("")) task = Contacts.getNameFromNumber(
-                    item.getNumber(), mContext);
-            rView.setTextViewText(R.id.taskText, task);
-            rView.setTextColor(R.id.taskText, itemTextColor);
+                String task = item.getName();
+                if (task == null || task.matches("")) task = Contacts.getNameFromNumber(
+                        item.getNumber(), mContext);
+                rView.setTextViewText(R.id.taskText, task);
+                rView.setTextColor(R.id.taskText, itemTextColor);
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                rView.setTextViewTextSize(R.id.taskText, TypedValue.COMPLEX_UNIT_SP, itemTextSize);
-                rView.setTextViewTextSize(R.id.taskNumber, TypedValue.COMPLEX_UNIT_SP, itemTextSize);
-                rView.setTextViewTextSize(R.id.taskDate, TypedValue.COMPLEX_UNIT_SP, itemTextSize);
-                rView.setTextViewTextSize(R.id.taskTime, TypedValue.COMPLEX_UNIT_SP, itemTextSize);
-                rView.setTextViewTextSize(R.id.leftTime, TypedValue.COMPLEX_UNIT_SP, itemTextSize);
-            } else {
-                rView.setFloat(R.id.taskTime, "setTextSize", itemTextSize);
-                rView.setFloat(R.id.taskDate, "setTextSize", itemTextSize);
-                rView.setFloat(R.id.taskNumber, "setTextSize", itemTextSize);
-                rView.setFloat(R.id.taskText, "setTextSize", itemTextSize);
-                rView.setFloat(R.id.leftTime, "setTextSize", itemTextSize);
-            }
-
-            String number = item.getNumber();
-            if (number != null && !number.matches("")) {
-                rView.setTextViewText(R.id.taskNumber, number);
-                rView.setTextColor(R.id.taskNumber, itemTextColor);
-            } else {
-                rView.setViewVisibility(R.id.taskNumber, View.GONE);
-            }
-            rView.setTextViewText(R.id.taskDate, item.getDayDate());
-            rView.setTextColor(R.id.taskDate, itemTextColor);
-
-            rView.setTextViewText(R.id.taskTime, item.getTime());
-            rView.setTextColor(R.id.taskTime, itemTextColor);
-
-            rView.setTextViewText(R.id.leftTime, mCount.getRemaining(item.getDate()));
-            rView.setTextColor(R.id.leftTime, itemTextColor);
-
-            long id = item.getId();
-            if (id != 0) {
-                Intent fillInIntent = new Intent();
-                fillInIntent.putExtra(Constants.EDIT_ID, id);
-                fillInIntent.putExtra(Constants.EDIT_WIDGET, 2);
-                rView.setOnClickFillInIntent(R.id.taskDate, fillInIntent);
-                rView.setOnClickFillInIntent(R.id.taskTime, fillInIntent);
-                rView.setOnClickFillInIntent(R.id.taskNumber, fillInIntent);
-                rView.setOnClickFillInIntent(R.id.taskText, fillInIntent);
-                rView.setOnClickFillInIntent(R.id.itemBg, fillInIntent);
-            }
-        }
-        if (item.getViewType() == 2){
-            rView = new RemoteViews(mContext.getPackageName(),
-                    R.layout.list_item_current_widget_with_list);
-            rView.setInt(R.id.itemBg, "setBackgroundColor", itemColor);
-            String task = item.getName();
-            rView.setTextViewText(R.id.taskText, task);
-            rView.setTextColor(R.id.taskText, itemTextColor);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                rView.setTextViewTextSize(R.id.taskText, TypedValue.COMPLEX_UNIT_SP, itemTextSize);
-            } else {
-                rView.setFloat(R.id.taskText, "setTextSize", itemTextSize);
-            }
-
-            int count = 0;
-            ArrayList<ShoppingList> lists = map.get(item.getId());
-            rView.removeAllViews(R.id.todoList);
-            for (ShoppingList list : lists){
-                RemoteViews view = new RemoteViews(mContext.getPackageName(),
-                        R.layout.list_item_task_item_widget);
-
-                boolean isBlack = widgetButton == R.drawable.ic_add_black_24dp;
-                if (list.isChecked() == 1) {
-                    if (isBlack) view.setInt(R.id.checkView, "setBackgroundResource", R.drawable.ic_check_box_black_24dp);
-                    else view.setInt(R.id.checkView, "setBackgroundResource", R.drawable.ic_check_box_white_24dp);
-                } else {
-                    if (isBlack) view.setInt(R.id.checkView, "setBackgroundResource", R.drawable.ic_check_box_outline_blank_black_24dp);
-                    else view.setInt(R.id.checkView, "setBackgroundResource", R.drawable.ic_check_box_outline_blank_white_24dp);
-                }
-
-                view.setTextColor(R.id.shopText, itemTextColor);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    view.setTextViewTextSize(R.id.shopText, TypedValue.COMPLEX_UNIT_SP, itemTextSize);
+                    rView.setTextViewTextSize(R.id.taskText, TypedValue.COMPLEX_UNIT_SP, itemTextSize);
+                    rView.setTextViewTextSize(R.id.taskNumber, TypedValue.COMPLEX_UNIT_SP, itemTextSize);
+                    rView.setTextViewTextSize(R.id.taskDate, TypedValue.COMPLEX_UNIT_SP, itemTextSize);
+                    rView.setTextViewTextSize(R.id.taskTime, TypedValue.COMPLEX_UNIT_SP, itemTextSize);
+                    rView.setTextViewTextSize(R.id.leftTime, TypedValue.COMPLEX_UNIT_SP, itemTextSize);
                 } else {
-                    view.setFloat(R.id.shopText, "setTextSize", itemTextSize);
+                    rView.setFloat(R.id.taskTime, "setTextSize", itemTextSize);
+                    rView.setFloat(R.id.taskDate, "setTextSize", itemTextSize);
+                    rView.setFloat(R.id.taskNumber, "setTextSize", itemTextSize);
+                    rView.setFloat(R.id.taskText, "setTextSize", itemTextSize);
+                    rView.setFloat(R.id.leftTime, "setTextSize", itemTextSize);
                 }
 
-                count++;
-                if (count == 9) {
-                    view.setViewVisibility(R.id.checkView, View.INVISIBLE);
-                    view.setTextViewText(R.id.shopText, "...");
-                    rView.addView(R.id.todoList, view);
-                    break;
+                String number = item.getNumber();
+                if (number != null && !number.matches("")) {
+                    rView.setTextViewText(R.id.taskNumber, number);
+                    rView.setTextColor(R.id.taskNumber, itemTextColor);
                 } else {
-                    view.setViewVisibility(R.id.checkView, View.VISIBLE);
-                    view.setTextViewText(R.id.shopText, list.getTitle());
-                    rView.addView(R.id.todoList, view);
+                    rView.setViewVisibility(R.id.taskNumber, View.GONE);
+                }
+                rView.setTextViewText(R.id.taskDate, item.getDayDate());
+                rView.setTextColor(R.id.taskDate, itemTextColor);
+
+                rView.setTextViewText(R.id.taskTime, item.getTime());
+                rView.setTextColor(R.id.taskTime, itemTextColor);
+
+                rView.setTextViewText(R.id.leftTime, mCount.getRemaining(item.getDate()));
+                rView.setTextColor(R.id.leftTime, itemTextColor);
+
+                long id = item.getId();
+                if (id != 0) {
+                    Intent fillInIntent = new Intent();
+                    fillInIntent.putExtra(Constants.EDIT_ID, id);
+                    fillInIntent.putExtra(Constants.EDIT_WIDGET, 2);
+                    rView.setOnClickFillInIntent(R.id.taskDate, fillInIntent);
+                    rView.setOnClickFillInIntent(R.id.taskTime, fillInIntent);
+                    rView.setOnClickFillInIntent(R.id.taskNumber, fillInIntent);
+                    rView.setOnClickFillInIntent(R.id.taskText, fillInIntent);
+                    rView.setOnClickFillInIntent(R.id.itemBg, fillInIntent);
                 }
             }
+            if (item.getViewType() == 2) {
+                rView = new RemoteViews(mContext.getPackageName(),
+                        R.layout.list_item_current_widget_with_list);
+                rView.setInt(R.id.itemBg, "setBackgroundColor", itemColor);
+                String task = item.getName();
+                rView.setTextViewText(R.id.taskText, task);
+                rView.setTextColor(R.id.taskText, itemTextColor);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    rView.setTextViewTextSize(R.id.taskText, TypedValue.COMPLEX_UNIT_SP, itemTextSize);
+                } else {
+                    rView.setFloat(R.id.taskText, "setTextSize", itemTextSize);
+                }
 
-            long id = item.getId();
-            if (id != 0) {
-                Intent fillInIntent = new Intent();
-                fillInIntent.putExtra(Constants.EDIT_ID, id);
-                fillInIntent.putExtra(Constants.EDIT_WIDGET, 2);
-                rView.setOnClickFillInIntent(R.id.taskText, fillInIntent);
-                rView.setOnClickFillInIntent(R.id.itemBg, fillInIntent);
-                rView.setOnClickFillInIntent(R.id.todoList, fillInIntent);
+                int count = 0;
+                ArrayList<ShoppingList> lists = map.get(item.getId());
+                rView.removeAllViews(R.id.todoList);
+                for (ShoppingList list : lists) {
+                    RemoteViews view = new RemoteViews(mContext.getPackageName(),
+                            R.layout.list_item_task_item_widget);
+
+                    boolean isBlack = widgetButton == R.drawable.ic_add_black_24dp;
+                    if (list.isChecked() == 1) {
+                        if (isBlack)
+                            view.setInt(R.id.checkView, "setBackgroundResource", R.drawable.ic_check_box_black_24dp);
+                        else
+                            view.setInt(R.id.checkView, "setBackgroundResource", R.drawable.ic_check_box_white_24dp);
+                    } else {
+                        if (isBlack)
+                            view.setInt(R.id.checkView, "setBackgroundResource", R.drawable.ic_check_box_outline_blank_black_24dp);
+                        else
+                            view.setInt(R.id.checkView, "setBackgroundResource", R.drawable.ic_check_box_outline_blank_white_24dp);
+                    }
+
+                    view.setTextColor(R.id.shopText, itemTextColor);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        view.setTextViewTextSize(R.id.shopText, TypedValue.COMPLEX_UNIT_SP, itemTextSize);
+                    } else {
+                        view.setFloat(R.id.shopText, "setTextSize", itemTextSize);
+                    }
+
+                    count++;
+                    if (count == 9) {
+                        view.setViewVisibility(R.id.checkView, View.INVISIBLE);
+                        view.setTextViewText(R.id.shopText, "...");
+                        rView.addView(R.id.todoList, view);
+                        break;
+                    } else {
+                        view.setViewVisibility(R.id.checkView, View.VISIBLE);
+                        view.setTextViewText(R.id.shopText, list.getTitle());
+                        rView.addView(R.id.todoList, view);
+                    }
+                }
+
+                long id = item.getId();
+                if (id != 0) {
+                    Intent fillInIntent = new Intent();
+                    fillInIntent.putExtra(Constants.EDIT_ID, id);
+                    fillInIntent.putExtra(Constants.EDIT_WIDGET, 2);
+                    rView.setOnClickFillInIntent(R.id.taskText, fillInIntent);
+                    rView.setOnClickFillInIntent(R.id.itemBg, fillInIntent);
+                    rView.setOnClickFillInIntent(R.id.todoList, fillInIntent);
+                }
             }
         }
         return rView;

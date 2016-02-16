@@ -1,6 +1,5 @@
 package com.cray.software.justreminder.activities;
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.content.Context;
 import android.content.Intent;
@@ -8,8 +7,9 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.LogInActivity;
 import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
@@ -45,19 +45,13 @@ import java.util.Locale;
 /**
  * Application splash screen for checking preferences.
  */
-public class SplashScreen extends Activity{
+public class SplashScreen extends AppCompatActivity {
 
     public static final String APP_UI_PREFERENCES = "ui_settings";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPrefs prefs = new SharedPrefs(SplashScreen.this);
-
-        if (prefs.loadBoolean(Prefs.EXPORT_SETTINGS)){
-            prefs.loadPrefsFromFile();
-        }
-        initPrefs();
     }
 
     /**
@@ -165,7 +159,12 @@ public class SplashScreen extends Activity{
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPrefs prefs = new SharedPrefs(this);
+        SharedPrefs prefs = new SharedPrefs(SplashScreen.this);
+        if (prefs.loadBoolean(Prefs.EXPORT_SETTINGS)){
+            prefs.loadPrefsFromFile();
+        }
+        initPrefs();
+
         if (!prefs.loadBoolean("isGenB")){
             DataBase db = new DataBase(this);
             db.open();
@@ -181,9 +180,7 @@ public class SplashScreen extends Activity{
                     }
                 } while (c.moveToNext());
             }
-            if (c != null) {
-                c.close();
-            }
+            if (c != null) c.close();
             db.close();
             prefs.saveBoolean("isGenB", true);
         }
@@ -201,7 +198,7 @@ public class SplashScreen extends Activity{
         checkPrefs();
 
         if (isFirstTime() && !prefs.loadBoolean(Prefs.CONTACTS_IMPORT_DIALOG)) {
-            startActivity(new Intent(SplashScreen.this, StartHelp.class));
+            startActivity(new Intent(SplashScreen.this, LogInActivity.class));
         } else {
             startActivity(new Intent(SplashScreen.this, ScreenManager.class));
         }
@@ -228,9 +225,7 @@ public class SplashScreen extends Activity{
                     db.setGroup(c.getLong(c.getColumnIndex(NextBase._ID)), defUiID);
                 } while (c.moveToNext());
             }
-            if (c != null) {
-                c.close();
-            }
+            if (c != null) c.close();
             db.close();
         }
         if (cat != null) cat.close();
@@ -383,33 +378,23 @@ public class SplashScreen extends Activity{
         if (!prefs.isString(Prefs.REMINDER_IMAGE)){
             prefs.savePrefs(Prefs.REMINDER_IMAGE, Constants.DEFAULT);
         }
-        String localeCheck = Locale.getDefault().toString().toLowerCase();
-        String url;
-        if (localeCheck.startsWith("uk")) {
-            url = Constants.LANGUAGE_UK;
-        } else if (localeCheck.startsWith("ru")) {
-            url = Constants.LANGUAGE_RU;
-        } else url = Constants.LANGUAGE_EN;
+
+        String url = Constants.LANGUAGE_EN;
         if (!prefs.isString(Prefs.VOICE_LANGUAGE)){
             prefs.savePrefs(Prefs.VOICE_LANGUAGE, url);
         }
-
         if (!prefs.isString(Prefs.TIME_MORNING)){
             prefs.savePrefs(Prefs.TIME_MORNING, "7:0");
         }
-
         if (!prefs.isString(Prefs.TIME_DAY)){
             prefs.savePrefs(Prefs.TIME_DAY, "12:0");
         }
-
         if (!prefs.isString(Prefs.TIME_EVENING)){
             prefs.savePrefs(Prefs.TIME_EVENING, "19:0");
         }
-
         if (!prefs.isString(Prefs.TIME_NIGHT)){
             prefs.savePrefs(Prefs.TIME_NIGHT, "23:0");
         }
-
         if (!prefs.isString(Prefs.DAYS_TO_BIRTHDAY)){
             prefs.saveInt(Prefs.DAYS_TO_BIRTHDAY, 0);
         }

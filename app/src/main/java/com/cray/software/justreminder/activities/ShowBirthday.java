@@ -16,6 +16,7 @@ import android.os.PowerManager;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.CardView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -152,10 +153,13 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
         }
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        Intent i = getIntent();
-        id = i.getLongExtra("id", 0);
+        id = getIntent().getLongExtra("id", 0);
 
         findViewById(R.id.single_container).setVisibility(View.VISIBLE);
+
+        CardView card = (CardView) findViewById(R.id.card);
+        card.setCardBackgroundColor(cs.getCardStyle());
+        if (Module.isLollipop()) card.setCardElevation(Configs.CARD_ELEVATION_REMINDER);
 
         loadImage();
 
@@ -163,10 +167,8 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
 
         FloatingActionButton buttonOk = (FloatingActionButton) findViewById(R.id.buttonOk);
         buttonOk.setOnClickListener(this);
-
         FloatingActionButton buttonCall = (FloatingActionButton) findViewById(R.id.buttonCall);
         buttonCall.setOnClickListener(this);
-
         FloatingActionButton buttonSend = (FloatingActionButton) findViewById(R.id.buttonSend);
         buttonSend.setOnClickListener(this);
         colorify(buttonOk, buttonCall, buttonSend);

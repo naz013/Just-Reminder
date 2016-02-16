@@ -2,7 +2,6 @@ package com.cray.software.justreminder.views;
 
 import android.animation.ObjectAnimator;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 import com.cray.software.justreminder.enums.QuickReturnViewType;
@@ -44,7 +43,7 @@ public class ReturnScrollListener extends RecyclerView.OnScrollListener {
 
     @Override
     public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-        Log.d(getClass().getSimpleName(), "onScrollStateChanged() : scrollState - " + newState);
+        //Log.d(getClass().getSimpleName(), "onScrollStateChanged() : scrollState - " + newState);
         // apply another list' s on scroll listener
         for (RecyclerView.OnScrollListener listener : mExtraOnScrollListenerList) {
             listener.onScrollStateChanged(recyclerView, newState);

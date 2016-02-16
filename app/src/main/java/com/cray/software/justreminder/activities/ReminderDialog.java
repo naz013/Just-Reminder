@@ -68,6 +68,8 @@ import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.TextDrawable;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -108,7 +110,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     private TextToSpeech tts;
     private Handler handler = new Handler();
 
-    //private Tracker mTracker;
+    private Tracker mTracker;
 
     /**
      * Runnable for increasing volume in stream.
@@ -518,7 +520,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
 
         if (LocationUtil.isGooglePlayServicesAvailable(this)) {
             ReminderApp application = (ReminderApp) getApplication();
-            //mTracker = application.getDefaultTracker();
+            mTracker = application.getDefaultTracker();
         }
     }
 
@@ -781,8 +783,8 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     protected void onResume() {
         super.onResume();
         if (LocationUtil.isGooglePlayServicesAvailable(this)) {
-            //mTracker.setScreenName("Reminder " + getType());
-            //mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+            mTracker.setScreenName("Reminder " + getType());
+            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
         }
     }
 

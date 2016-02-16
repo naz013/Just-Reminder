@@ -43,6 +43,7 @@ public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Integer> {
         this.showDialog = showDialog;
         if (showDialog){
             pd = new ProgressDialog(context);
+            pd.setMessage(context.getString(R.string.please_wait));
             pd.setCancelable(true);
         }
     }

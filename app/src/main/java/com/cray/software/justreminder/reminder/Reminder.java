@@ -26,7 +26,6 @@ import com.cray.software.justreminder.json.JExport;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JParser;
 import com.cray.software.justreminder.json.JRecurrence;
-import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.DelayReceiver;
 import com.cray.software.justreminder.services.GeolocationService;
@@ -110,9 +109,7 @@ public class Reminder {
                 db.setJson(id, parser.toJsonString());
                 int exp = parser.getExport().getCalendar();
 
-                if (Module.isMarshmallow()) {
-                    new AlarmReceiver().enableReminder(context, id);
-                }
+                new AlarmReceiver().enableReminder(context, id);
 
                 SharedPrefs sPrefs = new SharedPrefs(context);
                 boolean isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
@@ -331,7 +328,7 @@ public class Reminder {
      * @param context application context.
      * @param id reminder identifier.
      */
-    private static void disable(Context context, long id) {
+    public static void disable(Context context, long id) {
         NotificationManager mNotifyMgr =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Integer i = (int) (long) id;

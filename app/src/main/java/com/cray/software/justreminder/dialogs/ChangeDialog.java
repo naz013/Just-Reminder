@@ -8,6 +8,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.modules.Module;
 
 public class ChangeDialog extends Activity {
 
@@ -21,6 +22,7 @@ public class ChangeDialog extends Activity {
 
         WebView wv = new WebView(this);
         String url = "file:///android_asset/files/change_log.html";
+        if (Module.isPro()) url = "file:///android_asset/files/change_log_pro.html";
         wv.loadUrl(url);
         wv.setWebViewClient(new WebViewClient() {
             @Override

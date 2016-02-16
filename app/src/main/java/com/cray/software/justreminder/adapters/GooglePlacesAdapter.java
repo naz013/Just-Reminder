@@ -176,9 +176,9 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
         if (tag.contains("florist")) {
             if (isDark) return R.drawable.ic_local_florist_white_24dp;
             else return R.drawable.ic_local_florist_black_24dp;
-        } else if (tag.contains("food")) {
-            if (isDark) return R.drawable.ic_local_dining_white_24dp;
-            else return R.drawable.ic_local_dining_black_24dp;
+        } else if (tag.contains("cafe")) {
+            if (isDark) return R.drawable.ic_local_cafe_white_24dp;
+            else return R.drawable.ic_local_cafe_black_24dp;
         } else if (tag.contains("restaurant")) {
             if (isDark) return R.drawable.ic_restaurant_white_24dp;
             else return R.drawable.ic_restaurant_black_24dp;
@@ -197,9 +197,6 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
         } else if (tag.contains("car_repair") || tag.contains("car_rental") || tag.contains("car_dealer")) {
             if (isDark) return R.drawable.ic_directions_car_white_24dp;
             else return R.drawable.ic_directions_car_black_24dp;
-        } else if (tag.contains("cafe")) {
-            if (isDark) return R.drawable.ic_local_cafe_white_24dp;
-            else return R.drawable.ic_local_cafe_black_24dp;
         } else if (tag.contains("taxi") || tag.contains("taxi_stand")) {
             if (isDark) return R.drawable.ic_local_taxi_white_24dp;
             else return R.drawable.ic_local_taxi_black_24dp;
@@ -265,6 +262,9 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
                 || tag.contains("shopping_mall") || tag.contains("shoe_store")) {
             if (isDark) return R.drawable.ic_local_mall_white_24dp;
             else return R.drawable.ic_local_mall_black_24dp;
+        } else if (tag.contains("food")) {
+            if (isDark) return R.drawable.ic_local_dining_white_24dp;
+            else return R.drawable.ic_local_dining_black_24dp;
         } else {
             if (isDark) return R.drawable.ic_place_white_24dp;
             else return R.drawable.ic_place_black_24dp;

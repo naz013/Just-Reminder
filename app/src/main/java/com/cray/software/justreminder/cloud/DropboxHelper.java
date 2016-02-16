@@ -51,8 +51,6 @@ public class DropboxHelper {
     final static private String ACCESS_KEY_NAME = "ACCESS_KEY";
     final static private String ACCESS_SECRET_NAME = "ACCESS_SECRET";
 
-    private static final boolean USE_OAUTH1 = false;
-
     public DropboxHelper(Context context){
         this.mContext = context;
     }
@@ -130,15 +128,8 @@ public class DropboxHelper {
     }
 
     public boolean startLink(){
-        boolean isLinkSuccessful;
-        if (USE_OAUTH1) {
-            mDBApi.getSession().startAuthentication(mContext);
-            isLinkSuccessful = mDBApi.getSession().isLinked();
-        } else {
-            mDBApi.getSession().startOAuth2Authentication(mContext);
-            isLinkSuccessful = mDBApi.getSession().isLinked();
-        }
-        return isLinkSuccessful;
+        mDBApi.getSession().startOAuth2Authentication(mContext);
+        return mDBApi.getSession().isLinked();
     }
 
     public boolean unlink(){

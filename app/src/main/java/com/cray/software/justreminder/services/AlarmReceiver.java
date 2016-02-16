@@ -14,8 +14,6 @@ import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.enums.NewMethod;
 import com.cray.software.justreminder.helpers.Recurrence;
 import com.cray.software.justreminder.json.JModel;
-import com.cray.software.justreminder.json.JParser;
-import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.Type;
@@ -30,13 +28,13 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d("----ON_RECEIVE-----", TimeUtil.getFullDateTime(System.currentTimeMillis(), true));
         long id = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
-        int code = intent.getIntExtra(Constants.ITEM_CODE_INTENT, 0);
         Intent service = new Intent(context, AlarmReceiver.class);
         context.startService(service);
-        if (code == 2) {
-            JModel reminder = new Type(context).getItem(id);
-            String exclusion = reminder.getExclusion().toString();
-            if (exclusion != null){
+        JModel reminder = new Type(context).getItem(id);
+        String exclusion = reminder.getExclusion().toString();
+        String type = reminder.getType();
+        if (type.matches(Constants.TYPE_TIME)) {
+            if (exclusion != null) {
                 Recurrence helper = new Recurrence(exclusion);
                 if (!helper.isRange()) start(context, id);
                 else {
@@ -63,16 +61,9 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         Cursor c = db.getReminder(id);
         Integer i = (int) (long) id;
         long due = 0;
-        long repeat = 0;
-        int code = 0;
         if (c != null && c.moveToNext()) {
             due = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
-            String json = c.getString(c.getColumnIndex(NextBase.JSON));
-            JParser jModel = new JParser(json);
-            JRecurrence jRecurrence =  jModel.getRecurrence();
-            repeat = jRecurrence.getRepeat();
-            /*String type = c.getString(c.getColumnIndex(NextBase.TYPE));
-            if (due < System.currentTimeMillis()) {
+            /*if (due < System.currentTimeMillis()) {
                 if (type != null) {
                     if (type.startsWith(Constants.TYPE_WEEKDAY) ||
                             type.startsWith(Constants.TYPE_MONTHDAY)) {
@@ -88,25 +79,14 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         }
         if (c != null) c.close();
         db.close();
-
         if (due == 0) return;
-        intent.putExtra(Constants.ITEM_CODE_INTENT, code);
-
         PendingIntent alarmIntent = PendingIntent.getBroadcast(context, i, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        if (repeat > 0) {
-            if (Module.isMarshmallow()) {
-                alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, due, alarmIntent);
-            } else {
-                alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, due, repeat, alarmIntent);
-            }
+        if (Module.isMarshmallow()) {
+            alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, due, alarmIntent);
         } else {
-            if (Module.isMarshmallow()) {
-                alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, due, alarmIntent);
-            } else {
-                alarmMgr.set(AlarmManager.RTC_WAKEUP, due, alarmIntent);
-            }
+            alarmMgr.set(AlarmManager.RTC_WAKEUP, due, alarmIntent);
         }
     }
 

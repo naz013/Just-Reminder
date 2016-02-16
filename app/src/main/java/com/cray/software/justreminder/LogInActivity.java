@@ -14,7 +14,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Looper;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -37,9 +36,10 @@ import com.cray.software.justreminder.helpers.IOHelper;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.interfaces.LoginListener;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.utils.MemoryUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
-import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.CircularProgress;
 import com.cray.software.justreminder.views.PaperButton;
 import com.google.android.gms.auth.GoogleAuthException;
@@ -63,7 +63,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-public class LogInActivity extends Activity {
+public class LogInActivity extends Activity implements LoginListener {
 
     private SharedPrefs sPrefs;
     private ColorSetter cs = new ColorSetter(LogInActivity.this);
@@ -91,7 +91,7 @@ public class LogInActivity extends Activity {
         setTheme(cs.getFullscreenStyle());
         setContentView(R.layout.activity_log_in);
         if (Module.isLollipop()) {
-            getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
+            getWindow().setStatusBarColor(cs.getColor(cs.colorPrimaryDark()));
         }
         setRequestedOrientation(cs.getRequestOrientation());
 
@@ -140,7 +140,8 @@ public class LogInActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (enabled) {
-                    if (Permissions.checkPermission(LogInActivity.this, Permissions.GET_ACCOUNTS)) {
+                    if (Permissions.checkPermission(LogInActivity.this, Permissions.GET_ACCOUNTS,
+                            Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL, Permissions.ACCESS_FINE_LOCATION)) {
                         Intent intent = AccountPicker.newChooseAccountIntent(null, null,
                                 new String[]{"com.google"}, false, null, null, null, null);
                         startActivityForResult(intent, REQUEST_AUTHORIZATION);
@@ -148,7 +149,7 @@ public class LogInActivity extends Activity {
                     } else {
                         Permissions.requestPermission(LogInActivity.this, 103,
                                 Permissions.GET_ACCOUNTS, Permissions.READ_EXTERNAL,
-                                Permissions.WRITE_EXTERNAL);
+                                Permissions.WRITE_EXTERNAL, Permissions.ACCESS_FINE_LOCATION);
                     }
                 }
             }
@@ -160,7 +161,7 @@ public class LogInActivity extends Activity {
                 if (enabled) {
                     if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL,
                             Permissions.ACCESS_FINE_LOCATION)) {
-                        new LocalSync(LogInActivity.this, progress, progressMesage).execute();
+                        new LocalSync(LogInActivity.this, progress, progressMesage, LogInActivity.this).execute();
                         enabled = false;
                     } else {
                         Permissions.requestPermission(LogInActivity.this, 101,
@@ -178,7 +179,7 @@ public class LogInActivity extends Activity {
         switch (requestCode){
             case 101:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    new LocalSync(LogInActivity.this, progress, progressMesage).execute();
+                    new LocalSync(LogInActivity.this, progress, progressMesage, this).execute();
                     enabled = false;
                 } else {
                     checkGroups();
@@ -210,7 +211,7 @@ public class LogInActivity extends Activity {
                 break;
             case 104:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    new SyncTask(LogInActivity.this, progress, progressMesage).execute();
+                    new SyncTask(LogInActivity.this, progress, progressMesage, LogInActivity.this).execute();
                     enabled = false;
                 } else {
                     checkGroups();
@@ -240,7 +241,7 @@ public class LogInActivity extends Activity {
                 sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
                 if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL,
                         Permissions.WRITE_EXTERNAL, Permissions.ACCESS_FINE_LOCATION)) {
-                    new SyncTask(LogInActivity.this, progress, progressMesage).execute();
+                    new SyncTask(LogInActivity.this, progress, progressMesage, LogInActivity.this).execute();
                     enabled = false;
                 } else {
                     Permissions.requestPermission(LogInActivity.this, 104,
@@ -252,16 +253,6 @@ public class LogInActivity extends Activity {
             connectDropbox.setEnabled(false);
             connectGDrive.setEnabled(false);
             skipButton.setEnabled(false);
-            sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
-            if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL,
-                    Permissions.WRITE_EXTERNAL, Permissions.ACCESS_FINE_LOCATION)) {
-                new SyncTask(LogInActivity.this, progress, progressMesage).execute();
-                enabled = false;
-            } else {
-                Permissions.requestPermission(LogInActivity.this, 104,
-                        Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL,
-                        Permissions.ACCESS_FINE_LOCATION);
-            }
         }
     }
 
@@ -357,7 +348,7 @@ public class LogInActivity extends Activity {
             if (Permissions.checkPermission(LogInActivity.this,
                     Permissions.READ_EXTERNAL,
                     Permissions.WRITE_EXTERNAL)) {
-                new SyncTask(LogInActivity.this, progress, progressMesage).execute();
+                new SyncTask(LogInActivity.this, progress, progressMesage, this).execute();
             } else {
                 Permissions.requestPermission(LogInActivity.this, 104,
                         Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);
@@ -372,7 +363,7 @@ public class LogInActivity extends Activity {
             if (Permissions.checkPermission(LogInActivity.this,
                     Permissions.READ_EXTERNAL,
                     Permissions.WRITE_EXTERNAL)) {
-                new SyncTask(LogInActivity.this, progress, progressMesage).execute();
+                new SyncTask(LogInActivity.this, progress, progressMesage, this).execute();
             } else {
                 Permissions.requestPermission(LogInActivity.this, 104,
                         Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);
@@ -380,17 +371,70 @@ public class LogInActivity extends Activity {
         }
     }
 
-    public class LocalSync extends AsyncTask<Void, String, Void>{
+    @Override
+    public void onLocal() {
+        SharedPrefs sPrefs = new SharedPrefs(LogInActivity.this);
+        if (checkBox.isChecked()) {
+            sPrefs.saveBoolean(Prefs.CONTACT_BIRTHDAYS, true);
+            sPrefs.saveBoolean(Prefs.CONTACTS_IMPORT_DIALOG, true);
+            sPrefs.saveBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, true);
+            sPrefs.saveBoolean(Prefs.WIDGET_BIRTHDAYS, true);
+            sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, true);
+            if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_CONTACTS)) {
+                new ImportBirthdays(LogInActivity.this).execute();
+            } else {
+                Permissions.requestPermission(LogInActivity.this, 102,
+                        Permissions.READ_CONTACTS);
+            }
+        } else {
+            sPrefs.saveBoolean(Prefs.CONTACT_BIRTHDAYS, false);
+            sPrefs.saveBoolean(Prefs.CONTACTS_IMPORT_DIALOG, true);
+            sPrefs.saveBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, false);
+            sPrefs.saveBoolean(Prefs.WIDGET_BIRTHDAYS, false);
+            sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, false);
+        }
+        startActivity(new Intent(LogInActivity.this, ScreenManager.class));
+        finish();
+    }
 
-        Context mContext;
-        CircularProgress mProgress;
-        TextView mText;
-        boolean isChecked = false;
+    @Override
+    public void onCloud() {
+        if (checkBox.isChecked()) {
+            sPrefs.saveBoolean(Prefs.CONTACT_BIRTHDAYS, true);
+            sPrefs.saveBoolean(Prefs.CONTACTS_IMPORT_DIALOG, true);
+            sPrefs.saveBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, true);
+            sPrefs.saveBoolean(Prefs.WIDGET_BIRTHDAYS, true);
+            sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, true);
+            if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_CONTACTS)) {
+                new ImportBirthdays(LogInActivity.this).execute();
+            } else {
+                Permissions.requestPermission(LogInActivity.this, 102,
+                        Permissions.READ_CONTACTS);
+            }
+        } else {
+            sPrefs.saveBoolean(Prefs.CONTACT_BIRTHDAYS, false);
+            sPrefs.saveBoolean(Prefs.CONTACTS_IMPORT_DIALOG, true);
+            sPrefs.saveBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, false);
+            sPrefs.saveBoolean(Prefs.WIDGET_BIRTHDAYS, false);
+            sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, false);
+        }
+        startActivity(new Intent(this, ScreenManager.class));
+        finish();
+    }
 
-        public LocalSync(Context context, CircularProgress progress, TextView textView){
+    private class LocalSync extends AsyncTask<Void, String, Void>{
+
+        private Context mContext;
+        private CircularProgress mProgress;
+        private TextView mText;
+        private boolean isChecked = false;
+        private LoginListener listener;
+
+        public LocalSync(Context context, CircularProgress progress, TextView textView, LoginListener listener){
             this.mContext = context;
             this.mProgress = progress;
             this.mText = textView;
+            this.listener = listener;
         }
 
         @Override
@@ -413,7 +457,6 @@ public class LogInActivity extends Activity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            Looper.prepare();
             IOHelper ioHelper = new IOHelper(mContext);
 
             publishProgress(getString(R.string.syncing_groups));
@@ -440,30 +483,9 @@ public class LogInActivity extends Activity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            SharedPrefs sPrefs = new SharedPrefs(mContext);
-            if (checkBox.isChecked()) {
-                sPrefs.saveBoolean(Prefs.CONTACT_BIRTHDAYS, true);
-                sPrefs.saveBoolean(Prefs.CONTACTS_IMPORT_DIALOG, true);
-                sPrefs.saveBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, true);
-                sPrefs.saveBoolean(Prefs.WIDGET_BIRTHDAYS, true);
-                sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, true);
-                if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_CONTACTS)) {
-                    new ImportBirthdays(LogInActivity.this).execute();
-                } else {
-                    Permissions.requestPermission(LogInActivity.this, 102,
-                            Permissions.READ_CONTACTS);
-                }
-            } else {
-                sPrefs.saveBoolean(Prefs.CONTACT_BIRTHDAYS, false);
-                sPrefs.saveBoolean(Prefs.CONTACTS_IMPORT_DIALOG, true);
-                sPrefs.saveBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, false);
-                sPrefs.saveBoolean(Prefs.WIDGET_BIRTHDAYS, false);
-                sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, false);
-            }
             mProgress.setVisibility(View.INVISIBLE);
             mText.setText(R.string.done);
-            startActivity(new Intent(mContext, ScreenManager.class));
-            finish();
+            if (listener != null) listener.onLocal();
         }
     }
 
@@ -497,15 +519,18 @@ public class LogInActivity extends Activity {
 
     public class SyncTask extends AsyncTask<Void, String, Void>{
 
-        Context mContext;
-        CircularProgress mProgress;
-        TextView mText;
-        boolean isChecked = false;
+        private Context mContext;
+        private CircularProgress mProgress;
+        private TextView mText;
+        private boolean isChecked = false;
+        private LoginListener listener;
 
-        public SyncTask(Context context, CircularProgress progress, TextView textView){
+        public SyncTask(Context context, CircularProgress progress, TextView textView,
+                        LoginListener listener){
             this.mContext = context;
             this.mProgress = progress;
             this.mText = textView;
+            this.listener = listener;
         }
 
         @Override
@@ -528,25 +553,27 @@ public class LogInActivity extends Activity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            IOHelper ioHelper = new IOHelper(mContext);
+            if (MemoryUtil.isSdPresent()) {
+                IOHelper ioHelper = new IOHelper(mContext);
 
-            publishProgress(getString(R.string.syncing_groups));
-            ioHelper.restoreGroup(true);
+                publishProgress(getString(R.string.syncing_groups));
+                ioHelper.restoreGroup(true);
 
-            checkGroups();
+                checkGroups();
 
-            //import reminders
-            publishProgress(getString(R.string.syncing_reminders));
-            ioHelper.restoreReminder(true);
+                //import reminders
+                publishProgress(getString(R.string.syncing_reminders));
+                ioHelper.restoreReminder(true);
 
-            //import notes
-            publishProgress(getString(R.string.syncing_notes));
-            ioHelper.restoreNote(true);
+                //import notes
+                publishProgress(getString(R.string.syncing_notes));
+                ioHelper.restoreNote(true);
 
-            //import birthdays
-            if (isChecked) {
-                publishProgress(getString(R.string.syncing_birthdays));
-                ioHelper.restoreBirthday(true, false);
+                //import birthdays
+                if (isChecked) {
+                    publishProgress(getString(R.string.syncing_birthdays));
+                    ioHelper.restoreBirthday(true, false);
+                }
             }
 
             //getting Google Tasks
@@ -656,7 +683,6 @@ public class LogInActivity extends Activity {
                     }
                 }
             }
-
             data.close();
             return null;
         }
@@ -664,29 +690,9 @@ public class LogInActivity extends Activity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            if (checkBox.isChecked()) {
-                sPrefs.saveBoolean(Prefs.CONTACT_BIRTHDAYS, true);
-                sPrefs.saveBoolean(Prefs.CONTACTS_IMPORT_DIALOG, true);
-                sPrefs.saveBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, true);
-                sPrefs.saveBoolean(Prefs.WIDGET_BIRTHDAYS, true);
-                sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, true);
-                if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_CONTACTS)) {
-                    new ImportBirthdays(LogInActivity.this).execute();
-                } else {
-                    Permissions.requestPermission(LogInActivity.this, 102,
-                            Permissions.READ_CONTACTS);
-                }
-            } else {
-                sPrefs.saveBoolean(Prefs.CONTACT_BIRTHDAYS, false);
-                sPrefs.saveBoolean(Prefs.CONTACTS_IMPORT_DIALOG, true);
-                sPrefs.saveBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, false);
-                sPrefs.saveBoolean(Prefs.WIDGET_BIRTHDAYS, false);
-                sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, false);
-            }
             mProgress.setVisibility(View.INVISIBLE);
             mText.setText(getString(R.string.done));
-            startActivity(new Intent(mContext, ScreenManager.class));
-            finish();
+            if (listener != null) listener.onCloud();
         }
     }
 
