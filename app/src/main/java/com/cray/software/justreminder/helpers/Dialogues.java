@@ -436,31 +436,9 @@ public class Dialogues {
         locales.clear();
 
         final String localeCheck = Locale.getDefault().toString().toLowerCase();
-        int ru;
-        int uk;
-        int en;
-        if (localeCheck.startsWith("uk")) {
-            uk = 0;
-            ru = 2;
-            en = 1;
-            locales.add(context.getString(R.string.ukrainian) + " (" + Constants.LANGUAGE_UK + ")");
-            locales.add(context.getString(R.string.english) + " (" + Constants.LANGUAGE_EN + ")");
-            locales.add(context.getString(R.string.russian) + " (" + Constants.LANGUAGE_RU + ")");
-        } else if (localeCheck.startsWith("ru")) {
-            uk = 2;
-            ru = 0;
-            en = 1;
-            locales.add(context.getString(R.string.russian) + " (" + Constants.LANGUAGE_RU + ")");
-            locales.add(context.getString(R.string.english) + " (" + Constants.LANGUAGE_EN + ")");
-            locales.add(context.getString(R.string.ukrainian) + " (" + Constants.LANGUAGE_UK + ")");
-        } else {
-            uk = 1;
-            ru = 2;
-            en = 0;
-            locales.add(context.getString(R.string.english) + " (" + Constants.LANGUAGE_EN + ")");
-            locales.add(context.getString(R.string.ukrainian) + " (" + Constants.LANGUAGE_UK + ")");
-            locales.add(context.getString(R.string.russian) + " (" + Constants.LANGUAGE_RU + ")");
-        }
+        locales.add(context.getString(R.string.english) + " (" + Constants.LANGUAGE_EN + ")");
+        locales.add(context.getString(R.string.russian) + " (" + Constants.LANGUAGE_RU + ")");
+        locales.add(context.getString(R.string.ukrainian) + " (" + Constants.LANGUAGE_UK + ")");
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_list_item_single_choice, locales);
@@ -469,11 +447,11 @@ public class Dialogues {
         int i;
         String language = prefs.loadPrefs(Prefs.VOICE_LANGUAGE);
         if (language.matches(Constants.LANGUAGE_EN)){
-            i = en;
+            i = 0;
         } else if (language.matches(Constants.LANGUAGE_RU)){
-            i = ru;
+            i = 1;
         } else if (language.matches(Constants.LANGUAGE_UK)){
-            i = uk;
+            i = 2;
         } else i = 0;
 
         builder.setSingleChoiceItems(adapter, i, new DialogInterface.OnClickListener() {
