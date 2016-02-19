@@ -11,7 +11,7 @@ import com.cray.software.justreminder.ReminderApp;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
-import com.cray.software.justreminder.helpers.Recognizer;
+import com.cray.software.justreminder.helpers.Recognize;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.google.android.gms.analytics.HitBuilders;
@@ -45,9 +45,7 @@ public class VoiceWidgetDialog extends Activity {
                     .build());
         }
         SharedPrefs sPrefs = new SharedPrefs(VoiceWidgetDialog.this);
-        if (!sPrefs.loadBoolean(Prefs.AUTO_LANGUAGE)) {
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, sPrefs.loadPrefs(Prefs.VOICE_LANGUAGE));
-        } else intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, sPrefs.loadPrefs(Prefs.VOICE_LANGUAGE));
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.say_something));
         try {
             startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
@@ -63,7 +61,7 @@ public class VoiceWidgetDialog extends Activity {
 
             ArrayList matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
-            new Recognizer(VoiceWidgetDialog.this).selectTask(matches, true);
+            new Recognize(VoiceWidgetDialog.this).parseResults(matches, true);
             super.onActivityResult(requestCode, resultCode, data);
         }
         new Notifier(VoiceWidgetDialog.this).recreatePermanent();

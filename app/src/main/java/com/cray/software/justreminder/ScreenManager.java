@@ -63,7 +63,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Permissions;
-import com.cray.software.justreminder.helpers.Recognizer;
+import com.cray.software.justreminder.helpers.Recognize;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
@@ -1038,7 +1038,7 @@ public class ScreenManager extends AppCompatActivity
         if (requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_OK) {
             getIntent().setAction("JustActivity Created");
             ArrayList matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            new Recognizer(this).selectTask(matches, false);
+            new Recognize(this).parseResults(matches, false);
             super.onActivityResult(requestCode, resultCode, data);
         }
 

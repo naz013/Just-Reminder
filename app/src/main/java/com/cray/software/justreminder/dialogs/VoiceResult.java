@@ -66,7 +66,7 @@ public class VoiceResult extends Activity {
         RelativeLayout reminderContainer = (RelativeLayout) findViewById(R.id.reminderContainer);
         TextView leftTime = (TextView) findViewById(R.id.remainingTime);
         SwitchCompat check = (SwitchCompat) findViewById(R.id.itemCheck);
-        check.setVisibility(View.VISIBLE);
+        check.setVisibility(View.GONE);
         TextView taskDate = (TextView) findViewById(R.id.taskDate);
         taskDate.setText("");
         TextView reminder_type = (TextView) findViewById(R.id.reminder_type);

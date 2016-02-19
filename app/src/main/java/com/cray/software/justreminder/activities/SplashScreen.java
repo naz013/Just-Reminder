@@ -124,7 +124,6 @@ public class SplashScreen extends AppCompatActivity {
             uiEd.putBoolean(Prefs.QUICK_NOTE_REMINDER, false);
             uiEd.putBoolean(Prefs.NOTE_ENCRYPT, true);
             uiEd.putBoolean(Prefs.SYNC_NOTES, true);
-            uiEd.putBoolean(Prefs.AUTO_LANGUAGE, true);
             uiEd.putBoolean(Prefs.EXPORT_TO_STOCK, false);
             uiEd.putBoolean(Prefs.REMINDERS_IN_CALENDAR, true);
             uiEd.putBoolean(Prefs.IS_24_TIME_FORMAT, true);
@@ -458,9 +457,6 @@ public class SplashScreen extends AppCompatActivity {
         }
         if (!prefs.isString(Prefs.REMINDER_IMAGE_BLUR)){
             prefs.saveBoolean(Prefs.REMINDER_IMAGE_BLUR, false);
-        }
-        if (!prefs.isString(Prefs.AUTO_LANGUAGE)){
-            prefs.saveBoolean(Prefs.AUTO_LANGUAGE, true);
         }
         if (!prefs.isString(Prefs.QUICK_NOTE_REMINDER)){
             prefs.saveBoolean(Prefs.QUICK_NOTE_REMINDER, false);
