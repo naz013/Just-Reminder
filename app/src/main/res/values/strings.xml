@@ -513,4 +513,6 @@
     <string name="x_year">%s year</string>
     <string name="x_yearzz">%s years</string>
     <string name="application_not_selected">Application not selected</string>
+    <string name="report">Report about bug</string>
+    <string name="describe_your_problem">Describe your problem</string>
 </resources>

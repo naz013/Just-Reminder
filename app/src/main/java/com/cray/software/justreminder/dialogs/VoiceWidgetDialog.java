@@ -1,19 +1,15 @@
 package com.cray.software.justreminder.dialogs;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 
-import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderApp;
-import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Recognize;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.utils.LocationUtil;
+import com.cray.software.justreminder.utils.SuperUtil;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -36,7 +32,6 @@ public class VoiceWidgetDialog extends Activity {
     }
 
     public void startVoiceRecognitionActivity() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         if (LocationUtil.isGooglePlayServicesAvailable(this)) {
             mTracker.send(new HitBuilders.EventBuilder()
                     .setCategory("Voice control")
@@ -44,15 +39,7 @@ public class VoiceWidgetDialog extends Activity {
                     .setLabel("Widget")
                     .build());
         }
-        SharedPrefs sPrefs = new SharedPrefs(VoiceWidgetDialog.this);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, sPrefs.loadPrefs(Prefs.VOICE_LANGUAGE));
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.say_something));
-        try {
-            startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
-        } catch (ActivityNotFoundException e){
-            Messages.toast(getApplicationContext(), getString(R.string.no_recognizer_found));
-            finish();
-        }
+        SuperUtil.startVoiceRecognitionActivity(this, VOICE_RECOGNITION_REQUEST_CODE);
     }
 
     @Override

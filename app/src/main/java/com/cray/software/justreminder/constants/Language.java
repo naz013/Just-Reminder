@@ -2,8 +2,10 @@ package com.cray.software.justreminder.constants;
 
 import android.content.Context;
 
+import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class Language {
@@ -16,6 +18,31 @@ public class Language {
     public static final String POLISH = "pl";
     public static final String RUSSIAN = "ru";
     public static final String SPANISH = "es";
+
+    public static final String EN = "en-US";
+    public static final String RU = "ru-RU";
+    public static final String UK = "uk-UA";
+
+    public static ArrayList<String> getLanguages(Context context) {
+        ArrayList<String> locales = new ArrayList<>();
+        locales.add(context.getString(R.string.english) + " (" + EN + ")");
+        locales.add(context.getString(R.string.russian) + " (" + RU + ")");
+        locales.add(context.getString(R.string.ukrainian) + " (" + UK + ")");
+        return locales;
+    }
+
+    public static String getLanguage(int code) {
+        switch (code) {
+            case 0:
+                return EN;
+            case 1:
+                return RU;
+            case 2:
+                return UK;
+            default:
+                return EN;
+        }
+    }
 
     /**
      * Get locale for tts.

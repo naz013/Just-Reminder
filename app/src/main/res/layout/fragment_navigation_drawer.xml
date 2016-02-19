@@ -222,6 +222,19 @@
                 android:background="@android:color/darker_gray"/>
 
             <TextView
+                android:id="@+id/report"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:text="@string/report"
+                android:textSize="14sp"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackground"/>
+
+            <TextView
                 android:id="@+id/feed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

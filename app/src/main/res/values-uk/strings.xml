@@ -529,4 +529,6 @@
     <string name="x_year">%s рік</string>
     <string name="x_yearzz">%s роки</string>
     <string name="application_not_selected">Додаток не обрано</string>
+    <string name="report">Повідомити про помилку</string>
+    <string name="describe_your_problem">Describe your problem</string>
 </resources>

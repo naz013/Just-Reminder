@@ -82,14 +82,14 @@ public class SplashScreen extends AppCompatActivity {
             uiEd.putInt(Prefs.LAST_CALENDAR_VIEW, 1);
 
             String localeCheck = Locale.getDefault().toString().toLowerCase();
-            String url;
+            int locale;
             if (localeCheck.startsWith("uk")) {
-                url = Constants.LANGUAGE_UK;
+                locale = 2;
             } else if (localeCheck.startsWith("ru")) {
-                url = Constants.LANGUAGE_RU;
-            } else url = Constants.LANGUAGE_EN;
+                locale = 1;
+            } else locale = 0;
 
-            uiEd.putString(Prefs.VOICE_LANGUAGE, url);
+            uiEd.putInt(Prefs.VOICE_LOCALE, locale);
             uiEd.putString(Prefs.TIME_MORNING, "7:0");
             uiEd.putString(Prefs.TIME_DAY, "12:0");
             uiEd.putString(Prefs.TIME_EVENING, "19:0");
@@ -378,9 +378,8 @@ public class SplashScreen extends AppCompatActivity {
             prefs.savePrefs(Prefs.REMINDER_IMAGE, Constants.DEFAULT);
         }
 
-        String url = Constants.LANGUAGE_EN;
-        if (!prefs.isString(Prefs.VOICE_LANGUAGE)){
-            prefs.savePrefs(Prefs.VOICE_LANGUAGE, url);
+        if (!prefs.isString(Prefs.VOICE_LOCALE)){
+            prefs.saveInt(Prefs.VOICE_LOCALE, 0);
         }
         if (!prefs.isString(Prefs.TIME_MORNING)){
             prefs.savePrefs(Prefs.TIME_MORNING, "7:0");

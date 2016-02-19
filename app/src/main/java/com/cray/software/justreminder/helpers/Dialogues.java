@@ -30,7 +30,6 @@ import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * Copyright 2015 Nazar Suhovich
@@ -432,55 +431,21 @@ public class Dialogues {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
         builder.setTitle(context.getString(R.string.language));
-        final ArrayList<String> locales = new ArrayList<>();
-        locales.clear();
-
-        final String localeCheck = Locale.getDefault().toString().toLowerCase();
-        locales.add(context.getString(R.string.english) + " (" + Constants.LANGUAGE_EN + ")");
-        locales.add(context.getString(R.string.russian) + " (" + Constants.LANGUAGE_RU + ")");
-        locales.add(context.getString(R.string.ukrainian) + " (" + Constants.LANGUAGE_UK + ")");
+        final ArrayList<String> locales = Language.getLanguages(context);
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_list_item_single_choice, locales);
 
         SharedPrefs prefs = new SharedPrefs(context);
-        int i;
-        String language = prefs.loadPrefs(Prefs.VOICE_LANGUAGE);
-        if (language.matches(Constants.LANGUAGE_EN)){
-            i = 0;
-        } else if (language.matches(Constants.LANGUAGE_RU)){
-            i = 1;
-        } else if (language.matches(Constants.LANGUAGE_UK)){
-            i = 2;
-        } else i = 0;
+        int language = prefs.loadInt(Prefs.VOICE_LOCALE);
 
-        builder.setSingleChoiceItems(adapter, i, new DialogInterface.OnClickListener() {
+
+        builder.setSingleChoiceItems(adapter, language, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (which != -1) {
                     SharedPrefs prefs = new SharedPrefs(context);
-                    if (localeCheck.startsWith("uk")) {
-                        if (which == 0)
-                            prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_UK);
-                        if (which == 1)
-                            prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_EN);
-                        if (which == 2)
-                            prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_RU);
-                    } else if (localeCheck.startsWith("ru")) {
-                        if (which == 0)
-                            prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_RU);
-                        if (which == 1)
-                            prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_EN);
-                        if (which == 2)
-                            prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_UK);
-                    } else {
-                        if (which == 0)
-                            prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_EN);
-                        if (which == 1)
-                            prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_UK);
-                        if (which == 2)
-                            prefs.savePrefs(Prefs.VOICE_LANGUAGE, Constants.LANGUAGE_RU);
-                    }
+                    prefs.saveInt(Prefs.VOICE_LOCALE, which);
                 }
             }
         });

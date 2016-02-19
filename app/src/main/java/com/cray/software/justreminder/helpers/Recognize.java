@@ -13,8 +13,10 @@ import com.backdoor.simpleai.Types;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.activities.AddBirthday;
 import com.cray.software.justreminder.activities.QuickAddReminder;
+import com.cray.software.justreminder.activities.Report;
 import com.cray.software.justreminder.activities.SplashScreen;
 import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Language;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NotesBase;
@@ -50,7 +52,7 @@ public class Recognize {
 
     public void parseResults(ArrayList matches, boolean isWidget){
         SharedPrefs prefs = new SharedPrefs(mContext);
-        String language = prefs.loadPrefs(Prefs.VOICE_LANGUAGE);
+        String language = Language.getLanguage(prefs.loadInt(Prefs.VOICE_LOCALE));
         for (Object key : matches){
             String keyStr = key.toString();
             Log.d(Constants.LOG_TAG, "Key " + keyStr);
@@ -68,6 +70,8 @@ public class Recognize {
                         mContext.startActivity(new Intent(mContext, SplashScreen.class));
                     else if (action == RecUtils.SETTINGS)
                         mContext.startActivity(new Intent(mContext, SettingsActivity.class));
+                    else if (action == RecUtils.REPORT)
+                        mContext.startActivity(new Intent(mContext, Report.class));
                     else if (action == RecUtils.HELP)
                         mContext.startActivity(new Intent(mContext, VoiceHelp.class)
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT));

@@ -141,10 +141,6 @@ public class Constants {
     public static final String TYPE_SKYPE_CHAT = "skype_chat";
     public static final String TYPE_SKYPE_VIDEO = "skype_video";
 
-    public static final String LANGUAGE_EN = "en-US";
-    public static final String LANGUAGE_RU = "ru-RU";
-    public static final String LANGUAGE_UK = "uk-UA";
-
     public static final String ORDER_DATE_A_Z = "date_az";
     public static final String ORDER_DATE_Z_A = "date_za";
     public static final String ORDER_COMPLETED_A_Z = "completed_az";

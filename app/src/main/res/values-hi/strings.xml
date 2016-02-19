@@ -514,4 +514,6 @@
     <string name="x_yearzz">"%s साल"</string>
     <string name="application_not_selected">आवेदन नहीं चुने गए</string>
     <string name="app_title">"अनुस्मारक प्रो"</string>
+    <string name="report">Report about bug</string>
+    <string name="describe_your_problem">Describe your problem</string>
 </resources>

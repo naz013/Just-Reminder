@@ -36,6 +36,7 @@ import android.widget.TextView;
 import com.cray.software.justreminder.activities.AddPlace;
 import com.cray.software.justreminder.activities.Help;
 import com.cray.software.justreminder.activities.NewTemplate;
+import com.cray.software.justreminder.activities.Report;
 import com.cray.software.justreminder.async.DelayedAsync;
 import com.cray.software.justreminder.async.GetTasksListsAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
@@ -127,6 +128,7 @@ public class ScreenManager extends AppCompatActivity
     public static final String ACTION_CALENDAR = "action_calendar";
     public static final String FRAGMENT_EVENTS = "fragment_events";
     public static final String HELP = "help";
+    public static final String REPORT = "report";
     public static final String MARKET = "market";
     public static final String VOICE_RECOGNIZER = "sync_reminder";
     public static final String TASKS_AUTHORIZATION = "authorize";
@@ -481,6 +483,8 @@ public class ScreenManager extends AppCompatActivity
                 mPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
             } else if (tag.matches(HELP)) {
                 startActivity(new Intent(this, Help.class));
+            } else if (tag.matches(REPORT)) {
+                startActivity(new Intent(this, Report.class));
             } else if (tag.matches(MARKET)) {
                 marketDialog().show();
             } else if (tag.matches(FRAGMENT_SETTINGS)) {

@@ -123,6 +123,14 @@ public class NavigationDrawerFragment extends Fragment implements
             }
         });
 
+        TextView report = (TextView) rootView.findViewById(R.id.report);
+        report.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectItem(ScreenManager.REPORT, false);
+            }
+        });
+
         TextView feedButton = (TextView) rootView.findViewById(R.id.feed);
         feedButton.setOnClickListener(this);
 
@@ -191,7 +199,7 @@ public class NavigationDrawerFragment extends Fragment implements
         prefsButton.setTypeface(typeface);
         feedButton.setTypeface(typeface);
         helpButton.setTypeface(typeface);
-
+        report.setTypeface(typeface);
 
         if (!Module.isPro()){
             RelativeLayout ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);

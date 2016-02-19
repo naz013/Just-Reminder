@@ -12,6 +12,7 @@ import android.speech.RecognizerIntent;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.activities.ContactsList;
 import com.cray.software.justreminder.activities.SelectApplication;
+import com.cray.software.justreminder.constants.Language;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -108,7 +109,7 @@ public class SuperUtil {
     public static void startVoiceRecognitionActivity(Activity activity, int requestCode) {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         SharedPrefs sPrefs = new SharedPrefs(activity);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, sPrefs.loadPrefs(Prefs.VOICE_LANGUAGE));
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Language.getLanguage(sPrefs.loadInt(Prefs.VOICE_LOCALE)));
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, activity.getString(R.string.say_something));
         try {
             activity.startActivityForResult(intent, requestCode);
