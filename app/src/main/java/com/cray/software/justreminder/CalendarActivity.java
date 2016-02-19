@@ -24,7 +24,7 @@ import com.cray.software.justreminder.datas.models.EventsItem;
 import com.cray.software.justreminder.datas.models.EventsPagerItem;
 import com.cray.software.justreminder.dialogs.ActionPickerDialog;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.Recognizer;
+import com.cray.software.justreminder.helpers.Recognize;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
@@ -131,7 +131,7 @@ public class CalendarActivity extends AppCompatActivity {
         if (requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_OK) {
             ArrayList matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
-            new Recognizer(this).parseResults(matches, false);
+            new Recognize(this).parseResults(matches, false);
             super.onActivityResult(requestCode, resultCode, data);
         }
     }

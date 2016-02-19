@@ -21,7 +21,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="150dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="6dp"
@@ -39,22 +39,20 @@
         android:layout_marginTop="14dp"
         android:orientation="horizontal">
 
-        <TextView
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:background="?android:attr/selectableItemBackground"
             android:text="@string/edit"
             android:gravity="center"
             android:id="@+id/buttonEdit"
             style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
             android:clickable="true"/>
 
-        <TextView
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:background="?android:attr/selectableItemBackground"
             android:text="@string/ok"
             android:layout_marginLeft="15dp"
             android:gravity="center"

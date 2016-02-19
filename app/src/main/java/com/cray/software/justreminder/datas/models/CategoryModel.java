@@ -59,6 +59,19 @@ public class CategoryModel {
         return title;
     }
 
+    public static String getDefault(Context context){
+        DataBase db = new DataBase(context);
+        db.open();
+        Cursor c = db.queryCategories();
+        String uuId = null;
+        if (c != null && c.moveToFirst()){
+            uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+        }
+        if (c != null) c.close();
+        db.close();
+        return uuId;
+    }
+
     public long getId() {
         return id;
     }
