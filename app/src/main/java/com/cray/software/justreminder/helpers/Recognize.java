@@ -25,12 +25,8 @@ import com.cray.software.justreminder.dialogs.SelectVolume;
 import com.cray.software.justreminder.dialogs.VoiceHelp;
 import com.cray.software.justreminder.dialogs.VoiceResult;
 import com.cray.software.justreminder.json.JAction;
-import com.cray.software.justreminder.json.JExclusion;
 import com.cray.software.justreminder.json.JExport;
-import com.cray.software.justreminder.json.JLed;
-import com.cray.software.justreminder.json.JMelody;
 import com.cray.software.justreminder.json.JModel;
-import com.cray.software.justreminder.json.JPlace;
 import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.ReminderUtils;
@@ -110,10 +106,6 @@ public class Recognize {
         }
 
         String categoryId = CategoryModel.getDefault(mContext);
-
-        JExclusion jExclusion = new JExclusion();
-        JLed jLed = new JLed();
-        JMelody jMelody = new JMelody();
         JRecurrence jRecurrence = new JRecurrence(0, repeat, -1, weekdays, 0);
         JAction jAction = new JAction(type, number, -1, "", null);
 
@@ -122,13 +114,12 @@ public class Recognize {
         boolean isStock = prefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
         int exp = (isCalendar && (isCal || isStock)) ? 1 : 0;
         JExport jExport = new JExport(0, exp, null);
-        JPlace jPlace = new JPlace();
 
         Log.d("----RECORD_TIME-----", TimeUtil.getFullDateTime(System.currentTimeMillis(), true));
         Log.d("----EVENT_TIME-----", TimeUtil.getFullDateTime(startTime, true));
 
         JModel jModel = new JModel(summary, type, categoryId,
-                SyncHelper.generateID(), startTime, startTime, jRecurrence, null, jExport);
+                SyncHelper.generateID(), startTime, startTime, jRecurrence, jAction, jExport);
         long remId = new DateType(mContext, Constants.TYPE_REMINDER).save(jModel);
         if (isCalendar || isStock) {
             ReminderUtils.exportToCalendar(mContext, summary, startTime, remId, isCalendar, isStock);
