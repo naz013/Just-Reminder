@@ -73,7 +73,8 @@ public class CalendarActivity extends AppCompatActivity {
         voiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SuperUtil.startVoiceRecognitionActivity(CalendarActivity.this, VOICE_RECOGNITION_REQUEST_CODE);
+                SuperUtil.startVoiceRecognitionActivity(CalendarActivity.this,
+                        VOICE_RECOGNITION_REQUEST_CODE, false);
             }
         });
 

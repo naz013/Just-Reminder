@@ -491,7 +491,8 @@ public class ScreenManager extends AppCompatActivity
                 Intent intentS = new Intent(this, SettingsActivity.class);
                 startActivity(intentS);
             } else if (tag.matches(VOICE_RECOGNIZER)) {
-                SuperUtil.startVoiceRecognitionActivity(ScreenManager.this, VOICE_RECOGNITION_REQUEST_CODE);
+                SuperUtil.startVoiceRecognitionActivity(ScreenManager.this,
+                        VOICE_RECOGNITION_REQUEST_CODE, false);
                 if (LocationUtil.isGooglePlayServicesAvailable(this)) {
                     mTracker.send(new HitBuilders.EventBuilder()
                             .setCategory("Voice control")
@@ -714,7 +715,8 @@ public class ScreenManager extends AppCompatActivity
                 onItemSelected(FRAGMENT_EVENTS);
                 return true;
             case R.id.action_voice:
-                SuperUtil.startVoiceRecognitionActivity(ScreenManager.this, VOICE_RECOGNITION_REQUEST_CODE);
+                SuperUtil.startVoiceRecognitionActivity(ScreenManager.this,
+                        VOICE_RECOGNITION_REQUEST_CODE, false);
                 return true;
         }
         return super.onOptionsItemSelected(item);

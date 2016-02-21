@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:id="@+id/windowBackground"
     android:orientation="vertical"
-    android:gravity="center|bottom"
+    android:gravity="center"
     android:layout_height="match_parent"
     android:padding="@dimen/dimen_log_in_padding">
 
@@ -57,21 +57,4 @@
         android:textSize="@dimen/log_in_skip_text_size"
         android:layout_gravity="center_horizontal" />
 
-    <com.cray.software.justreminder.views.CircularProgress
-        android:layout_gravity="center"
-        android:layout_height="@dimen/log_in_circle_size"
-        android:layout_width="@dimen/log_in_circle_size"
-        android:visibility="visible"
-        android:id="@+id/progress"
-        android:layout_marginTop="@dimen/log_in_circle_margin_top"
-        widget:circular_progress_color="?attr/colorPrimaryDark"
-        widget:circular_progress_size="Small"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/dimen_log_in_progress_margin_top"
-        android:textSize="@dimen/log_in_progress_text_size"
-        android:id="@+id/progressMesage"/>
 </LinearLayout>

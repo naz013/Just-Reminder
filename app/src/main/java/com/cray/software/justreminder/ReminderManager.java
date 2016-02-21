@@ -298,7 +298,8 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         insertVoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SuperUtil.startVoiceRecognitionActivity(ReminderManager.this, VOICE_RECOGNITION_REQUEST_CODE);
+                SuperUtil.startVoiceRecognitionActivity(ReminderManager.this,
+                        VOICE_RECOGNITION_REQUEST_CODE, true);
             }
         });
         changeExtra.setOnClickListener(new View.OnClickListener() {

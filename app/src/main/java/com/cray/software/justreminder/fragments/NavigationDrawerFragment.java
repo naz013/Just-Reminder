@@ -201,6 +201,8 @@ public class NavigationDrawerFragment extends Fragment implements
         helpButton.setTypeface(typeface);
         report.setTypeface(typeface);
 
+        report.setVisibility(View.GONE);
+
         if (!Module.isPro()){
             RelativeLayout ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);
             ImageView basket = (ImageView) rootView.findViewById(R.id.basket);

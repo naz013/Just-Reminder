@@ -514,6 +514,6 @@
     <string name="x_yearzz">"%s roky"</string>
     <string name="application_not_selected">Aplikace není vybrána</string>
     <string name="app_title">Připomenutí PRO</string>
-    <string name="report">Report about bug</string>
-    <string name="describe_your_problem">Describe your problem</string>
+    <string name="report">Zpráva o chybě</string>
+    <string name="describe_your_problem">Popište svůj problém</string>
 </resources>

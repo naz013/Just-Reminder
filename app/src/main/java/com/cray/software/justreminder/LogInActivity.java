@@ -5,6 +5,7 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,46 +23,36 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import com.cray.software.justreminder.async.CloudLogin;
+import com.cray.software.justreminder.async.LocalLogin;
 import com.cray.software.justreminder.cloud.DropboxHelper;
-import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
-import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Contacts;
-import com.cray.software.justreminder.helpers.IOHelper;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.LoginListener;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.utils.MemoryUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
-import com.cray.software.justreminder.views.CircularProgress;
 import com.cray.software.justreminder.views.PaperButton;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.AccountPicker;
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
-import com.google.api.client.util.DateTime;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.tasks.TasksScopes;
-import com.google.api.services.tasks.model.Task;
-import com.google.api.services.tasks.model.TaskList;
-import com.google.api.services.tasks.model.TaskLists;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 
 public class LogInActivity extends Activity implements LoginListener {
 
@@ -69,8 +60,7 @@ public class LogInActivity extends Activity implements LoginListener {
     private ColorSetter cs = new ColorSetter(LogInActivity.this);
     private PaperButton connectGDrive, connectDropbox;
     private CheckBox checkBox;
-    private TextView skipButton, progressMesage;
-    private CircularProgress progress;
+    private TextView skipButton;
 
     private DropboxHelper dbx;
     private static final int REQUEST_AUTHORIZATION = 1;
@@ -84,6 +74,8 @@ public class LogInActivity extends Activity implements LoginListener {
     private Activity a = this;
 
     private boolean enabled = true;
+
+    private ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,9 +108,6 @@ public class LogInActivity extends Activity implements LoginListener {
         skipButton = (TextView) findViewById(R.id.skipButton);
         String text = skipButton.getText().toString();
         skipButton.setText(SuperUtil.appendString(text, " (", getString(R.string.local_sync), ")"));
-        progressMesage = (TextView) findViewById(R.id.progressMesage);
-        progress = (CircularProgress) findViewById(R.id.progress);
-        progress.setVisibility(View.INVISIBLE);
 
         connectDropbox.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,7 +150,7 @@ public class LogInActivity extends Activity implements LoginListener {
                 if (enabled) {
                     if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL,
                             Permissions.ACCESS_FINE_LOCATION)) {
-                        new LocalSync(LogInActivity.this, progress, progressMesage, LogInActivity.this).execute();
+                        new LocalLogin(LogInActivity.this, checkBox.isChecked(), LogInActivity.this).execute();
                         enabled = false;
                     } else {
                         Permissions.requestPermission(LogInActivity.this, 101,
@@ -179,7 +168,7 @@ public class LogInActivity extends Activity implements LoginListener {
         switch (requestCode){
             case 101:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    new LocalSync(LogInActivity.this, progress, progressMesage, this).execute();
+                    new LocalLogin(LogInActivity.this, checkBox.isChecked(), LogInActivity.this).execute();
                     enabled = false;
                 } else {
                     checkGroups();
@@ -211,7 +200,7 @@ public class LogInActivity extends Activity implements LoginListener {
                 break;
             case 104:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    new SyncTask(LogInActivity.this, progress, progressMesage, LogInActivity.this).execute();
+                    new CloudLogin(LogInActivity.this, checkBox.isChecked(), this).execute();
                     enabled = false;
                 } else {
                     checkGroups();
@@ -241,7 +230,7 @@ public class LogInActivity extends Activity implements LoginListener {
                 sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
                 if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL,
                         Permissions.WRITE_EXTERNAL, Permissions.ACCESS_FINE_LOCATION)) {
-                    new SyncTask(LogInActivity.this, progress, progressMesage, LogInActivity.this).execute();
+                    new CloudLogin(LogInActivity.this, checkBox.isChecked(), this).execute();
                     enabled = false;
                 } else {
                     Permissions.requestPermission(LogInActivity.this, 104,
@@ -297,8 +286,8 @@ public class LogInActivity extends Activity implements LoginListener {
 
             @Override
             protected void onPreExecute() {
-                progress.setVisibility(View.VISIBLE);
-                progressMesage.setText(R.string.trying_to_log_in);
+                dialog = ProgressDialog.show(LogInActivity.this, getString(R.string.please_wait),
+                        getString(R.string.trying_to_log_in), true, false);
             }
 
             @Override
@@ -308,6 +297,7 @@ public class LogInActivity extends Activity implements LoginListener {
 
             @Override
             protected void onPostExecute(String s) {
+                if (dialog != null && dialog.isShowing()) dialog.dismiss();
                 if (s != null) {
                     accountName = s;
                 }
@@ -348,7 +338,7 @@ public class LogInActivity extends Activity implements LoginListener {
             if (Permissions.checkPermission(LogInActivity.this,
                     Permissions.READ_EXTERNAL,
                     Permissions.WRITE_EXTERNAL)) {
-                new SyncTask(LogInActivity.this, progress, progressMesage, this).execute();
+                new CloudLogin(LogInActivity.this, checkBox.isChecked(), this).execute();
             } else {
                 Permissions.requestPermission(LogInActivity.this, 104,
                         Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);
@@ -363,7 +353,7 @@ public class LogInActivity extends Activity implements LoginListener {
             if (Permissions.checkPermission(LogInActivity.this,
                     Permissions.READ_EXTERNAL,
                     Permissions.WRITE_EXTERNAL)) {
-                new SyncTask(LogInActivity.this, progress, progressMesage, this).execute();
+                new CloudLogin(LogInActivity.this, checkBox.isChecked(), this).execute();
             } else {
                 Permissions.requestPermission(LogInActivity.this, 104,
                         Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);
@@ -422,73 +412,6 @@ public class LogInActivity extends Activity implements LoginListener {
         finish();
     }
 
-    private class LocalSync extends AsyncTask<Void, String, Void>{
-
-        private Context mContext;
-        private CircularProgress mProgress;
-        private TextView mText;
-        private boolean isChecked = false;
-        private LoginListener listener;
-
-        public LocalSync(Context context, CircularProgress progress, TextView textView, LoginListener listener){
-            this.mContext = context;
-            this.mProgress = progress;
-            this.mText = textView;
-            this.listener = listener;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mProgress.setVisibility(View.VISIBLE);
-            isChecked = checkBox.isChecked();
-        }
-
-        @Override
-        protected void onProgressUpdate(final String... values) {
-            super.onProgressUpdate(values);
-            new android.os.Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    mText.setText(values[0]);
-                }
-            });
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            IOHelper ioHelper = new IOHelper(mContext);
-
-            publishProgress(getString(R.string.syncing_groups));
-            ioHelper.restoreGroup(false);
-
-            checkGroups();
-
-            //import reminders
-            publishProgress(getString(R.string.syncing_reminders));
-            ioHelper.restoreReminder(false);
-
-            //import notes
-            publishProgress(getString(R.string.syncing_notes));
-            ioHelper.restoreNote(false);
-
-            //import birthdays
-            if (isChecked) {
-                publishProgress(getString(R.string.syncing_birthdays));
-                ioHelper.restoreBirthday(false, false);
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            mProgress.setVisibility(View.INVISIBLE);
-            mText.setText(R.string.done);
-            if (listener != null) listener.onLocal();
-        }
-    }
-
     private void checkGroups() {
         DataBase DB = new DataBase(this);
         DB.open();
@@ -515,185 +438,6 @@ public class LogInActivity extends Activity implements LoginListener {
         }
         if (cat != null) cat.close();
         DB.close();
-    }
-
-    public class SyncTask extends AsyncTask<Void, String, Void>{
-
-        private Context mContext;
-        private CircularProgress mProgress;
-        private TextView mText;
-        private boolean isChecked = false;
-        private LoginListener listener;
-
-        public SyncTask(Context context, CircularProgress progress, TextView textView,
-                        LoginListener listener){
-            this.mContext = context;
-            this.mProgress = progress;
-            this.mText = textView;
-            this.listener = listener;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mProgress.setVisibility(View.VISIBLE);
-            isChecked = checkBox.isChecked();
-        }
-
-        @Override
-        protected void onProgressUpdate(final String... values) {
-            super.onProgressUpdate(values);
-            new android.os.Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    mText.setText(values[0]);
-                }
-            });
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            if (MemoryUtil.isSdPresent()) {
-                IOHelper ioHelper = new IOHelper(mContext);
-
-                publishProgress(getString(R.string.syncing_groups));
-                ioHelper.restoreGroup(true);
-
-                checkGroups();
-
-                //import reminders
-                publishProgress(getString(R.string.syncing_reminders));
-                ioHelper.restoreReminder(true);
-
-                //import notes
-                publishProgress(getString(R.string.syncing_notes));
-                ioHelper.restoreNote(true);
-
-                //import birthdays
-                if (isChecked) {
-                    publishProgress(getString(R.string.syncing_birthdays));
-                    ioHelper.restoreBirthday(true, false);
-                }
-            }
-
-            //getting Google Tasks
-            GTasksHelper helper = new GTasksHelper(ctx);
-            TaskLists lists = null;
-            try {
-                lists = helper.getTaskLists();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            TasksData data = new TasksData(ctx);
-            data.open();
-            if (lists != null && lists.size() > 0) {
-                publishProgress(getString(R.string.syncing_google_tasks));
-                for (TaskList item : lists.getItems()) {
-                    DateTime dateTime = item.getUpdated();
-                    String listId = item.getId();
-                    Cursor c = data.getTasksList(listId);
-                    if (c != null && c.moveToFirst() && c.getCount() == 1) {
-                        data.updateTasksList(c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID)),
-                                item.getTitle(), listId, c.getInt(c.getColumnIndex(TasksConstants.COLUMN_DEFAULT)),
-                                item.getEtag(), item.getKind(),
-                                item.getSelfLink(), dateTime != null ? dateTime.getValue() : 0,
-                                c.getInt(c.getColumnIndex(TasksConstants.COLUMN_COLOR)));
-                    } else if (c != null && c.moveToFirst() && c.getCount() > 1) {
-                        do {
-                            data.deleteTasksList(c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID)));
-                        } while (c.moveToNext());
-                        Random r = new Random();
-                        int color = r.nextInt(15);
-                        data.addTasksList(item.getTitle(), listId, 0, item.getEtag(), item.getKind(),
-                                item.getSelfLink(), dateTime != null ? dateTime.getValue() : 0, color);
-                    } else {
-                        Random r = new Random();
-                        int color = r.nextInt(15);
-                        data.addTasksList(item.getTitle(), listId, 0, item.getEtag(), item.getKind(),
-                                item.getSelfLink(), dateTime != null ? dateTime.getValue() : 0, color);
-                    }
-                    if (c != null) {
-                        c.close();
-                    }
-
-                    Cursor cc = data.getTasksLists();
-                    if (cc != null && cc.moveToFirst()) {
-                        data.setDefault(cc.getLong(cc.getColumnIndex(TasksConstants.COLUMN_ID)));
-                        data.setSystemDefault(cc.getLong(cc.getColumnIndex(TasksConstants.COLUMN_ID)));
-                    }
-                    if (cc != null) {
-                        cc.close();
-                    }
-
-                    List<Task> tasks = helper.getTasks(listId);
-                    if (tasks != null && tasks.size() > 0) {
-                        for (Task task : tasks) {
-                            DateTime dueDate = task.getDue();
-                            long due = dueDate != null ? dueDate.getValue() : 0;
-
-                            DateTime completeDate = task.getCompleted();
-                            long complete = completeDate != null ? completeDate.getValue() : 0;
-
-                            DateTime updateDate = task.getUpdated();
-                            long update = updateDate != null ? updateDate.getValue() : 0;
-
-                            String taskId = task.getId();
-
-                            boolean isDeleted = false;
-                            try {
-                                isDeleted = task.getDeleted();
-                            } catch (NullPointerException e) {
-                                e.printStackTrace();
-                            }
-
-                            boolean isHidden = false;
-                            try {
-                                isHidden = task.getHidden();
-                            } catch (NullPointerException e) {
-                                e.printStackTrace();
-                            }
-
-                            Cursor cursor = data.getTask(taskId);
-                            if (cursor != null && cursor.moveToFirst() && cursor.getCount() > 1) {
-                                do {
-                                    data.deleteTask(cursor.getLong(cursor.getColumnIndex(TasksConstants.COLUMN_ID)));
-                                } while (cursor.moveToNext());
-                                data.addTask(task.getTitle(), taskId, complete, isDeleted, due,
-                                        task.getEtag(), task.getKind(), task.getNotes(),
-                                        task.getParent(), task.getPosition(), task.getSelfLink(), update, 0,
-                                        listId, task.getStatus(), isHidden);
-                            } else if (cursor != null && cursor.moveToFirst() && cursor.getCount() == 1) {
-                                data.updateFullTask(cursor.getLong(cursor.getColumnIndex(TasksConstants.COLUMN_ID)),
-                                        task.getTitle(), taskId, complete, isDeleted, due,
-                                        task.getEtag(), task.getKind(), task.getNotes(),
-                                        task.getParent(), task.getPosition(), task.getSelfLink(), update,
-                                        cursor.getLong(cursor.getColumnIndex(TasksConstants.COLUMN_REMINDER_ID)),
-                                        listId, task.getStatus(), isHidden);
-                            } else {
-                                data.addTask(task.getTitle(), taskId, complete, isDeleted, due,
-                                        task.getEtag(), task.getKind(), task.getNotes(),
-                                        task.getParent(), task.getPosition(), task.getSelfLink(), update, 0,
-                                        listId, task.getStatus(), isHidden);
-                            }
-                            if (cursor != null) {
-                                cursor.close();
-                            }
-                        }
-                    }
-                }
-            }
-            data.close();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            mProgress.setVisibility(View.INVISIBLE);
-            mText.setText(getString(R.string.done));
-            if (listener != null) listener.onCloud();
-        }
     }
 
     public class ImportBirthdays extends AsyncTask<Void, Void, Void>{

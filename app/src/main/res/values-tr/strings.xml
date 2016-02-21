@@ -513,6 +513,6 @@
     <string name="x_year">"%s yıl"</string>
     <string name="x_yearzz">"%s yıllar"</string>
     <string name="application_not_selected">"Uygulama değildir seçilmiş"</string>
-    <string name="report">Report about bug</string>
-    <string name="describe_your_problem">Describe your problem</string>
+    <string name="report">Hata hakkında Raporu</string>
+    <string name="describe_your_problem">Sorununuzu açıklayın</string>
 </resources>

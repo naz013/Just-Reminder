@@ -39,7 +39,7 @@ public class VoiceWidgetDialog extends Activity {
                     .setLabel("Widget")
                     .build());
         }
-        SuperUtil.startVoiceRecognitionActivity(this, VOICE_RECOGNITION_REQUEST_CODE);
+        SuperUtil.startVoiceRecognitionActivity(this, VOICE_RECOGNITION_REQUEST_CODE, false);
     }
 
     @Override

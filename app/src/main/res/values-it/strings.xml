@@ -513,6 +513,6 @@
     <string name="x_year">"%s anno"</string>
     <string name="x_yearzz">"%s anni"</string>
     <string name="application_not_selected">L\'applicazione non selezionata</string>
-    <string name="report">Report about bug</string>
-    <string name="describe_your_problem">Describe your problem</string>
+    <string name="report">Report sulle bug</string>
+    <string name="describe_your_problem">Descrivere il problema</string>
 </resources>

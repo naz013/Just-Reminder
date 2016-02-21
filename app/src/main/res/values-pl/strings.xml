@@ -514,6 +514,6 @@
     <string name="x_yearzz">"%s lat"</string>
     <string name="application_not_selected">Aplikacja nie wybrano</string>
     <string name="app_title">"Przypomnienie PRO"</string>
-    <string name="report">Report about bug</string>
-    <string name="describe_your_problem">Describe your problem</string>
+    <string name="report">Raport na temat błędów</string>
+    <string name="describe_your_problem">Opisz swój problem</string>
 </resources>
