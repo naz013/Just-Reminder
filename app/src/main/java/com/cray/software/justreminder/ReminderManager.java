@@ -558,7 +558,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         db.open();
         Cursor c = db.getReminder(id);
         if (c != null && c.moveToFirst()) {
-            int isArchived = c.getInt(c.getColumnIndex(Constants.COLUMN_ARCHIVED));
+            int isArchived = c.getInt(c.getColumnIndex(NextBase.DB_LIST));
             if (isArchived == 1) {
                 Reminder.delete(id, this);
                 Messages.toast(ReminderManager.this, getString(R.string.deleted));
