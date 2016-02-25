@@ -21,6 +21,7 @@ public class BirthdayAlarm extends WakefulBroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Intent service = new Intent(context, BirthdayAlarm.class);
         context.startService(service);
+        setAlarm(context);
         Intent check = new Intent(context, CheckBirthdays.class);
         context.startService(check);
     }
@@ -38,10 +39,9 @@ public class BirthdayAlarm extends WakefulBroadcastReceiver {
         calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        if (Module.isMarshmallow()) alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, alarmIntent);
-        else alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, alarmIntent);
+        if (Module.isMarshmallow()) alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
+                calendar.getTimeInMillis(), alarmIntent);
+        else alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
     }
 
     public void cancelAlarm(Context context) {
