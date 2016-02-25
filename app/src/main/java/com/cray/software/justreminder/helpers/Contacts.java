@@ -29,15 +29,15 @@ public class Contacts {
     }
 
     /**
-     * Get contact identifier by contact name.
-     * @param name contact name.
+     * Get contact identifier by contact phoneNumber.
+     * @param phoneNumber contact phoneNumber.
      * @param context application context.
      * @return Contact identifier
      */
-    public static int getIdFromNumber(String name, Context context) {
+    public static int getIdFromNumber(String phoneNumber, Context context) {
         int phoneContactID = 0;
         try {
-            String contact = Uri.encode(name);
+            String contact = Uri.encode(phoneNumber);
             Cursor contactLookupCursor = context.getContentResolver()
                     .query(Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, contact),
                             new String[] {ContactsContract.PhoneLookup.DISPLAY_NAME, ContactsContract.PhoneLookup._ID},
@@ -175,30 +175,6 @@ public class Contacts {
         }
         if (number == null){
             number = "noNumber";
-        }
-        return number;
-    }
-
-    /**
-     * Find contact number by contact name.
-     * @param name contact name.
-     * @param context application context.
-     * @return Phone number
-     */
-    public static String findNumber(String name, Context context) {
-        String number = "";
-        while (name.length() > 1) {
-            String selection = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME+" like '%" + name +"%'";
-            String[] projection = new String[] { ContactsContract.CommonDataKinds.Phone.NUMBER};
-            Cursor c = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                    projection, selection, null, null);
-            if (c != null && c.moveToFirst()) {
-                number = c.getString(0);
-                c.close();
-            }
-            if (number != null)
-                break;
-            name = name.substring(0, name.length() - 2);
         }
         return number;
     }

@@ -35,7 +35,8 @@ public class CallReceiver extends BroadcastReceiver {
         @Override
         public void onCallStateChanged(int state, String incomingNumber){
             SharedPrefs prefs = new SharedPrefs(mContext);
-            if(incomingNumber != null && incomingNumber.length() > 0) incoming_nr = incomingNumber;
+            if (incomingNumber != null && incomingNumber.length() > 0) incoming_nr = incomingNumber;
+            else return;
 
             switch(state){
                 case TelephonyManager.CALL_STATE_RINGING:

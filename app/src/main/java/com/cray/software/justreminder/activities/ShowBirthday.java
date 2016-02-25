@@ -193,6 +193,8 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
             number = Contacts.getNumber(name, ShowBirthday.this);
         }
         CircleImageView contactPhoto = (CircleImageView) findViewById(R.id.contactPhoto);
+        if (contactId == 0 && number != null)
+            contactId = Contacts.getIdFromNumber(number, ShowBirthday.this);
         Uri photo = Contacts.getPhoto(contactId);
         if (photo != null)
             contactPhoto.setImageURI(photo);

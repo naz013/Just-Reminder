@@ -254,6 +254,7 @@ public class DataBase {
         args.put(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY, birthday);
         args.put(Constants.ContactConstants.COLUMN_CONTACT_DAY, day);
         args.put(Constants.ContactConstants.COLUMN_CONTACT_MONTH, month);
+        args.put(Constants.ContactConstants.COLUMN_CONTACT_VAR, "");
         return db.update(CONTACTS_TABLE_NAME, args, Constants.ContactConstants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 

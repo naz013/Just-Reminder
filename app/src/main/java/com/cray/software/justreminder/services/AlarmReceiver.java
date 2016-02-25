@@ -95,8 +95,6 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent alarmIntent = PendingIntent.getBroadcast(context, i, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        if (alarmMgr!= null) {
-            alarmMgr.cancel(alarmIntent);
-        }
+        if (alarmMgr!= null) alarmMgr.cancel(alarmIntent);
     }
 }

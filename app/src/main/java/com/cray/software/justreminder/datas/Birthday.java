@@ -3,12 +3,11 @@ package com.cray.software.justreminder.datas;
 import android.app.AlarmManager;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
-import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,7 +51,6 @@ public class Birthday {
                 int day = c.getInt(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_DAY));
                 String year = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_VAR));
                 String birthValue = getBirthdayValue(month, day, mDays);
-                Log.d(Constants.LOG_TAG, "Date " + mDate + ", birth date " + birthValue);
                 if (year != null) {
                     if (birthValue.equals(mDate) && !year.matches(String.valueOf(mYear))) {
                         list.add(id);
@@ -66,7 +64,6 @@ public class Birthday {
         }
         if (c != null) c.close();
         db.close();
-        Log.d(Constants.LOG_TAG, "List size " + list.size());
         return list;
     }
 

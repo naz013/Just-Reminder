@@ -8,6 +8,7 @@ import android.support.v4.content.WakefulBroadcastReceiver;
 
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.modules.Module;
 
 import java.util.Calendar;
@@ -21,6 +22,7 @@ public class BirthdayAlarm extends WakefulBroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Intent service = new Intent(context, BirthdayAlarm.class);
         context.startService(service);
+        cancelAlarm(context);
         setAlarm(context);
         Intent check = new Intent(context, CheckBirthdays.class);
         context.startService(check);
@@ -39,8 +41,10 @@ public class BirthdayAlarm extends WakefulBroadcastReceiver {
         calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        if (Module.isMarshmallow()) alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
-                calendar.getTimeInMillis(), alarmIntent);
+        if (calendar.getTimeInMillis() < System.currentTimeMillis())
+            calendar.setTimeInMillis(calendar.getTimeInMillis() + TimeCount.DAY);
+        if (Module.isMarshmallow())
+            alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
         else alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
     }
 
@@ -48,8 +52,6 @@ public class BirthdayAlarm extends WakefulBroadcastReceiver {
         Intent intent = new Intent(context, BirthdayAlarm.class);
         alarmIntent = PendingIntent.getBroadcast(context, 210, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        if (alarmMgr!= null) {
-            alarmMgr.cancel(alarmIntent);
-        }
+        if (alarmMgr!= null) alarmMgr.cancel(alarmIntent);
     }
 }
