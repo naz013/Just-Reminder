@@ -28,6 +28,8 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
+import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 public class TemplatesFragment extends Fragment implements SimpleListener {
 
@@ -66,6 +68,11 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
             emptyImage.setImageResource(R.drawable.textsms_white);
         } else {
             emptyImage.setImageResource(R.drawable.textsms);
+        }
+
+        if (Module.isMarshmallow()) {
+            emptyImage.setImageDrawable(ViewUtils.getVector(getActivity(),
+                    R.drawable.ic_textsms_black_24dp1));
         }
 
         listView = (RecyclerView) rootView.findViewById(R.id.currentList);

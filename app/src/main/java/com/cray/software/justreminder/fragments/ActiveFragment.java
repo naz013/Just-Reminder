@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.Animatable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,6 +45,7 @@ import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -162,8 +164,6 @@ public class ActiveFragment extends Fragment implements
                              final Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
 
-        SharedPrefs prefs = new SharedPrefs(getActivity());
-
         filterLayout = (LinearLayout) rootView.findViewById(R.id.filterLayout);
         TextView dateStart = (TextView) rootView.findViewById(R.id.dateStart);
         dateEnd = (TextView) rootView.findViewById(R.id.dateEnd);
@@ -182,6 +182,11 @@ public class ActiveFragment extends Fragment implements
             emptyImage.setImageResource(R.drawable.ic_alarm_off_48px_white);
         } else {
             emptyImage.setImageResource(R.drawable.ic_alarm_off_48px);
+        }
+
+        if (Module.isMarshmallow()) {
+            emptyImage.setImageDrawable(ViewUtils.getVector(getActivity(),
+                    R.drawable.ic_alarm_off_black_24dp));
         }
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);

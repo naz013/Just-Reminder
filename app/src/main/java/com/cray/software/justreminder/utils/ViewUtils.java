@@ -1,10 +1,12 @@
 package com.cray.software.justreminder.utils;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
@@ -24,9 +26,23 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.modules.Module;
 
 public class ViewUtils {
+
+    /**
+     * Get tinted vector drawable.
+     * @param context application context
+     * @param resource vector drawable resource.
+     * @return VectorDrawable
+     */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public static VectorDrawable getVector(Context context, @DrawableRes int resource) {
+        VectorDrawable drawable = (VectorDrawable) context.getResources().getDrawable(resource);
+        if (drawable != null) drawable.setTint(getColor(context, new ColorSetter(context).colorAccent()));
+        return drawable;
+    }
 
     /**
      * Create ColorStateList for FAB from colors.

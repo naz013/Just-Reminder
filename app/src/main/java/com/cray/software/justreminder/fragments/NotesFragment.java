@@ -43,6 +43,7 @@ import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.utils.ViewUtils;
 
 public class NotesFragment extends Fragment implements SyncListener, SimpleListener {
 
@@ -140,6 +141,11 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
             emptyImage.setImageResource(R.drawable.note_white);
         } else {
             emptyImage.setImageResource(R.drawable.note);
+        }
+
+        if (Module.isMarshmallow()) {
+            emptyImage.setImageDrawable(ViewUtils.getVector(getActivity(),
+                    R.drawable.ic_event_note_black_24dp1));
         }
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
