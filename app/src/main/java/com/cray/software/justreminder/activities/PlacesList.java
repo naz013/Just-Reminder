@@ -74,10 +74,6 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
             emptyImage.setImageResource(R.drawable.place);
         }
 
-        if (Module.isMarshmallow()) {
-            emptyImage.setImageDrawable(ViewUtils.getVector(this, R.drawable.ic_place_black_24dp1));
-        }
-
         listView = (RecyclerView) findViewById(R.id.currentList);
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
