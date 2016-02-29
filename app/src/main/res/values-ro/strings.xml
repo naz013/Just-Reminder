@@ -516,6 +516,6 @@
     <string name="app_title">"Reminder PRO"</string>
     <string name="report">Raport despre eroare</string>
     <string name="describe_your_problem">Descrieți problema</string>
-    <string name="day_night">Day/Night</string>
-    <string name="enable_changing_theme_during_day">Enable changing theme during day</string>
+    <string name="day_night">Zi/Noapte</string>
+    <string name="enable_changing_theme_during_day">Activați schimbarea automată temă în timpul zilei</string>
 </resources>

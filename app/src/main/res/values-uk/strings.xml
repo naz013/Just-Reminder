@@ -531,6 +531,6 @@
     <string name="application_not_selected">Додаток не обрано</string>
     <string name="report">Повідомити про помилку</string>
     <string name="describe_your_problem">Опишіть проблему</string>
-    <string name="day_night">Day/Night</string>
-    <string name="enable_changing_theme_during_day">Enable changing theme during day</string>
+    <string name="day_night">День/Ніч</string>
+    <string name="enable_changing_theme_during_day">Увімкнути автоматичну зміну теми протягом дня</string>
 </resources>

@@ -516,6 +516,6 @@
     <string name="app_title">"Rappel PRO"</string>
     <string name="report">Rapport à propos de bug</string>
     <string name="describe_your_problem">Décrivez votre problème</string>
-    <string name="day_night">Day/Night</string>
-    <string name="enable_changing_theme_during_day">Enable changing theme during day</string>
+    <string name="day_night">Jour/Nuit</string>
+    <string name="enable_changing_theme_during_day">Activer changeant automatiquement le thème pendant la journée</string>
 </resources>

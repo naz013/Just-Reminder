@@ -515,6 +515,6 @@
     <string name="application_not_selected">L\'applicazione non selezionata</string>
     <string name="report">Report sulle bug</string>
     <string name="describe_your_problem">Descrivere il problema</string>
-    <string name="day_night">Day/Night</string>
-    <string name="enable_changing_theme_during_day">Enable changing theme during day</string>
+    <string name="day_night">Giorno/Notte</string>
+    <string name="enable_changing_theme_during_day">Abilita cambiando tema automaticamente durante il giorno</string>
 </resources>

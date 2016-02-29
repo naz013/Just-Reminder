@@ -516,6 +516,6 @@
     <string name="app_title">Připomenutí PRO</string>
     <string name="report">Zpráva o chybě</string>
     <string name="describe_your_problem">Popište svůj problém</string>
-    <string name="day_night">Day/Night</string>
-    <string name="enable_changing_theme_during_day">Enable changing theme during day</string>
+    <string name="day_night">Den/Noc</string>
+    <string name="enable_changing_theme_during_day">Povolit automatickou změnu motivu v průběhu dne</string>
 </resources>

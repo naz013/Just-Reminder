@@ -516,6 +516,6 @@
     <string name="app_title">"अनुस्मारक प्रो"</string>
     <string name="report">बग के बारे में रिपोर्ट</string>
     <string name="describe_your_problem">आपकी समस्या का वर्णन करें</string>
-    <string name="day_night">Day/Night</string>
-    <string name="enable_changing_theme_during_day">Enable changing theme during day</string>
+    <string name="day_night">दिन/रात</string>
+    <string name="enable_changing_theme_during_day">दिन के दौरान स्वचालित रूप से विषय बदलते सक्षम करें</string>
 </resources>

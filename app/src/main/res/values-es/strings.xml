@@ -515,6 +515,6 @@
     <string name="application_not_selected">"La aplicación no seleccionado"</string>
     <string name="report">"Informe sobre el error"</string>
     <string name="describe_your_problem">"Describir su problema"</string>
-    <string name="day_night">Day/Night</string>
-    <string name="enable_changing_theme_during_day">Enable changing theme during day</string>
+    <string name="day_night">Día/Noche</string>
+    <string name="enable_changing_theme_during_day">Habilitar el cambio de tema automáticamente durante el día</string>
 </resources>

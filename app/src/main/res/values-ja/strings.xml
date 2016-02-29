@@ -516,6 +516,6 @@
     <string name="application_not_selected">"アプリケーションを選択しません"</string>
     <string name="report">"バグに関する報告書"</string>
     <string name="describe_your_problem">"あなたの問題を説明してください"</string>
-    <string name="day_night">Day/Night</string>
-    <string name="enable_changing_theme_during_day">Enable changing theme during day</string>
+    <string name="day_night">デイ/ナイト</string>
+    <string name="enable_changing_theme_during_day">日中に自動的にテーマを変更する有効</string>
 </resources>
