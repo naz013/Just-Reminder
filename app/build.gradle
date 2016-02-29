@@ -7,11 +7,12 @@ android {
         applicationId 'com.cray.software.justreminder'
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 127
-        versionName '5.0.8'
+        versionCode 128
+        versionName '5.0.9'
         multiDexEnabled true
         renderscriptTargetApi 20
         renderscriptSupportModeEnabled true
+        vectorDrawables.useSupportLibrary = true
     }
 
     lintOptions {
@@ -46,7 +47,7 @@ android {
         pro {
             applicationId 'com.cray.software.justreminderpro'
             buildConfigField "boolean", "IS_PRO", "true"
-            versionCode 99
+            versionCode 100
         }
     }
 
@@ -87,16 +88,16 @@ repositories {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.google.apis:google-api-services-calendar:v3-rev159-1.21.0' exclude module: 'httpclient'
+    compile 'com.google.apis:google-api-services-calendar:v3-rev167-1.21.0' exclude module: 'httpclient'
     compile 'com.google.api-client:google-api-client-android:1.21.0' exclude module: 'httpclient'
-    compile 'com.google.apis:google-api-services-drive:v3-rev6-1.21.0' exclude module: 'httpclient'
-    compile 'com.google.apis:google-api-services-tasks:v1-rev42-1.21.0' exclude module: 'httpclient'
+    compile 'com.google.apis:google-api-services-drive:v3-rev11-1.21.0' exclude module: 'httpclient'
+    compile 'com.google.apis:google-api-services-tasks:v1-rev43-1.21.0' exclude module: 'httpclient'
     compile 'com.google.http-client:google-http-client-gson:1.21.0' exclude module: 'httpclient'
-    compile 'com.android.support:cardview-v7:23.1.1'
-    compile 'com.android.support:support-v4:23.1.1'
+    compile 'com.android.support:cardview-v7:23.2.0'
+    compile 'com.android.support:support-v4:23.2.0'
     compile 'com.android.support:multidex:1.0.1'
-    compile 'com.android.support:recyclerview-v7:23.1.1'
-    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:recyclerview-v7:23.2.0'
+    compile 'com.android.support:appcompat-v7:23.2.0'
     compile 'com.google.android.gms:play-services-auth:8.4.0'
     compile 'com.google.android.gms:play-services-appindexing:8.4.0'
     compile 'com.google.android.gms:play-services-drive:8.4.0'
@@ -104,7 +105,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:8.4.0'
     compile 'com.google.android.gms:play-services-analytics:8.4.0'
     compile 'com.google.android.gms:play-services-wearable:8.4.0'
-    compile 'com.android.support:design:23.1.1'
+    compile 'com.android.support:design:23.2.0'
     //Github libraries
     compile project(':photoPreview')
     compile project(':flextcal')

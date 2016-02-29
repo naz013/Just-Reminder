@@ -35,6 +35,7 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.models.ReminderModel;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -177,7 +178,7 @@ public class ActiveFragment extends Fragment implements
         emptyItem.setVisibility(View.VISIBLE);
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (prefs.loadBoolean(Prefs.USE_DARK_THEME)) {
+        if (new ColorSetter(getActivity()).isDark()) {
             emptyImage.setImageResource(R.drawable.ic_alarm_off_48px_white);
         } else {
             emptyImage.setImageResource(R.drawable.ic_alarm_off_48px);

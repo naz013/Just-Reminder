@@ -140,6 +140,7 @@ public class SplashScreen extends AppCompatActivity {
             uiEd.putBoolean(Prefs.REMINDER_IMAGE_BLUR, false);
             uiEd.putBoolean(Prefs.SYSTEM_VOLUME, false);
             uiEd.putBoolean(Prefs.INCREASING_VOLUME, false);
+            uiEd.putBoolean(Prefs.DAY_NIGHT, false);
 
             if (Module.isPro()) {
                 uiEd.putBoolean(Prefs.BIRTHDAY_LED_STATUS, false);
@@ -451,6 +452,9 @@ public class SplashScreen extends AppCompatActivity {
             prefs.saveInt(Prefs.SOUND_STREAM, 5);
         }
 
+        if (!prefs.isString(Prefs.DAY_NIGHT)){
+            prefs.saveBoolean(Prefs.DAY_NIGHT, false);
+        }
         if (!prefs.isString(Prefs.RATE_SHOW)){
             prefs.saveBoolean(Prefs.RATE_SHOW, false);
         }

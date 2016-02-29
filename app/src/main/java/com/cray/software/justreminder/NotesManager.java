@@ -577,8 +577,7 @@ public class NotesManager extends AppCompatActivity {
     }
 
     private void setImages(){
-        sPrefs = new SharedPrefs(NotesManager.this);
-        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)){
+        if (new ColorSetter(this).isDark()){
             discardReminder.setImageResource(R.drawable.ic_clear_white_24dp);
         } else {
             discardReminder.setImageResource(R.drawable.ic_clear_black_24dp);

@@ -328,7 +328,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         cSetter = new ColorSetter(getActivity());
 
         mRadius = prefs.loadInt(Prefs.LOCATION_RADIUS);
-        isDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
+        isDark = new ColorSetter(getActivity()).isDark();
 
         map = ((SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map)).getMap();

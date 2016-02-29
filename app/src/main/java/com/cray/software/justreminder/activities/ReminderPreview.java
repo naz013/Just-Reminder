@@ -185,7 +185,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
         mapContainer = (LinearLayout) findViewById(R.id.mapContainer);
         mapContainer.setVisibility(View.GONE);
 
-        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
+        if (new ColorSetter(this).isDark()) {
             time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_alarm_white_24dp, 0, 0, 0);
             type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_assignment_white_24dp, 0, 0, 0);
             group.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_local_offer_white_24dp, 0, 0, 0);

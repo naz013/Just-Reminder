@@ -29,7 +29,7 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
     private ActionBar ab;
     
     private PrefsView use24TimePrefs, useDarkStylePrefs, themeColorPrefs,
-            smartFoldPrefs, wearEnablePrefs, itemPreviewPrefs, wearPrefs;
+            smartFoldPrefs, wearEnablePrefs, itemPreviewPrefs, wearPrefs, dayNightPrefs;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,6 +51,10 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
         useDarkStylePrefs = (PrefsView) rootView.findViewById(R.id.useDarkStylePrefs);
         useDarkStylePrefs.setChecked(sPrefs.loadBoolean(Prefs.USE_DARK_THEME));
         useDarkStylePrefs.setOnClickListener(this);
+
+        dayNightPrefs = (PrefsView) rootView.findViewById(R.id.dayNightPrefs);
+        dayNightPrefs.setChecked(sPrefs.loadBoolean(Prefs.DAY_NIGHT));
+        dayNightPrefs.setOnClickListener(this);
 
         themeColorPrefs = (PrefsView) rootView.findViewById(R.id.themeColorPrefs);
         themeColorPrefs.setOnClickListener(this);
@@ -115,7 +119,24 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
             useDarkStylePrefs.setChecked(false);
         } else {
             sPrefs.saveBoolean(Prefs.USE_DARK_THEME, true);
+            sPrefs.saveBoolean(Prefs.DAY_NIGHT, false);
             useDarkStylePrefs.setChecked(true);
+            dayNightPrefs.setChecked(false);
+        }
+        sPrefs.saveBoolean(Prefs.UI_CHANGED, true);
+        getActivity().recreate();
+    }
+
+    private void dayNightChange (){
+        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
+        if (dayNightPrefs.isChecked()){
+            sPrefs.saveBoolean(Prefs.DAY_NIGHT, false);
+            dayNightPrefs.setChecked(false);
+        } else {
+            sPrefs.saveBoolean(Prefs.DAY_NIGHT, true);
+            sPrefs.saveBoolean(Prefs.USE_DARK_THEME, false);
+            dayNightPrefs.setChecked(true);
+            useDarkStylePrefs.setChecked(false);
         }
         sPrefs.saveBoolean(Prefs.UI_CHANGED, true);
         getActivity().recreate();
@@ -187,6 +208,9 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
                 break;
             case R.id.useDarkStylePrefs:
                 useDarkStyleChange();
+                break;
+            case R.id.dayNightPrefs:
+                dayNightChange();
                 break;
             case R.id.use24TimePrefs:
                 _24Change();

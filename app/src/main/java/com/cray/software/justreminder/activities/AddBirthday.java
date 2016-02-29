@@ -113,7 +113,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         birthDate.setOnClickListener(this);
 
         ImageView dateIcon = (ImageView) findViewById(R.id.dateIcon);
-        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)){
+        if (cs.isDark()){
             dateIcon.setImageResource(R.drawable.ic_event_white_24dp);
         } else {
             dateIcon.setImageResource(R.drawable.ic_event_black_24dp);
@@ -210,7 +210,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         birthDate.setText(format.format(calendar.getTime()));
 
         ImageButton pickContact = (ImageButton) findViewById(R.id.pickContact);
-        ViewUtils.setImage(pickContact, sPrefs.loadBoolean(Prefs.USE_DARK_THEME));
+        ViewUtils.setImage(pickContact, cs.isDark());
         pickContact.setOnClickListener(this);
     }
 

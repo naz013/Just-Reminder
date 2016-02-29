@@ -13,8 +13,7 @@ import android.widget.RadioButton;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
@@ -63,7 +62,7 @@ public class ActionView extends LinearLayout {
         init(context, attrs);
     }
 
-    private void init(Context context, AttributeSet attrs) {
+    private void init(final Context context, AttributeSet attrs) {
         View.inflate(context, R.layout.action_view_layout, this);
         //setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         setOrientation(VERTICAL);
@@ -79,7 +78,7 @@ public class ActionView extends LinearLayout {
                     ViewUtils.showOver(actionBlock);
                     selectNumber = (ImageButton) findViewById(R.id.selectNumber);
                     selectNumber.setOnClickListener(contactClick);
-                    ViewUtils.setImage(selectNumber, new SharedPrefs(activity).loadBoolean(Prefs.USE_DARK_THEME));
+                    ViewUtils.setImage(selectNumber, new ColorSetter(context).isDark());
 
                     numberView = (FloatingEditText) findViewById(R.id.numberView);
                     numberView.setFocusableInTouchMode(true);

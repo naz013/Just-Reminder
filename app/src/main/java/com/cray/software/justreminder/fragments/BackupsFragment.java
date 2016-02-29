@@ -19,8 +19,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
-import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.spinner.SpinnerItem;
@@ -102,8 +101,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
     private void setNavigation(){
         navIds.clear();
-        SharedPrefs prefs = new SharedPrefs(getActivity());
-        boolean isDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
+        boolean isDark = new ColorSetter(getActivity()).isDark();
         if (isDark) {
             navIds.add(new Item(new SpinnerItem(getString(R.string.local),
                     R.drawable.ic_sd_storage_white_24dp), LOCAL_INT,

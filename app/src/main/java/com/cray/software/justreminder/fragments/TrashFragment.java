@@ -23,6 +23,7 @@ import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.ReminderModel;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.LCAMListener;
@@ -90,7 +91,7 @@ public class TrashFragment extends Fragment implements RecyclerListener{
         emptyText.setText(R.string.trash_is_empty);
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME)) {
+        if (new ColorSetter(getActivity()).isDark()) {
             emptyImage.setImageResource(R.drawable.delete_white);
         } else {
             emptyImage.setImageResource(R.drawable.delete);

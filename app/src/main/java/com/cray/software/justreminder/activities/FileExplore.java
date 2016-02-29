@@ -80,7 +80,7 @@ public class FileExplore extends AppCompatActivity implements View.OnClickListen
 
         list = (ListView) findViewById(R.id.list);
 
-        isDark = new SharedPrefs(this).loadBoolean(Prefs.USE_DARK_THEME);
+        isDark = cs.isDark();
 
         buttonContainer = (LinearLayout) findViewById(R.id.buttonContainer);
         buttonContainer.setVisibility(View.GONE);

@@ -602,7 +602,7 @@ public class ScreenManager extends AppCompatActivity
             args.putInt(FlextCal.START_DAY_OF_WEEK, FlextCal.MONDAY);
         }
         args.putBoolean(FlextCal.ENABLE_IMAGES, mPrefs.loadBoolean(Prefs.CALENDAR_IMAGE));
-        args.putBoolean(FlextCal.DARK_THEME, mPrefs.loadBoolean(Prefs.USE_DARK_THEME));
+        args.putBoolean(FlextCal.DARK_THEME, cSetter.isDark());
         calendarView.setArguments(args);
         calendarView.setBackgroundForToday(cSetter.getColor(cSetter.colorCurrentCalendar()));
         replace(calendarView, mTag);

@@ -15,6 +15,8 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
 
+import java.util.Calendar;
+
 public class ColorSetter {
 
     public static final int NUM_OF_MARKERS = 16;
@@ -98,8 +100,7 @@ public class ColorSetter {
     @ColorRes
     public int colorAccent(int code){
         int color;
-        boolean isDark = new SharedPrefs(mContext).loadBoolean(Prefs.USE_DARK_THEME);
-        if (isDark) {
+        if (isDark()) {
             switch (code) {
                 case 0:
                     color = R.color.indigoAccent;
@@ -224,6 +225,30 @@ public class ColorSetter {
     }
 
     /**
+     * <p>
+     *     Check what color palette use for application.
+     * </p>
+     * @return boolean
+     */
+    public boolean isDark() {
+        sPrefs = new SharedPrefs(mContext);
+        boolean isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
+        boolean isDayNight = sPrefs.loadBoolean(Prefs.DAY_NIGHT);
+        if (isDayNight) {
+            Calendar calendar = Calendar.getInstance();
+            long mTime = System.currentTimeMillis();
+            calendar.setTimeInMillis(mTime);
+            calendar.set(Calendar.HOUR_OF_DAY, 8);
+            calendar.set(Calendar.MINUTE, 0);
+            long min = calendar.getTimeInMillis();
+            calendar.set(Calendar.HOUR_OF_DAY, 19);
+            long max = calendar.getTimeInMillis();
+            return !(mTime >= min && mTime <= max);
+        }
+        return isDark;
+    }
+
+    /**
      * Get theme for application based on user choice.
      * @return Theme resource
      */
@@ -232,8 +257,7 @@ public class ColorSetter {
         int id;
         sPrefs = new SharedPrefs(mContext);
         int loadedColor = sPrefs.loadInt(Prefs.APP_THEME);
-        boolean isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
-        if (isDark) {
+        if (isDark()) {
             switch (loadedColor) {
                 case 0:
                     id = R.style.HomeDark_Red;
@@ -686,7 +710,7 @@ public class ColorSetter {
     public int getSpinnerStyle(){
         int color;
         sPrefs = new SharedPrefs(mContext);
-        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
+        if (isDark()) {
             color = R.color.material_grey;
         } else color = R.color.whitePrimary;
         return getColor(color);
@@ -701,8 +725,7 @@ public class ColorSetter {
         int id;
         sPrefs = new SharedPrefs(mContext);
         int loadedColor = sPrefs.loadInt(Prefs.APP_THEME);
-        boolean isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
-        if (isDark) {
+        if (isDark()) {
             switch (loadedColor) {
                 case 0:
                     id = R.style.HomeDarkDialog_Red;
@@ -834,7 +857,7 @@ public class ColorSetter {
     public int getFullscreenStyle(){
         int id;
         sPrefs = new SharedPrefs(mContext);
-        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
+        if (isDark()) {
             id = R.style.HomeDarkFullscreen;
         } else id = R.style.HomeWhiteFullscreen;
         return id;
@@ -848,7 +871,7 @@ public class ColorSetter {
     public int getTransparentStyle(){
         int id;
         sPrefs = new SharedPrefs(mContext);
-        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
+        if (isDark()) {
             id = R.style.HomeDarkTranslucent;
         } else id = R.style.HomeWhiteTranslucent;
         return id;
@@ -862,7 +885,7 @@ public class ColorSetter {
     public int getBackgroundStyle(){
         int id;
         sPrefs = new SharedPrefs(mContext);
-        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
+        if (isDark()) {
             id = getColor(R.color.material_grey);
         } else id = getColor(R.color.material_white);
         return id;
@@ -875,7 +898,7 @@ public class ColorSetter {
     @ColorInt
     public int getStatusBarStyle(){
         sPrefs = new SharedPrefs(mContext);
-        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
+        if (isDark()) {
             return getColor(R.color.material_grey);
         } else return getColor(colorPrimaryDark());
     }
@@ -888,7 +911,7 @@ public class ColorSetter {
     public int getCardStyle(){
         int color;
         sPrefs = new SharedPrefs(mContext);
-        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
+        if (isDark()) {
             color = getColor(R.color.grey_x);
         } else color = getColor(R.color.whitePrimary);
         return color;
@@ -902,7 +925,7 @@ public class ColorSetter {
     public int getCardDrawableStyle(){
         int color;
         sPrefs = new SharedPrefs(mContext);
-        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
+        if (isDark()) {
             color = R.drawable.card_bg_dark;
         } else color = R.drawable.card_bg;
         return color;

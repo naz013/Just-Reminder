@@ -206,8 +206,7 @@ public class NavigationDrawerFragment extends Fragment implements
         if (!Module.isPro()){
             RelativeLayout ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);
             ImageView basket = (ImageView) rootView.findViewById(R.id.basket);
-            SharedPrefs sPrefs = new SharedPrefs(getActivity());
-            if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)){
+            if (new ColorSetter(getActivity()).isDark()){
                 basket.setImageResource(R.drawable.market_icon_white);
             } else {
                 basket.setImageResource(R.drawable.market_icon);
@@ -274,8 +273,7 @@ public class NavigationDrawerFragment extends Fragment implements
     }
 
     private void loadMenu() {
-        SharedPrefs prefs = new SharedPrefs(getActivity());
-        if (!prefs.loadBoolean(Prefs.USE_DARK_THEME)){
+        if (!new ColorSetter(getActivity()).isDark()){
             activeScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_notifications_black_24dp, 0, 0, 0);
             archiveScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_delete_black_24dp, 0, 0, 0);
             calendar.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_today_black_24dp, 0, 0, 0);

@@ -232,8 +232,7 @@ public class CloudDrives extends AppCompatActivity {
     }
 
     private void setImage(){
-        SharedPrefs sPrefs = new SharedPrefs(CloudDrives.this);
-        if (!sPrefs.loadBoolean(Prefs.USE_DARK_THEME)){
+        if (!new ColorSetter(this).isDark()){
             dropboxTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.dropbox_icon, 0, 0, 0);
             gDriveTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.google_grey, 0, 0, 0);
         } else {

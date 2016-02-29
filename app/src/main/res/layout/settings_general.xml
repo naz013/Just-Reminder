@@ -29,6 +29,16 @@
             app:prefs_divider_top="false"
             app:prefs_type="check"
             app:prefs_divider_bottom="true"/>
+
+        <com.cray.software.justreminder.views.PrefsView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/dayNightPrefs"
+            app:prefs_primary_text="@string/day_night"
+            app:prefs_secondary_text="@string/enable_changing_theme_during_day"
+            app:prefs_divider_top="false"
+            app:prefs_type="check"
+            app:prefs_divider_bottom="true"/>
     
         <com.cray.software.justreminder.views.PrefsView
             android:layout_width="match_parent"

@@ -477,7 +477,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         cSetter = new ColorSetter(getActivity());
 
         markerRadius = prefs.loadInt(Prefs.LOCATION_RADIUS);
-        isDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
+        isDark = new ColorSetter(getActivity()).isDark();
         if (!Module.isPro()) markerStyle = prefs.loadInt(Prefs.MARKER_STYLE);
 
         map = ((SupportMapFragment) getChildFragmentManager()

@@ -192,7 +192,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
 
         isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
         isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
-        isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
+        isDark = colorSetter.isDark();
         hasTasks = new GTasksHelper(this).isLinked();
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -514,7 +514,6 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void setUpNavigation() {
         ArrayList<SpinnerItem> navSpinner = new ArrayList<>();
-        isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
         if (isDark) {
             navSpinner.add(new SpinnerItem(getString(R.string.by_date), R.drawable.ic_event_white_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.timer), R.drawable.ic_timer_white_24dp));
@@ -1155,7 +1154,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 }
             } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)) {
                 number = baseFragment.getNumber();
-                if (number.matches("") || number.matches(".*https?://")) {
+                if (number == null || number.matches("") || number.matches(".*https?://")) {
                     showSnackbar(getString(R.string.you_dont_insert_link));
                     return null;
                 }
@@ -1167,13 +1166,13 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         String subjectString = null;
         if (isMailAttached()) {
             String email = baseFragment.getNumber();
-            if (email.matches("") || !email.matches(".*@.*..*")) {
+            if (email == null || email.matches("") || !email.matches(".*@.*..*")) {
                 showSnackbar(getString(R.string.email_is_incorrect));
                 return null;
             } else number = email;
 
             String subString = baseFragment.getMessage();
-            if (subString.matches("")) {
+            if (subString == null || subString.matches("")) {
                 showSnackbar(getString(R.string.you_dont_insert_any_message));
                 return null;
             }
@@ -1192,15 +1191,13 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 return null;
             }
             LatLng dest = null;
-            boolean isNull = true;
-            if (curPlace != null) {
-                dest = curPlace;
-                isNull = false;
-            }
-            if (isNull) {
+            if (curPlace == null) {
                 showSnackbar(getString(R.string.you_dont_select_place));
                 return null;
+            } else {
+                dest = curPlace;
             }
+
             if (isLocationAttached()) {
                 LocationFragment fragment = (LocationFragment) baseFragment;
                 if (fragment.isDelayed()) {

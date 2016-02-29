@@ -72,7 +72,7 @@ public class AddPlace extends AppCompatActivity implements MapListener {
 
         placeName = (EditText) findViewById(R.id.placeName);
         googleMap = MapFragment.newInstance(false, false, false, false,
-                sPrefs.loadInt(Prefs.MARKER_STYLE), sPrefs.loadBoolean(Prefs.USE_DARK_THEME));
+                sPrefs.loadInt(Prefs.MARKER_STYLE), cs.isDark());
         googleMap.setListener(this);
 
         getSupportFragmentManager().beginTransaction()

@@ -12,10 +12,9 @@ import android.view.ViewGroup;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.adapters.PlaceRecyclerAdapter;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.PlaceDataProvider;
 import com.cray.software.justreminder.fragments.helpers.MapFragment;
-import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.reminder.Reminder;
 
@@ -44,7 +43,7 @@ public class GeolocationFragment extends Fragment implements SimpleListener {
         View rootView = inflater.inflate(R.layout.fragment_geolocation_layout, container, false);
 
         fragment = MapFragment.newInstance(false, true, false, false, false, false,
-                new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME));
+                new ColorSetter(getActivity()).isDark());
         fragment.setAdapter(loadPlaces());
 
         getChildFragmentManager().beginTransaction()

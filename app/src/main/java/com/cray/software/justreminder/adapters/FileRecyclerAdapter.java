@@ -14,10 +14,8 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.models.FileModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 
@@ -56,7 +54,7 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
         this.list = list;
         cs = new ColorSetter(context);
         setHasStableIds(true);
-        isDark = new SharedPrefs(context).loadBoolean(Prefs.USE_DARK_THEME);
+        isDark = cs.isDark();
     }
 
     /**

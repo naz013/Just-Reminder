@@ -99,7 +99,7 @@ public class ShopsPreview extends AppCompatActivity {
         reminderContainer = (RelativeLayout) findViewById(R.id.reminderContainer);
 
         time = (TextView) findViewById(R.id.time);
-        if (new SharedPrefs(this).loadBoolean(Prefs.USE_DARK_THEME)) {
+        if (cSetter.isDark()) {
             time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_alarm_white_24dp, 0, 0, 0);
         } else {
             time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_alarm_black_24dp, 0, 0, 0);

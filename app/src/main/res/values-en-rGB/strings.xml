@@ -516,4 +516,6 @@
     <string name="app_title">Reminder PRO</string>
     <string name="report">Report about bug</string>
     <string name="describe_your_problem">Describe your problem</string>
+    <string name="day_night">Day/Night</string>
+    <string name="enable_changing_theme_during_day">Enable changing theme during day</string>
 </resources>

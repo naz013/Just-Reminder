@@ -55,7 +55,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         cs = new ColorSetter(context);
         mCount = new TimeCount(context);
         is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
-        isDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
+        isDark = cs.isDark();
         setHasStableIds(true);
     }
 

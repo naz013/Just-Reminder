@@ -17,11 +17,10 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.activities.AddBirthday;
 import com.cray.software.justreminder.adapters.CalendarEventsAdapter;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.models.EventsItem;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.reminder.Reminder;
 
@@ -64,7 +63,7 @@ public class EventsListFragment extends Fragment implements SimpleListener {
         emptyText.setText(getString(R.string.no_events));
 
         ImageView emptyImage = (ImageView) view.findViewById(R.id.emptyImage);
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME))
+        if (new ColorSetter(getActivity()).isDark())
             emptyImage.setImageResource(R.drawable.today_white);
         else
             emptyImage.setImageResource(R.drawable.today);

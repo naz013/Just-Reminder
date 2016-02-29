@@ -515,4 +515,6 @@
     <string name="application_not_selected">"O aplicativo não está selecionada"</string>
     <string name="report">"Relatório sobre bug"</string>
     <string name="describe_your_problem">"Descreva o seu problema"</string>
+    <string name="day_night">Day/Night</string>
+    <string name="enable_changing_theme_during_day">Enable changing theme during day</string>
 </resources>

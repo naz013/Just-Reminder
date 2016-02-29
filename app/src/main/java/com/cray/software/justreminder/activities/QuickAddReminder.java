@@ -5,7 +5,6 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -26,7 +25,6 @@ import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.models.CategoryModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -80,7 +78,7 @@ public class QuickAddReminder extends AppCompatActivity {
         ImageView timeIcon = (ImageView) findViewById(R.id.timeIcon);
         ImageView repeatIcon = (ImageView) findViewById(R.id.repeatIcon);
 
-        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)){
+        if (cs.isDark()){
             timeIcon.setImageResource(R.drawable.ic_alarm_white_24dp);
             repeatIcon.setImageResource(R.drawable.ic_refresh_white_24dp);
         } else {

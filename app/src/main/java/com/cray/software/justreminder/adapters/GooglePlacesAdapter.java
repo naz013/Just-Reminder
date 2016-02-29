@@ -28,9 +28,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.models.PlaceModel;
-import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.utils.AssetsUtil;
 
@@ -62,7 +61,7 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
     public GooglePlacesAdapter(final Context context, ArrayList<PlaceModel> array) {
         this.array = array;
         typeface = AssetsUtil.getLightTypeface(context);
-        isDark = new SharedPrefs(context).loadBoolean(Prefs.USE_DARK_THEME);
+        isDark = new ColorSetter(context).isDark();
         setHasStableIds(true);
     }
 

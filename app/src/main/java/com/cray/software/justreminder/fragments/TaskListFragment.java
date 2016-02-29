@@ -15,9 +15,8 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.TasksRecyclerAdapter;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.models.Task;
-import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SyncListener;
 
@@ -62,7 +61,7 @@ public class TaskListFragment extends Fragment implements SyncListener {
         emptyItem.setVisibility(View.VISIBLE);
 
         ImageView emptyImage = (ImageView) view.findViewById(R.id.emptyImage);
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME)) {
+        if (new ColorSetter(getActivity()).isDark()) {
             emptyImage.setImageResource(R.drawable.clear_white);
         } else {
             emptyImage.setImageResource(R.drawable.clear);

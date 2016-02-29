@@ -22,6 +22,7 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.PlaceDataProvider;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.LCAMListener;
@@ -61,7 +62,7 @@ public class PlacesFragment extends Fragment implements SimpleListener {
         emptyText.setText(getActivity().getString(R.string.no_places));
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.USE_DARK_THEME)) {
+        if (new ColorSetter(getActivity()).isDark()) {
             emptyImage.setImageResource(R.drawable.place_white);
         } else {
             emptyImage.setImageResource(R.drawable.place);

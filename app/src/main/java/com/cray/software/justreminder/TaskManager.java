@@ -142,7 +142,7 @@ public class TaskManager extends AppCompatActivity {
         ImageView dateIcon = (ImageView) findViewById(R.id.dateIcon);
         ImageView timeIcon = (ImageView) findViewById(R.id.timeIcon);
         ImageView listIcon = (ImageView) findViewById(R.id.listIcon);
-        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)){
+        if (cSetter.isDark()){
             noteIcon.setImageResource(R.drawable.ic_event_note_white_24dp);
             dateIcon.setImageResource(R.drawable.ic_event_white_24dp);
             timeIcon.setImageResource(R.drawable.ic_alarm_white_24dp);

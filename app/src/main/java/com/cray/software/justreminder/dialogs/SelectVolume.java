@@ -34,7 +34,7 @@ public class SelectVolume extends Activity {
         code = getIntent().getIntExtra("int", 0);
 
         sPrefs = new SharedPrefs(SelectVolume.this);
-        isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
+        isDark = cs.isDark();
 
         radiusValue = (TextView) findViewById(R.id.radiusValue);
         radiusValue.setText(String.valueOf(sPrefs.loadInt(Prefs.VOLUME)));

@@ -9,9 +9,7 @@ import android.view.MenuItem;
 import android.webkit.WebView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
@@ -44,8 +42,7 @@ public class Help extends AppCompatActivity {
 
         findViewById(R.id.windowBg).setBackgroundColor(cSetter.getBackgroundStyle());
 
-        SharedPrefs prefs = new SharedPrefs(Help.this);
-        boolean isDark = prefs.loadBoolean(Prefs.USE_DARK_THEME);
+        boolean isDark = cSetter.isDark();
 
         helpView = (WebView) findViewById(R.id.helpView);
         String localeCheck = Locale.getDefault().toString().toLowerCase();

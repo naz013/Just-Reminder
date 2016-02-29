@@ -34,6 +34,7 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.datas.NoteDataProvider;
 import com.cray.software.justreminder.datas.models.NoteModel;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -135,7 +136,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         emptyItem.setVisibility(View.VISIBLE);
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (sPrefs.loadBoolean(Prefs.USE_DARK_THEME)) {
+        if (new ColorSetter(getActivity()).isDark()) {
             emptyImage.setImageResource(R.drawable.note_white);
         } else {
             emptyImage.setImageResource(R.drawable.note);

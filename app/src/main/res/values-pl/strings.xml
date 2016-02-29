@@ -516,4 +516,6 @@
     <string name="app_title">"Przypomnienie PRO"</string>
     <string name="report">Raport na temat błędów</string>
     <string name="describe_your_problem">Opisz swój problem</string>
+    <string name="day_night">Day/Night</string>
+    <string name="enable_changing_theme_during_day">Enable changing theme during day</string>
 </resources>
