@@ -158,7 +158,7 @@ public class FlextCal extends Fragment {
     public WeekdayArrayAdapter getNewWeekdayAdapter() {
         return new WeekdayArrayAdapter(
                 getActivity(), android.R.layout.simple_list_item_1,
-                getDaysOfWeek());
+                getDaysOfWeek(), isDark);
     }
 
     /**

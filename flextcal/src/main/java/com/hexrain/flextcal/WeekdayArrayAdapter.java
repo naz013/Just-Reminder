@@ -1,7 +1,6 @@
 package com.hexrain.flextcal;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -17,10 +16,12 @@ import java.util.List;
  */
 public class WeekdayArrayAdapter extends ArrayAdapter<String> {
 	public static int textColor = Color.LTGRAY;
+	private boolean isDark;
 
 	public WeekdayArrayAdapter(Context context, int textViewResourceId,
-							   List<String> objects) {
+							   List<String> objects, boolean isDark) {
 		super(context, textViewResourceId, objects);
+		this.isDark = isDark;
 	}
 
 	// To prevent cell highlighted when clicked
@@ -52,8 +53,7 @@ public class WeekdayArrayAdapter extends ArrayAdapter<String> {
 			textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
 		}
 
-        SharedPreferences prefs = getContext().getSharedPreferences("ui_settings", Context.MODE_PRIVATE);
-        if (prefs.getBoolean("dark_theme", false)){
+        if (isDark){
             textColor = getContext().getResources().getColor(android.R.color.white);
         } else textColor = getContext().getResources().getColor(android.R.color.black);
 
