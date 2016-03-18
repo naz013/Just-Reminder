@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    android:installLocation="internalOnly">
+    android:installLocation="auto">
 
     <permission
         android:name="com.cray.software.justreminderpro.maps.permission.MAPS_RECEIVE"
