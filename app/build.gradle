@@ -7,8 +7,8 @@ android {
         applicationId 'com.cray.software.justreminder'
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 130
-        versionName '5.0.11'
+        versionCode 131
+        versionName '5.0.12'
         multiDexEnabled true
         renderscriptTargetApi 20
         renderscriptSupportModeEnabled true
@@ -47,7 +47,7 @@ android {
         pro {
             applicationId 'com.cray.software.justreminderpro'
             buildConfigField "boolean", "IS_PRO", "true"
-            versionCode 102
+            versionCode 103
         }
     }
 

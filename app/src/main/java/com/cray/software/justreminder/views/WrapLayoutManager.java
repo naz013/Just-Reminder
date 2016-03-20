@@ -90,7 +90,14 @@ public class WrapLayoutManager extends LinearLayoutManager {
     private void measureScrapChild(RecyclerView.Recycler recycler, int position, int widthSpec,
                                    int heightSpec, int[] measuredDimension) {
 
-        View view = recycler.getViewForPosition(position);
+        View view;
+        try {
+            view = recycler.getViewForPosition(position);
+        } catch (IndexOutOfBoundsException e) {
+            measuredDimension[0] = 0;
+            measuredDimension[1] = 0;
+            return;
+        }
         if (view.getVisibility() == View.GONE) {
             measuredDimension[0] = 0;
             measuredDimension[1] = 0;

@@ -549,6 +549,7 @@ public class SyncHelper {
      */
     private void reminderObject(JSONObject jsonObj) throws JSONException {
         JModel jModel = new JParser(jsonObj).parse();
+        if (jModel == null) return;
         String uuID = jModel.getUuId();
         String type = jModel.getType();
         if (uuID != null && !Reminder.isUuId(mContext, uuID) && type != null) {
@@ -711,7 +712,6 @@ public class SyncHelper {
     /**
      * Restore birthday from JSON file to application.
      * @param file birthday file path.
-     * @param fileNameR file name.
      * @throws JSONException
      */
     public void birthdayFromJson(File file) throws JSONException {
