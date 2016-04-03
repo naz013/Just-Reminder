@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.backdoor.moove">
+    package="com.cray.software.justreminder">
 
     <uses-feature android:name="android.hardware.type.watch" />
 
@@ -20,30 +20,21 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".WearService"
-            android:enabled="true"
-            android:exported="true">
+        <service android:name=".WearService">
             <intent-filter>
-
-                <!-- listeners receive events that match the action and data filters -->
                 <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
                 <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
                 <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
                 <action android:name="com.google.android.gms.wearable.CAPABILITY_CHANGED" />
                 <action android:name="com.google.android.gms.wearable.CHANNEL_EVENT" />
-
-                <data
-                    android:host="*"
-                    android:scheme="wear" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.backdoor.moove.DISMISS" />
+                <data android:host="*" android:scheme="wear" android:pathPrefix="/wear" />
             </intent-filter>
         </service>
 
         <activity
-            android:name=".ReminderActivity"></activity>
+            android:name=".ReminderActivity"/>
+        <activity
+            android:name=".BirthdayActivity"/>
     </application>
 
 </manifest>

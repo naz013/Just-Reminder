@@ -7,5 +7,5 @@
     android:layout_height="match_parent"
     app:rectLayout="@layout/rect_activity_reminder"
     app:roundLayout="@layout/round_activity_reminder"
-    tools:context="com.backdoor.moove.ReminderActivity"
+    tools:context=".ReminderActivity"
     tools:deviceIds="wear"></android.support.wearable.view.WatchViewStub>

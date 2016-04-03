@@ -20,6 +20,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.services.WearService;
 import com.cray.software.justreminder.views.PrefsView;
 import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
 
@@ -80,8 +81,9 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
         wearPrefs = (PrefsView) rootView.findViewById(R.id.wearPrefs);
         wearPrefs.setChecked(sPrefs.loadBoolean(Prefs.WEAR_SERVICE));
         wearPrefs.setOnClickListener(this);
-        if (Module.isJellyMR2()) wearPrefs.setVisibility(View.VISIBLE);
-        //else
+        if (Module.isJellyMR2())
+            wearPrefs.setVisibility(View.VISIBLE);
+        else
             wearPrefs.setVisibility(View.GONE);
 
         themeView();
@@ -94,9 +96,11 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
         if (wearPrefs.isChecked()){
             sPrefs.saveBoolean(Prefs.WEAR_SERVICE, false);
             wearPrefs.setChecked(false);
+            getActivity().stopService(new Intent(getActivity(), WearService.class));
         } else {
             sPrefs.saveBoolean(Prefs.WEAR_SERVICE, true);
             wearPrefs.setChecked(true);
+            getActivity().startService(new Intent(getActivity(), WearService.class));
         }
     }
 

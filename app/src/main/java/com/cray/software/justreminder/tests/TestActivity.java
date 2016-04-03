@@ -12,8 +12,10 @@ import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.activities.AddBirthday;
 import com.cray.software.justreminder.activities.AddPlace;
 import com.cray.software.justreminder.activities.FollowReminder;
+import com.cray.software.justreminder.activities.MissedCallDialog;
 import com.cray.software.justreminder.activities.QuickAddReminder;
 import com.cray.software.justreminder.activities.QuickSMS;
+import com.cray.software.justreminder.activities.ShowBirthday;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 
 import java.util.ArrayList;
@@ -36,17 +38,18 @@ public class TestActivity extends AppCompatActivity implements SimpleListener {
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.setAdapter(adapter);
         }
-
-        //startActivity(new Intent(this, ScreenManager.class));
     }
 
     private ArrayList<ActionItem> getList() {
         list = new ArrayList<>();
+        list.add(new ActionItem("Run application", ScreenManager.class));
         list.add(new ActionItem("After call screen", FollowReminder.class));
         list.add(new ActionItem("Quick message", QuickSMS.class));
         list.add(new ActionItem("Quick reminder", QuickAddReminder.class));
         list.add(new ActionItem("Add place", AddPlace.class));
         list.add(new ActionItem("Add birthday", AddBirthday.class));
+        list.add(new ActionItem("Missed call screen", MissedCallDialog.class));
+        list.add(new ActionItem("Birthday dialog", ShowBirthday.class));
         return list;
     }
 

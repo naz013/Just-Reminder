@@ -1,8 +1,9 @@
-package com.backdoor.moove;
+package com.cray.software.justreminder;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.backdoor.shared.SharedConst;
 import com.google.android.gms.common.ConnectionResult;
@@ -31,16 +32,19 @@ public class WearService extends WearableListenerService implements
                 .addOnConnectionFailedListener(this)
                 .build();
         mGoogleApiClient.connect();
+        Log.d(TAG, "Create");
     }
 
     @Override
     public void onDestroy() {
-        Wearable.DataApi.removeListener(mGoogleApiClient, this);
         super.onDestroy();
+        Wearable.DataApi.removeListener(mGoogleApiClient, this);
+        Log.d(TAG, "Destroy");
     }
 
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
+        Log.d(TAG, "Data received");
         for (DataEvent event : dataEvents) {
             if (event.getType() == DataEvent.TYPE_CHANGED) {
                 // DataItem changed
@@ -51,16 +55,36 @@ public class WearService extends WearableListenerService implements
                     startActivity(new Intent(getApplicationContext(), ReminderActivity.class)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             .putExtra(Const.INTENT_TEXT, dataMap.getString(SharedConst.KEY_TASK))
+                            .putExtra(Const.INTENT_TIMED, dataMap.getBoolean(SharedConst.KEY_TIMED))
+                            .putExtra(Const.INTENT_REPEAT, dataMap.getBoolean(SharedConst.KEY_REPEAT))
+                            .putExtra(Const.INTENT_THEME, dataMap.getBoolean(SharedConst.KEY_THEME))
+                            .putExtra(Const.INTENT_COLOR, dataMap.getInt(SharedConst.KEY_COLOR))
                             .putExtra(Const.INTENT_TYPE, dataMap.getString(SharedConst.KEY_TYPE)));
+                } else if (item.getUri().getPath().compareTo(SharedConst.WEAR_BIRTHDAY) == 0) {
+                    DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+
+                    startActivity(new Intent(getApplicationContext(), BirthdayActivity.class)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            .putExtra(Const.INTENT_TEXT, dataMap.getString(SharedConst.KEY_TASK))
+                            .putExtra(Const.INTENT_THEME, dataMap.getBoolean(SharedConst.KEY_THEME))
+                            .putExtra(Const.INTENT_COLOR, dataMap.getInt(SharedConst.KEY_COLOR)));
+                } else if (item.getUri().getPath().compareTo(SharedConst.WEAR_STOP) == 0) {
+                    DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                    if (dataMap.getBoolean(SharedConst.KEY_STOP)) {
+                        Intent intent = new Intent("finish_activity");
+                        sendBroadcast(intent);
+                    } else if (dataMap.getBoolean(SharedConst.KEY_STOP_B)) {
+                        Intent intent = new Intent("finish_birthday");
+                        sendBroadcast(intent);
+                    }
                 }
-            } else if (event.getType() == DataEvent.TYPE_DELETED) {
-                // DataItem deleted
             }
         }
     }
 
     @Override
     public void onConnected(Bundle bundle) {
+        Log.d(TAG, "connected");
         Wearable.DataApi.addListener(mGoogleApiClient, this);
     }
 
@@ -71,6 +95,6 @@ public class WearService extends WearableListenerService implements
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        Log.d(TAG, "connection failed \n" + connectionResult.getErrorMessage());
     }
 }

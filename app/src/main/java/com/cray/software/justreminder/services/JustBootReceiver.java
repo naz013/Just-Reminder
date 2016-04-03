@@ -34,6 +34,9 @@ public class JustBootReceiver extends BroadcastReceiver {
             new BirthdayPermanentAlarm().setAlarm(context);
             new Notifier(context).showBirthdayPermanent();
         }
+        if (prefs.loadBoolean(Prefs.WEAR_SERVICE)) {
+            context.startService(new Intent(context, WearService.class));
+        }
 
         new DisableAsync(context).execute();
     }

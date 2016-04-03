@@ -14,6 +14,7 @@
     <color name="material_divider">#b6b6b6</color>
 
     <color name="black_overlay">#66000000</color>
+    <color name="black_transparency">#40000000</color>
 
     <color name="redPrimary">#F44336</color>
     <color name="redPrimaryDark">#D32F2F</color>

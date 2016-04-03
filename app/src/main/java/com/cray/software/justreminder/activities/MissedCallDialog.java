@@ -13,6 +13,7 @@ import android.os.PowerManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -20,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.backdoor.shared.SharedConst;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
@@ -36,12 +38,22 @@ import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.MissedCallAlarm;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
 
 import java.util.Calendar;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MissedCallDialog extends Activity {
+public class MissedCallDialog extends Activity implements GoogleApiClient.ConnectionCallbacks, DataApi.DataListener {
 
     private MissedCallAlarm alarm = new MissedCallAlarm();
     private long id;
@@ -54,8 +66,11 @@ public class MissedCallDialog extends Activity {
     private int streamVol;
     private int mVolume;
     private int mStream;
+    private String wearMessage;
 
     private Handler handler = new Handler();
+
+    private GoogleApiClient mGoogleApiClient;
 
     /**
      * Runnable for increasing volume in stream.
@@ -127,7 +142,7 @@ public class MissedCallDialog extends Activity {
         Intent res = getIntent();
         id = res.getLongExtra(Constants.ITEM_ID_INTENT, 0);
         number = res.getStringExtra("number");
-        long time = res.getLongExtra("time", 0);
+        long time = res.getLongExtra("time", System.currentTimeMillis());
 
         CardView card = (CardView) findViewById(R.id.card);
         card.setCardBackgroundColor(cs.getCardStyle());
@@ -173,6 +188,8 @@ public class MissedCallDialog extends Activity {
 
         String name = Contacts.getNameFromNumber(number, MissedCallDialog.this);
 
+        wearMessage = name + "\n" + number;
+
         if (number != null) {
             long conID = Contacts.getIdFromNumber(number, MissedCallDialog.this);
             Uri photo = Contacts.getPhoto(conID);
@@ -195,40 +212,59 @@ public class MissedCallDialog extends Activity {
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-                sendIntent.setType("vnd.android-dir/mms-sms");
-                sendIntent.putExtra("address", number);
-                startActivity(Intent.createChooser(sendIntent, "SMS:"));
-                removeMissed();
-                removeFlags();
-                finish();
+                sendSMS();
             }
         });
 
         buttonOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeMissed();
-                removeFlags();
-                finish();
+                ok();
             }
         });
 
         buttonCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeMissed();
-                if (Permissions.checkPermission(MissedCallDialog.this, Permissions.CALL_PHONE)) {
-                    Telephony.makeCall(number, MissedCallDialog.this);
-                    removeFlags();
-                    finish();
-                } else {
-                    Permissions.requestPermission(MissedCallDialog.this, 104, Permissions.CALL_PHONE);
-                }
+                call();
             }
         });
 
         notifier.showMissedReminder(name == null || name.matches("") ? number : name, id);
+
+        if (prefs.loadBoolean(Prefs.WEAR_SERVICE)) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(Wearable.API)
+                    .addConnectionCallbacks(this)
+                    .build();
+        }
+    }
+
+    private void call() {
+        removeMissed();
+        if (Permissions.checkPermission(MissedCallDialog.this, Permissions.CALL_PHONE)) {
+            Telephony.makeCall(number, MissedCallDialog.this);
+            removeFlags();
+            finish();
+        } else {
+            Permissions.requestPermission(MissedCallDialog.this, 104, Permissions.CALL_PHONE);
+        }
+    }
+
+    private void ok() {
+        removeMissed();
+        removeFlags();
+        finish();
+    }
+
+    private void sendSMS() {
+        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+        sendIntent.setType("vnd.android-dir/mms-sms");
+        sendIntent.putExtra("address", number);
+        startActivity(Intent.createChooser(sendIntent, "SMS:"));
+        removeMissed();
+        removeFlags();
+        finish();
     }
 
     private void removeMissed() {
@@ -283,6 +319,14 @@ public class MissedCallDialog extends Activity {
                 | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+
+        if (new SharedPrefs(this).loadBoolean(Prefs.WEAR_SERVICE)) {
+            PutDataMapRequest putDataMapReq = PutDataMapRequest.create(SharedConst.WEAR_STOP);
+            DataMap map = putDataMapReq.getDataMap();
+            map.putBoolean(SharedConst.KEY_STOP_B, true);
+            PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+            Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
+        }
     }
 
     @Override
@@ -307,11 +351,69 @@ public class MissedCallDialog extends Activity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (new SharedPrefs(this).loadBoolean(Prefs.WEAR_SERVICE))
+            mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (new SharedPrefs(this).loadBoolean(Prefs.WEAR_SERVICE)) {
+            Wearable.DataApi.removeListener(mGoogleApiClient, this);
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         notifier.discardMedia();
         if (new SharedPrefs(MissedCallDialog.this).loadBoolean(Prefs.SMART_FOLD)){
             moveTaskToBack(true);
             removeFlags();
         } else Messages.toast(getApplicationContext(), getString(R.string.select_one_of_item));
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Wearable.DataApi.addListener(mGoogleApiClient, this);
+        Log.d(Constants.LOG_TAG, "Connected");
+
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create(SharedConst.WEAR_BIRTHDAY);
+        DataMap map = putDataMapReq.getDataMap();
+        map.putString(SharedConst.KEY_TASK, wearMessage);
+        map.putInt(SharedConst.KEY_COLOR, cs.colorAccent());
+        map.putBoolean(SharedConst.KEY_THEME, cs.isDark());
+        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+        Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onDataChanged(DataEventBuffer dataEventBuffer) {
+        Log.d(Constants.LOG_TAG, "Data received");
+        for (DataEvent event : dataEventBuffer) {
+            if (event.getType() == DataEvent.TYPE_CHANGED) {
+                // DataItem changed
+                DataItem item = event.getDataItem();
+                if (item.getUri().getPath().compareTo(SharedConst.PHONE_BIRTHDAY) == 0) {
+                    DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+
+                    int keyCode = dataMap.getInt(SharedConst.REQUEST_KEY);
+                    if (keyCode == SharedConst.KEYCODE_OK) {
+                        ok();
+                    } else if (keyCode == SharedConst.KEYCODE_MESSAGE) {
+                        sendSMS();
+                    } else {
+                        call();
+                    }
+                }
+            }
+        }
     }
 }

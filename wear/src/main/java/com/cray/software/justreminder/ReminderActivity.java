@@ -1,7 +1,11 @@
-package com.backdoor.moove;
+package com.cray.software.justreminder;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.wearable.view.CircularButton;
 import android.support.wearable.view.WatchViewStub;
@@ -12,36 +16,58 @@ import android.widget.TextView;
 import com.backdoor.shared.SharedConst;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.wearable.DataApi;
-import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
-public class ReminderActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, DataApi.DataListener {
+public class ReminderActivity extends Activity implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
-    private TextView mTextView;
     private static final String TAG = "WearReminder";
     private GoogleApiClient mGoogleApiClient;
+
+    BroadcastReceiver broadcast_reciever = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context arg0, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals("finish_activity")) {
+                finish();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reminder);
-
         Intent intent = getIntent();
         final String task = intent.getStringExtra(Const.INTENT_TEXT);
         final String type = intent.getStringExtra(Const.INTENT_TYPE);
+        final boolean timed = intent.getBooleanExtra(Const.INTENT_TIMED, false);
+        final boolean repeat = intent.getBooleanExtra(Const.INTENT_REPEAT, false);
+        final boolean dark = intent.getBooleanExtra(Const.INTENT_THEME, false);
+        final int color = intent.getIntExtra(Const.INTENT_COLOR, 0);
+
+        if (dark) {
+            setTheme(R.style.HomeDark);
+        } else {
+            setTheme(R.style.HomeWhite);
+        }
+        setContentView(R.layout.activity_reminder);
 
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
-                mTextView = (TextView) stub.findViewById(R.id.text);
+                TextView mTextView = (TextView) stub.findViewById(R.id.text);
 
                 CircularButton buttonOk = (CircularButton) findViewById(R.id.buttonOk);
                 CircularButton buttonCall = (CircularButton) findViewById(R.id.buttonCall);
                 CircularButton buttonNotification = (CircularButton) findViewById(R.id.buttonNotification);
+                CircularButton buttonCancel = (CircularButton) findViewById(R.id.buttonCancel);
+                CircularButton buttonSnooze = (CircularButton) findViewById(R.id.buttonSnooze);
+                buttonCancel.setVisibility(repeat ? View.VISIBLE : View.GONE);
+                buttonSnooze.setVisibility(timed ? View.VISIBLE : View.GONE);
 
                 if (type != null) {
                     if (type.contains("call")) {
@@ -58,11 +84,7 @@ public class ReminderActivity extends Activity implements GoogleApiClient.Connec
                     buttonCall.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (type.contains("message")){
-                                sendRequest(SharedConst.KEYCODE_MESSAGE);
-                            } else {
-                                sendRequest(SharedConst.KEYCODE_CALL);
-                            }
+                            sendRequest(SharedConst.KEYCODE_CALL);
                         }
                     });
                 } else {
@@ -83,6 +105,25 @@ public class ReminderActivity extends Activity implements GoogleApiClient.Connec
                         sendRequest(SharedConst.KEYCODE_OK);
                     }
                 });
+
+                buttonCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        sendRequest(SharedConst.KEYCODE_CANCEL);
+                    }
+                });
+                buttonSnooze.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        sendRequest(SharedConst.KEYCODE_SNOOZE);
+                    }
+                });
+                Resources res = getResources();
+                if (dark) mTextView.setTextColor(res.getColor(R.color.whitePrimary));
+                else mTextView.setTextColor(res.getColor(R.color.blackPrimary));
+                int colored = res.getColor(ColorUtil.colorAccent(dark, color));
+                changeColor(colored, buttonCall, buttonCancel, buttonNotification, buttonOk, buttonSnooze);
+
             }
         });
 
@@ -92,6 +133,12 @@ public class ReminderActivity extends Activity implements GoogleApiClient.Connec
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
+    }
+
+    private void changeColor(int color, CircularButton... buttons) {
+        for (CircularButton button : buttons) {
+            button.setColor(color);
+        }
     }
 
     private void sendRequest(int keyCode) {
@@ -109,19 +156,19 @@ public class ReminderActivity extends Activity implements GoogleApiClient.Connec
     protected void onResume() {
         super.onResume();
         mGoogleApiClient.connect();
+        registerReceiver(broadcast_reciever, new IntentFilter("finish_activity"));
     }
 
     @Override
     protected void onPause() {
-        Wearable.DataApi.removeListener(mGoogleApiClient, this);
-        mGoogleApiClient.disconnect();
         super.onPause();
+        mGoogleApiClient.disconnect();
+        unregisterReceiver(broadcast_reciever);
     }
 
     @Override
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "On connected");
-        Wearable.DataApi.addListener(mGoogleApiClient, this);
     }
 
     @Override
@@ -132,10 +179,5 @@ public class ReminderActivity extends Activity implements GoogleApiClient.Connec
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.d(TAG, "On connection failed");
-    }
-
-    @Override
-    public void onDataChanged(DataEventBuffer dataEventBuffer) {
-
     }
 }

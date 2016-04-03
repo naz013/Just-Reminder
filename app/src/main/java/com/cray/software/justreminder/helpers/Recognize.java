@@ -41,9 +41,15 @@ import java.util.Random;
 public class Recognize {
 
     private Context mContext;
+    private boolean isWear;
 
     public Recognize(Context context){
         this.mContext = context;
+    }
+
+    public void parseResults(ArrayList matches, boolean isWidget, boolean isWear){
+        this.isWear = isWear;
+        this.parseResults(matches, isWidget);
     }
 
     public void parseResults(ArrayList matches, boolean isWidget){
@@ -125,7 +131,7 @@ public class Recognize {
             ReminderUtils.exportToCalendar(mContext, summary, startTime, remId, isCalendar, isStock);
         }
 
-        if (widget) {
+        if (widget && !isWear) {
             mContext.startActivity(new Intent(mContext, VoiceResult.class)
                     .putExtra("ids", remId)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP));
@@ -175,6 +181,6 @@ public class Recognize {
         db.linkToReminder(id, remId);
         db.close();
         new UpdatesHelper(mContext).updateNotesWidget();
-        Toast.makeText(mContext, mContext.getString(R.string.saved), Toast.LENGTH_SHORT).show();
+        if (!isWear) Toast.makeText(mContext, mContext.getString(R.string.saved), Toast.LENGTH_SHORT).show();
     }
 }

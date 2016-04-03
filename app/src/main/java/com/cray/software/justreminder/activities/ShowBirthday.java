@@ -24,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.backdoor.shared.SharedConst;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
@@ -42,6 +43,16 @@ import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
@@ -50,7 +61,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import jp.wasabeef.picasso.transformations.BlurTransformation;
 
 public class ShowBirthday extends Activity implements View.OnClickListener,
-        TextToSpeech.OnInitListener {
+        TextToSpeech.OnInitListener, GoogleApiClient.ConnectionCallbacks, DataApi.DataListener {
 
     private long id;
     private int contactId;
@@ -62,12 +73,15 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
     private int streamVol;
     private int mVolume;
     private int mStream;
+    private String wearMessage;
 
     private TextToSpeech tts;
 
     private static final int MY_DATA_CHECK_CODE = 111;
 
     private Handler handler = new Handler();
+
+    private GoogleApiClient mGoogleApiClient;
 
     /**
      * Runnable for increasing volume in stream.
@@ -212,6 +226,8 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
         userYears.setTypeface(typeface);
         userYears.setText(years);
 
+        wearMessage = name + "\n" + years;
+
         if (number == null || number.matches("noNumber")) {
             buttonCall.setVisibility(View.GONE);
             buttonSend.setVisibility(View.GONE);
@@ -231,6 +247,13 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
             } catch (ActivityNotFoundException e) {
                 e.printStackTrace();
             }
+        }
+
+        if (prefs.loadBoolean(Prefs.WEAR_SERVICE)) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(Wearable.API)
+                    .addConnectionCallbacks(this)
+                    .build();
         }
     }
 
@@ -294,6 +317,14 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
             tts.stop();
             tts.shutdown();
         }
+
+        if (new SharedPrefs(this).loadBoolean(Prefs.WEAR_SERVICE)) {
+            PutDataMapRequest putDataMapReq = PutDataMapRequest.create(SharedConst.WEAR_STOP);
+            DataMap map = putDataMapReq.getDataMap();
+            map.putBoolean(SharedConst.KEY_STOP_B, true);
+            PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+            Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
+        }
     }
 
     @Override
@@ -303,21 +334,29 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
                 updateBirthday();
                 break;
             case R.id.buttonCall:
-                if (Permissions.checkPermission(ShowBirthday.this, Permissions.CALL_PHONE)) {
-                    Telephony.makeCall(number, ShowBirthday.this);
-                    updateBirthday();
-                } else {
-                    Permissions.requestPermission(ShowBirthday.this, 104, Permissions.CALL_PHONE);
-                }
+                call();
                 break;
             case R.id.buttonSend:
-                if (Permissions.checkPermission(ShowBirthday.this, Permissions.SEND_SMS)) {
-                    Telephony.sendSms(number, ShowBirthday.this);
-                    updateBirthday();
-                } else {
-                    Permissions.requestPermission(ShowBirthday.this, 103, Permissions.SEND_SMS);
-                }
+                sendSMS();
                 break;
+        }
+    }
+
+    private void sendSMS() {
+        if (Permissions.checkPermission(ShowBirthday.this, Permissions.SEND_SMS)) {
+            Telephony.sendSms(number, ShowBirthday.this);
+            updateBirthday();
+        } else {
+            Permissions.requestPermission(ShowBirthday.this, 103, Permissions.SEND_SMS);
+        }
+    }
+
+    private void call() {
+        if (Permissions.checkPermission(ShowBirthday.this, Permissions.CALL_PHONE)) {
+            Telephony.makeCall(number, ShowBirthday.this);
+            updateBirthday();
+        } else {
+            Permissions.requestPermission(ShowBirthday.this, 104, Permissions.CALL_PHONE);
         }
     }
 
@@ -373,6 +412,22 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (new SharedPrefs(this).loadBoolean(Prefs.WEAR_SERVICE))
+            mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (new SharedPrefs(this).loadBoolean(Prefs.WEAR_SERVICE)) {
+            Wearable.DataApi.removeListener(mGoogleApiClient, this);
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         removeFlags();
@@ -420,5 +475,47 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
                 }
             }
         } else Log.e("error", "Initialization Failed!");
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Wearable.DataApi.addListener(mGoogleApiClient, this);
+        Log.d(Constants.LOG_TAG, "Connected");
+
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create(SharedConst.WEAR_BIRTHDAY);
+        DataMap map = putDataMapReq.getDataMap();
+        map.putString(SharedConst.KEY_TASK, wearMessage);
+        map.putInt(SharedConst.KEY_COLOR, cs.colorAccent());
+        map.putBoolean(SharedConst.KEY_THEME, cs.isDark());
+        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+        Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onDataChanged(DataEventBuffer dataEventBuffer) {
+        Log.d(Constants.LOG_TAG, "Data received");
+        for (DataEvent event : dataEventBuffer) {
+            if (event.getType() == DataEvent.TYPE_CHANGED) {
+                // DataItem changed
+                DataItem item = event.getDataItem();
+                if (item.getUri().getPath().compareTo(SharedConst.PHONE_BIRTHDAY) == 0) {
+                    DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+
+                    int keyCode = dataMap.getInt(SharedConst.REQUEST_KEY);
+                    if (keyCode == SharedConst.KEYCODE_OK) {
+                        updateBirthday();
+                    } else if (keyCode == SharedConst.KEYCODE_MESSAGE) {
+                        sendSMS();
+                    } else {
+                        call();
+                    }
+                }
+            }
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.backdoor.moove;
+package com.cray.software.justreminder;
 
 /**
  * Copyright 2015 Nazar Suhovich
@@ -18,4 +18,8 @@ package com.backdoor.moove;
 public class Const {
     public static final String INTENT_TEXT = "text";
     public static final String INTENT_TYPE = "type";
+    public static final String INTENT_TIMED = "timed";
+    public static final String INTENT_REPEAT = "repeat";
+    public static final String INTENT_THEME = "theme";
+    public static final String INTENT_COLOR = "color";
 }

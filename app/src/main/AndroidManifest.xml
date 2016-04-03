@@ -733,7 +733,21 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".tests.TestActivity"></activity>
+        <activity android:name=".tests.TestActivity" />
+
+        <service
+            android:name=".services.WearService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
+                <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
+                <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+                <action android:name="com.google.android.gms.wearable.CAPABILITY_CHANGED" />
+                <action android:name="com.google.android.gms.wearable.CHANNEL_EVENT" />
+                <data android:host="*" android:scheme="wear" android:pathPrefix="/background" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
