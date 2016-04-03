@@ -1282,7 +1282,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         JMelody jMelody = new JMelody(melody, volume);
         JRecurrence jRecurrence = new JRecurrence(myDay, repeat, repeats, weekdays, timeAfter);
         JAction jAction = new JAction(type, number, auto, subjectString, attachment);
-        JExport jExport = new JExport(gTaskSync, calendarSync, null);
+        JExport jExport = new JExport().setGtasks(gTaskSync).setCalendar(calendarSync);
         JPlace jPlace = new JPlace(latitude, longitude, radius, style);
 
         Log.d("----RECORD_TIME-----", TimeUtil.getFullDateTime(System.currentTimeMillis(), true));

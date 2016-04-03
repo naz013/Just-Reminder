@@ -114,35 +114,39 @@ public class JExport {
      * Set current JSON object
      * @param jsonObject JSON object
      */
-    public void setJsonObject(JSONObject jsonObject) {
+    public JExport setJsonObject(JSONObject jsonObject) {
         this.jsonObject = jsonObject;
+        return this;
     }
 
-    public void setCalendar(int calendar) {
+    public JExport setCalendar(int calendar) {
         this.calendar = calendar;
         try {
             jsonObject.put(CALENDAR, calendar);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        return this;
     }
 
-    public void setGtasks(int gTasks) {
+    public JExport setGtasks(int gTasks) {
         this.gTasks = gTasks;
         try {
             jsonObject.put(GTASKS, gTasks);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        return this;
     }
 
-    public void setCalendarId(String calendarId) {
+    public JExport setCalendarId(String calendarId) {
         this.calendarId = calendarId;
         try {
             jsonObject.put(CALENDAR_ID, calendarId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        return this;
     }
 
     public String getCalendarId() {

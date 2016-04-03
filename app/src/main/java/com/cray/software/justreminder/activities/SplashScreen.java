@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.cray.software.justreminder.BuildConfig;
 import com.cray.software.justreminder.LogInActivity;
 import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.constants.Configs;
@@ -37,6 +39,7 @@ import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.CheckPosition;
 import com.cray.software.justreminder.services.GeolocationService;
+import com.cray.software.justreminder.tests.TestActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -197,10 +200,14 @@ public class SplashScreen extends AppCompatActivity {
 
         checkPrefs();
 
-        if (isFirstTime() && !prefs.loadBoolean(Prefs.CONTACTS_IMPORT_DIALOG)) {
-            startActivity(new Intent(SplashScreen.this, LogInActivity.class));
+        if (BuildConfig.DEBUG) {
+            startActivity(new Intent(SplashScreen.this, TestActivity.class));
         } else {
-            startActivity(new Intent(SplashScreen.this, ScreenManager.class));
+            if (isFirstTime() && !prefs.loadBoolean(Prefs.CONTACTS_IMPORT_DIALOG)) {
+                startActivity(new Intent(SplashScreen.this, LogInActivity.class));
+            } else {
+                startActivity(new Intent(SplashScreen.this, ScreenManager.class));
+            }
         }
 
         finish();

@@ -172,7 +172,9 @@
                 <data android:mimeType="*/*" />
                 <data android:pathPattern=".*\\.note" />
             </intent-filter>
-            <intent-filter> <!-- Intent filter for open files from email -->
+            <intent-filter>
+
+                <!-- Intent filter for open files from email -->
                 <data android:scheme="content" />
 
                 <action android:name="android.intent.action.VIEW" />
@@ -731,6 +733,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".tests.TestActivity"></activity>
     </application>
 
 </manifest>
