@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="wrap_content"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp"
     android:layout_marginLeft="5dp"
-    android:layout_marginRight="5dp"
-    android:layout_marginBottom="5dp">
+    android:layout_marginRight="5dp">
 
     <RelativeLayout
+        android:id="@+id/background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/background"
         android:focusable="false">
 
         <CheckBox
+            android:id="@+id/itemCheck"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/itemCheck"
-            android:visibility="visible"
             android:layout_alignParentLeft="true"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:visibility="visible" />
 
         <TextView
+            android:id="@+id/shopText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:layout_toRightOf="@+id/itemCheck"
-            android:layout_toLeftOf="@+id/clearButton"
             android:layout_centerVertical="true"
-            android:id="@+id/shopText"/>
+            android:layout_toLeftOf="@+id/clearButton"
+            android:layout_toRightOf="@+id/itemCheck"
+            android:textSize="16sp" />
 
         <ImageButton
+            android:id="@+id/clearButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/clearButton"
-            android:src="@drawable/ic_clear_black_24dp"
             android:layout_alignParentRight="true"
-            android:visibility="invisible"
+            android:layout_centerVertical="true"
             android:background="@android:color/transparent"
-            android:layout_centerVertical="true"/>
+            android:src="@drawable/ic_clear_black_24dp"
+            android:visibility="invisible" />
     </RelativeLayout>
 </FrameLayout>

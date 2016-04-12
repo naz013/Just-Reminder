@@ -1,71 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:background="@color/whitePrimary"
     android:id="@+id/itemBg"
-    android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/whitePrimary"
+    android:orientation="vertical">
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="5dp"
+        android:layout_gravity="center_horizontal"
         android:gravity="center"
-        android:layout_gravity="center_horizontal">
+        android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="5dp">
 
         <TextView
+            android:id="@+id/taskText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:textColor="@color/blackPrimary"
             android:layout_weight="0.8"
-            android:id="@+id/taskText" />
+            android:singleLine="true"
+            android:textColor="@color/blackPrimary" />
 
         <TextView
+            android:id="@+id/taskDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:gravity="right"
             android:singleLine="true"
-            android:layout_weight="1"
-            android:textColor="@color/blackPrimary"
-            android:id="@+id/taskDate" />
+            android:textColor="@color/blackPrimary" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="5dp"
+        android:layout_gravity="center_horizontal"
         android:gravity="center"
-        android:layout_gravity="center_horizontal">
+        android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="5dp">
 
         <TextView
+            android:id="@+id/taskNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:textColor="@color/blackPrimary"
             android:layout_weight="0.8"
-            android:id="@+id/taskNumber" />
+            android:singleLine="true"
+            android:textColor="@color/blackPrimary" />
 
         <TextView
+            android:id="@+id/taskTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/blackPrimary"
+            android:layout_weight="1"
             android:gravity="right"
             android:singleLine="true"
-            android:layout_weight="1"
-            android:id="@+id/taskTime" />
+            android:textColor="@color/blackPrimary" />
     </LinearLayout>
 
     <TextView
+        android:id="@+id/leftTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:singleLine="true"
         android:gravity="center"
-        android:textColor="@color/blackPrimary"
-        android:id="@+id/leftTime"/>
+        android:singleLine="true"
+        android:textColor="@color/blackPrimary" />
 </LinearLayout>

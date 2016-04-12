@@ -1,71 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/card"
-    card_view:cardElevation="2dp"
     android:layout_marginTop="2dp"
-    card_view:cardCornerRadius="0dp">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/background"
-    android:orientation="horizontal">
-
-    <TextView
-        android:layout_width="5dp"
-        android:layout_height="match_parent"
-        android:background="@color/bluePrimary"
-        android:id="@+id/listColor"/>
-
-    <CheckBox
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.9"
-        android:layout_gravity="center_vertical"
-        android:id="@+id/checkDone"/>
+    card_view:cardCornerRadius="0dp"
+    card_view:cardElevation="2dp">
 
     <LinearLayout
+        android:id="@+id/background"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:layout_weight="0.4"
-        android:layout_gravity="center_vertical"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/listColor"
+            android:layout_width="5dp"
+            android:layout_height="match_parent"
+            android:background="@color/bluePrimary" />
+
+        <CheckBox
+            android:id="@+id/checkDone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:id="@+id/task"
-            android:singleLine="true"
-            android:textSize="17sp"
-            android:text="Hello"
-            />
+            android:layout_weight="0.9" />
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:id="@+id/note"
-            android:singleLine="true"
-            android:textSize="15sp"
-            android:layout_marginTop="3dp"
-            android:text="Hello"
-            />
+            android:layout_margin="5dp"
+            android:layout_weight="0.4"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/task"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:singleLine="true"
+                android:text="Hello"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/note"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="3dp"
+                android:singleLine="true"
+                android:text="Hello"
+                android:textSize="15sp" />
 
         </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/taskDate"
-        android:textSize="14sp"
-        android:gravity="center"
-        android:layout_margin="4dp"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="0.7"/>
-</LinearLayout>
-    </android.support.v7.widget.CardView>
+        <TextView
+            android:id="@+id/taskDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="4dp"
+            android:layout_weight="0.7"
+            android:gravity="center"
+            android:textSize="14sp" />
+    </LinearLayout>
+</android.support.v7.widget.CardView>

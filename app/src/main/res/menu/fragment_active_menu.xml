@@ -4,27 +4,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ScreenManager">
 
-    <item android:id="@+id/action_voice"
-        android:title="@string/voice_control"
+    <item
+        android:id="@+id/action_voice"
         android:icon="@drawable/ic_mic_white_24dp"
+        android:title="@string/voice_control"
         app:showAsAction="ifRoom" />
 
-    <item android:id="@+id/action_search"
-        android:title="@string/search"
+    <item
+        android:id="@+id/action_search"
         android:icon="@drawable/ic_search_white_24dp"
+        android:title="@string/search"
         app:showAsAction="ifRoom" />
 
-    <item android:id="@+id/action_refresh"
-        android:title="@string/sync"
+    <item
+        android:id="@+id/action_refresh"
         android:icon="@drawable/ic_cached_white_24dp"
+        android:title="@string/sync"
         app:showAsAction="never" />
 
-    <item android:id="@+id/action_filter"
-        android:title="@string/filter"
+    <item
+        android:id="@+id/action_filter"
         android:icon="@drawable/ic_filter_list_white_24dp"
+        android:title="@string/filter"
         app:showAsAction="never" />
 
-    <item android:id="@+id/action_exit"
+    <item
+        android:id="@+id/action_exit"
         android:title="@string/exit"
         app:showAsAction="never" />
 </menu>

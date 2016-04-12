@@ -3,27 +3,32 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.cray.software.justreminder.app.MainActivity" >
+    tools:context="com.cray.software.justreminder.app.MainActivity">
 
-    <item android:id="@+id/action_custom_melody"
+    <item
+        android:id="@+id/action_custom_melody"
         android:title="@string/melody"
         app:showAsAction="never" />
 
-    <item android:id="@+id/action_volume"
+    <item
+        android:id="@+id/action_volume"
         android:title="@string/loudness"
         app:showAsAction="never" />
 
-    <item android:id="@+id/action_custom_radius"
+    <item
+        android:id="@+id/action_custom_radius"
         android:title="@string/radius"
         android:visible="false"
         app:showAsAction="never" />
 
-    <item android:id="@+id/action_custom_color"
+    <item
+        android:id="@+id/action_custom_color"
         android:title="@string/led_color"
         android:visible="false"
         app:showAsAction="never" />
 
-    <item android:id="@+id/action_limit"
+    <item
+        android:id="@+id/action_limit"
         android:title="@string/repeat_limit"
         android:visible="false"
         app:showAsAction="never" />

@@ -1,64 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/windowBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:id="@+id/windowBackground"
     tools:context=".ReminderManager">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <include layout="@layout/toolbar_reminder"
-            android:id="@+id/toolbar"/>
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar_reminder" />
 
     </android.support.design.widget.AppBarLayout>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/wrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/wrapper"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context=".ReminderManager">
 
         <LinearLayout
+            android:id="@+id/layoutContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:gravity="center|top"
-            android:id="@+id/layoutContainer"/>
+            android:orientation="vertical" />
 
         <FrameLayout
+            android:id="@+id/repeatFrame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="@drawable/card_bg_dark"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="100dp"
-            android:id="@+id/repeatFrame">
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/card_bg_dark">
 
             <SeekBar
+                android:id="@+id/repeatSeek"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:id="@+id/repeatSeek"
                 android:layout_gravity="center"
                 android:layout_margin="5dp"
-                android:max="101"/>
+                android:max="101" />
 
         </FrameLayout>
 
         <TextView
+            android:id="@+id/repeatLabel"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
             android:layout_above="@+id/repeatFrame"
-            android:id="@+id/repeatLabel"
-            android:textSize="70sp"/>
+            android:gravity="center"
+            android:textSize="70sp" />
 
     </RelativeLayout>
 

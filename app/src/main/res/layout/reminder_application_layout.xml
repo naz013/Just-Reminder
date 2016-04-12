@@ -3,9 +3,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/application_layout"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:visibility="visible">
 
     <ScrollView
@@ -15,114 +15,114 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:paddingLeft="@dimen/create_margin"
-            android:paddingRight="@dimen/create_margin"
-            android:orientation="vertical">
+            android:paddingRight="@dimen/create_margin">
 
             <CheckBox
+                android:id="@+id/dateExport"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="gone"
-                android:textSize="@dimen/checkbox_text_size"
                 android:layout_marginTop="@dimen/create_margin"
                 android:text="@string/add_to_calendar"
-                android:id="@+id/dateExport" />
+                android:textSize="@dimen/checkbox_text_size"
+                android:visibility="gone" />
 
             <CheckBox
+                android:id="@+id/dateTaskExport"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="gone"
-                android:textSize="@dimen/checkbox_text_size"
                 android:layout_marginTop="@dimen/create_margin"
                 android:text="@string/google_tasks"
-                android:id="@+id/dateTaskExport" />
+                android:textSize="@dimen/checkbox_text_size"
+                android:visibility="gone" />
 
             <RelativeLayout
-                android:layout_width="match_parent"
                 android:id="@+id/applicationLayout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <ImageButton
+                    android:id="@+id/pickApplication"
                     android:layout_width="@dimen/create_imagebutton_size"
                     android:layout_height="@dimen/create_imagebutton_size"
-                    android:id="@+id/pickApplication"
-                    android:src="@drawable/ic_launch_black_24dp"
                     android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"/>
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_launch_black_24dp" />
 
                 <TextView
+                    android:id="@+id/applicationName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center"
                     android:layout_marginLeft="10dp"
                     android:layout_toRightOf="@+id/pickApplication"
-                    android:layout_centerVertical="true"
-                    android:text="@string/application_not_selected"
-                    android:textSize="@dimen/create_text_size_normal"
-                    android:gravity="center"
                     android:ems="10"
+                    android:gravity="center"
                     android:singleLine="true"
-                    android:layout_gravity="center"
-                    android:id="@+id/applicationName" />
+                    android:text="@string/application_not_selected"
+                    android:textSize="@dimen/create_text_size_normal" />
 
-                </RelativeLayout>
+            </RelativeLayout>
 
             <com.cray.software.justreminder.views.FloatingEditText
-                app:floating_edit_text_highlighted_color="?attr/colorAccent"
+                android:id="@+id/phoneNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/url"
-                android:textSize="@dimen/create_text_size_normal"
-                android:gravity="center"
-                android:ems="10"
-                android:singleLine="true"
                 android:layout_gravity="center"
-                android:id="@+id/phoneNumber"
-                android:inputType="textEmailAddress" />
+                android:ems="10"
+                android:gravity="center"
+                android:hint="@string/url"
+                android:inputType="textEmailAddress"
+                android:singleLine="true"
+                android:textSize="@dimen/create_text_size_normal"
+                app:floating_edit_text_highlighted_color="?attr/colorAccent" />
 
             <RadioGroup
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
+                android:layout_height="fill_parent"
                 android:gravity="center"
-                android:layout_height="fill_parent">
+                android:orientation="horizontal">
 
                 <RadioButton
+                    android:id="@+id/application"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/checkbox_text_size"
                     android:text="@string/application"
-                    android:id="@+id/application" />
+                    android:textSize="@dimen/checkbox_text_size" />
 
                 <RadioButton
+                    android:id="@+id/browser"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
-                    android:textSize="@dimen/checkbox_text_size"
                     android:text="@string/open_link"
-                    android:id="@+id/browser" />
+                    android:textSize="@dimen/checkbox_text_size" />
             </RadioGroup>
 
             <com.cray.software.justreminder.views.DateTimeView
+                android:id="@+id/dateView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/create_margin"
                 android:layout_marginLeft="@dimen/create_margin"
                 android:layout_marginRight="@dimen/create_margin"
-                android:id="@+id/dateView"/>
+                android:layout_marginTop="@dimen/create_margin" />
 
             <com.cray.software.justreminder.views.RepeatView
+                android:id="@+id/repeatView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/create_margin"
+                android:layout_marginBottom="80dp"
                 android:layout_marginLeft="@dimen/create_margin"
                 android:layout_marginRight="@dimen/create_margin"
-                app:repeat_type_text="@string/days"
-                android:layout_marginBottom="80dp"
-                android:id="@+id/repeatView"/>
+                android:layout_marginTop="@dimen/create_margin"
+                app:repeat_type_text="@string/days" />
 
-            </LinearLayout>
+        </LinearLayout>
 
-        </ScrollView>
+    </ScrollView>
 
 </LinearLayout>

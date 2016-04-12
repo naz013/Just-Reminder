@@ -1,121 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
+    android:orientation="vertical"
     android:paddingBottom="16dp"
-    android:paddingTop="24dp"
     android:paddingLeft="24dp"
-    android:paddingRight="24dp">
+    android:paddingRight="24dp"
+    android:paddingTop="24dp">
 
     <RadioGroup
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/themeGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <RadioButton
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
             android:id="@+id/redCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:drawableLeft="@drawable/marker_red"
-            android:drawablePadding="0dp"
-            android:layout_margin="5dp"/>
+            android:drawablePadding="0dp" />
 
         <RadioButton
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
             android:id="@+id/purpleCheck"
-            android:drawableLeft="@drawable/marker_violet"
-            android:layout_margin="5dp"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:drawableLeft="@drawable/marker_violet" />
 
         <RadioButton
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
             android:id="@+id/greenLightCheck"
-            android:drawableLeft="@drawable/marker_green_light"
-            android:layout_margin="5dp"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:drawableLeft="@drawable/marker_green_light" />
 
         <RadioButton
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
             android:id="@+id/greenCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:drawableLeft="@drawable/marker_green"
-            android:drawablePadding="0dp"
-            android:layout_margin="5dp"/>
+            android:drawablePadding="0dp" />
 
     </RadioGroup>
+
     <RadioGroup
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/themeGroup2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <RadioButton
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
             android:id="@+id/blueLightCheck"
-            android:drawableLeft="@drawable/marker_blue_light"
-            android:layout_margin="5dp"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:drawableLeft="@drawable/marker_blue_light" />
 
         <RadioButton
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
             android:id="@+id/blueCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:drawableLeft="@drawable/marker_blue"
-            android:drawablePadding="0dp"
-            android:layout_margin="5dp"/>
+            android:drawablePadding="0dp" />
 
         <RadioButton
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
             android:id="@+id/yellowCheck"
-            android:drawableLeft="@drawable/marker_yellow"
-            android:layout_margin="5dp"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:drawableLeft="@drawable/marker_yellow" />
 
         <RadioButton
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
             android:id="@+id/orangeCheck"
-            android:drawableLeft="@drawable/marker_orange"
-            android:layout_margin="5dp"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:drawableLeft="@drawable/marker_orange" />
 
     </RadioGroup>
 
     <RadioGroup
+        android:id="@+id/themeGroup3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/themeGroup3"
         android:orientation="horizontal">
 
         <RadioButton
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
             android:id="@+id/cyanCheck"
-            android:drawableLeft="@drawable/marker_cyan"
-            android:layout_margin="5dp"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:drawableLeft="@drawable/marker_cyan" />
 
         <RadioButton
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
             android:id="@+id/pinkCheck"
-            android:drawableLeft="@drawable/marker_pink"
-            android:layout_margin="5dp"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:drawableLeft="@drawable/marker_pink" />
 
         <RadioButton
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
             android:id="@+id/tealCheck"
-            android:drawableLeft="@drawable/marker_teal"
-            android:layout_margin="5dp"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:drawableLeft="@drawable/marker_teal" />
 
         <RadioButton
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
             android:id="@+id/amberCheck"
-            android:drawableLeft="@drawable/marker_amber"
-            android:layout_margin="5dp"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:drawableLeft="@drawable/marker_amber" />
 
     </RadioGroup>
 
@@ -124,38 +126,38 @@
         android:layout_height="wrap_content">
 
         <RadioGroup
+            android:id="@+id/themeGroup4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/themeGroup4"
             android:orientation="horizontal">
 
             <RadioButton
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
                 android:id="@+id/deepPurpleCheck"
-                android:drawableLeft="@drawable/marker_deep_purple"
-                android:layout_margin="5dp"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:drawableLeft="@drawable/marker_deep_purple" />
 
             <RadioButton
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
                 android:id="@+id/deepOrangeCheck"
-                android:drawableLeft="@drawable/marker_deep_orange"
-                android:layout_margin="5dp"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:drawableLeft="@drawable/marker_deep_orange" />
 
             <RadioButton
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
                 android:id="@+id/indigoCheck"
-                android:drawableLeft="@drawable/marker_indigo"
-                android:layout_margin="5dp"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:drawableLeft="@drawable/marker_indigo" />
 
             <RadioButton
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
                 android:id="@+id/limeCheck"
-                android:drawableLeft="@drawable/marker_lime"
-                android:layout_margin="5dp"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:drawableLeft="@drawable/marker_lime" />
 
         </RadioGroup>
 
@@ -163,12 +165,12 @@
 
     <TextView
         android:id="@+id/themeClose"
+        style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center|right"
-        android:textSize="18sp"
-        style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
-        android:gravity="center"
         android:layout_marginTop="24dp"
-        android:text="@string/ok"/>
+        android:gravity="center"
+        android:text="@string/ok"
+        android:textSize="18sp" />
 </LinearLayout>

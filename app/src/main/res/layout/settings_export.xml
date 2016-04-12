@@ -5,148 +5,148 @@
     android:layout_height="wrap_content"
     android:scrollbars="none">
 
-<LinearLayout
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_marginLeft="@dimen/settings_margin"
-    android:layout_marginRight="@dimen/settings_margin"
-    android:layout_height="wrap_content">
-
-    <com.cray.software.justreminder.views.PrefsView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/exportToCalendarPrefs"
-        app:prefs_primary_text="@string/export_to_google_calendar"
-        app:prefs_divider_top="false"
-        app:prefs_type="check"
-        app:prefs_divider_bottom="true"/>
+        android:layout_marginLeft="@dimen/settings_margin"
+        android:layout_marginRight="@dimen/settings_margin"
+        android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/event_duration"
-        android:id="@+id/eventDuration"
-        android:paddingRight="15dp"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_vertical"
-        android:textSize="@dimen/settings_text_size_primary" />
+        <com.cray.software.justreminder.views.PrefsView
+            android:id="@+id/exportToCalendarPrefs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:prefs_divider_bottom="true"
+            app:prefs_divider_top="false"
+            app:prefs_primary_text="@string/export_to_google_calendar"
+            app:prefs_type="check" />
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        <TextView
+            android:id="@+id/eventDuration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:paddingBottom="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="15dp"
+            android:text="@string/event_duration"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="@dimen/settings_text_size_primary" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/choose_calendar"
-        android:id="@+id/selectCalendar"
-        android:paddingRight="15dp"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_vertical"
-        android:textSize="@dimen/settings_text_size_primary" />
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        <TextView
+            android:id="@+id/selectCalendar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:paddingBottom="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="15dp"
+            android:text="@string/choose_calendar"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="@dimen/settings_text_size_primary" />
 
-    <com.cray.software.justreminder.views.PrefsView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/exportToStockPrefs"
-        app:prefs_primary_text="@string/export_to_stock_calendar"
-        app:prefs_divider_top="false"
-        app:prefs_type="check"
-        app:prefs_divider_bottom="true"/>
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
 
-    <com.cray.software.justreminder.views.PrefsView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/autoBackupPrefs"
-        app:prefs_primary_text="@string/automatically_backup"
-        app:prefs_divider_top="false"
-        app:prefs_type="check"
-        app:prefs_divider_bottom="true"/>
+        <com.cray.software.justreminder.views.PrefsView
+            android:id="@+id/exportToStockPrefs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:prefs_divider_bottom="true"
+            app:prefs_divider_top="false"
+            app:prefs_primary_text="@string/export_to_stock_calendar"
+            app:prefs_type="check" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/interval"
-        android:id="@+id/syncInterval"
-        android:paddingRight="15dp"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_vertical"
-        android:textSize="@dimen/settings_text_size_primary" />
+        <com.cray.software.justreminder.views.PrefsView
+            android:id="@+id/autoBackupPrefs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:prefs_divider_bottom="true"
+            app:prefs_divider_top="false"
+            app:prefs_primary_text="@string/automatically_backup"
+            app:prefs_type="check" />
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        <TextView
+            android:id="@+id/syncInterval"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:paddingBottom="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="15dp"
+            android:text="@string/interval"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="@dimen/settings_text_size_primary" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/cloud_services"
-        android:id="@+id/clouds"
-        android:paddingRight="15dp"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_vertical"
-        android:textSize="@dimen/settings_text_size_primary" />
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        <TextView
+            android:id="@+id/clouds"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:paddingBottom="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="15dp"
+            android:text="@string/cloud_services"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="@dimen/settings_text_size_primary" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/clean"
-        android:id="@+id/clean"
-        android:paddingRight="15dp"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_vertical"
-        android:textSize="@dimen/settings_text_size_primary" />
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        <TextView
+            android:id="@+id/clean"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:paddingBottom="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="15dp"
+            android:text="@string/clean"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="@dimen/settings_text_size_primary" />
 
-    <com.cray.software.justreminder.views.PrefsView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/syncSettingsPrefs"
-        app:prefs_primary_text="@string/backup_settings"
-        app:prefs_divider_top="false"
-        app:prefs_type="check"
-        app:prefs_divider_bottom="false"/>
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
 
-</LinearLayout>
-    </ScrollView>
+        <com.cray.software.justreminder.views.PrefsView
+            android:id="@+id/syncSettingsPrefs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:prefs_divider_bottom="false"
+            app:prefs_divider_top="false"
+            app:prefs_primary_text="@string/backup_settings"
+            app:prefs_type="check" />
+
+    </LinearLayout>
+</ScrollView>

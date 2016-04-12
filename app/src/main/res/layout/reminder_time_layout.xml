@@ -3,10 +3,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/after_time_layout"
-    android:visibility="visible"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:visibility="visible">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -15,142 +15,142 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
-            android:orientation="vertical"
-            android:layout_marginRight="@dimen/create_margin"
+            android:layout_marginBottom="10dp"
             android:layout_marginLeft="@dimen/create_margin"
-            android:layout_marginBottom="10dp">
+            android:layout_marginRight="@dimen/create_margin"
+            android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent">
 
                 <LinearLayout
+                    android:id="@+id/container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/container"
                     android:orientation="vertical">
 
                     <CheckBox
+                        android:id="@+id/dateExport"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:visibility="gone"
-                        android:textSize="@dimen/checkbox_text_size"
                         android:layout_marginTop="@dimen/create_margin"
                         android:text="@string/add_to_calendar"
-                        android:id="@+id/dateExport" />
+                        android:textSize="@dimen/checkbox_text_size"
+                        android:visibility="gone" />
 
                     <CheckBox
+                        android:id="@+id/dateTaskExport"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:visibility="gone"
-                        android:textSize="@dimen/checkbox_text_size"
                         android:layout_marginTop="@dimen/create_margin"
                         android:text="@string/google_tasks"
-                        android:id="@+id/dateTaskExport" />
+                        android:textSize="@dimen/checkbox_text_size"
+                        android:visibility="gone" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:gravity="center"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:gravity="center">
 
                         <RelativeLayout
                             android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:layout_toLeftOf="@+id/deleteButton"
-                            android:gravity="center"
-                            android:layout_height="wrap_content">
+                            android:gravity="center">
 
                             <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
                                 android:id="@+id/hoursView"
-                                android:textSize="40sp"
-                                android:gravity="center|bottom"
-                                android:textColor="?attr/colorAccent"
-                                android:layout_toLeftOf="@+id/hours"
-                                android:text="42"/>
-
-                            <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_toLeftOf="@+id/hours"
+                                android:gravity="center|bottom"
+                                android:text="42"
+                                android:textColor="?attr/colorAccent"
+                                android:textSize="40sp" />
+
+                            <TextView
                                 android:id="@+id/hours"
-                                android:textSize="20sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentTop="true"
+                                android:layout_marginRight="5dp"
+                                android:layout_toLeftOf="@+id/minutesView"
                                 android:gravity="center|top"
                                 android:text="@string/h"
-                                android:layout_alignParentTop="true"
-                                android:layout_toLeftOf="@+id/minutesView"
-                                android:layout_marginRight="5dp"/>
+                                android:textSize="20sp" />
 
                             <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
                                 android:id="@+id/minutesView"
-                                android:textSize="40sp"
-                                android:gravity="center|bottom"
-                                android:textColor="?attr/colorAccent"
-                                android:layout_toLeftOf="@+id/minutes"
-                                android:text="42"/>
-
-                            <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_toLeftOf="@+id/minutes"
+                                android:gravity="center|bottom"
+                                android:text="42"
+                                android:textColor="?attr/colorAccent"
+                                android:textSize="40sp" />
+
+                            <TextView
                                 android:id="@+id/minutes"
-                                android:textSize="20sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentTop="true"
+                                android:layout_marginRight="5dp"
+                                android:layout_toLeftOf="@+id/secondsView"
                                 android:gravity="center|bottom"
                                 android:text="@string/m"
-                                android:layout_alignParentTop="true"
-                                android:layout_toLeftOf="@+id/secondsView"
-                                android:layout_marginRight="5dp"/>
+                                android:textSize="20sp" />
 
                             <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
                                 android:id="@+id/secondsView"
-                                android:textSize="40sp"
-                                android:gravity="center|bottom"
-                                android:textColor="?attr/colorAccent"
-                                android:layout_toLeftOf="@+id/seconds"
-                                android:text="55"/>
-
-                            <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_toLeftOf="@+id/seconds"
+                                android:gravity="center|bottom"
+                                android:text="55"
+                                android:textColor="?attr/colorAccent"
+                                android:textSize="40sp" />
+
+                            <TextView
                                 android:id="@+id/seconds"
-                                android:textSize="20sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
                                 android:layout_alignParentTop="true"
                                 android:gravity="center|bottom"
                                 android:text="@string/c"
-                                android:layout_alignParentRight="true"/>
+                                android:textSize="20sp" />
 
                         </RelativeLayout>
 
                         <ImageButton
+                            android:id="@+id/deleteButton"
+                            style="@style/Widget.AppCompat.ActionButton"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
-                            android:id="@+id/deleteButton"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
                             android:layout_marginLeft="20dp"
                             android:layout_marginRight="20dp"
-                            style="@style/Widget.AppCompat.ActionButton"
-                            android:src="@drawable/ic_backspace_black_24dp"/>
+                            android:src="@drawable/ic_backspace_black_24dp" />
 
                     </RelativeLayout>
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="?attr/colorAccent"/>
+                        android:background="?attr/colorAccent" />
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="fill_parent"
-                    android:orientation="vertical"
+                    android:layout_below="@+id/container"
                     android:layout_marginTop="10dp"
-                    android:layout_below="@+id/container">
+                    android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -159,31 +159,31 @@
                         android:orientation="horizontal">
 
                         <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="1"
-                            android:textSize="25sp"
                             android:id="@+id/b1"
                             style="@style/Widget.AppCompat.ActionButton"
-                            android:layout_weight="1"/>
-
-                        <Button
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="2"
-                            android:textSize="25sp"
+                            android:layout_weight="1"
+                            android:text="1"
+                            android:textSize="25sp" />
+
+                        <Button
                             android:id="@+id/b2"
                             style="@style/Widget.AppCompat.ActionButton"
-                            android:layout_weight="1"/>
-
-                        <Button
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="3"
-                            android:textSize="25sp"
+                            android:layout_weight="1"
+                            android:text="2"
+                            android:textSize="25sp" />
+
+                        <Button
                             android:id="@+id/b3"
                             style="@style/Widget.AppCompat.ActionButton"
-                            android:layout_weight="1"/>
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="3"
+                            android:textSize="25sp" />
 
                     </LinearLayout>
 
@@ -194,31 +194,31 @@
                         android:orientation="horizontal">
 
                         <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="4"
-                            android:textSize="25sp"
                             android:id="@+id/b4"
                             style="@style/Widget.AppCompat.ActionButton"
-                            android:layout_weight="1"/>
-
-                        <Button
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="5"
-                            android:textSize="25sp"
+                            android:layout_weight="1"
+                            android:text="4"
+                            android:textSize="25sp" />
+
+                        <Button
                             android:id="@+id/b5"
                             style="@style/Widget.AppCompat.ActionButton"
-                            android:layout_weight="1"/>
-
-                        <Button
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="6"
-                            android:textSize="25sp"
+                            android:layout_weight="1"
+                            android:text="5"
+                            android:textSize="25sp" />
+
+                        <Button
                             android:id="@+id/b6"
                             style="@style/Widget.AppCompat.ActionButton"
-                            android:layout_weight="1"/>
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="6"
+                            android:textSize="25sp" />
 
                     </LinearLayout>
 
@@ -229,31 +229,31 @@
                         android:orientation="horizontal">
 
                         <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="7"
-                            android:textSize="25sp"
                             android:id="@+id/b7"
                             style="@style/Widget.AppCompat.ActionButton"
-                            android:layout_weight="1"/>
-
-                        <Button
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="8"
-                            android:textSize="25sp"
+                            android:layout_weight="1"
+                            android:text="7"
+                            android:textSize="25sp" />
+
+                        <Button
                             android:id="@+id/b8"
                             style="@style/Widget.AppCompat.ActionButton"
-                            android:layout_weight="1"/>
-
-                        <Button
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="9"
-                            android:textSize="25sp"
+                            android:layout_weight="1"
+                            android:text="8"
+                            android:textSize="25sp" />
+
+                        <Button
                             android:id="@+id/b9"
                             style="@style/Widget.AppCompat.ActionButton"
-                            android:layout_weight="1"/>
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="9"
+                            android:textSize="25sp" />
 
                     </LinearLayout>
 
@@ -264,29 +264,29 @@
                         android:orientation="horizontal">
 
                         <Button
+                            style="@style/Widget.AppCompat.ActionButton"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:text="0"
-                            android:visibility="invisible"
-                            style="@style/Widget.AppCompat.ActionButton"
-                            android:layout_weight="1"/>
+                            android:visibility="invisible" />
 
                         <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="0"
-                            android:textSize="25sp"
                             android:id="@+id/b0"
                             style="@style/Widget.AppCompat.ActionButton"
-                            android:layout_weight="1"/>
-
-                        <Button
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:text="0"
-                            android:visibility="invisible"
+                            android:textSize="25sp" />
+
+                        <Button
                             style="@style/Widget.AppCompat.ActionButton"
-                            android:layout_weight="1"/>
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="0"
+                            android:visibility="invisible" />
                     </LinearLayout>
                 </LinearLayout>
             </RelativeLayout>
@@ -296,36 +296,36 @@
                 android:layout_height="wrap_content">
 
                 <TextView
+                    android:id="@+id/selectExclusion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/exclusion"
-                    android:layout_marginLeft="@dimen/create_margin"
-                    android:layout_marginTop="@dimen/create_margin"
-                    android:layout_marginRight="@dimen/create_margin"
-                    android:textSize="@dimen/create_text_size_normal"
-                    android:layout_toLeftOf="@+id/exclusionClear"
                     android:layout_centerVertical="true"
-                    android:id="@+id/selectExclusion"/>
+                    android:layout_marginLeft="@dimen/create_margin"
+                    android:layout_marginRight="@dimen/create_margin"
+                    android:layout_marginTop="@dimen/create_margin"
+                    android:layout_toLeftOf="@+id/exclusionClear"
+                    android:text="@string/exclusion"
+                    android:textSize="@dimen/create_text_size_normal" />
 
                 <ImageButton
+                    android:id="@+id/exclusionClear"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:src="@drawable/ic_clear_black_24dp"
-                    android:id="@+id/exclusionClear"
+                    android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:layout_alignParentRight="true"/>
+                    android:src="@drawable/ic_clear_black_24dp" />
 
             </RelativeLayout>
 
             <com.cray.software.justreminder.views.RepeatView
+                android:id="@+id/repeatView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/create_margin"
+                android:layout_marginBottom="80dp"
                 android:layout_marginLeft="@dimen/create_margin"
                 android:layout_marginRight="@dimen/create_margin"
-                app:repeat_type_text="@string/minutes"
-                android:layout_marginBottom="80dp"
-                android:id="@+id/repeatView"/>
+                android:layout_marginTop="@dimen/create_margin"
+                app:repeat_type_text="@string/minutes" />
 
         </LinearLayout>
     </ScrollView>

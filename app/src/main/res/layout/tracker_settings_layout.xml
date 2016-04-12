@@ -1,75 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
+    android:orientation="vertical"
     android:paddingBottom="16dp"
-    android:paddingTop="24dp"
     android:paddingLeft="24dp"
-    android:paddingRight="24dp">
+    android:paddingRight="24dp"
+    android:paddingTop="24dp">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/titleDialog"
-        android:text="@string/tracking_settings" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/tracking_settings"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_marginTop="15dp"
         android:layout_marginBottom="5dp"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
         android:text="@string/for_lower_battery_usage_set_bigger_values"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
+        android:id="@+id/radiusValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="15dp"
         android:layout_marginBottom="5dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/radiusValue" />
+        android:layout_marginTop="15dp"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <SeekBar
+        android:id="@+id/radiusBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:max="100"
-        android:progress="1"
-        android:id="@+id/radiusBar"/>
+        android:progress="1" />
 
     <TextView
+        android:id="@+id/timeValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="15dp"
         android:layout_marginBottom="5dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/timeValue" />
+        android:layout_marginTop="15dp"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <SeekBar
+        android:id="@+id/timeBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:max="30"
-        android:progress="1"
-        android:id="@+id/timeBar"/>
+        android:progress="1" />
 
     <TextView
+        android:id="@+id/aboutClose"
+        style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
-        android:text="@string/ok"
-        android:clickable="false"
-        android:textSize="18sp"
-        style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
-        android:gravity="center"
-        android:layout_marginTop="24dp"
         android:layout_gravity="bottom|right"
-        android:id="@+id/aboutClose" />
+        android:layout_marginTop="24dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="false"
+        android:gravity="center"
+        android:text="@string/ok"
+        android:textSize="18sp" />
 </LinearLayout>

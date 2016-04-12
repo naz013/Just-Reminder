@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'com.android.databinding'
 
 android {
     compileSdkVersion 23
@@ -86,6 +88,11 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    supportLibraryVersion = "23.2.1"
+    playServicesVersion = "8.3.0"
+}
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.google.apis:google-api-services-calendar:v3-rev173-1.21.0' exclude module: 'httpclient'
@@ -100,24 +107,26 @@ dependencies {
     //Additional modules
     compile project(':shared')
     wearApp project(':wear')
-    compile 'com.android.support:cardview-v7:23.2.1'
-    compile 'com.android.support:support-v4:23.2.1'
-    compile 'com.android.support:multidex:1.0.1'
-    compile 'com.android.support:recyclerview-v7:23.2.1'
-    compile 'com.android.support:appcompat-v7:23.2.1'
-    compile 'com.google.android.gms:play-services-auth:8.3.0'
-    compile 'com.google.android.gms:play-services-appindexing:8.3.0'
-    compile 'com.google.android.gms:play-services-drive:8.3.0'
-    compile 'com.google.android.gms:play-services-location:8.3.0'
-    compile 'com.google.android.gms:play-services-maps:8.3.0'
-    compile 'com.google.android.gms:play-services-analytics:8.3.0'
-    compile 'com.google.android.gms:play-services-wearable:8.3.0'
-    compile 'com.android.support:design:23.2.1'
+    compile "com.android.support:cardview-v7:${supportLibraryVersion}"
+    compile "com.android.support:support-v4:${supportLibraryVersion}"
+    compile "com.android.support:multidex:1.0.1"
+    compile "com.android.support:recyclerview-v7:${supportLibraryVersion}"
+    compile "com.android.support:appcompat-v7:${supportLibraryVersion}"
+    compile "com.google.android.gms:play-services-auth:${playServicesVersion}"
+    compile "com.google.android.gms:play-services-appindexing:${playServicesVersion}"
+    compile "com.google.android.gms:play-services-drive:${playServicesVersion}"
+    compile "com.google.android.gms:play-services-location:${playServicesVersion}"
+    compile "com.google.android.gms:play-services-maps:${playServicesVersion}"
+    compile "com.google.android.gms:play-services-analytics:${playServicesVersion}"
+    compile "com.google.android.gms:play-services-wearable:${playServicesVersion}"
+    compile "com.android.support:design:${supportLibraryVersion}"
     compile 'jp.wasabeef:picasso-transformations:2.0.0'
     compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.3.0'
     compile 'com.github.deano2390:MaterialShowcaseView:1.1.0'
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'com.squareup.retrofit2:retrofit:2.0.1'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.1'
     compile project(path: ':backend', configuration: 'android-endpoints')
 }
 

@@ -2,45 +2,44 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    android:id="@+id/windowBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:id="@+id/windowBackground">
+    android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:minHeight="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+    <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
         <EditText
+            android:id="@+id/placeName"
             android:layout_width="match_parent"
             android:layout_height="72dp"
-            android:id="@+id/placeName"
-            android:textSize="@dimen/create_text_size_secondary"
-            android:hint="@string/message"
-            android:textColorHint="@color/whitePrimary"
-            android:maxLength="120"
             android:layout_gravity="center_horizontal"
             android:layout_marginLeft="@dimen/create_margin"
+            android:layout_marginRight="@dimen/create_margin"
             android:layout_marginTop="?attr/actionBarSize"
             android:background="@android:color/transparent"
-            android:layout_marginRight="@dimen/create_margin"/>
+            android:hint="@string/message"
+            android:maxLength="120"
+            android:textColorHint="@color/whitePrimary"
+            android:textSize="@dimen/create_text_size_secondary" />
 
     </android.support.v7.widget.Toolbar>
 
     <TextView
+        android:id="@+id/leftCharacters"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/create_margin"
         android:layout_marginRight="@dimen/create_margin"
         android:layout_marginTop="@dimen/create_margin"
         android:text="152"
-        android:textSize="@dimen/create_text_size_normal"
-        android:id="@+id/leftCharacters"/>
+        android:textSize="@dimen/create_text_size_normal" />
 </LinearLayout>

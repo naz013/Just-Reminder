@@ -1,66 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
+    android:orientation="vertical"
     android:paddingBottom="16dp"
-    android:paddingTop="24dp"
     android:paddingLeft="24dp"
-    android:paddingRight="24dp">
+    android:paddingRight="24dp"
+    android:paddingTop="24dp">
 
     <TextView
+        android:id="@+id/appVersion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/appVersion"
-        android:textSize="20sp"
+        android:layout_gravity="center"
         android:gravity="center"
         android:text="@string/can_you_rate_this_application"
-        android:layout_gravity="center" />
+        android:textSize="20sp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_gravity="right"
-        android:layout_marginTop="24dp">
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:text="@string/never"
             android:id="@+id/rateNever"
-            android:clickable="true"
             style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
-            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center|right"
-            />
+            android:clickable="true"
+            android:gravity="center"
+            android:text="@string/never"
+            android:textSize="18sp" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:text="@string/later"
             android:id="@+id/rateLater"
-            android:clickable="true"
             style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
-            android:gravity="center"
-            android:layout_marginLeft="5dp"
-            android:layout_gravity="center|right"/>
-
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:text="@string/rate"
-            style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
+            android:layout_gravity="center|right"
             android:layout_marginLeft="5dp"
-            android:id="@+id/buttonRate"
             android:clickable="true"
             android:gravity="center"
-            android:layout_gravity="center|right"/>
+            android:text="@string/later"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/buttonRate"
+            style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|right"
+            android:layout_marginLeft="5dp"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="@string/rate"
+            android:textSize="18sp" />
 
     </LinearLayout>
 
-        </LinearLayout>
+</LinearLayout>

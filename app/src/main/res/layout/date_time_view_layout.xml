@@ -8,21 +8,21 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:id="@+id/dateField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tue, 5 Nov 2015"
             android:layout_marginRight="15dp"
             android:layout_toLeftOf="@+id/timeField"
-            android:textSize="@dimen/create_text_size_normal"
-            android:id="@+id/dateField" />
+            android:text="Tue, 5 Nov 2015"
+            android:textSize="@dimen/create_text_size_normal" />
 
         <TextView
+            android:id="@+id/timeField"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/create_text_size_normal"
-            android:text="14:05"
             android:layout_alignParentRight="true"
-            android:id="@+id/timeField" />
+            android:text="14:05"
+            android:textSize="@dimen/create_text_size_normal" />
 
     </RelativeLayout>
 </merge>

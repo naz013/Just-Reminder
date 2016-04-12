@@ -1,33 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
     android:id="@+id/windowBackground"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:minHeight="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+    <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
         <EditText
+            android:id="@+id/editField"
             android:layout_width="match_parent"
             android:layout_height="72dp"
-            android:id="@+id/editField"
-            android:textSize="@dimen/create_text_size_secondary"
-            android:hint="@string/name"
-            android:textColorHint="@color/whitePrimary"
             android:layout_gravity="center_horizontal"
             android:layout_marginLeft="@dimen/create_margin"
+            android:layout_marginRight="@dimen/create_margin"
             android:layout_marginTop="?attr/actionBarSize"
             android:background="@android:color/transparent"
-            android:layout_marginRight="@dimen/create_margin"/>
+            android:hint="@string/name"
+            android:textColorHint="@color/whitePrimary"
+            android:textSize="@dimen/create_text_size_secondary" />
 
     </android.support.v7.widget.Toolbar>
 
@@ -41,28 +40,28 @@
             android:orientation="vertical">
 
             <CheckBox
+                android:id="@+id/defaultCheck"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/defaultCheck"
                 android:layout_gravity="center"
-                android:textSize="@dimen/checkbox_text_size"
                 android:layout_marginTop="10dp"
-                android:text="@string/default_string"/>
+                android:text="@string/default_string"
+                android:textSize="@dimen/checkbox_text_size" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="@string/color"
-                android:textStyle="bold"
-                android:clickable="false"
-                android:textAllCaps="true"
-                android:layout_marginTop="@dimen/create_margin"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="@dimen/category_margin"
                 android:layout_marginRight="@dimen/category_margin"
-                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/create_margin"
+                android:clickable="false"
                 android:gravity="center_vertical"
-                android:textSize="@dimen/create_text_size_normal" />
+                android:text="@string/color"
+                android:textAllCaps="true"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="@dimen/create_text_size_normal"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -71,37 +70,38 @@
                 android:orientation="horizontal">
 
                 <ImageButton
-                    android:layout_height="50dp"
-                    android:layout_width="50dp"
                     android:id="@+id/red_checkbox"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/circle_drawable_red"
-                    android:layout_margin="5dp"/>
+                    android:src="@drawable/circle_drawable_red" />
 
                 <ImageButton
-                    android:layout_height="50dp"
-                    android:layout_width="50dp"
-                    android:background="@android:color/transparent"
                     android:id="@+id/violet_checkbox"
-                    android:src="@drawable/circle_drawable_purple"
-                    android:layout_margin="5dp"/>
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="5dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/circle_drawable_purple" />
 
                 <ImageButton
-                    android:layout_height="50dp"
-                    android:layout_width="50dp"
-                    android:background="@android:color/transparent"
                     android:id="@+id/green_checkbox"
-                    android:src="@drawable/circle_drawable_green"
-                    android:layout_margin="5dp"/>
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="5dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/circle_drawable_green" />
 
                 <ImageButton
-                    android:layout_height="50dp"
-                    android:layout_width="50dp"
-                    android:background="@android:color/transparent"
                     android:id="@+id/light_green_checkbox"
-                    android:src="@drawable/circle_drawable_green_light"
-                    android:layout_margin="5dp"/>
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="5dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/circle_drawable_green_light" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -109,38 +109,39 @@
                 android:orientation="horizontal">
 
                 <ImageButton
-                    android:layout_height="50dp"
-                    android:layout_width="50dp"
                     android:id="@+id/blue_checkbox"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/circle_drawable_blue"
-                    android:layout_margin="5dp"/>
+                    android:src="@drawable/circle_drawable_blue" />
 
                 <ImageButton
-                    android:layout_height="50dp"
-                    android:layout_width="50dp"
                     android:id="@+id/light_blue_checkbox"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/circle_drawable_blue_light"
-                    android:layout_margin="5dp"/>
+                    android:src="@drawable/circle_drawable_blue_light" />
 
                 <ImageButton
-                    android:layout_height="50dp"
-                    android:layout_width="50dp"
                     android:id="@+id/yellow_checkbox"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/circle_drawable_yellow"
-                    android:layout_margin="5dp"/>
+                    android:src="@drawable/circle_drawable_yellow" />
 
                 <ImageButton
-                    android:layout_height="50dp"
-                    android:layout_width="50dp"
                     android:id="@+id/orange_checkbox"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/circle_drawable_orange"
-                    android:layout_margin="5dp"/>
+                    android:src="@drawable/circle_drawable_orange" />
 
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -148,82 +149,82 @@
                 android:orientation="horizontal">
 
                 <ImageButton
-                    android:layout_height="50dp"
-                    android:layout_width="50dp"
                     android:id="@+id/grey_checkbox"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/circle_drawable_cyan"
-                    android:layout_margin="5dp"/>
+                    android:src="@drawable/circle_drawable_cyan" />
 
                 <ImageButton
-                    android:layout_height="50dp"
-                    android:layout_width="50dp"
                     android:id="@+id/pink_checkbox"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/circle_drawable_pink"
-                    android:layout_margin="5dp"/>
+                    android:src="@drawable/circle_drawable_pink" />
 
                 <ImageButton
-                    android:layout_height="50dp"
-                    android:layout_width="50dp"
                     android:id="@+id/sand_checkbox"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/circle_drawable_teal"
-                    android:layout_margin="5dp"/>
+                    android:src="@drawable/circle_drawable_teal" />
 
                 <ImageButton
-                    android:layout_height="50dp"
-                    android:layout_width="50dp"
                     android:id="@+id/brown_checkbox"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/circle_drawable_amber"
-                    android:layout_margin="5dp"/>
+                    android:src="@drawable/circle_drawable_amber" />
 
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/themeGroupPro"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="visible"
                 android:layout_gravity="center"
-                android:id="@+id/themeGroupPro"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="visible">
 
                 <ImageButton
-                    android:layout_height="50dp"
-                    android:layout_width="50dp"
                     android:id="@+id/deepPurple"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/circle_drawable_deep_purple"
-                    android:layout_margin="5dp"/>
+                    android:src="@drawable/circle_drawable_deep_purple" />
 
                 <ImageButton
-                    android:layout_height="50dp"
-                    android:layout_width="50dp"
                     android:id="@+id/indigoCheckbox"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/circle_drawable_indigo"
-                    android:layout_margin="5dp"/>
+                    android:src="@drawable/circle_drawable_indigo" />
 
                 <ImageButton
-                    android:layout_height="50dp"
-                    android:layout_width="50dp"
                     android:id="@+id/limeCheckbox"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/circle_drawable_lime"
-                    android:layout_margin="5dp"/>
+                    android:src="@drawable/circle_drawable_lime" />
 
                 <ImageButton
-                    android:layout_height="50dp"
-                    android:layout_width="50dp"
                     android:id="@+id/deepOrange"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="5dp"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/circle_drawable_deep_orange"
-                    android:layout_margin="5dp"/>
+                    android:src="@drawable/circle_drawable_deep_orange" />
             </LinearLayout>
 
-            </LinearLayout>
+        </LinearLayout>
 
-        </ScrollView>
+    </ScrollView>
 
 </LinearLayout>

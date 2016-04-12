@@ -5,118 +5,119 @@
     android:layout_height="wrap_content"
     android:scrollbars="none">
 
-<LinearLayout
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_marginLeft="@dimen/settings_margin"
-    android:layout_marginRight="@dimen/settings_margin"
-    android:layout_height="wrap_content">
-
-    <com.cray.software.justreminder.views.PrefsView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/notificationOptionPrefs"
-        app:prefs_primary_text="@string/distance_notification"
-        app:prefs_divider_top="false"
-        app:prefs_type="check"
-        app:prefs_divider_bottom="true"/>
-
-    <com.cray.software.justreminder.views.PrefsView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/radiusPrefs"
-        app:prefs_primary_text="@string/radius"
-        app:prefs_divider_top="false"
-        app:prefs_type="text"
-        app:prefs_divider_bottom="true"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/map_type"
-        android:id="@+id/mapType"
-        android:paddingRight="15dp"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_vertical"
-        android:textSize="@dimen/settings_text_size_primary" />
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/places"
-        android:id="@+id/places"
-        android:paddingRight="15dp"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_vertical"
-        android:textSize="@dimen/settings_text_size_primary" />
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/markerStyleContainer"
-        android:visibility="gone"
+        android:layout_marginLeft="@dimen/settings_margin"
+        android:layout_marginRight="@dimen/settings_margin"
         android:orientation="vertical">
-        <TextView
+
+        <com.cray.software.justreminder.views.PrefsView
+            android:id="@+id/notificationOptionPrefs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/style_of_marker"
-            android:id="@+id/markerStyle"
-            android:paddingRight="15dp"
-            android:paddingTop="15dp"
-            android:paddingBottom="15dp"
+            app:prefs_divider_bottom="true"
+            app:prefs_divider_top="false"
+            app:prefs_primary_text="@string/distance_notification"
+            app:prefs_type="check" />
+
+        <com.cray.software.justreminder.views.PrefsView
+            android:id="@+id/radiusPrefs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:prefs_divider_bottom="true"
+            app:prefs_divider_top="false"
+            app:prefs_primary_text="@string/radius"
+            app:prefs_type="text" />
+
+        <TextView
+            android:id="@+id/mapType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
-            android:layout_gravity="center_horizontal"
             android:gravity="center_vertical"
+            android:paddingBottom="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="15dp"
+            android:text="@string/map_type"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="@dimen/settings_text_size_primary" />
 
         <View
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
+            android:background="@android:color/darker_gray" />
+
+        <TextView
+            android:id="@+id/places"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:paddingBottom="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="15dp"
+            android:text="@string/places"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="@dimen/settings_text_size_primary" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
+
+        <LinearLayout
+            android:id="@+id/markerStyleContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/markerStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:paddingBottom="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="15dp"
+                android:text="@string/style_of_marker"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="@dimen/settings_text_size_primary" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tracker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:paddingBottom="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="15dp"
+            android:text="@string/tracking_settings"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="@dimen/settings_text_size_primary" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
 
     </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/tracking_settings"
-        android:id="@+id/tracker"
-        android:paddingRight="15dp"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_vertical"
-        android:textSize="@dimen/settings_text_size_primary" />
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
-
-</LinearLayout>
-    </ScrollView>
+</ScrollView>

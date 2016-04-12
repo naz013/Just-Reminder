@@ -7,68 +7,68 @@
     android:scrollbars="none">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/settings_margin"
         android:layout_marginRight="@dimen/settings_margin"
-        android:layout_height="wrap_content">
+        android:orientation="vertical">
 
         <com.cray.software.justreminder.views.PrefsView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/missedPrefs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:prefs_divider_bottom="true"
+            app:prefs_divider_top="false"
             app:prefs_primary_text="@string/missed_call_reminder"
-            app:prefs_divider_top="false"
-            app:prefs_type="check"
-            app:prefs_divider_bottom="true"/>
+            app:prefs_type="check" />
 
         <com.cray.software.justreminder.views.PrefsView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/missedTimePrefs"
-            app:prefs_primary_text="@string/time"
-            app:prefs_divider_top="false"
-            app:prefs_type="none"
-            app:prefs_divider_bottom="true"/>
-
-        <com.cray.software.justreminder.views.PrefsView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:prefs_divider_bottom="true"
+            app:prefs_divider_top="false"
+            app:prefs_primary_text="@string/time"
+            app:prefs_type="none" />
+
+        <com.cray.software.justreminder.views.PrefsView
             android:id="@+id/quickSMSPrefs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:prefs_divider_bottom="true"
+            app:prefs_divider_top="false"
             app:prefs_primary_text="@string/quick_sms"
             app:prefs_secondary_text="@string/show_quick_answer_window"
-            app:prefs_divider_top="false"
-            app:prefs_type="check"
-            app:prefs_divider_bottom="true"/>
+            app:prefs_type="check" />
 
         <TextView
+            android:id="@+id/templates"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/messages"
-            android:id="@+id/templates"
-            android:paddingRight="15dp"
-            android:paddingTop="15dp"
-            android:paddingBottom="15dp"
+            android:layout_gravity="center_horizontal"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
-            android:layout_gravity="center_horizontal"
             android:gravity="center_vertical"
+            android:paddingBottom="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="15dp"
+            android:text="@string/messages"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="@dimen/settings_text_size_primary" />
 
         <View
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
+            android:background="@android:color/darker_gray" />
 
         <com.cray.software.justreminder.views.PrefsView
+            android:id="@+id/followReminderPrefs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/followReminderPrefs"
-            app:prefs_primary_text="@string/after_call_reminder"
+            app:prefs_divider_bottom="false"
             app:prefs_divider_top="false"
-            app:prefs_type="check"
-            app:prefs_divider_bottom="false"/>
+            app:prefs_primary_text="@string/after_call_reminder"
+            app:prefs_type="check" />
 
     </LinearLayout>
 

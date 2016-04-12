@@ -1,144 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
     android:id="@+id/windowBackground"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <include layout="@layout/toolbar"
-        android:layout_alignParentTop="true"
-        android:layout_height="wrap_content"
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar"
         android:layout_width="match_parent"
-        android:id="@+id/toolbar"/>
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" />
 
     <RadioGroup
+        android:id="@+id/group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
         android:layout_gravity="center"
         android:gravity="center"
-        android:id="@+id/group"
-        android:layout_below="@+id/toolbar"
         android:orientation="horizontal">
 
         <RadioButton
+            android:id="@+id/customRadio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/custom"
-            android:id="@+id/customRadio"/>
+            android:text="@string/custom" />
 
         <RadioButton
+            android:id="@+id/theme"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/theme"
-            android:text="@string/theme"/>
+            android:text="@string/theme" />
 
     </RadioGroup>
 
     <android.support.v4.view.ViewPager
+        android:id="@+id/themePager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/group"
-        android:id="@+id/themePager"/>
+        android:layout_below="@+id/group" />
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_below="@+id/group"
         android:id="@+id/customContainer"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/group"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/widget_config_margin"
-            android:layout_gravity="center_horizontal">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/background"
-                android:textSize="@dimen/widget_config_text_size"
-                android:id="@+id/textView3" />
+                android:textSize="@dimen/widget_config_text_size" />
 
             <Spinner
+                android:id="@+id/widgetBgSpinner"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/widgetBgSpinner" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:gravity="center"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/widget_config_margin"
-            android:layout_height="wrap_content">
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/widget_config_text_size"
-                android:text="@string/text_color"/>
+                android:text="@string/text_color"
+                android:textSize="@dimen/widget_config_text_size" />
 
             <RadioGroup
-                android:layout_width="match_parent"
-                android:gravity="center"
-                android:layout_height="wrap_content"
                 android:id="@+id/colorsTitleGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
                 android:orientation="horizontal">
 
                 <RadioButton
+                    android:id="@+id/radioTitleBlack"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/checkbox_text_size"
                     android:text="@string/black"
-                    android:id="@+id/radioTitleBlack" />
+                    android:textSize="@dimen/checkbox_text_size" />
 
                 <RadioButton
+                    android:id="@+id/radioTitleWhite"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/checkbox_text_size"
                     android:layout_marginLeft="15dp"
                     android:text="@string/white"
-                    android:id="@+id/radioTitleWhite" />
+                    android:textSize="@dimen/checkbox_text_size" />
             </RadioGroup>
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:gravity="center"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/widget_config_margin_top"
-            android:layout_height="wrap_content">
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/widget_config_text_size"
-                android:text="@string/button_color"/>
+                android:text="@string/button_color"
+                android:textSize="@dimen/widget_config_text_size" />
 
             <RadioGroup
-                android:layout_width="match_parent"
-                android:gravity="center"
-                android:layout_height="wrap_content"
                 android:id="@+id/colorsButtonGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
                 android:orientation="horizontal">
 
                 <RadioButton
+                    android:id="@+id/radioButtonBlack"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/widget_config_text_size"
                     android:text="@string/black"
-                    android:id="@+id/radioButtonBlack" />
+                    android:textSize="@dimen/widget_config_text_size" />
 
                 <RadioButton
+                    android:id="@+id/radioButtonWhite"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
-                    android:textSize="@dimen/widget_config_text_size"
                     android:text="@string/white"
-                    android:id="@+id/radioButtonWhite" />
+                    android:textSize="@dimen/widget_config_text_size" />
             </RadioGroup>
         </LinearLayout>
     </LinearLayout>

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:id="@+id/background"
     android:minHeight="35dp"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,36 +12,36 @@
         android:orientation="vertical">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="12dp"
             android:id="@+id/currentMark"
-            android:layout_weight="1"
-            android:background="@color/bluePrimary"/>
-
-        <TextView
             android:layout_width="match_parent"
             android:layout_height="12dp"
-            android:id="@+id/reminderMark"
             android:layout_weight="1"
-            android:background="@color/redPrimary"/>
+            android:background="@color/bluePrimary" />
 
         <TextView
+            android:id="@+id/reminderMark"
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:layout_weight="1"
+            android:background="@color/redPrimary" />
+
+        <TextView
+            android:id="@+id/birthdayMark"
             android:layout_width="match_parent"
             android:layout_height="11dp"
             android:layout_weight="1"
-            android:id="@+id/birthdayMark"
-            android:background="@color/greenPrimary"/>
+            android:background="@color/greenPrimary" />
 
     </LinearLayout>
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <TextView
+        android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="25"
-        android:minHeight="35dp"
         android:layout_gravity="center"
         android:gravity="center|center_vertical"
-        android:textColor="@color/blackPrimary"
-        android:id="@+id/textView"/>
+        android:minHeight="35dp"
+        android:text="25"
+        android:textColor="@color/blackPrimary" />
 
 </FrameLayout>

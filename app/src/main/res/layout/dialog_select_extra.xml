@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Nazar Suhovich
   ~ <p/>
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,84 +15,85 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
+    android:orientation="vertical"
     android:paddingBottom="16dp"
-    android:paddingTop="24dp"
     android:paddingLeft="24dp"
-    android:paddingRight="24dp">
+    android:paddingRight="24dp"
+    android:paddingTop="24dp">
 
     <TextView
+        android:id="@+id/dialogTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/dialogTitle"
         android:layout_marginBottom="@dimen/create_margin"
-        android:text="@string/personalization" />
+        android:gravity="center"
+        android:text="@string/personalization"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <android.support.v7.widget.SwitchCompat
+        android:id="@+id/extraSwitch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:id="@+id/extraSwitch"
-        android:text="@string/default_string"/>
+        android:text="@string/default_string" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="italic"
         android:maxLines="3"
-        android:text="@string/allow_customizing_notification"/>
+        android:text="@string/allow_customizing_notification"
+        android:textStyle="italic" />
 
     <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/vibrationCheck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text="@string/vibrate"/>
+        android:text="@string/vibrate" />
 
     <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/voiceCheck"
-        android:text="@string/voice_notification"/>
-
-    <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/voice_notification" />
+
+    <CheckBox
         android:id="@+id/wakeCheck"
-        android:text="@string/turn_on_screen"/>
-
-    <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/turn_on_screen" />
+
+    <CheckBox
         android:id="@+id/unlockCheck"
-        android:text="@string/unlock_screen"/>
-
-    <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/unlock_screen" />
+
+    <CheckBox
         android:id="@+id/repeatCheck"
-        android:text="@string/repeat_notification"/>
-
-    <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/repeat_notification" />
+
+    <CheckBox
         android:id="@+id/autoCheck"
-        android:text="@string/enable_sending_sms_automatically"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/enable_sending_sms_automatically" />
 
     <Button
+        android:id="@+id/buttonOk"
+        style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/ok"
-        android:clickable="false"
-        android:textSize="18sp"
-        style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
-        android:gravity="center"
-        android:layout_marginTop="14dp"
         android:layout_gravity="bottom|right"
-        android:id="@+id/buttonOk" />
+        android:layout_marginTop="14dp"
+        android:clickable="false"
+        android:gravity="center"
+        android:text="@string/ok"
+        android:textSize="18sp" />
 </LinearLayout>

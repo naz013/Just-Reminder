@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:id="@+id/windowBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/windowBackground">
+    android:orientation="vertical">
 
-    <include layout="@layout/toolbar"
-        android:id="@+id/toolbar"/>
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -22,50 +23,55 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-            <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-                <TableRow android:layout_marginBottom="20dp" android:layout_marginTop="20dp">
-                    <CheckBox android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_gravity="center|left"
-                        android:id="@+id/eventsCheck"
-                        android:text="@string/birthdays"/>
-                    <Spinner
-                        android:layout_width="match_parent"
-                        android:layout_weight="1"
-                        android:layout_gravity="center"
-                        android:id="@+id/eventCalendar"
-                        android:layout_height="wrap_content"/>
-                </TableRow>
+                    <TableRow
+                        android:layout_marginBottom="20dp"
+                        android:layout_marginTop="20dp">
 
-            </TableLayout>
+                        <CheckBox
+                            android:id="@+id/eventsCheck"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center|left"
+                            android:layout_weight="1"
+                            android:text="@string/birthdays" />
+
+                        <Spinner
+                            android:id="@+id/eventCalendar"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1" />
+                    </TableRow>
+
+                </TableLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/material_divider"/>
+                    android:background="@color/material_divider" />
 
                 <CheckBox
+                    android:id="@+id/autoCheck"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="20dp"
-                    android:id="@+id/autoCheck"
-                    android:text="@string/check_automatically"/>
+                    android:text="@string/check_automatically" />
 
                 <Button
+                    android:id="@+id/syncInterval"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
-                    android:id="@+id/syncInterval"
-                    android:textSize="16sp"
-                    android:text="@string/interval"/>
+                    android:text="@string/interval"
+                    android:textSize="16sp" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/material_divider"/>
+                    android:background="@color/material_divider" />
 
             </LinearLayout>
 
@@ -75,17 +81,17 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_above="@+id/button"
-            android:background="@color/material_divider"/>
+            android:background="@color/material_divider" />
 
         <TextView
+            android:id="@+id/button"
+            style="?android:borderlessButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/button"
-            android:padding="0dp"
-            android:layout_margin="0dp"
-            style="?android:borderlessButtonStyle"
             android:layout_alignParentBottom="true"
-            android:text="@string/import_string"/>
+            android:layout_margin="0dp"
+            android:padding="0dp"
+            android:text="@string/import_string" />
 
     </RelativeLayout>
 </LinearLayout>

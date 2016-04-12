@@ -1,122 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:scrollbars="none">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/settings_margin"
         android:layout_marginRight="@dimen/settings_margin"
-        android:layout_height="wrap_content">
+        android:orientation="vertical">
 
         <com.cray.software.justreminder.views.PrefsView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/globalOptionPrefs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:prefs_divider_bottom="true"
+            app:prefs_divider_top="false"
             app:prefs_primary_text="@string/global_settings"
-            app:prefs_divider_top="false"
-            app:prefs_type="check"
-            app:prefs_divider_bottom="true"/>
+            app:prefs_type="check" />
 
         <com.cray.software.justreminder.views.PrefsView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/vibrationOptionPrefs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:prefs_divider_bottom="true"
+            app:prefs_divider_top="false"
             app:prefs_primary_text="@string/vibrate"
-            app:prefs_divider_top="false"
-            app:prefs_type="check"
-            app:prefs_divider_bottom="true"/>
+            app:prefs_type="check" />
 
         <com.cray.software.justreminder.views.PrefsView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/infiniteVibrateOptionPrefs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:prefs_divider_bottom="true"
+            app:prefs_divider_top="false"
             app:prefs_primary_text="@string/infinite_vibrate"
-            app:prefs_divider_top="false"
-            app:prefs_type="check"
-            app:prefs_divider_bottom="true"/>
+            app:prefs_type="check" />
 
         <com.cray.software.justreminder.views.PrefsView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/soundOptionPrefs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:prefs_divider_bottom="true"
+            app:prefs_divider_top="false"
             app:prefs_primary_text="@string/sound_in_silent_mode"
-            app:prefs_divider_top="false"
-            app:prefs_type="check"
-            app:prefs_divider_bottom="true"/>
+            app:prefs_type="check" />
 
         <com.cray.software.justreminder.views.PrefsView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/infiniteSoundOptionPrefs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:prefs_divider_bottom="true"
+            app:prefs_divider_top="false"
             app:prefs_primary_text="@string/infinite_sound"
-            app:prefs_divider_top="false"
-            app:prefs_type="check"
-            app:prefs_divider_bottom="true"/>
+            app:prefs_type="check" />
 
         <com.cray.software.justreminder.views.PrefsView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/wakeScreenOptionPrefs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:prefs_divider_bottom="true"
+            app:prefs_divider_top="false"
             app:prefs_primary_text="@string/turn_on_screen"
-            app:prefs_divider_top="false"
-            app:prefs_type="check"
-            app:prefs_divider_bottom="true"/>
+            app:prefs_type="check" />
 
         <com.cray.software.justreminder.views.PrefsView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/chooseSoundPrefs"
-            app:prefs_primary_text="@string/melody"
-            app:prefs_divider_top="false"
-            app:prefs_type="none"
-            app:prefs_divider_bottom="true"/>
-
-        <com.cray.software.justreminder.views.PrefsView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/ttsPrefs"
-            app:prefs_primary_text="@string/voice_notification"
+            app:prefs_divider_bottom="true"
             app:prefs_divider_top="false"
-            app:prefs_type="check"
-            app:prefs_divider_bottom="true"/>
+            app:prefs_primary_text="@string/melody"
+            app:prefs_type="none" />
+
+        <com.cray.software.justreminder.views.PrefsView
+            android:id="@+id/ttsPrefs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:prefs_divider_bottom="true"
+            app:prefs_divider_top="false"
+            app:prefs_primary_text="@string/voice_notification"
+            app:prefs_type="check" />
 
         <TextView
+            android:id="@+id/locale"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/language"
-            android:id="@+id/locale"
-            android:paddingRight="15dp"
-            android:paddingTop="15dp"
-            android:paddingBottom="15dp"
+            android:layout_gravity="center_horizontal"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
-            android:layout_gravity="center_horizontal"
             android:gravity="center_vertical"
+            android:paddingBottom="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="15dp"
+            android:text="@string/language"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="@dimen/settings_text_size_primary" />
 
         <com.cray.software.justreminder.views.PrefsView
+            android:id="@+id/ledPrefs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/ledPrefs"
-            app:prefs_primary_text="@string/led_notification"
+            app:prefs_divider_bottom="true"
             app:prefs_divider_top="true"
-            app:prefs_type="check"
-            app:prefs_divider_bottom="true"/>
+            app:prefs_primary_text="@string/led_notification"
+            app:prefs_type="check" />
 
         <com.cray.software.justreminder.views.PrefsView
+            android:id="@+id/chooseLedColorPrefs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/chooseLedColorPrefs"
-            app:prefs_primary_text="@string/led_color"
+            app:prefs_divider_bottom="false"
             app:prefs_divider_top="false"
-            app:prefs_type="none"
-            app:prefs_divider_bottom="false"/>
+            app:prefs_primary_text="@string/led_color"
+            app:prefs_type="none" />
 
     </LinearLayout>
 

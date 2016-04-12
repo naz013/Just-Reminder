@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:gravity="center|top"
+    android:id="@+id/monthDayLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/monthDayLayout">
+    android:gravity="center|top"
+    android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -14,85 +13,85 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_marginBottom="88dp"
+            android:layout_marginLeft="@dimen/create_margin"
             android:layout_marginRight="@dimen/create_margin"
-            android:layout_marginLeft="@dimen/create_margin">
+            android:orientation="vertical">
 
             <CheckBox
+                android:id="@+id/dateExport"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="gone"
-                android:textSize="@dimen/checkbox_text_size"
                 android:layout_marginTop="@dimen/create_margin"
                 android:text="@string/add_to_calendar"
-                android:id="@+id/dateExport" />
+                android:textSize="@dimen/checkbox_text_size"
+                android:visibility="gone" />
 
             <CheckBox
+                android:id="@+id/dateTaskExport"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="gone"
-                android:textSize="@dimen/checkbox_text_size"
                 android:layout_marginTop="@dimen/create_margin"
                 android:text="@string/google_tasks"
-                android:id="@+id/dateTaskExport" />
+                android:textSize="@dimen/checkbox_text_size"
+                android:visibility="gone" />
 
             <TextView
+                android:id="@+id/timeField"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:textSize="@dimen/create_text_size_primary"
-                android:text="14:05"
-                android:layout_weight="1"
-                android:clickable="true"
                 android:layout_marginBottom="@dimen/create_margin"
+                android:layout_weight="1"
                 android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
                 android:ems="10"
-                android:id="@+id/timeField" />
+                android:gravity="center"
+                android:text="14:05"
+                android:textSize="@dimen/create_text_size_primary" />
 
             <LinearLayout
-                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:gravity="center_horizontal"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_height="wrap_content">
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
 
                 <RadioButton
+                    android:id="@+id/dayCheck"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/dayCheck"
                     android:layout_gravity="center|left"
-                    android:text="@string/select_day"/>
+                    android:text="@string/select_day" />
 
                 <TextView
+                    android:id="@+id/monthDayField"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="25"
-                    android:ems="10"
-                    android:clickable="true"
                     android:layout_marginBottom="@dimen/create_margin"
                     android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:ems="10"
                     android:gravity="center"
-                    android:textSize="@dimen/create_text_size_primary"
-                    android:id="@+id/monthDayField" />
+                    android:text="25"
+                    android:textSize="@dimen/create_text_size_primary" />
             </LinearLayout>
 
             <RadioButton
+                android:id="@+id/lastCheck"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center|left"
-                android:id="@+id/lastCheck"
-                android:text="@string/last_day"/>
+                android:text="@string/last_day" />
 
             <com.cray.software.justreminder.views.ActionView
+                android:id="@+id/actionView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/create_margin"
                 android:layout_marginBottom="80dp"
-                android:id="@+id/actionView"/>
-            </LinearLayout>
+                android:layout_marginTop="@dimen/create_margin" />
+        </LinearLayout>
     </ScrollView>
 
 </LinearLayout>

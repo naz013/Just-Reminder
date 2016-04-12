@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Nazar Suhovich
   ~ <p/>
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,9 +17,9 @@
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/windowBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/windowBackground"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.cray.software.justreminder.activities.NotePreview"
     tools:showIn="@layout/activity_note_preview">
@@ -30,74 +29,74 @@
         android:layout_height="wrap_content">
 
         <RelativeLayout
-            android:layout_width="match_parent"
             android:id="@+id/container"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <TextView
+                android:id="@+id/noteText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/noteText"
+                android:layout_below="@+id/imageView"
+                android:paddingBottom="30dp"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
-                android:paddingBottom="30dp"
                 android:paddingTop="25dp"
-                android:textSize="18sp"
-                android:layout_below="@+id/imageView"/>
+                android:textSize="18sp" />
 
             <LinearLayout
+                android:id="@+id/reminderContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/noteText"
-                android:id="@+id/reminderContainer"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingLeft="15dp"
-                    android:textSize="20sp"
                     android:paddingTop="30dp"
+                    android:text="@string/type"
                     android:textAllCaps="true"
-                    android:text="@string/type"/>
+                    android:textSize="20sp" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginLeft="15dp"
-                    android:background="@android:color/darker_gray"/>
+                    android:background="@android:color/darker_gray" />
 
                 <TextView
+                    android:id="@+id/reminderTime"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingBottom="15dp"
                     android:paddingLeft="15dp"
                     android:paddingRight="15dp"
-                    android:paddingBottom="15dp"
                     android:paddingTop="15dp"
-                    android:textSize="18sp"
-                    android:id="@+id/reminderTime"/>
+                    android:textSize="18sp" />
 
                 <LinearLayout
+                    android:id="@+id/buttonContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="right"
-                    android:id="@+id/buttonContainer"
                     android:orientation="horizontal">
 
                     <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:id="@+id/editReminder"
                         style="?android:attr/borderlessButtonStyle"
-                        android:text="@string/edit"/>
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/edit" />
 
                     <Button
+                        android:id="@+id/deleteReminder"
+                        style="?android:attr/borderlessButtonStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="15dp"
-                        android:id="@+id/deleteReminder"
-                        style="?android:attr/borderlessButtonStyle"
-                        android:text="@string/delete"/>
+                        android:text="@string/delete" />
 
                 </LinearLayout>
 

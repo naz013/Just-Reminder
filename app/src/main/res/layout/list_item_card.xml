@@ -2,191 +2,191 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:layout_height="wrap_content"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp"
     android:layout_marginLeft="5dp"
     android:layout_marginRight="5dp"
-    android:orientation="vertical"
-    android:layout_marginBottom="5dp">
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/listHeader"
         style="?android:attr/listSeparatorTextViewStyle"
         android:layout_width="match_parent"
         android:layout_height="38dp"
-        android:textColor="?attr/colorAccent"
         android:background="@android:color/transparent"
         android:clickable="true"
         android:gravity="center_vertical"
         android:paddingLeft="12dp"
         android:paddingRight="12dp"
-        android:textSize="14sp"
         android:text="15 November"
+        android:textColor="?attr/colorAccent"
+        android:textSize="14sp"
         android:visibility="gone" />
 
     <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:clipChildren="false"
         android:id="@+id/itemCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
+        android:clipChildren="false"
         android:foreground="?android:attr/selectableItemBackground"
         card_view:cardCornerRadius="3dp"
-        card_view:contentPadding="1dp"
         card_view:cardUseCompatPadding="true"
-        android:layout_height="wrap_content">
+        card_view:contentPadding="1dp">
 
         <RelativeLayout
+            android:id="@+id/reminderContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/reminderContainer"
-            android:padding="8dp"
-            android:focusable="false">
+            android:focusable="false"
+            android:padding="8dp">
 
             <android.support.v7.widget.SwitchCompat
+                android:id="@+id/itemCheck"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
                 android:focusable="false"
-                android:visibility="visible"
-                android:id="@+id/itemCheck"/>
+                android:visibility="visible" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_toLeftOf="@+id/itemCheck"
                 android:layout_height="wrap_content"
-                android:focusable="false"
-                android:layout_marginRight="5dp"
                 android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_toLeftOf="@+id/itemCheck"
+                android:focusable="false"
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/reminder_type"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="false"
                     android:singleLine="true"
-                    android:text="Type"
-                    android:id="@+id/reminder_type"/>
+                    android:text="Type" />
 
                 <TextView
+                    android:id="@+id/taskText"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:singleLine="true"
                     android:layout_marginTop="5dp"
                     android:focusable="false"
-                    android:text="Task"
                     android:gravity="center_vertical"
-                    android:id="@+id/taskText" />
+                    android:singleLine="true"
+                    android:text="Task"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
 
                 <TextView
+                    android:id="@+id/reminder_phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
-                    android:focusable="false"
+                    android:layout_marginTop="5dp"
                     android:layout_weight="0.75"
-                    android:layout_marginTop="5dp"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:id="@+id/reminder_phone" />
+                    android:focusable="false"
+                    android:singleLine="true"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
+                    android:id="@+id/taskDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:singleLine="true"
-                    android:focusable="false"
                     android:layout_marginTop="5dp"
+                    android:focusable="false"
+                    android:singleLine="true"
                     android:text="22 Dec 2015 10:40"
-                    android:id="@+id/taskDate" />
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <LinearLayout
+                    android:id="@+id/endContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:id="@+id/endContainer"
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="15sp"
-                        android:gravity="left"
-                        android:focusable="false"
                         android:id="@+id/repeatInterval"
-                        android:layout_weight="1"/>
-
-                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:visibility="visible"
-                        android:singleLine="true"
                         android:layout_weight="1"
                         android:focusable="false"
-                        android:textStyle="italic"
-                        android:gravity="right"
-                        android:layout_marginLeft="10dp"
+                        android:gravity="left"
+                        android:textSize="15sp" />
+
+                    <TextView
                         android:id="@+id/remainingTime"
-                        android:textAppearance="?android:attr/textAppearanceSmall"/>
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight="1"
+                        android:focusable="false"
+                        android:gravity="right"
+                        android:singleLine="true"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textStyle="italic"
+                        android:visibility="visible" />
 
                 </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
 
         <LinearLayout
+            android:id="@+id/subBackground"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusable="false"
             android:orientation="vertical"
             android:padding="8dp"
-            android:visibility="gone"
-            android:id="@+id/subBackground"
-            android:focusable="false">
+            android:visibility="gone">
 
             <LinearLayout
+                android:id="@+id/titleContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/titleContainer"
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/shoppingTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:singleLine="true"
+                    android:layout_marginLeft="5dp"
                     android:layout_marginTop="2dp"
                     android:focusable="false"
-                    android:layout_marginLeft="5dp"
                     android:gravity="center_vertical"
-                    android:id="@+id/shoppingTitle" />
+                    android:singleLine="true"
+                    android:textSize="18sp" />
 
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
-                    android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
-                    android:background="@android:color/darker_gray"/>
+                    android:layout_marginTop="5dp"
+                    android:background="@android:color/darker_gray" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/todoList"
                 android:layout_width="match_parent"
-                android:overScrollMode="never"
-                android:visibility="visible"
-                android:orientation="vertical"
-                android:divider="@android:color/transparent"
                 android:layout_height="wrap_content"
-                android:scrollbars="none"
+                android:divider="@android:color/transparent"
+                android:fastScrollEnabled="false"
                 android:focusable="false"
-                android:fastScrollEnabled="false"/>
+                android:orientation="vertical"
+                android:overScrollMode="never"
+                android:scrollbars="none"
+                android:visibility="visible" />
 
             <TextView
+                android:id="@+id/shoppingTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/shoppingTime"
-                android:textSize="18sp"
                 android:layout_marginTop="5dp"
-                android:drawablePadding="@dimen/reminder_preview_margin_top"/>
+                android:drawablePadding="@dimen/reminder_preview_margin_top"
+                android:textSize="18sp" />
 
         </LinearLayout>
 

@@ -1,75 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <RelativeLayout
-            android:orientation="horizontal"
+            android:id="@+id/headerBg"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:id="@+id/headerBg"
+            android:layout_gravity="center_horizontal"
             android:background="@color/bluePrimary"
-            android:layout_gravity="center_horizontal">
+            android:orientation="horizontal">
 
             <ImageButton
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:visibility="visible"
                 android:id="@+id/tasksCount"
-                android:src="@drawable/ic_add_black_24dp"
-                android:gravity="center"
-                android:background="@android:color/transparent"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"/>
-
-            <ImageButton
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:visibility="visible"
-                android:id="@+id/settingsButton"
-                android:src="@drawable/ic_settings_black_24dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
                 android:background="@android:color/transparent"
                 android:gravity="center"
+                android:src="@drawable/ic_add_black_24dp"
+                android:visibility="visible" />
+
+            <ImageButton
+                android:id="@+id/settingsButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/tasksCount"
-                android:layout_centerVertical="true"/>
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:src="@drawable/ic_settings_black_24dp"
+                android:visibility="visible" />
 
             <TextView
+                android:id="@+id/widgetTitle"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:id="@+id/widgetTitle"
+                android:layout_toLeftOf="@+id/settingsButton"
                 android:gravity="center|left"
                 android:paddingLeft="15dp"
-                android:textColor="@color/whitePrimary"
-                android:textSize="18sp"
-                android:text="@string/notes"
                 android:singleLine="true"
+                android:text="@string/notes"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:layout_toLeftOf="@+id/settingsButton"/>
+                android:textColor="@color/whitePrimary"
+                android:textSize="18sp" />
         </RelativeLayout>
 
         <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
             android:id="@+id/widgetBg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:background="@color/material_divider"
-            android:layout_height="match_parent">
+            android:orientation="vertical">
 
             <ListView
                 android:id="@android:id/list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:divider="@null"
-                android:scrollbars="none"
                 android:layout_margin="5dp"
-                android:dividerHeight="5dp" >
-            </ListView>
+                android:divider="@null"
+                android:dividerHeight="5dp"
+                android:scrollbars="none" />
 
             <TextView
                 android:id="@android:id/empty"

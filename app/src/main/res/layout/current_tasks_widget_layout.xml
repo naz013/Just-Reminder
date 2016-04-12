@@ -5,85 +5,84 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <RelativeLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:id="@+id/headerBg"
-        android:background="@color/blackPrimary"
-        android:layout_gravity="center_horizontal">
-
-        <ImageButton
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:visibility="visible"
-            android:id="@+id/tasksCount"
-            android:src="@drawable/ic_add_black_24dp"
-            android:gravity="center"
-            android:background="@android:color/transparent"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"/>
-
-        <ImageButton
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:visibility="visible"
-            android:id="@+id/voiceButton"
-            android:src="@drawable/ic_mic_black_24dp"
-            android:background="@android:color/transparent"
-            android:gravity="center"
-            android:layout_toLeftOf="@+id/tasksCount"
-            android:layout_centerVertical="true"/>
-
-        <ImageButton
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:visibility="visible"
-            android:id="@+id/settingsButton"
-            android:src="@drawable/ic_settings_black_24dp"
-            android:background="@android:color/transparent"
-            android:gravity="center"
-            android:layout_toLeftOf="@+id/voiceButton"
-            android:layout_centerVertical="true"/>
-
-        <TextView
+        <RelativeLayout
+            android:id="@+id/headerBg"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:id="@+id/widgetDate"
-            android:gravity="center"
-            android:textColor="@color/blackPrimary"
-            android:textSize="18sp"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_toLeftOf="@+id/settingsButton"/>
-    </RelativeLayout>
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/blackPrimary"
+            android:orientation="horizontal">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:id="@+id/widgetBg"
-        android:background="@color/material_grey_dialog"
-        android:layout_height="match_parent">
+            <ImageButton
+                android:id="@+id/tasksCount"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:src="@drawable/ic_add_black_24dp"
+                android:visibility="visible" />
 
-        <ListView
-            android:id="@android:id/list"
+            <ImageButton
+                android:id="@+id/voiceButton"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/tasksCount"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:src="@drawable/ic_mic_black_24dp"
+                android:visibility="visible" />
+
+            <ImageButton
+                android:id="@+id/settingsButton"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/voiceButton"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:src="@drawable/ic_settings_black_24dp"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/widgetDate"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_toLeftOf="@+id/settingsButton"
+                android:gravity="center"
+                android:singleLine="true"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/blackPrimary"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/widgetBg"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@null"
-            android:scrollbars="none"
-            android:layout_margin="5dp"
-            android:dividerHeight="5dp" >
-        </ListView>
+            android:background="@color/material_grey_dialog"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@android:id/empty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/no_events" />
-    </LinearLayout>
+            <ListView
+                android:id="@android:id/list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:divider="@null"
+                android:dividerHeight="5dp"
+                android:scrollbars="none"></ListView>
+
+            <TextView
+                android:id="@android:id/empty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_events" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

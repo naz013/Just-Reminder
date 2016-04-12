@@ -6,72 +6,72 @@
     <RelativeLayout
         android:id="@+id/containerView"
         android:layout_width="match_parent"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:foreground="?android:attr/selectableItemBackground">
 
         <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
             android:id="@+id/dividerTop"
-            android:layout_alignParentTop="true"
-            android:background="@android:color/darker_gray"/>
-
-        <View
             android:layout_width="fill_parent"
             android:layout_height="1dp"
+            android:layout_alignParentTop="true"
+            android:background="@android:color/darker_gray" />
+
+        <View
             android:id="@+id/dividerBottom"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
             android:layout_below="@+id/itemsContainer"
-            android:background="@android:color/darker_gray"/>
+            android:background="@android:color/darker_gray" />
 
         <LinearLayout
+            android:id="@+id/itemsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_below="@+id/dividerTop"
-            android:id="@+id/itemsContainer"
-            android:paddingTop="10dp"
+            android:layout_toLeftOf="@+id/viewContainer"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
             android:paddingBottom="15dp"
             android:paddingRight="15dp"
-            android:gravity="center_vertical"
-            android:layout_toLeftOf="@+id/viewContainer">
+            android:paddingTop="10dp">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:layout_gravity="center_vertical"
                 android:id="@+id/prefsPrimaryText"
-                android:textSize="@dimen/settings_text_size_primary"
-                android:text="Text"/>
-
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:text="Text"
+                android:textSize="@dimen/settings_text_size_primary" />
+
+            <TextView
                 android:id="@+id/prefsSecondaryText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:visibility="gone"
-                android:textSize="@dimen/settings_text_size_secondary" />
+                android:textSize="@dimen/settings_text_size_secondary"
+                android:visibility="gone" />
 
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/viewContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="5dp"
             android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:gravity="center_vertical"
-            android:id="@+id/viewContainer">
+            android:orientation="vertical">
 
             <CheckBox
                 android:id="@+id/prefsCheck"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
+                android:clickable="false"
                 android:saveEnabled="false"
-                android:clickable="false" />
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/prefsValue"
@@ -79,13 +79,13 @@
                 android:layout_height="wrap_content"
                 android:clickable="false"
                 android:text="02"
-                android:visibility="gone"
-                android:textSize="@dimen/settings_text_size_primary"/>
+                android:textSize="@dimen/settings_text_size_primary"
+                android:visibility="gone" />
 
             <View
                 android:id="@+id/prefsView"
                 android:layout_width="@dimen/settings_view_size"
-                android:layout_height="@dimen/settings_view_size"/>
+                android:layout_height="@dimen/settings_view_size" />
 
         </LinearLayout>
     </RelativeLayout>

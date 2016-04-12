@@ -1,112 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:id="@+id/windowBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/windowBackground">
+    android:orientation="vertical">
 
-    <include layout="@layout/toolbar"
-        android:id="@+id/toolbar"/>
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_marginRight="@dimen/times_margin"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/times_margin"
-        android:layout_marginTop="@dimen/times_margin"
-        android:layout_height="wrap_content">
+        android:layout_marginRight="@dimen/times_margin"
+        android:layout_marginTop="@dimen/times_margin">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/morningTime"
-            android:textSize="@dimen/create_text_size_secondary"
-            android:layout_centerVertical="true"
+            android:text="@string/morning"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/morning"/>
+            android:textSize="@dimen/create_text_size_secondary" />
+
         <TextView
+            android:id="@+id/morningTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:padding="5dp"
             android:text="07:00"
-            android:textSize="@dimen/create_text_size_primary"
-            android:padding="5dp"
-            android:id="@+id/morningTime"/>
-        </RelativeLayout>
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="@dimen/create_text_size_primary" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/times_margin"
         android:layout_marginLeft="@dimen/times_margin"
+        android:layout_marginRight="@dimen/times_margin"
         android:layout_marginTop="@dimen/times_margin">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/dayTime"
-            android:layout_centerVertical="true"
-            android:textSize="@dimen/create_text_size_secondary"
-            android:text="@string/day"/>
+            android:text="@string/day"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="@dimen/create_text_size_secondary" />
+
         <TextView
+            android:id="@+id/dayTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:padding="5dp"
             android:text="12:00"
-            android:textSize="@dimen/create_text_size_primary"
-            android:padding="5dp"
-            android:id="@+id/dayTime"/>
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="@dimen/create_text_size_primary" />
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/times_margin"
         android:layout_marginLeft="@dimen/times_margin"
+        android:layout_marginRight="@dimen/times_margin"
         android:layout_marginTop="@dimen/times_margin">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/eveningTime"
-            android:layout_centerVertical="true"
-            android:textSize="@dimen/create_text_size_secondary"
-            android:text="@string/evening"/>
+            android:text="@string/evening"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="@dimen/create_text_size_secondary" />
+
         <TextView
+            android:id="@+id/eveningTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="18:00"
-            android:textSize="@dimen/create_text_size_primary"
             android:padding="5dp"
-            android:id="@+id/eveningTime"/>
+            android:text="18:00"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="@dimen/create_text_size_primary" />
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/times_margin"
         android:layout_marginLeft="@dimen/times_margin"
+        android:layout_marginRight="@dimen/times_margin"
         android:layout_marginTop="@dimen/times_margin">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_toLeftOf="@+id/nightTime"
             android:layout_centerVertical="true"
-            android:textSize="@dimen/create_text_size_secondary"
-            android:text="@string/night"/>
+            android:layout_toLeftOf="@+id/nightTime"
+            android:text="@string/night"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="@dimen/create_text_size_secondary" />
+
         <TextView
+            android:id="@+id/nightTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="23:00"
             android:padding="5dp"
-            android:textSize="@dimen/create_text_size_primary"
-            android:id="@+id/nightTime"/>
+            android:text="23:00"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="@dimen/create_text_size_primary" />
     </RelativeLayout>
 
 </LinearLayout>

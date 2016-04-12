@@ -2,31 +2,32 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    android:id="@+id/windowBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/windowBackground">
+    android:orientation="vertical">
 
-    <include layout="@layout/toolbar"
-        android:id="@+id/toolbar"/>
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
 
     <com.cray.software.justreminder.views.FloatingEditText
-        app:floating_edit_text_highlighted_color="?attr/colorAccent"
+        android:id="@+id/searchField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/search"
-        android:layout_marginTop="5dp"
+        android:layout_gravity="center_horizontal"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:id="@+id/searchField"
-        android:layout_gravity="center_horizontal" />
+        android:layout_marginTop="5dp"
+        android:hint="@string/search"
+        app:floating_edit_text_highlighted_color="?attr/colorAccent" />
 
     <ListView
+        android:id="@+id/contactsList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/contactsList"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="5dp"
-        android:dividerHeight="3dp"
         android:divider="@android:color/transparent"
-        android:layout_gravity="center_horizontal" />
+        android:dividerHeight="3dp" />
 </LinearLayout>

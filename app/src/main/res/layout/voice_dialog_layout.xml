@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
+    android:orientation="vertical"
     android:paddingBottom="16dp"
-    android:paddingTop="24dp"
     android:paddingLeft="24dp"
-    android:paddingRight="24dp">
+    android:paddingRight="24dp"
+    android:paddingTop="24dp">
 
     <TextView
+        android:id="@+id/resultText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/resultText"
-        android:text="@string/saved"
-        android:gravity="center"
-        android:textSize="20sp"
+        android:layout_gravity="center"
         android:layout_marginBottom="10dp"
-        android:layout_gravity="center"/>
+        android:gravity="center"
+        android:text="@string/saved"
+        android:textSize="20sp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="150dp"
+        android:layout_marginBottom="6dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginBottom="6dp">
+        android:layout_marginTop="6dp">
 
-        <include layout="@layout/list_item_card"/>
+        <include layout="@layout/list_item_card" />
 
     </RelativeLayout>
 
@@ -35,31 +35,31 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center|right"
-        android:gravity="right"
         android:layout_marginTop="14dp"
+        android:gravity="right"
         android:orientation="horizontal">
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:text="@string/edit"
-            android:gravity="center"
             android:id="@+id/buttonEdit"
             style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
-            android:clickable="true"/>
-
-        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:text="@string/ok"
-            android:layout_marginLeft="15dp"
+            android:clickable="true"
             android:gravity="center"
+            android:text="@string/edit"
+            android:textSize="18sp" />
+
+        <Button
             android:id="@+id/buttonClose"
             style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
-            android:clickable="true"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="@string/ok"
+            android:textSize="18sp" />
 
-        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

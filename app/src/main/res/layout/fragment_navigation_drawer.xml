@@ -1,18 +1,17 @@
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_gravity="start"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawerBg"
-    android:background="@color/whitePrimary"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_gravity="start"
+    android:background="@color/whitePrimary">
 
     <ScrollView
-        android:layout_gravity="start"
-        android:layout_above="@+id/pinnedLayout"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/pinnedLayout"
+        android:layout_gravity="start"
         android:overScrollMode="ifContentScrolls"
-        android:scrollbars="none"
-        android:layout_height="match_parent">
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -24,283 +23,283 @@
                 android:layout_height="175dp">
 
                 <ImageView
+                    android:id="@+id/image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:id="@+id/image"/>
+                    android:scaleType="centerCrop" />
 
                 <TextView
+                    android:id="@+id/appNameBanner"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:textSize="25sp"
-                    android:textColor="@color/whitePrimary"
-                    android:id="@+id/appNameBanner"
+                    android:gravity="center"
                     android:text="@string/app_name"
-                    android:gravity="center"/>
+                    android:textColor="@color/whitePrimary"
+                    android:textSize="25sp" />
 
             </RelativeLayout>
 
             <TextView
+                android:id="@+id/activeScreen"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
-                android:clickable="true"
-                android:gravity="center_vertical"
                 android:background="?android:attr/selectableItemBackground"
-                android:id="@+id/activeScreen"
-                android:text="@string/tasks"
-                android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
-                android:paddingTop="16dp"
-                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:clickable="true"
                 android:drawableLeft="@drawable/ic_access_time_black_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
-                android:visibility="visible"/>
+                android:gravity="center_vertical"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
+                android:paddingTop="16dp"
+                android:text="@string/tasks"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:visibility="visible" />
 
             <TextView
+                android:id="@+id/notes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
-                android:clickable="true"
-                android:gravity="center_vertical"
                 android:background="?android:attr/selectableItemBackground"
-                android:id="@+id/notes"
-                android:text="@string/notes"
-                android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
-                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
-                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:clickable="true"
                 android:drawableLeft="@drawable/ic_event_note_black_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
-                android:visibility="visible"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
-                android:clickable="true"
                 android:gravity="center_vertical"
-                android:background="?android:attr/selectableItemBackground"
-                android:id="@+id/googleTasks"
-                android:text="@string/google_tasks"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
                 android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
-                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:text="@string/notes"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/googleTasks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
                 android:drawableLeft="@drawable/ic_event_available_black_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
-                android:visibility="gone"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
-                android:clickable="true"
                 android:gravity="center_vertical"
-                android:background="?android:attr/selectableItemBackground"
-                android:id="@+id/calendar"
-                android:text="@string/calendar"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
                 android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
-                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:text="@string/google_tasks"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/calendar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
                 android:drawableLeft="@drawable/ic_today_black_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
-                android:visibility="visible"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
-                android:clickable="true"
                 android:gravity="center_vertical"
-                android:background="?android:attr/selectableItemBackground"
-                android:id="@+id/geoScreen"
-                android:text="@string/directions"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
                 android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
-                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:text="@string/calendar"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/geoScreen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
                 android:drawableLeft="@drawable/ic_navigation_black_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
-                android:visibility="visible"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
-                android:clickable="true"
                 android:gravity="center_vertical"
-                android:background="?android:attr/selectableItemBackground"
-                android:id="@+id/categories"
-                android:text="@string/groups"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
                 android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
-                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:text="@string/directions"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/categories"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
                 android:drawableLeft="@drawable/ic_local_offer_black_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
-                android:visibility="visible"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
-                android:clickable="true"
                 android:gravity="center_vertical"
-                android:background="?android:attr/selectableItemBackground"
-                android:id="@+id/places"
-                android:text="@string/places"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
                 android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
-                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:text="@string/groups"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/places"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
                 android:drawableLeft="@drawable/ic_place_black_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
-                android:visibility="gone"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
-                android:clickable="true"
                 android:gravity="center_vertical"
-                android:background="?android:attr/selectableItemBackground"
-                android:id="@+id/templates"
-                android:text="@string/messages"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
                 android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
-                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:text="@string/places"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/templates"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
                 android:drawableLeft="@drawable/ic_textsms_black_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
-                android:visibility="gone"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
-                android:clickable="true"
                 android:gravity="center_vertical"
-                android:background="?android:attr/selectableItemBackground"
-                android:id="@+id/manageBackup"
-                android:text="@string/backup_files"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
                 android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
-                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:text="@string/messages"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/manageBackup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
                 android:drawableLeft="@drawable/ic_history_black_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
-                android:visibility="visible"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
-                android:clickable="true"
                 android:gravity="center_vertical"
-                android:background="?android:attr/selectableItemBackground"
-                android:id="@+id/archiveScreen"
-                android:text="@string/trash"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
                 android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
-                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:text="@string/backup_files"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/archiveScreen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
                 android:drawableLeft="@drawable/ic_delete_black_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
-                android:visibility="visible"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
-                android:clickable="true"
                 android:gravity="center_vertical"
-                android:background="?android:attr/selectableItemBackground"
-                android:id="@+id/settings"
-                android:text="@string/action_settings"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
                 android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
-                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:text="@string/trash"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
                 android:drawableLeft="@drawable/ic_settings_black_24dp"
                 android:drawablePadding="@dimen/main_drawer_fragment_main_drawable_p"
-                android:visibility="visible"/>
+                android:gravity="center_vertical"
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:paddingLeft="@dimen/main_drawer_fragment_main_p_left"
+                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
+                android:text="@string/action_settings"
+                android:textSize="@dimen/main_drawer_fragment_settings_t_size"
+                android:visibility="visible" />
 
             <View
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
+                android:background="@android:color/darker_gray" />
 
             <TextView
                 android:id="@+id/report"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
-                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
-                android:text="@string/report"
-                android:textSize="14sp"
+                android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:gravity="center_vertical"
-                android:background="?android:attr/selectableItemBackground"/>
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:paddingLeft="10dp"
+                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
+                android:text="@string/report"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/feed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
-                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
-                android:text="@string/feedback"
-                android:textSize="14sp"
+                android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:gravity="center_vertical"
-                android:background="?android:attr/selectableItemBackground"/>
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:paddingLeft="10dp"
+                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
+                android:text="@string/feedback"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/help"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
-                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
-                android:text="@string/help"
-                android:textSize="14sp"
+                android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:gravity="center_vertical"
-                android:background="?android:attr/selectableItemBackground"/>
+                android:paddingBottom="@dimen/main_drawer_fragment_main_p_bottom"
+                android:paddingLeft="10dp"
+                android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
+                android:text="@string/help"
+                android:textSize="14sp" />
 
         </LinearLayout>
 
     </ScrollView>
 
     <LinearLayout
+        android:id="@+id/pinnedLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/pinnedLayout"
         android:layout_alignParentBottom="true"
         android:orientation="vertical">
 
         <RelativeLayout
+            android:id="@+id/ads_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
+            android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
+            android:paddingBottom="7dp"
             android:paddingLeft="10dp"
             android:paddingTop="7dp"
-            android:paddingBottom="7dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:id="@+id/ads_container">
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/buy_pro"
-                android:layout_toLeftOf="@+id/basket"
                 android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/basket"
                 android:clickable="false"
                 android:gravity="center|left"
-                android:textSize="25sp"/>
+                android:text="@string/buy_pro"
+                android:textSize="25sp" />
 
             <ImageView
+                android:id="@+id/basket"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/market_icon"
-                android:layout_marginRight="25dp"
-                android:clickable="false"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:id="@+id/basket"/>
+                android:layout_marginRight="25dp"
+                android:clickable="false"
+                android:src="@drawable/market_icon" />
 
         </RelativeLayout>
 

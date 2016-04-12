@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Nazar Suhovich
   ~ <p/>
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,11 +17,11 @@
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/windowBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.cray.software.justreminder.activities.ReminderPreview"
-    android:id="@+id/windowBackground"
     tools:showIn="@layout/activity_reminder_preview">
 
     <RelativeLayout
@@ -35,264 +34,264 @@
             android:orientation="vertical">
 
             <RelativeLayout
+                android:id="@+id/switchWrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clickable="true"
-                android:background="?android:attr/selectableItemBackground"
                 android:layout_marginLeft="@dimen/reminder_preview_container_padding"
                 android:layout_marginRight="88dp"
-                android:id="@+id/switchWrapper">
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true">
 
                 <TextView
+                    android:id="@+id/statusText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@+id/statusSwitch"
                     android:layout_centerVertical="true"
-                    android:textSize="20sp"
+                    android:layout_toLeftOf="@+id/statusSwitch"
                     android:paddingLeft="35dp"
-                    android:id="@+id/statusText"/>
+                    android:textSize="20sp" />
 
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/statusSwitch"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
-                    android:layout_marginRight="5dp"
-                    android:clickable="false"
                     android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"/>
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="5dp"
+                    android:clickable="false" />
 
             </RelativeLayout>
 
             <TextView
+                android:id="@+id/time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/time"
-                android:textSize="18sp"
                 android:layout_marginLeft="@dimen/reminder_preview_container_padding"
                 android:layout_marginRight="@dimen/reminder_preview_container_padding"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
                 android:drawableLeft="@drawable/ic_access_time_black_24dp"
-                android:drawablePadding="@dimen/reminder_preview_margin_top"/>
+                android:drawablePadding="@dimen/reminder_preview_margin_top"
+                android:textSize="18sp" />
 
             <TextView
+                android:id="@+id/location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/location"
-                android:textSize="18sp"
                 android:layout_marginLeft="@dimen/reminder_preview_container_padding"
                 android:layout_marginRight="@dimen/reminder_preview_container_padding"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
                 android:drawableLeft="@drawable/ic_navigation_black_24dp"
-                android:drawablePadding="@dimen/reminder_preview_margin_top"/>
+                android:drawablePadding="@dimen/reminder_preview_margin_top"
+                android:textSize="18sp" />
 
             <TextView
+                android:id="@+id/group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/group"
-                android:textSize="18sp"
                 android:layout_marginLeft="@dimen/reminder_preview_container_padding"
                 android:layout_marginRight="@dimen/reminder_preview_container_padding"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
                 android:drawableLeft="@drawable/ic_local_offer_black_24dp"
-                android:drawablePadding="@dimen/reminder_preview_margin_top"/>
+                android:drawablePadding="@dimen/reminder_preview_margin_top"
+                android:textSize="18sp" />
 
             <TextView
+                android:id="@+id/type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/type"
-                android:textSize="18sp"
                 android:layout_marginLeft="@dimen/reminder_preview_container_padding"
                 android:layout_marginRight="@dimen/reminder_preview_container_padding"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
                 android:drawableLeft="@drawable/ic_assignment_black_24dp"
-                android:drawablePadding="@dimen/reminder_preview_margin_top"/>
+                android:drawablePadding="@dimen/reminder_preview_margin_top"
+                android:textSize="18sp" />
 
             <TextView
+                android:id="@+id/number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/number"
-                android:textSize="18sp"
                 android:layout_marginLeft="@dimen/reminder_preview_container_padding"
                 android:layout_marginRight="@dimen/reminder_preview_container_padding"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
                 android:drawableLeft="@drawable/ic_account_circle_black_24dp"
-                android:drawablePadding="@dimen/reminder_preview_margin_top"/>
+                android:drawablePadding="@dimen/reminder_preview_margin_top"
+                android:textSize="18sp" />
 
             <TextView
+                android:id="@+id/melody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/melody"
-                android:textSize="18sp"
                 android:layout_marginLeft="@dimen/reminder_preview_container_padding"
                 android:layout_marginRight="@dimen/reminder_preview_container_padding"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
                 android:drawableLeft="@drawable/ic_music_note_black_24dp"
-                android:drawablePadding="@dimen/reminder_preview_margin_top"/>
+                android:drawablePadding="@dimen/reminder_preview_margin_top"
+                android:textSize="18sp" />
 
             <TextView
+                android:id="@+id/repeat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/repeat"
-                android:textSize="18sp"
                 android:layout_marginLeft="@dimen/reminder_preview_container_padding"
                 android:layout_marginRight="@dimen/reminder_preview_container_padding"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
                 android:drawableLeft="@drawable/ic_refresh_black_24dp"
-                android:drawablePadding="@dimen/reminder_preview_margin_top"/>
+                android:drawablePadding="@dimen/reminder_preview_margin_top"
+                android:textSize="18sp" />
 
             <LinearLayout
+                android:id="@+id/mapContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/mapContainer"
-                android:visibility="gone"
                 android:layout_marginLeft="@dimen/reminder_preview_container_padding"
                 android:layout_marginRight="@dimen/reminder_preview_container_padding"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <fragment
                     android:id="@+id/map"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:clickable="true"
-                    android:name="com.google.android.gms.maps.SupportMapFragment"/>
+                    android:clickable="true" />
 
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/tasksContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/tasksContainer"
-                android:visibility="gone"
                 android:layout_marginLeft="@dimen/reminder_preview_container_padding"
                 android:layout_marginRight="@dimen/reminder_preview_container_padding"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:text="@string/task"
                     android:paddingTop="30dp"
-                    android:textAllCaps="true"/>
+                    android:text="@string/task"
+                    android:textAllCaps="true"
+                    android:textSize="18sp" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@android:color/darker_gray"/>
+                    android:background="@android:color/darker_gray" />
 
                 <LinearLayout
+                    android:id="@+id/background"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/background"
-                    android:clickable="true"
-                    android:background="?android:attr/selectableItemBackground"
                     android:layout_marginTop="15dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/listColor"
                         android:layout_width="5dp"
                         android:layout_height="match_parent"
-                        android:background="@color/bluePrimary"
-                        android:id="@+id/listColor"/>
+                        android:background="@color/bluePrimary" />
 
                     <CheckBox
+                        android:id="@+id/checkDone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.9"
                         android:layout_gravity="center_vertical"
-                        android:id="@+id/checkDone"/>
+                        android:layout_weight="0.9" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:layout_weight="0.4"
-                        android:layout_gravity="center_vertical"
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/taskText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:id="@+id/taskText"
                             android:singleLine="true"
                             android:textSize="17sp" />
 
                         <TextView
+                            android:id="@+id/taskNote"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:id="@+id/taskNote"
+                            android:layout_marginTop="3dp"
                             android:singleLine="true"
-                            android:textSize="15sp"
-                            android:layout_marginTop="3dp" />
+                            android:textSize="15sp" />
 
                     </LinearLayout>
 
                     <TextView
+                        android:id="@+id/taskDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/taskDate"
-                        android:textSize="14sp"
-                        android:gravity="center"
-                        android:layout_margin="4dp"
                         android:layout_gravity="center_vertical"
-                        android:layout_weight="0.7"/>
+                        android:layout_margin="4dp"
+                        android:layout_weight="0.7"
+                        android:gravity="center"
+                        android:textSize="14sp" />
                 </LinearLayout>
 
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/notesContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/notesContainer"
-                android:visibility="gone"
                 android:layout_marginLeft="@dimen/reminder_preview_container_padding"
                 android:layout_marginRight="@dimen/reminder_preview_container_padding"
                 android:layout_marginTop="@dimen/reminder_preview_margin_top"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:text="@string/notes"
                     android:paddingTop="30dp"
-                    android:textAllCaps="true"/>
+                    android:text="@string/notes"
+                    android:textAllCaps="true"
+                    android:textSize="18sp" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@android:color/darker_gray"/>
+                    android:background="@android:color/darker_gray" />
 
                 <ImageView
+                    android:id="@+id/imageView"
                     android:layout_width="match_parent"
                     android:layout_height="256dp"
-                    android:scaleType="centerCrop"
-                    android:id="@+id/imageView"
-                    android:minHeight="?attr/actionBarSize"/>
+                    android:minHeight="?attr/actionBarSize"
+                    android:scaleType="centerCrop" />
 
                 <TextView
+                    android:id="@+id/noteText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/noteText"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp" />
 
             </LinearLayout>
 
         </LinearLayout>
 
-    <com.cray.software.justreminder.views.CircularProgress
-        android:layout_gravity="center"
-        android:layout_height="50dp"
-        android:layout_width="50dp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:visibility="gone"
-        android:id="@+id/progress"
-        app:circular_progress_color="?attr/colorPrimaryDark"
-        app:circular_progress_size="Small"/>
+        <com.cray.software.justreminder.views.CircularProgress
+            android:id="@+id/progress"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:circular_progress_color="?attr/colorPrimaryDark"
+            app:circular_progress_size="Small" />
     </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>

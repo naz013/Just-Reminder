@@ -1,60 +1,60 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:widget="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
     android:id="@+id/windowBackground"
-    android:orientation="vertical"
-    android:gravity="center"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
     android:padding="@dimen/dimen_log_in_padding">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_gravity="center_horizontal"
         android:text="@string/connect_to_cloud"
-        android:textSize="@dimen/log_in_title_text_size"
-        android:layout_gravity="center_horizontal" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="@dimen/log_in_title_text_size" />
 
     <com.cray.software.justreminder.views.PaperButton
-        widget:paper_text="@string/google_drive"
+        android:id="@+id/connectGDrive"
         android:layout_width="wrap_content"
-        widget:paper_color="@color/redPrimary"
-        widget:paper_text_color="@color/whitePrimary"
-        widget:paper_corner_radius="@dimen/log_in_button_corner_radius"
+        android:layout_height="@dimen/log_in_button_height"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/log_in_first_button_margin_top"
-        widget:paper_text_size="@dimen/log_in_button_text_size"
-        android:id="@+id/connectGDrive"
-        android:layout_height="@dimen/log_in_button_height" />
+        widget:paper_color="@color/redPrimary"
+        widget:paper_corner_radius="@dimen/log_in_button_corner_radius"
+        widget:paper_text="@string/google_drive"
+        widget:paper_text_color="@color/whitePrimary"
+        widget:paper_text_size="@dimen/log_in_button_text_size" />
 
     <com.cray.software.justreminder.views.PaperButton
-        widget:paper_text="@string/dropbox"
-        android:layout_width="wrap_content"
-        android:layout_gravity="center"
-        widget:paper_corner_radius="@dimen/log_in_button_corner_radius"
-        widget:paper_color="@color/bluePrimary"
-        widget:paper_text_color="@color/whitePrimary"
         android:id="@+id/connectDropbox"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/log_in_button_height"
+        android:layout_gravity="center"
         android:layout_marginTop="@dimen/log_in_button_margin_top"
-        widget:paper_text_size="@dimen/log_in_button_text_size"
-        android:layout_height="@dimen/log_in_button_height" />
+        widget:paper_color="@color/bluePrimary"
+        widget:paper_corner_radius="@dimen/log_in_button_corner_radius"
+        widget:paper_text="@string/dropbox"
+        widget:paper_text_color="@color/whitePrimary"
+        widget:paper_text_size="@dimen/log_in_button_text_size" />
 
     <CheckBox
+        android:id="@+id/checkBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/import_birthdays"
-        android:id="@+id/checkBox"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/log_in_check_margin_top"
-        android:layout_gravity="center_horizontal" />
+        android:text="@string/import_birthdays" />
 
     <TextView
+        android:id="@+id/skipButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/skip"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/log_in_skip_margin_top"
-        android:id="@+id/skipButton"
-        android:textSize="@dimen/log_in_skip_text_size"
-        android:layout_gravity="center_horizontal" />
+        android:text="@string/skip"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="@dimen/log_in_skip_text_size" />
 
 </LinearLayout>

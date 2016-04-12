@@ -2,10 +2,10 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/weekday_layout"
-    android:visibility="visible"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:visibility="visible">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -14,140 +14,140 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="88dp">
+            android:layout_marginBottom="88dp"
+            android:orientation="vertical">
 
             <CheckBox
+                android:id="@+id/dateExport"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="gone"
-                android:textSize="@dimen/checkbox_text_size"
                 android:layout_marginTop="@dimen/create_margin"
                 android:text="@string/add_to_calendar"
-                android:id="@+id/dateExport" />
+                android:textSize="@dimen/checkbox_text_size"
+                android:visibility="gone" />
 
             <CheckBox
+                android:id="@+id/dateTaskExport"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="gone"
-                android:textSize="@dimen/checkbox_text_size"
                 android:layout_marginTop="@dimen/create_margin"
                 android:text="@string/google_tasks"
-                android:id="@+id/dateTaskExport" />
+                android:textSize="@dimen/checkbox_text_size"
+                android:visibility="gone" />
 
             <TextView
+                android:id="@+id/timeField"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:gravity="center"
-                android:textSize="@dimen/create_text_size_normal"
-                android:text="14:05"
+                android:layout_marginLeft="@dimen/create_margin"
+                android:layout_marginRight="@dimen/create_margin"
+                android:layout_marginTop="@dimen/create_margin"
                 android:layout_weight="1"
                 android:clickable="true"
-                android:layout_marginRight="@dimen/create_margin"
-                android:layout_marginLeft="@dimen/create_margin"
-                android:layout_marginTop="@dimen/create_margin"
                 android:ems="10"
-                android:id="@+id/timeField" />
+                android:gravity="center"
+                android:text="14:05"
+                android:textSize="@dimen/create_text_size_normal" />
 
             <HorizontalScrollView
+                android:id="@+id/horizontalScrollView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:scrollbars="none"
-                android:overScrollMode="never"
                 android:layout_marginTop="@dimen/create_margin"
-                android:id="@+id/horizontalScrollView" >
+                android:overScrollMode="never"
+                android:scrollbars="none">
 
                 <LinearLayout
-                    android:orientation="horizontal"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <ToggleButton
+                        android:id="@+id/mondayCheck"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:textOn="@string/mon"
+                        android:background="@drawable/toggle_blue"
+                        android:singleLine="true"
                         android:textOff="@string/mon"
-                        android:singleLine="true"
-                        android:textSize="@dimen/create_text_size_small"
-                        android:background="@drawable/toggle_blue"
-                        android:id="@+id/mondayCheck" />
+                        android:textOn="@string/mon"
+                        android:textSize="@dimen/create_text_size_small" />
 
                     <ToggleButton
+                        android:id="@+id/tuesdayCheck"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:textOn="@string/tue"
+                        android:layout_marginLeft="@dimen/create_toggle_margin_left"
+                        android:background="@drawable/toggle_blue"
+                        android:singleLine="true"
                         android:textOff="@string/tue"
-                        android:singleLine="true"
-                        android:textSize="@dimen/create_text_size_small"
-                        android:background="@drawable/toggle_blue"
-                        android:layout_marginLeft="@dimen/create_toggle_margin_left"
-                        android:id="@+id/tuesdayCheck" />
+                        android:textOn="@string/tue"
+                        android:textSize="@dimen/create_text_size_small" />
 
                     <ToggleButton
+                        android:id="@+id/wednesdayCheck"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:textOn="@string/wed"
+                        android:layout_marginLeft="@dimen/create_toggle_margin_left"
+                        android:background="@drawable/toggle_blue"
+                        android:singleLine="true"
                         android:textOff="@string/wed"
-                        android:singleLine="true"
-                        android:textSize="@dimen/create_text_size_small"
-                        android:background="@drawable/toggle_blue"
-                        android:layout_marginLeft="@dimen/create_toggle_margin_left"
-                        android:id="@+id/wednesdayCheck" />
+                        android:textOn="@string/wed"
+                        android:textSize="@dimen/create_text_size_small" />
 
                     <ToggleButton
+                        android:id="@+id/thursdayCheck"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:textOn="@string/thu"
+                        android:layout_marginLeft="@dimen/create_toggle_margin_left"
+                        android:background="@drawable/toggle_blue"
+                        android:singleLine="true"
                         android:textOff="@string/thu"
-                        android:singleLine="true"
-                        android:textSize="@dimen/create_text_size_small"
-                        android:layout_marginLeft="@dimen/create_toggle_margin_left"
-                        android:background="@drawable/toggle_blue"
-                        android:id="@+id/thursdayCheck" />
+                        android:textOn="@string/thu"
+                        android:textSize="@dimen/create_text_size_small" />
 
                     <ToggleButton
+                        android:id="@+id/fridayCheck"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:textOn="@string/fri"
+                        android:layout_marginLeft="@dimen/create_toggle_margin_left"
+                        android:background="@drawable/toggle_blue"
+                        android:singleLine="true"
                         android:textOff="@string/fri"
-                        android:singleLine="true"
-                        android:textSize="@dimen/create_text_size_small"
-                        android:layout_marginLeft="@dimen/create_toggle_margin_left"
-                        android:background="@drawable/toggle_blue"
-                        android:id="@+id/fridayCheck" />
+                        android:textOn="@string/fri"
+                        android:textSize="@dimen/create_text_size_small" />
 
                     <ToggleButton
+                        android:id="@+id/saturdayCheck"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:textOn="@string/sat"
+                        android:layout_marginLeft="@dimen/create_toggle_margin_left"
+                        android:background="@drawable/toggle_blue"
+                        android:singleLine="true"
                         android:textOff="@string/sat"
-                        android:singleLine="true"
-                        android:textSize="@dimen/create_text_size_small"
-                        android:layout_marginLeft="@dimen/create_toggle_margin_left"
-                        android:background="@drawable/toggle_blue"
-                        android:id="@+id/saturdayCheck" />
+                        android:textOn="@string/sat"
+                        android:textSize="@dimen/create_text_size_small" />
 
                     <ToggleButton
+                        android:id="@+id/sundayCheck"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:textOn="@string/sun"
-                        android:textOff="@string/sun"
-                        android:textSize="@dimen/create_text_size_small"
+                        android:layout_marginLeft="@dimen/create_toggle_margin_left"
                         android:background="@drawable/toggle_blue"
                         android:singleLine="true"
-                        android:layout_marginLeft="@dimen/create_toggle_margin_left"
-                        android:id="@+id/sundayCheck" />
+                        android:textOff="@string/sun"
+                        android:textOn="@string/sun"
+                        android:textSize="@dimen/create_text_size_small" />
                 </LinearLayout>
             </HorizontalScrollView>
 
             <com.cray.software.justreminder.views.ActionView
+                android:id="@+id/actionView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/create_margin"
-                android:id="@+id/actionView"/>
+                android:layout_marginTop="@dimen/create_margin" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

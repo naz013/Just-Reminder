@@ -1,26 +1,24 @@
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:id="@+id/wrapper"
-    android:layout_height="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:widget="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:id="@+id/wrapper"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
-        android:visibility="visible"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </android.support.v4.view.ViewPager>
+        android:layout_height="match_parent"
+        android:visibility="visible"></android.support.v4.view.ViewPager>
 
     <com.cray.software.justreminder.views.CircularProgress
-        android:layout_gravity="center"
-        android:layout_height="50dp"
-        android:layout_width="50dp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:visibility="gone"
         android:id="@+id/progress"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:visibility="gone"
         widget:circular_progress_color="?attr/colorPrimaryDark"
-        widget:circular_progress_size="Small"/>
+        widget:circular_progress_size="Small" />
 
 </RelativeLayout>

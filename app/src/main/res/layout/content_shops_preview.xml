@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 Nazar Suhovich
   ~ <p/>
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,9 +17,9 @@
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/windowBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/windowBackground"
     android:fillViewport="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.cray.software.justreminder.activities.ShopsPreview"
@@ -31,53 +30,53 @@
         android:layout_height="match_parent">
 
         <RelativeLayout
-            android:layout_width="match_parent"
             android:id="@+id/reminderContainer"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="@dimen/reminder_preview_margin_top"
-            android:layout_marginRight="88dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_height="wrap_content">
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="88dp"
+            android:layout_marginTop="@dimen/reminder_preview_margin_top">
 
             <android.support.v7.widget.SwitchCompat
+                android:id="@+id/reminderSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/reminderSwitch"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="15dp"/>
+                android:layout_marginLeft="15dp" />
 
             <TextView
+                android:id="@+id/time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/time"
-                android:textSize="18sp"
                 android:layout_alignParentTop="true"
-                android:layout_toLeftOf="@+id/reminderSwitch"
                 android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/reminderSwitch"
                 android:drawableLeft="@drawable/ic_access_time_black_24dp"
-                android:drawablePadding="@dimen/reminder_preview_margin_top"/>
+                android:drawablePadding="@dimen/reminder_preview_margin_top"
+                android:textSize="18sp" />
 
         </RelativeLayout>
 
         <CheckBox
+            android:id="@+id/showHidden"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/show_hidden"
-            android:layout_marginLeft="15dp"
             android:layout_below="@+id/reminderContainer"
-            android:layout_marginTop="@dimen/reminder_preview_margin_top"
+            android:layout_marginLeft="15dp"
             android:layout_marginRight="88dp"
-            android:id="@+id/showHidden"/>
+            android:layout_marginTop="@dimen/reminder_preview_margin_top"
+            android:text="@string/show_hidden" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/todoList"
             android:layout_width="match_parent"
-            android:overScrollMode="never"
-            android:layout_marginTop="15dp"
-            android:minHeight="56dp"
-            android:layout_below="@+id/showHidden"
             android:layout_height="wrap_content"
-            android:clipToPadding="false"/>
+            android:layout_below="@+id/showHidden"
+            android:layout_marginTop="15dp"
+            android:clipToPadding="false"
+            android:minHeight="56dp"
+            android:overScrollMode="never" />
     </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:clipChildren="false"
     android:id="@+id/itemCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginLeft="5dp"
     android:layout_marginRight="5dp"
+    android:clipChildren="false"
     android:foreground="?android:attr/selectableItemBackground"
     card_view:cardCornerRadius="3dp"
-    card_view:cardUseCompatPadding="true"
-    android:layout_height="wrap_content">
+    card_view:cardUseCompatPadding="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -17,19 +17,19 @@
         android:focusable="false">
 
         <TextView
+            android:id="@+id/eventColor"
             android:layout_width="10dp"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
-            android:background="@color/bluePrimary"
             android:layout_centerVertical="true"
-            android:id="@+id/eventColor"/>
+            android:background="@color/bluePrimary" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
             android:layout_toRightOf="@+id/eventColor"
-            android:layout_centerVertical="true"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -41,22 +41,22 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/eventType"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Type"
-                    android:id="@+id/eventType"/>
+                    android:text="Type" />
 
                 <TextView
+                    android:id="@+id/eventDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Date"
-                    android:lines="2"
-                    android:gravity="center"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
-                    android:id="@+id/eventDate"/>
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:lines="2"
+                    android:text="Date" />
 
             </LinearLayout>
 
@@ -68,22 +68,22 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/eventText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Text"
-                    android:id="@+id/eventText"/>
+                    android:text="Text" />
 
                 <TextView
+                    android:id="@+id/eventNumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Number"
-                    android:lines="2"
-                    android:gravity="center"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
-                    android:id="@+id/eventNumber"/>
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:lines="2"
+                    android:text="Number" />
 
             </LinearLayout>
 

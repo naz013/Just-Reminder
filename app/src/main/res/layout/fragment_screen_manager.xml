@@ -1,50 +1,49 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/currentList"
         android:layout_width="match_parent"
-        android:visibility="visible"
+        android:layout_height="match_parent"
         android:layout_below="@+id/filterLayout"
-        android:layout_height="match_parent"/>
+        android:visibility="visible" />
 
     <LinearLayout
+        android:id="@+id/emptyItem"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/emptyItem"
-        android:visibility="visible"
-        android:gravity="center"
         android:layout_below="@+id/filterLayout"
         android:layout_centerVertical="true"
-        android:orientation="vertical" >
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="visible">
 
         <ImageView
-            android:layout_width="75dp"
             android:id="@+id/emptyImage"
+            android:layout_width="75dp"
             android:layout_height="75dp"
             android:layout_marginBottom="35dp"
-            android:src="@drawable/alarm"/>
+            android:src="@drawable/alarm" />
 
         <TextView
-            android:layout_width="match_parent"
             android:id="@+id/emptyText"
-            android:textSize="30sp"
-            android:text="@string/no_events"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center|top"
-            android:layout_height="wrap_content" />
+            android:text="@string/no_events"
+            android:textSize="30sp" />
 
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/filterLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:orientation="vertical"
         android:padding="10dp"
-        android:visibility="gone"
-        android:id="@+id/filterLayout"
-        android:orientation="vertical">
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -52,29 +51,29 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/dateStart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:gravity="start"
-                android:id="@+id/dateStart"
-                android:text="12 Jan 2016"
-                android:layout_weight="1"/>
+                android:text="12 Jan 2016" />
 
             <TextView
+                android:id="@+id/dateEnd"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:gravity="end"
-                android:id="@+id/dateEnd"
-                android:text="15 Jan 2016"
-                android:layout_weight="1"/>
+                android:text="15 Jan 2016" />
 
         </LinearLayout>
 
         <SeekBar
+            android:id="@+id/dateSeek"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:id="@+id/dateSeek"
-            android:max="58"/>
+            android:max="58" />
 
     </LinearLayout>
 </RelativeLayout>

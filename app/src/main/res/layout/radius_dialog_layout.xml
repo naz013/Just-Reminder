@@ -1,85 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
+    android:orientation="vertical"
     android:paddingBottom="16dp"
-    android:paddingTop="24dp"
     android:paddingLeft="24dp"
-    android:paddingRight="24dp">
+    android:paddingRight="24dp"
+    android:paddingTop="24dp">
 
     <TextView
+        android:id="@+id/titleDialog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/titleDialog"
-        android:text="@string/radius" />
+        android:text="@string/radius"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
+        android:id="@+id/radiusValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="15dp"
         android:layout_marginBottom="5dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/radiusValue" />
+        android:layout_marginTop="15dp"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <SeekBar
+        android:id="@+id/radiusBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:max="2000"
-        android:progress="25"
-        android:id="@+id/radiusBar"/>
+        android:progress="25" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:layout_marginTop="24dp"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/minusButton"
+            style="@style/Widget.AppCompat.ActionButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="-"
-            android:textSize="30sp"
             android:gravity="center"
-            style="@style/Widget.AppCompat.ActionButton"
-            android:id="@+id/minusButton"/>
+            android:text="-"
+            android:textSize="30sp" />
 
         <Button
+            android:id="@+id/plusButton"
+            style="@style/Widget.AppCompat.ActionButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="+"
-            android:textSize="30sp"
             android:gravity="center"
-            style="@style/Widget.AppCompat.ActionButton"
-            android:id="@+id/plusButton"/>
+            android:text="+"
+            android:textSize="30sp" />
 
-        </LinearLayout>
+    </LinearLayout>
 
     <CheckBox
+        android:id="@+id/transportCheck"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/transportCheck"
-        android:visibility="gone"
         android:gravity="center"
-        android:text="@string/i_use_transport"/>
+        android:text="@string/i_use_transport"
+        android:visibility="gone" />
 
     <TextView
+        android:id="@+id/aboutClose"
+        style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/ok"
-        android:clickable="false"
-        android:textSize="18sp"
-        style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
-        android:gravity="center"
-        android:layout_marginTop="24dp"
         android:layout_gravity="bottom|right"
-        android:id="@+id/aboutClose" />
+        android:layout_marginTop="24dp"
+        android:clickable="false"
+        android:gravity="center"
+        android:text="@string/ok"
+        android:textSize="18sp" />
 </LinearLayout>

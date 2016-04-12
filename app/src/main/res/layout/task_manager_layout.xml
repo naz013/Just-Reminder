@@ -1,32 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
     android:id="@+id/windowBackground"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:minHeight="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+    <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <EditText
+            android:id="@+id/editField"
             android:layout_width="match_parent"
             android:layout_height="72dp"
-            android:id="@+id/editField"
-            android:textSize="@dimen/create_text_size_secondary"
-            android:hint="@string/task"
-            android:textColorHint="@color/whitePrimary"
             android:layout_gravity="center_horizontal"
             android:layout_marginLeft="@dimen/create_margin"
+            android:layout_marginRight="@dimen/create_margin"
             android:layout_marginTop="?attr/actionBarSize"
             android:background="@android:color/transparent"
-            android:layout_marginRight="@dimen/create_margin"/>
+            android:hint="@string/task"
+            android:textColorHint="@color/whitePrimary"
+            android:textSize="@dimen/create_text_size_secondary" />
 
     </android.support.v7.widget.Toolbar>
 
@@ -48,104 +47,110 @@
                 <TableRow android:foreground="?attr/selectableItemBackground">
 
                     <ImageView
+                        android:id="@+id/noteIcon"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:scaleType="center"
                         android:layout_marginRight="15dp"
-                        android:id="@+id/noteIcon"
-                        android:src="@drawable/ic_event_note_black_24dp"/>
+                        android:scaleType="center"
+                        android:src="@drawable/ic_event_note_black_24dp" />
 
                     <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
                         android:id="@+id/noteField"
-                        android:textSize="@dimen/create_text_size_secondary"
-                        android:hint="@string/note"
-                        android:gravity="center_vertical"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginRight="@dimen/create_margin"/>
-
-                </TableRow>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginBottom="@dimen/create_margin"
-                    android:layout_marginTop="@dimen/create_margin"
-                    android:background="@color/material_divider"/>
-                <TableRow android:foreground="?attr/selectableItemBackground">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:scaleType="center"
-                        android:layout_marginRight="15dp"
-                        android:id="@+id/dateIcon"
-                        android:src="@drawable/ic_event_black_24dp"/>
-
-                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Tue, 5 Nov 2015"
-                        android:ems="10"
-                        android:layout_gravity="center_vertical"
-                        android:textSize="@dimen/create_text_size_normal"
-                        android:id="@+id/dateField" />
-
-                </TableRow>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginBottom="@dimen/create_margin"
-                    android:layout_marginTop="@dimen/create_margin"
-                    android:background="@color/material_divider"/>
-                <TableRow android:foreground="?attr/selectableItemBackground">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginRight="15dp"
-                        android:scaleType="center"
-                        android:id="@+id/timeIcon"
-                        android:src="@drawable/ic_alarm_black_24dp"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/create_text_size_normal"
-                        android:text="14:05"
-                        android:layout_gravity="center_vertical"
-                        android:ems="10"
-                        android:id="@+id/timeField" />
-
-                </TableRow>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginBottom="@dimen/create_margin"
-                    android:layout_marginTop="@dimen/create_margin"
-                    android:background="@color/material_divider"/>
-                <TableRow android:foreground="?attr/selectableItemBackground">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginRight="15dp"
-                        android:scaleType="center"
-                        android:id="@+id/listIcon"
-                        android:src="@drawable/ic_view_list_black_24dp"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:clickable="true"
-                        android:textAllCaps="true"
-                        android:id="@+id/listText"
-                        android:text="Reminder"
                         android:layout_gravity="center_vertical"
                         android:layout_marginRight="@dimen/create_margin"
+                        android:background="@android:color/transparent"
+                        android:gravity="center_vertical"
+                        android:hint="@string/note"
+                        android:textSize="@dimen/create_text_size_secondary" />
+
+                </TableRow>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="@dimen/create_margin"
+                    android:layout_marginTop="@dimen/create_margin"
+                    android:background="@color/material_divider" />
+
+                <TableRow android:foreground="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:id="@+id/dateIcon"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="15dp"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_event_black_24dp" />
+
+                    <TextView
+                        android:id="@+id/dateField"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:ems="10"
+                        android:text="Tue, 5 Nov 2015"
                         android:textSize="@dimen/create_text_size_normal" />
+
+                </TableRow>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="@dimen/create_margin"
+                    android:layout_marginTop="@dimen/create_margin"
+                    android:background="@color/material_divider" />
+
+                <TableRow android:foreground="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:id="@+id/timeIcon"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="15dp"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_alarm_black_24dp" />
+
+                    <TextView
+                        android:id="@+id/timeField"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:ems="10"
+                        android:text="14:05"
+                        android:textSize="@dimen/create_text_size_normal" />
+
+                </TableRow>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="@dimen/create_margin"
+                    android:layout_marginTop="@dimen/create_margin"
+                    android:background="@color/material_divider" />
+
+                <TableRow android:foreground="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:id="@+id/listIcon"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="15dp"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_view_list_black_24dp" />
+
+                    <TextView
+                        android:id="@+id/listText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="@dimen/create_margin"
+                        android:clickable="true"
+                        android:text="Reminder"
+                        android:textAllCaps="true"
+                        android:textSize="@dimen/create_text_size_normal"
+                        android:textStyle="bold" />
 
                 </TableRow>
             </TableLayout>

@@ -10,71 +10,71 @@
         android:orientation="vertical">
 
         <CheckBox
+            android:id="@+id/actionCheck"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_gravity="center"
-            android:textSize="@dimen/checkbox_text_size"
+            android:gravity="center"
             android:text="@string/action"
-            android:id="@+id/actionCheck" />
+            android:textSize="@dimen/checkbox_text_size" />
 
         <LinearLayout
-            android:orientation="vertical"
             android:id="@+id/actionBlock"
-            android:layout_marginTop="@dimen/create_margin"
             android:layout_width="match_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:layout_marginTop="@dimen/create_margin"
+            android:orientation="vertical">
 
             <RadioGroup
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
+                android:layout_height="fill_parent"
                 android:gravity="center"
-                android:layout_height="fill_parent">
+                android:orientation="horizontal">
 
                 <RadioButton
+                    android:id="@+id/callAction"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/create_text_size_normal"
                     android:text="@string/make_call"
-                    android:id="@+id/callAction" />
+                    android:textSize="@dimen/create_text_size_normal" />
 
                 <RadioButton
+                    android:id="@+id/messageAction"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/create_text_size_normal"
                     android:layout_marginLeft="15dp"
                     android:text="@string/sms"
-                    android:id="@+id/messageAction" />
+                    android:textSize="@dimen/create_text_size_normal" />
             </RadioGroup>
 
             <LinearLayout
-                android:orientation="horizontal"
-                android:layout_marginTop="@dimen/create_margin"
                 android:layout_width="fill_parent"
-                android:layout_marginRight="@dimen/create_margin"
+                android:layout_height="fill_parent"
                 android:layout_marginLeft="@dimen/create_margin"
-                android:layout_height="fill_parent">
+                android:layout_marginRight="@dimen/create_margin"
+                android:layout_marginTop="@dimen/create_margin"
+                android:orientation="horizontal">
 
                 <ImageButton
+                    android:id="@+id/selectNumber"
                     android:layout_width="@dimen/create_imagebutton_size"
                     android:layout_height="@dimen/create_imagebutton_size"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_person_add_black_24dp"
-                    android:id="@+id/selectNumber" />
+                    android:src="@drawable/ic_person_add_black_24dp" />
 
                 <com.cray.software.justreminder.views.FloatingEditText
-                    app:floating_edit_text_highlighted_color="?attr/colorAccent"
+                    android:id="@+id/numberView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:hint="@string/phone"
-                    android:textSize="@dimen/create_text_size_normal"
-                    android:gravity="center"
-                    android:ems="10"
-                    android:singleLine="true"
                     android:layout_gravity="center"
-                    android:id="@+id/numberView"
-                    android:inputType="text|phone" />
+                    android:layout_marginLeft="10dp"
+                    android:ems="10"
+                    android:gravity="center"
+                    android:hint="@string/phone"
+                    android:inputType="text|phone"
+                    android:singleLine="true"
+                    android:textSize="@dimen/create_text_size_normal"
+                    app:floating_edit_text_highlighted_color="?attr/colorAccent" />
             </LinearLayout>
         </LinearLayout>
 

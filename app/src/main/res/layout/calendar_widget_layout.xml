@@ -1,105 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widgetBg"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/widgetBg"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:orientation="vertical">
 
     <RelativeLayout
-        android:layout_width="match_parent"
         android:id="@+id/header"
-        android:layout_alignParentTop="true"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true">
 
         <ImageButton
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:visibility="visible"
             android:id="@+id/plusButton"
-            android:src="@drawable/ic_add_black_24dp"
-            android:gravity="center"
-            android:background="@android:color/transparent"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:src="@drawable/ic_add_black_24dp"
+            android:visibility="visible" />
 
         <ImageButton
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:visibility="visible"
             android:id="@+id/voiceButton"
-            android:src="@drawable/ic_mic_black_24dp"
-            android:background="@android:color/transparent"
-            android:gravity="center"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/plusButton"
-            android:layout_centerVertical="true"/>
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:src="@drawable/ic_mic_black_24dp"
+            android:visibility="visible" />
 
         <ImageButton
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:visibility="visible"
             android:id="@+id/settingsButton"
-            android:src="@drawable/ic_settings_black_24dp"
-            android:background="@android:color/transparent"
-            android:gravity="center"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/voiceButton"
-            android:layout_centerVertical="true"/>
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:src="@drawable/ic_settings_black_24dp"
+            android:visibility="visible" />
 
         <ImageButton
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:visibility="visible"
             android:id="@+id/nextMonth"
-            android:src="@drawable/ic_keyboard_arrow_right_black_24dp"
-            android:background="@android:color/transparent"
-            android:gravity="center"
-            android:layout_toLeftOf="@+id/settingsButton"
-            android:layout_centerVertical="true"/>
-
-        <ImageButton
             android:layout_width="42dp"
             android:layout_height="42dp"
-            android:visibility="visible"
-            android:id="@+id/prevMonth"
-            android:src="@drawable/ic_keyboard_arrow_left_black_24dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/settingsButton"
             android:background="@android:color/transparent"
-            android:layout_alignParentLeft="true"
             android:gravity="center"
-            android:layout_centerVertical="true"/>
+            android:src="@drawable/ic_keyboard_arrow_right_black_24dp"
+            android:visibility="visible" />
+
+        <ImageButton
+            android:id="@+id/prevMonth"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:src="@drawable/ic_keyboard_arrow_left_black_24dp"
+            android:visibility="visible" />
 
         <TextView
+            android:id="@+id/currentDate"
             android:layout_width="match_parent"
             android:layout_height="42dp"
-            android:id="@+id/currentDate"
+            android:layout_toLeftOf="@+id/nextMonth"
+            android:layout_toRightOf="@+id/prevMonth"
             android:gravity="center|left"
-            android:textColor="@color/blackPrimary"
-            android:textSize="16sp"
             android:paddingLeft="15dp"
             android:singleLine="true"
-            android:layout_toLeftOf="@+id/nextMonth"
-            android:layout_toRightOf="@+id/prevMonth"/>
+            android:textColor="@color/blackPrimary"
+            android:textSize="16sp" />
 
-        </RelativeLayout>
+    </RelativeLayout>
 
     <GridView
+        android:id="@+id/weekdayGrid"
         android:layout_width="match_parent"
         android:layout_height="23dp"
-        android:numColumns="7"
-        android:background="@color/whitePrimary"
         android:layout_below="@+id/header"
-        android:overScrollMode="never"
-        android:id="@+id/weekdayGrid"/>
+        android:background="@color/whitePrimary"
+        android:numColumns="7"
+        android:overScrollMode="never" />
 
     <GridView
+        android:id="@+id/monthGrid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:numColumns="7"
-        android:verticalSpacing="1dp"
-        android:horizontalSpacing="1dp"
-        android:background="@color/material_divider"
-        android:stretchMode="columnWidth"
-        android:overScrollMode="never"
         android:layout_below="@+id/weekdayGrid"
-        android:id="@+id/monthGrid"/>
+        android:background="@color/material_divider"
+        android:horizontalSpacing="1dp"
+        android:numColumns="7"
+        android:overScrollMode="never"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="1dp" />
 
 </RelativeLayout>

@@ -10,50 +10,50 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:gravity="left|center"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="left|center">
 
             <TextView
+                android:id="@+id/text1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center|left"
-                android:id="@+id/text1"
-                android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:gravity="center|left"
                 android:text="@string/repeat"
-                android:textSize="@dimen/create_text_size_normal"/>
+                android:textSize="@dimen/create_text_size_normal" />
 
             <EditText
+                android:id="@+id/repeatTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:minWidth="50dp"
-                android:layout_toRightOf="@+id/text1"
-                android:maxLength="3"
-                android:inputType="number"
-                android:gravity="center"
                 android:layout_marginLeft="@dimen/create_margin"
-                android:textSize="@dimen/create_text_size_normal"
-                android:id="@+id/repeatTitle"/>
+                android:layout_marginRight="10dp"
+                android:layout_toRightOf="@+id/text1"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="3"
+                android:minWidth="50dp"
+                android:textSize="@dimen/create_text_size_normal" />
 
             <TextView
+                android:id="@+id/repeatType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center|left"
                 android:layout_centerVertical="true"
-                android:text="@string/days"
-                android:id="@+id/repeatType"
                 android:layout_toRightOf="@+id/repeatTitle"
-                android:textSize="@dimen/create_text_size_normal"/>
+                android:gravity="center|left"
+                android:text="@string/days"
+                android:textSize="@dimen/create_text_size_normal" />
 
         </RelativeLayout>
 
         <SeekBar
+            android:id="@+id/repeatViewSeek"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/repeatViewSeek"
-            android:max="365"/>
+            android:max="365" />
 
     </LinearLayout>
 </merge>

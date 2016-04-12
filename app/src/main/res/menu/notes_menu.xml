@@ -2,20 +2,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.cray.software.justreminder.app.MainActivity" >
+    tools:context="com.cray.software.justreminder.app.MainActivity">
 
-    <item android:id="@+id/action_list"
-        android:title="@string/grid_view"
+    <item
+        android:id="@+id/action_list"
         android:icon="@drawable/ic_view_quilt_white_24dp"
+        android:title="@string/grid_view"
         app:showAsAction="ifRoom" />
 
-    <item android:id="@+id/action_sync"
-        android:title="@string/sync"
+    <item
+        android:id="@+id/action_sync"
         android:icon="@drawable/ic_cached_white_24dp"
+        android:title="@string/sync"
         app:showAsAction="ifRoom" />
 
-    <item android:id="@+id/action_order"
-        android:title="@string/order"
+    <item
+        android:id="@+id/action_order"
         android:icon="@drawable/ic_sort_white_24dp"
+        android:title="@string/order"
         app:showAsAction="ifRoom" />
 </menu>

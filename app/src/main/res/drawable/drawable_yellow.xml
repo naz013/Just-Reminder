@@ -3,9 +3,10 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
 
-    <stroke android:width="2dp"
-        android:color="@color/yellowPrimary"/>
+    <stroke
+        android:width="2dp"
+        android:color="@color/yellowPrimary" />
 
-    <solid android:color="@color/yellowPrimary"/>
+    <solid android:color="@color/yellowPrimary" />
 
 </shape>

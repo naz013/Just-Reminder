@@ -1,73 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:id="@+id/windowBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/windowBackground">
+    android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:minHeight="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
         android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
         <EditText
+            android:id="@+id/birthName"
             android:layout_width="match_parent"
             android:layout_height="72dp"
-            android:id="@+id/birthName"
-            android:textSize="@dimen/create_text_size_secondary"
-            android:hint="@string/name"
-            android:textColorHint="@color/whitePrimary"
             android:layout_gravity="center_horizontal"
             android:layout_marginLeft="@dimen/create_margin"
+            android:layout_marginRight="@dimen/create_margin"
             android:layout_marginTop="?attr/actionBarSize"
             android:background="@android:color/transparent"
-            android:layout_marginRight="@dimen/create_margin"/>
+            android:hint="@string/name"
+            android:textColorHint="@color/whitePrimary"
+            android:textSize="@dimen/create_text_size_secondary" />
 
     </android.support.v7.widget.Toolbar>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingRight="@dimen/wrapper_padding_right"
+            android:orientation="vertical"
             android:paddingLeft="@dimen/wrapper_padding_left"
-            android:orientation="vertical">
+            android:paddingRight="@dimen/wrapper_padding_right">
 
             <TableLayout
                 android:layout_width="match_parent"
-                android:layout_marginTop="@dimen/view_margin_top"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/view_margin_top">
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:foreground="?attr/selectableItemBackground">
 
                     <ImageView
+                        android:id="@+id/dateIcon"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:id="@+id/dateIcon"
                         android:layout_marginRight="15dp"
                         android:scaleType="center"
-                        android:src="@drawable/ic_event_black_24dp"/>
+                        android:src="@drawable/ic_event_black_24dp" />
 
                     <TextView
+                        android:id="@+id/birthDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:id="@+id/birthDate"
                         android:layout_gravity="center_vertical"
                         android:background="?android:attr/selectableItemBackground"
-                        android:textSize="@dimen/add_birthday_text_size_primary"
-                        android:text="25/05/1985"/>
+                        android:gravity="center"
+                        android:text="25/05/1985"
+                        android:textSize="@dimen/add_birthday_text_size_primary" />
 
                 </TableRow>
 
@@ -76,48 +76,48 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="@dimen/view_margin_top"
                 android:layout_marginBottom="@dimen/view_margin_top"
-                android:background="?attr/colorAccent"/>
+                android:layout_marginTop="@dimen/view_margin_top"
+                android:background="?attr/colorAccent" />
 
             <CheckBox
+                android:id="@+id/contactCheck"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/contactCheck"
-                android:textSize="@dimen/add_birthday_text_size_primary"
-                android:gravity="center"
                 android:clickable="true"
-                android:text="@string/contact"/>
+                android:gravity="center"
+                android:text="@string/contact"
+                android:textSize="@dimen/add_birthday_text_size_primary" />
 
             <LinearLayout
+                android:id="@+id/container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/view_margin_top"
-                android:id="@+id/container"
-                android:visibility="visible"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="visible">
 
                 <ImageButton
+                    android:id="@+id/pickContact"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:gravity="center"
-                    android:textSize="@dimen/add_birthday_text_size_primary"
-                    android:id="@+id/pickContact"
+                    android:layout_marginRight="15dp"
+                    android:background="@android:color/transparent"
                     android:clickable="false"
                     android:foreground="?android:attr/selectableItemBackground"
-                    android:background="@android:color/transparent"
-                    android:layout_marginRight="15dp"
-                    android:src="@drawable/ic_person_add_black_24dp"/>
+                    android:gravity="center"
+                    android:src="@drawable/ic_person_add_black_24dp"
+                    android:textSize="@dimen/add_birthday_text_size_primary" />
 
                 <EditText
+                    android:id="@+id/phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="phone"
+                    android:layout_gravity="center_vertical"
                     android:ems="10"
                     android:hint="@string/phone"
-                    android:id="@+id/phone"
-                    android:textSize="@dimen/add_birthday_text_size_primary"
-                    android:layout_gravity="center_vertical" />
+                    android:inputType="phone"
+                    android:textSize="@dimen/add_birthday_text_size_primary" />
             </LinearLayout>
         </LinearLayout>
 

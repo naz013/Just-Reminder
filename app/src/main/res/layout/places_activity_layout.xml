@@ -1,61 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/windowBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:id="@+id/windowBackground">
+    android:fitsSystemWindows="true">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <include layout="@layout/toolbar"
-            android:id="@+id/toolbar"/>
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar" />
 
     </android.support.design.widget.AppBarLayout>
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <RelativeLayout
         android:id="@+id/wrapper"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/currentList"
             android:layout_width="match_parent"
-            android:overScrollMode="never"
-            android:visibility="visible"
-            android:divider="@android:color/transparent"
             android:layout_height="match_parent"
-            android:scrollbars="none"
-            android:focusable="false"
             android:choiceMode="singleChoice"
-            android:fastScrollEnabled="true"/>
+            android:divider="@android:color/transparent"
+            android:fastScrollEnabled="true"
+            android:focusable="false"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            android:visibility="visible" />
 
         <LinearLayout
+            android:id="@+id/emptyItem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/emptyItem"
-            android:visibility="visible"
-            android:gravity="center"
             android:layout_centerVertical="true"
-            android:orientation="vertical" >
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="visible">
 
             <ImageView
-                android:layout_width="75dp"
                 android:id="@+id/emptyImage"
+                android:layout_width="75dp"
                 android:layout_height="75dp"
                 android:layout_marginBottom="35dp"
-                android:src="@drawable/place"/>
+                android:src="@drawable/place" />
 
             <TextView
-                android:layout_width="match_parent"
                 android:id="@+id/emptyText"
-                android:textSize="25sp"
-                android:text="@string/no_places"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center|top"
-                android:layout_height="wrap_content" />
+                android:text="@string/no_places"
+                android:textSize="25sp" />
 
         </LinearLayout>
 

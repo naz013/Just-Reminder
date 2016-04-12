@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/windowBackground"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".NotesManager">
 
-    <include layout="@layout/toolbar_note"
-        android:id="@+id/toolbar"/>
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar_note" />
 
     <RelativeLayout
+        android:id="@+id/layoutContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="visible"
-        android:id="@+id/layoutContainer"
         android:gravity="center|top"
-        android:paddingTop="@dimen/create_note_padding"
+        android:orientation="vertical"
         android:paddingLeft="@dimen/create_note_padding"
-        android:paddingRight="@dimen/create_note_padding">
+        android:paddingRight="@dimen/create_note_padding"
+        android:paddingTop="@dimen/create_note_padding"
+        android:visibility="visible">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -32,85 +33,85 @@
                 android:orientation="vertical">
 
                 <com.cray.software.justreminder.views.FloatingEditText
-                    app:floating_edit_text_highlighted_color="@color/blackPrimary"
-                    app:floating_edit_text_color="@color/blackPrimary"
+                    android:id="@+id/task_message"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/task_message"
-                    android:textSize="@dimen/create_note_text_size"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="5dp"
                     android:hint="@string/note"
                     android:textColor="@color/blackPrimary"
                     android:textColorHint="@color/blackPrimary"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="5dp"/>
+                    android:textSize="@dimen/create_note_text_size"
+                    app:floating_edit_text_color="@color/blackPrimary"
+                    app:floating_edit_text_highlighted_color="@color/blackPrimary" />
 
                 <RelativeLayout
-                    android:layout_width="match_parent"
                     android:id="@+id/imageContainer"
-                    android:visibility="gone"
-                    android:layout_height="wrap_content">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
 
                     <ImageView
+                        android:id="@+id/noteImage"
                         android:layout_width="match_parent"
-                        android:visibility="visible"
-                        android:src="@drawable/current_widget_preview"
-                        android:scaleType="centerCrop"
-                        android:minHeight="350dp"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="20dp"
-                        android:id="@+id/noteImage"/>
+                        android:minHeight="350dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/current_widget_preview"
+                        android:visibility="visible" />
 
                     <ImageButton
+                        android:id="@+id/deleteButton"
                         android:layout_width="@dimen/create_note_image_button_size"
                         android:layout_height="@dimen/create_note_image_button_size"
-                        android:src="@drawable/ic_clear_white_24dp"
-                        android:layout_alignParentTop="true"
                         android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
                         android:background="@drawable/drawable_cyan"
-                        android:id="@+id/deleteButton"/>
+                        android:src="@drawable/ic_clear_white_24dp" />
 
                 </RelativeLayout>
 
                 <LinearLayout
+                    android:id="@+id/remindContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/remindContainer"
                     android:layout_marginBottom="20dp"
-                    android:visibility="gone"
                     android:gravity="center|right"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:visibility="gone">
 
                     <TextView
+                        android:id="@+id/remindDate"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:textSize="@dimen/create_note_text_size_secondary"
                         android:gravity="center"
                         android:text="27/11/2014"
                         android:textColor="@color/blackPrimary"
-                        android:id="@+id/remindDate"/>
+                        android:textSize="@dimen/create_note_text_size_secondary" />
 
                     <TextView
+                        android:id="@+id/remindTime"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="20:00"
-                        android:gravity="center"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="25dp"
-                        android:textSize="@dimen/create_note_text_size_secondary"
+                        android:gravity="center"
+                        android:text="20:00"
                         android:textColor="@color/blackPrimary"
-                        android:id="@+id/remindTime"/>
+                        android:textSize="@dimen/create_note_text_size_secondary" />
 
                     <ImageButton
+                        android:id="@+id/discardReminder"
                         android:layout_width="@dimen/create_note_image_button_size"
                         android:layout_height="@dimen/create_note_image_button_size"
-                        android:id="@+id/discardReminder"
-                        android:src="@drawable/ic_clear_black_24dp"/>
+                        android:src="@drawable/ic_clear_black_24dp" />
 
                 </LinearLayout>
 
-                </LinearLayout>
+            </LinearLayout>
 
-            </ScrollView>
+        </ScrollView>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"

@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="wrap_content"
+    android:id="@+id/background"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp"
     android:layout_marginLeft="5dp"
     android:layout_marginRight="5dp"
-    android:id="@+id/background"
-    android:focusable="false"
-    android:layout_marginBottom="5dp">
+    android:focusable="false">
 
     <TextView
+        android:id="@+id/shopText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
+        android:layout_centerVertical="true"
         android:layout_marginLeft="10dp"
         android:layout_toRightOf="@+id/checkView"
-        android:layout_centerVertical="true"
-        android:id="@+id/shopText"/>
+        android:textSize="16sp" />
 
     <ImageView
+        android:id="@+id/checkView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/checkView"
         android:layout_alignParentLeft="true"
-        android:visibility="visible"
+        android:layout_centerVertical="true"
         android:background="@android:color/transparent"
-        android:layout_centerVertical="true"/>
+        android:visibility="visible" />
 </RelativeLayout>

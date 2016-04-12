@@ -3,10 +3,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.cray.software.justreminder.app.MainActivity" >
+    tools:context="com.cray.software.justreminder.app.MainActivity">
 
-    <item android:id="@+id/action_delete_all"
-        android:title="@string/delete_all"
+    <item
+        android:id="@+id/action_delete_all"
         android:icon="@drawable/ic_delete_white_24dp"
+        android:title="@string/delete_all"
         app:showAsAction="ifRoom" />
 </menu>

@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="wrap_content"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
+    android:orientation="horizontal"
     android:paddingBottom="16dp"
-    android:paddingTop="24dp"
     android:paddingLeft="24dp"
-    android:paddingRight="24dp">
+    android:paddingRight="24dp"
+    android:paddingTop="24dp">
 
     <ImageButton
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:scaleType="fitCenter"
         android:id="@+id/addEvent"
-        android:background="@android:color/transparent"
-        android:src="@drawable/alarm_button"/>
-
-    <ImageButton
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:scaleType="fitCenter"
-        android:id="@+id/addBirth"
         android:background="@android:color/transparent"
-        android:src="@drawable/cake_button"/>
+        android:scaleType="fitCenter"
+        android:src="@drawable/alarm_button" />
+
+    <ImageButton
+        android:id="@+id/addBirth"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/cake_button" />
 
 </LinearLayout>

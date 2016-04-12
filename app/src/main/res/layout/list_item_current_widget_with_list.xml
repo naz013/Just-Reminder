@@ -1,31 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:background="@color/whitePrimary"
     android:id="@+id/itemBg"
-    android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/whitePrimary"
+    android:orientation="vertical">
 
     <TextView
+        android:id="@+id/taskText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:singleLine="true"
+        android:layout_marginBottom="5dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="5dp"
-        android:textColor="@color/blackPrimary"
-        android:id="@+id/taskText" />
+        android:singleLine="true"
+        android:textColor="@color/blackPrimary" />
 
     <LinearLayout
         android:id="@+id/todoList"
         android:layout_width="match_parent"
-        android:overScrollMode="never"
-        android:visibility="visible"
-        android:orientation="vertical"
-        android:divider="@android:color/transparent"
         android:layout_height="wrap_content"
-        android:scrollbars="none"
+        android:divider="@android:color/transparent"
+        android:fastScrollEnabled="false"
         android:focusable="false"
-        android:fastScrollEnabled="false"/>
+        android:orientation="vertical"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        android:visibility="visible" />
 
 </LinearLayout>

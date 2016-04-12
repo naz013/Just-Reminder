@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2015 Nazar Suhovich
   ~ <p/>
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,104 +15,104 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/mapMask"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible"
-        android:id="@+id/mapMask"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="visible">
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clickable="true"
-            android:name="com.google.android.gms.maps.SupportMapFragment"/>
+            android:clickable="true" />
 
         <LinearLayout
+            android:id="@+id/buttonContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_alignParentLeft="true"
-            android:id="@+id/buttonContainer"
+            android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp">
+            android:orientation="vertical">
 
             <android.support.v7.widget.CardView
+                android:id="@+id/zoomCard"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/zoomCard">
+                android:layout_height="wrap_content">
 
                 <ImageButton
-                    android:layout_width="@dimen/create_imagebutton_size"
-                    android:layout_height="@dimen/create_imagebutton_size_ext"
                     android:id="@+id/mapZoom"
                     style="?android:borderlessButtonStyle"
-                    android:src="@drawable/ic_arrow_upward_white_24dp"/>
+                    android:layout_width="@dimen/create_imagebutton_size"
+                    android:layout_height="@dimen/create_imagebutton_size_ext"
+                    android:src="@drawable/ic_arrow_upward_white_24dp" />
 
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
+                android:id="@+id/backCard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:id="@+id/backCard">
+                android:layout_marginTop="10dp">
 
                 <ImageButton
-                    android:layout_width="@dimen/create_imagebutton_size"
-                    android:layout_height="@dimen/create_imagebutton_size"
                     android:id="@+id/backButton"
                     style="?android:borderlessButtonStyle"
-                    android:src="@drawable/ic_keyboard_arrow_left_white_24dp"/>
+                    android:layout_width="@dimen/create_imagebutton_size"
+                    android:layout_height="@dimen/create_imagebutton_size"
+                    android:src="@drawable/ic_keyboard_arrow_left_white_24dp" />
 
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
+                android:id="@+id/layersCard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:id="@+id/layersCard">
+                android:layout_marginTop="10dp">
 
                 <ImageButton
-                    android:layout_width="@dimen/create_imagebutton_size"
-                    android:layout_height="@dimen/create_imagebutton_size"
                     android:id="@+id/layers"
                     style="?android:borderlessButtonStyle"
-                    android:src="@drawable/ic_layers_white_24dp"/>
+                    android:layout_width="@dimen/create_imagebutton_size"
+                    android:layout_height="@dimen/create_imagebutton_size"
+                    android:src="@drawable/ic_layers_white_24dp" />
 
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
+                android:id="@+id/markersCard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:id="@+id/markersCard">
+                android:layout_marginTop="10dp">
 
                 <ImageButton
-                    android:layout_width="@dimen/create_imagebutton_size"
-                    android:layout_height="@dimen/create_imagebutton_size"
                     android:id="@+id/markers"
                     style="?android:borderlessButtonStyle"
-                    android:src="@drawable/ic_palette_white_24dp"/>
+                    android:layout_width="@dimen/create_imagebutton_size"
+                    android:layout_height="@dimen/create_imagebutton_size"
+                    android:src="@drawable/ic_palette_white_24dp" />
 
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
+                android:id="@+id/placesCard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:id="@+id/placesCard">
+                android:layout_marginTop="10dp">
 
                 <ImageButton
-                    android:layout_width="@dimen/create_imagebutton_size"
-                    android:layout_height="@dimen/create_imagebutton_size"
                     android:id="@+id/places"
                     style="?android:borderlessButtonStyle"
-                    android:src="@drawable/ic_directions_white_24dp"/>
+                    android:layout_width="@dimen/create_imagebutton_size"
+                    android:layout_height="@dimen/create_imagebutton_size"
+                    android:src="@drawable/ic_directions_white_24dp" />
 
             </android.support.v7.widget.CardView>
 
@@ -121,51 +120,51 @@
 
 
         <android.support.v7.widget.CardView
+            android:id="@+id/searchCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
+            android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
-            android:id="@+id/searchCard"
-            android:layout_toRightOf="@+id/buttonContainer"
-            android:layout_marginRight="10dp">
+            android:layout_toRightOf="@+id/buttonContainer">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:id="@+id/cardSearch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="2dp"
+                    android:layout_toLeftOf="@+id/cardClear"
                     android:hint="@string/search_place"
                     android:singleLine="true"
-                    android:layout_margin="2dp"
-                    android:layout_centerVertical="true"
-                    android:textSize="@dimen/create_text_size_normal"
-                    android:layout_toLeftOf="@+id/cardClear"
-                    android:id="@+id/cardSearch"/>
+                    android:textSize="@dimen/create_text_size_normal" />
 
                 <ImageButton
+                    android:id="@+id/cardClear"
+                    style="?android:borderlessButtonStyle"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:id="@+id/cardClear"
-                    android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
                     android:layout_margin="2dp"
-                    style="?android:borderlessButtonStyle"
-                    android:src="@drawable/ic_search_white_24dp"/>
+                    android:src="@drawable/ic_search_white_24dp" />
             </RelativeLayout>
 
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
+            android:id="@+id/layersContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="visible"
+            android:layout_below="@+id/searchCard"
             android:layout_marginTop="10dp"
             android:layout_toRightOf="@+id/buttonContainer"
-            android:layout_below="@+id/searchCard"
-            android:id="@+id/layersContainer">
+            android:orientation="vertical"
+            android:visibility="visible">
 
             <ScrollView
                 android:layout_width="wrap_content"
@@ -174,44 +173,44 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="10dp">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:id="@+id/typeNormal"
-                        android:textSize="18sp"
-                        android:clickable="true"
-                        android:padding="7dp"
-                        android:text="@string/normal"/>
-
-                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:padding="7dp"
+                        android:text="@string/normal"
+                        android:textSize="18sp" />
+
+                    <TextView
                         android:id="@+id/typeSatellite"
-                        android:textSize="18sp"
-                        android:clickable="true"
-                        android:padding="7dp"
-                        android:text="@string/satellite"/>
-
-                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:padding="7dp"
+                        android:text="@string/satellite"
+                        android:textSize="18sp" />
+
+                    <TextView
                         android:id="@+id/typeHybrid"
-                        android:textSize="18sp"
-                        android:clickable="true"
-                        android:padding="7dp"
-                        android:text="@string/hybrid"/>
-
-                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/typeTerrain"
-                        android:textSize="18sp"
                         android:clickable="true"
                         android:padding="7dp"
-                        android:text="@string/terrain"/>
+                        android:text="@string/hybrid"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/typeTerrain"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:padding="7dp"
+                        android:text="@string/terrain"
+                        android:textSize="18sp" />
 
                 </LinearLayout>
 
@@ -220,13 +219,13 @@
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
+            android:id="@+id/styleCard"
             android:layout_width="match_parent"
             android:layout_height="175dp"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:visibility="gone"
-            android:id="@+id/styleCard">
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -235,66 +234,66 @@
                 android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/groupOne"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:id="@+id/groupOne"/>
+                    android:orientation="horizontal" />
 
                 <LinearLayout
+                    android:id="@+id/groupTwo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:id="@+id/groupTwo"/>
+                    android:orientation="horizontal" />
 
                 <LinearLayout
+                    android:id="@+id/groupThree"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:id="@+id/groupThree"/>
+                    android:orientation="horizontal" />
 
             </LinearLayout>
 
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
+            android:id="@+id/placesListCard"
             android:layout_width="match_parent"
             android:layout_height="175dp"
-            android:visibility="visible"
+            android:layout_alignParentBottom="true"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_alignParentBottom="true"
-            android:id="@+id/placesListCard">
+            android:visibility="visible">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/placesList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"/>
+                android:layout_marginRight="15dp" />
 
             <LinearLayout
+                android:id="@+id/emptyItem"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/emptyItem"
-                android:visibility="visible"
-                android:gravity="center"
                 android:layout_centerVertical="true"
-                android:orientation="vertical" >
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="visible">
 
                 <ImageView
-                    android:layout_width="50dp"
                     android:id="@+id/emptyImage"
+                    android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_marginBottom="15dp"
-                    android:src="@drawable/ic_directions_white_24dp"/>
+                    android:src="@drawable/ic_directions_white_24dp" />
 
                 <TextView
-                    android:layout_width="match_parent"
                     android:id="@+id/emptyText"
-                    android:textSize="25sp"
-                    android:text="@string/no_places"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:gravity="center|top"
-                    android:layout_height="wrap_content" />
+                    android:text="@string/no_places"
+                    android:textSize="25sp" />
 
             </LinearLayout>
 

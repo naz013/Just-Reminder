@@ -1,232 +1,231 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:gravity="center"
     android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
     tools:context=".activities.ReminderDialog">
-    
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:fitsSystemWindows="true"
-        android:layout_height="match_parent">
-    
-    <ImageView
-        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:id="@+id/bgImage"/>
+        android:fitsSystemWindows="true">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="center"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="30dp"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:id="@+id/single_container">
+        <ImageView
+            android:id="@+id/bgImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="@dimen/reminder_photo_size"
-            android:layout_height="@dimen/reminder_photo_size"
-            android:layout_gravity="center"
-            android:visibility="visible"
-            android:scaleType="centerCrop"
-            app:civ_border_color="@color/material_grey_dialog"
-            app:civ_border_width="5dp"
-            android:id="@+id/contactPhoto"/>
-
-        <android.support.v7.widget.CardView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/single_container"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:id="@+id/card"
-            app:contentPadding="10dp"
-            android:layout_marginBottom="150dp"
-            app:cardCornerRadius="5dp">
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:gravity="center"
+            android:orientation="vertical">
 
-            <LinearLayout
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/contactPhoto"
+                android:layout_width="@dimen/reminder_photo_size"
+                android:layout_height="@dimen/reminder_photo_size"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+                android:visibility="visible"
+                app:civ_border_color="@color/material_grey_dialog"
+                app:civ_border_width="5dp" />
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/card"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:id="@+id/remText"
-                    android:gravity="center"
-                    android:text="@string/e_mail"
-                    android:textSize="@dimen/reminder_text_size_normal"
-                    android:layout_gravity="start" />
+                android:layout_marginBottom="150dp"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="5dp"
+                app:contentPadding="10dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="visible"
-                    android:layout_marginTop="10dp"
-                    android:id="@+id/container">
+                    android:orientation="vertical">
 
-                    <RelativeLayout
+                    <TextView
+                        android:id="@+id/remText"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:gravity="center"
+                        android:text="@string/e_mail"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textSize="@dimen/reminder_text_size_normal" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="25dp"
-                            android:textSize="17sp"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center_vertical"
-                            android:layout_alignParentLeft="true"
-                            android:id="@+id/actionDirect"
-                            android:text="@string/to"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="17sp"
-                            android:layout_toRightOf="@+id/actionDirect"
-                            android:id="@+id/contactInfo"/>
-
-                    </RelativeLayout>
-
-                    <RelativeLayout
+                    <LinearLayout
+                        android:id="@+id/container"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:id="@+id/subjectContainer">
+                        android:orientation="vertical"
+                        android:visibility="visible">
 
-                        <TextView
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/actionDirect"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerVertical="true"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginRight="25dp"
+                                android:text="@string/to"
+                                android:textSize="17sp" />
+
+                            <TextView
+                                android:id="@+id/contactInfo"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_toRightOf="@+id/actionDirect"
+                                android:textSize="17sp" />
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/subjectContainer"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="25dp"
-                            android:textSize="17sp"
-                            android:id="@+id/subjectDirect"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center_vertical"
-                            android:layout_alignParentLeft="true"
-                            android:text="@string/subject"/>
+                            android:layout_marginTop="10dp">
 
-                        <TextView
+                            <TextView
+                                android:id="@+id/subjectDirect"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerVertical="true"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginRight="25dp"
+                                android:text="@string/subject"
+                                android:textSize="17sp" />
+
+                            <TextView
+                                android:id="@+id/subjectView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_toRightOf="@+id/subjectDirect"
+                                android:textSize="17sp" />
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="17sp"
-                            android:layout_toRightOf="@+id/subjectDirect"
-                            android:id="@+id/subjectView"/>
+                            android:layout_marginTop="10dp">
 
-                    </RelativeLayout>
+                            <TextView
+                                android:id="@+id/someView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerVertical="true"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginRight="25dp"
+                                android:text="@string/message"
+                                android:textSize="17sp" />
 
-                    <RelativeLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp">
+                            <TextView
+                                android:id="@+id/messageView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_toRightOf="@+id/someView"
+                                android:textSize="17sp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="25dp"
-                            android:textSize="17sp"
-                            android:id="@+id/someView"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center_vertical"
-                            android:layout_alignParentLeft="true"
-                            android:text="@string/message"/>
+                        </RelativeLayout>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="17sp"
-                            android:layout_toRightOf="@+id/someView"
-                            android:id="@+id/messageView"/>
+                    </LinearLayout>
 
-                    </RelativeLayout>
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/todoList"
+                        android:layout_width="250dp"
+                        android:layout_height="250dp"
+                        android:layout_marginTop="10dp"
+                        android:overScrollMode="never"
+                        android:scrollbars="none"
+                        android:visibility="gone" />
 
                 </LinearLayout>
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/todoList"
-                    android:layout_width="250dp"
-                    android:overScrollMode="never"
-                    android:visibility="gone"
-                    android:layout_marginTop="10dp"
-                    android:layout_height="250dp"
-                    android:scrollbars="none"/>
-
-            </LinearLayout>
-
-        </android.support.v7.widget.CardView>
+            </android.support.v7.widget.CardView>
 
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
-            android:layout_gravity="center"
-            android:layout_above="@+id/delayContainer"
             android:id="@+id/actionContainer"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/delayContainer"
+            android:layout_gravity="center"
             android:gravity="center"
-            android:layout_height="wrap_content">
+            android:orientation="horizontal">
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/buttonOk"
                 android:layout_width="50dp"
-                android:layout_margin="@dimen/reminder_margin_top"
-                android:layout_height="50dp"/>
+                android:layout_height="50dp"
+                android:layout_margin="@dimen/reminder_margin_top" />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/buttonCall"
                 android:layout_width="50dp"
-                android:layout_margin="@dimen/reminder_margin_top"
-                android:layout_height="50dp"/>
+                android:layout_height="50dp"
+                android:layout_margin="@dimen/reminder_margin_top" />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/buttonCancel"
                 android:layout_width="50dp"
-                android:layout_margin="@dimen/reminder_margin_top"
-                android:layout_height="50dp"/>
+                android:layout_height="50dp"
+                android:layout_margin="@dimen/reminder_margin_top" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
             android:id="@+id/delayContainer"
-            android:gravity="center"
-            android:layout_marginBottom="35dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_height="wrap_content">
+            android:layout_gravity="center"
+            android:layout_marginBottom="35dp"
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/buttonDelay"
                 android:layout_width="50dp"
-                android:layout_margin="@dimen/reminder_margin_top"
-                android:layout_height="50dp"/>
+                android:layout_height="50dp"
+                android:layout_margin="@dimen/reminder_margin_top" />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/buttonDelayFor"
                 android:layout_width="50dp"
-                android:layout_margin="@dimen/reminder_margin_top"
-                android:layout_height="50dp"/>
+                android:layout_height="50dp"
+                android:layout_margin="@dimen/reminder_margin_top" />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/buttonNotification"
                 android:layout_width="50dp"
-                android:layout_margin="@dimen/reminder_margin_top"
-                android:layout_height="50dp"/>
+                android:layout_height="50dp"
+                android:layout_margin="@dimen/reminder_margin_top" />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/buttonEdit"
                 android:layout_width="50dp"
-                android:layout_margin="@dimen/reminder_margin_top"
-                android:layout_height="50dp"/>
+                android:layout_height="50dp"
+                android:layout_margin="@dimen/reminder_margin_top" />
 
         </LinearLayout>
     </RelativeLayout>
