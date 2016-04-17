@@ -47,7 +47,7 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.Contacts;
+import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;

@@ -22,12 +22,9 @@
         android:hint="@string/search"
         app:floating_edit_text_highlighted_color="?attr/colorAccent" />
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/contactsList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="5dp"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="3dp" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="5dp" />
 </LinearLayout>

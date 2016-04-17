@@ -27,7 +27,7 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.models.BirthdayModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.Contacts;
+import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;

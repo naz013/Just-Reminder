@@ -19,7 +19,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.Contacts;
+import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.SuperUtil;

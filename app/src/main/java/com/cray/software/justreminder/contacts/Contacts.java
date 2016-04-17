@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.helpers;
+package com.cray.software.justreminder.contacts;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;

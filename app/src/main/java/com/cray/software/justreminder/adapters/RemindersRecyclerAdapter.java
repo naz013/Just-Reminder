@@ -24,7 +24,7 @@ import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.datas.models.ReminderModel;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.Contacts;
+import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.helpers.Recurrence;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
