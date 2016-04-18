@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 
 import com.cray.software.justreminder.R;
@@ -116,6 +117,17 @@ public class ContactsActivity extends AppCompatActivity implements LoadListener,
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
         toolbar.setTitle(getString(R.string.contacts));
+        toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent();
+            setResult(RESULT_CANCELED, intent);
+            finish();
+        }
+        return true;
     }
 
     @Override
