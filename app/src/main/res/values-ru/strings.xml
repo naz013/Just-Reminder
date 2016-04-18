@@ -533,4 +533,5 @@
     <string name="describe_your_problem">Опишите проблему</string>
     <string name="day_night">День/Ночь</string>
     <string name="enable_changing_theme_during_day">Включение автоматического изменения темы в течение дня</string>
+    <string name="move_backward">Move backward</string>
 </resources>

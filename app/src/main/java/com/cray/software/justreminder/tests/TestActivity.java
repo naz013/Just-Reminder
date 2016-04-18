@@ -17,6 +17,7 @@ import com.cray.software.justreminder.activities.QuickAddReminder;
 import com.cray.software.justreminder.activities.QuickSMS;
 import com.cray.software.justreminder.activities.ShowBirthday;
 import com.cray.software.justreminder.contacts.ContactsActivity;
+import com.cray.software.justreminder.feedback.SendReportActivity;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class TestActivity extends AppCompatActivity implements SimpleListener {
         list = new ArrayList<>();
         list.add(new ActionItem("Run application", ScreenManager.class));
         list.add(new ActionItem("Contact picker", ContactsActivity.class));
+        list.add(new ActionItem("Feedback screen", SendReportActivity.class));
         list.add(new ActionItem("After call screen", FollowReminder.class));
         list.add(new ActionItem("Quick message", QuickSMS.class));
         list.add(new ActionItem("Quick reminder", QuickAddReminder.class));

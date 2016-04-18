@@ -36,7 +36,6 @@ import android.widget.TextView;
 import com.cray.software.justreminder.activities.AddPlace;
 import com.cray.software.justreminder.activities.Help;
 import com.cray.software.justreminder.activities.NewTemplate;
-import com.cray.software.justreminder.activities.Report;
 import com.cray.software.justreminder.async.DelayedAsync;
 import com.cray.software.justreminder.async.GetTasksListsAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
@@ -49,6 +48,7 @@ import com.cray.software.justreminder.dialogs.ActionPickerDialog;
 import com.cray.software.justreminder.dialogs.ChangeDialog;
 import com.cray.software.justreminder.dialogs.RateDialog;
 import com.cray.software.justreminder.enums.QuickReturnViewType;
+import com.cray.software.justreminder.feedback.SendReportActivity;
 import com.cray.software.justreminder.fragments.ActiveFragment;
 import com.cray.software.justreminder.fragments.BackupsFragment;
 import com.cray.software.justreminder.fragments.EventsFragment;
@@ -484,7 +484,7 @@ public class ScreenManager extends AppCompatActivity
             } else if (tag.matches(HELP)) {
                 startActivity(new Intent(this, Help.class));
             } else if (tag.matches(REPORT)) {
-                startActivity(new Intent(this, Report.class));
+                startActivity(new Intent(this, SendReportActivity.class));
             } else if (tag.matches(MARKET)) {
                 marketDialog().show();
             } else if (tag.matches(FRAGMENT_SETTINGS)) {

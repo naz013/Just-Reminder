@@ -518,4 +518,7 @@
     <string name="day_night">Day/Night</string>
     <string name="enable_changing_theme_during_day">Enable changing theme during day</string>
     <string name="save_widget">Save widget</string>
+    <string name="refresh">Refresh</string>
+    <string name="move_forward">Move forward</string>
+    <string name="move_backward">Move backward</string>
 </resources>

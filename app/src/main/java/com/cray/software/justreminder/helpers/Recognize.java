@@ -13,7 +13,6 @@ import com.backdoor.simpleai.Types;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.activities.AddBirthday;
 import com.cray.software.justreminder.activities.QuickAddReminder;
-import com.cray.software.justreminder.activities.Report;
 import com.cray.software.justreminder.activities.SplashScreen;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Language;
@@ -24,6 +23,7 @@ import com.cray.software.justreminder.datas.models.CategoryModel;
 import com.cray.software.justreminder.dialogs.SelectVolume;
 import com.cray.software.justreminder.dialogs.VoiceHelp;
 import com.cray.software.justreminder.dialogs.VoiceResult;
+import com.cray.software.justreminder.feedback.SendReportActivity;
 import com.cray.software.justreminder.json.JAction;
 import com.cray.software.justreminder.json.JExport;
 import com.cray.software.justreminder.json.JModel;
@@ -73,7 +73,7 @@ public class Recognize {
                     else if (action == RecUtils.SETTINGS)
                         mContext.startActivity(new Intent(mContext, SettingsActivity.class));
                     else if (action == RecUtils.REPORT)
-                        mContext.startActivity(new Intent(mContext, Report.class));
+                        mContext.startActivity(new Intent(mContext, SendReportActivity.class));
                     else if (action == RecUtils.HELP)
                         mContext.startActivity(new Intent(mContext, VoiceHelp.class)
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT));

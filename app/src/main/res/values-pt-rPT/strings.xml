@@ -517,4 +517,5 @@
     <string name="describe_your_problem">"Descreva o seu problema"</string>
     <string name="day_night">Dia/Noite</string>
     <string name="enable_changing_theme_during_day">Permitem a troca do tema automaticamente durante o dia</string>
+    <string name="move_backward">Move backward</string>
 </resources>
