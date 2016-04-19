@@ -518,4 +518,5 @@
     <string name="day_night">Gündüz/Gece</string>
     <string name="enable_changing_theme_during_day">Gün boyunca otomatik olarak tema değiştirme etkinleştirme</string>
     <string name="move_backward">Move backward</string>
+    <string name="create_task">Create task</string>
 </resources>

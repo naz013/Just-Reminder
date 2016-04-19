@@ -19,6 +19,7 @@ import com.cray.software.justreminder.dialogs.AboutDialog;
 import com.cray.software.justreminder.dialogs.ChangeDialog;
 import com.cray.software.justreminder.dialogs.RateDialog;
 import com.cray.software.justreminder.dialogs.PermissionsList;
+import com.cray.software.justreminder.feedback.SendReportActivity;
 import com.cray.software.justreminder.modules.Module;
 
 public class OtherSettingsFragment extends Fragment {
@@ -94,15 +95,10 @@ public class OtherSettingsFragment extends Fragment {
         menuFeedback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                emailIntent.setType("plain/text");
-                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"feedback.cray@gmail.com"});
-                if (Module.isPro()) {
-                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Reminder PRO");
-                } else {
-                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Reminder");
-                }
-                getActivity().startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+                getActivity().getApplicationContext()
+                        .startActivity(new Intent(getActivity().getApplicationContext(),
+                                SendReportActivity.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             }
         });
 

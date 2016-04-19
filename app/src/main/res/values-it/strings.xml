@@ -518,4 +518,5 @@
     <string name="day_night">Giorno/Notte</string>
     <string name="enable_changing_theme_during_day">Abilita cambiando tema automaticamente durante il giorno</string>
     <string name="move_backward">Move backward</string>
+    <string name="create_task">Create task</string>
 </resources>

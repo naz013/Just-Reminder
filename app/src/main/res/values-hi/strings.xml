@@ -519,4 +519,5 @@
     <string name="day_night">दिन/रात</string>
     <string name="enable_changing_theme_during_day">दिन के दौरान स्वचालित रूप से विषय बदलते सक्षम करें</string>
     <string name="move_backward">Move backward</string>
+    <string name="create_task">Create task</string>
 </resources>

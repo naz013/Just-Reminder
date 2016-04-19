@@ -390,7 +390,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.FollowReminder"
+            android:name=".calls.FollowReminder"
             android:configChanges="keyboardHidden|orientation">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -637,17 +637,17 @@
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <receiver
-            android:name=".services.CallReceiver"
+            android:name=".calls.CallReceiver"
             android:enabled="true"
             android:permission="android.permission.READ_PHONE_STATE">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".services.MissedCallAlarm" />
+        <receiver android:name=".calls.MissedCallAlarm" />
 
         <activity
-            android:name=".activities.MissedCallDialog"
+            android:name=".calls.MissedCallDialog"
             android:configChanges="keyboardHidden|orientation"
             android:theme="@style/HomeWhiteFullscreen">
             <intent-filter>

@@ -519,4 +519,5 @@
     <string name="day_night">デイ/ナイト</string>
     <string name="enable_changing_theme_during_day">日中に自動的にテーマを変更する有効</string>
     <string name="move_backward">Move backward</string>
+    <string name="create_task">Create task</string>
 </resources>

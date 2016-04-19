@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.services;
+package com.cray.software.justreminder.calls;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
-import com.cray.software.justreminder.activities.FollowReminder;
 import com.cray.software.justreminder.activities.QuickSMS;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;

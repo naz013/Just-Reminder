@@ -322,6 +322,10 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 else remText.setText(R.string.skype_call);
                 contactInfo.setText(number);
                 messageView.setText(task);
+                if (task == null) {
+                    messageView.setVisibility(View.GONE);
+                    findViewById(R.id.someView).setVisibility(View.GONE);
+                }
             }
             container.setVisibility(View.VISIBLE);
         } else if (type.contains(Constants.TYPE_MESSAGE) ||
