@@ -32,7 +32,7 @@ public class Reminder {
 	String json;
 	
 	@Index
-	ReminderForm.ReminderType type;
+	String type;
 	
 	@Index
 	String uuId;
@@ -66,7 +66,10 @@ public class Reminder {
 		this.summary = reminderForm.getSummary();
 		this.json = reminderForm.getJson();
 		this.type = reminderForm.getType();
-		this.uuId = UUID.randomUUID().toString();
+        this.uuId = reminderForm.getUuId();
+		if (uuId == null || uuId.matches("")) {
+			this.uuId = UUID.randomUUID().toString();
+		}
 		this.category = reminderForm.getCategory();
 		this.eventTime = reminderForm.getEventTime();
 		this.dbStatus = 0;
@@ -154,7 +157,7 @@ public class Reminder {
 		return summary;
 	}
 	
-	public ReminderForm.ReminderType getType() {
+	public String getType() {
 		return type;
 	}
 	

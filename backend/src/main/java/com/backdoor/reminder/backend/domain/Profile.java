@@ -1,19 +1,22 @@
 package com.backdoor.reminder.backend.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.appengine.repackaged.com.google.common.collect.ImmutableList;
 import com.googlecode.objectify.annotation.Cache;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Cache
 public class Profile {
 	String displayName;
+
 	String mainEmail;
-	List<String> conferenceKeysToAttend = new ArrayList<>(0);
+
+	String password;
+
+	List<Long> connectedUsers = new ArrayList<>(0);
 
 	@Id
 	String userId;
@@ -22,18 +25,18 @@ public class Profile {
 	 * Just making the default constructor private.
 	 */
 	private Profile() {}
-    
-    /**
-     * Public constructor for Profile.
-     * @param userId The user id, obtained from the email
-     * @param displayName Any string user wants us to display him/her on this system.
-     * @param mainEmail User's main e-mail address.
-     * 
-     */
-    public Profile (String userId, String displayName, String mainEmail) {
+
+    public Profile (String userId, String displayName, String mainEmail, String password) {
     	this.userId = userId;
     	this.displayName = displayName;
     	this.mainEmail = mainEmail;
+    	this.password = password;
+    }
+
+    public Profile (String userId, String displayName, String mainEmail) {
+        this.userId = userId;
+        this.displayName = displayName;
+        this.mainEmail = mainEmail;
     }
     
 	public String getDisplayName() {
@@ -47,31 +50,33 @@ public class Profile {
 	public String getUserId() {
 		return userId;
 	}
-	
-	public List<String> getConferenceKeysToAttend() {
-        return ImmutableList.copyOf(conferenceKeysToAttend);
+
+	public String getPassword() {
+		return password;
+	}
+
+	public List<Long> getConnectedUsers() {
+		return connectedUsers;
+	}
+
+	public void addToConferenceKeysToAttend(long userId) {
+		connectedUsers.add(userId);
     }
-    
-    public void addToConferenceKeysToAttend(String conferenceKey) {
-        conferenceKeysToAttend.add(conferenceKey);
-    }
-    
-    /**
-     * Remove the conferenceId from conferenceIdsToAttend.
-     *
-     * @param conferenceKey a websafe String representation of the Conference Key.
-     */
-    public void unregisterFromConference(String conferenceKey) {
-        if (conferenceKeysToAttend.contains(conferenceKey)) {
-            conferenceKeysToAttend.remove(conferenceKey);
+
+    public void unregisterFromConference(long userId) {
+        if (connectedUsers.contains(userId)) {
+			connectedUsers.remove(userId);
         } else {
-            throw new IllegalArgumentException("Invalid conferenceKey: " + conferenceKey);
+            throw new IllegalArgumentException("Invalid userId: " + userId);
         }
     }
 
-	public void update(String displayName) {
+	public void update(String displayName, String password) {
 		if (displayName != null) {
 			this.displayName = displayName;
+		}
+		if (password != null && password.length() > 8) {
+			this.password = password;
 		}
 	}
 

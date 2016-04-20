@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<datastore-indexes autoGenerate="true">
-
+<datastore-indexes autoGenerate="false">
+    <datastore-index ancestor="true" kind="Reminder" source="manual">
+        <property name="eventTime" direction="asc" />
+    </datastore-index>
+    <datastore-index ancestor="true" kind="Group" source="manual">
+        <property name="name" direction="asc" />
+    </datastore-index>
+    <datastore-index ancestor="true" kind="Note" source="manual">
+        <property name="text" direction="asc" />
+    </datastore-index>
+    <datastore-index ancestor="true" kind="Note" source="manual">
+        <property name="dateTime" direction="desc" />
+    </datastore-index>
+    <datastore-index ancestor="true" kind="Note" source="manual">
+        <property name="dateTime" direction="asc" />
+    </datastore-index>
 </datastore-indexes>

@@ -18,7 +18,7 @@
         <option name="HTTP_PORT" value="8080" />
         <option name="WAR_DIR" value="D:\projects\just-reminder\backend\build\exploded-app" />
         <option name="WEB_APP_DIR" value="D:\projects\just-reminder\backend\src\main\webapp" />
-        <option name="APPENGINE_SDKROOT" value="C:\Users\nsuho\.gradle\appengine-sdk\appengine-java-sdk-1.9.28" />
+        <option name="APPENGINE_SDKROOT" value="C:\Users\nsuho\.gradle\appengine-sdk\appengine-java-sdk-1.9.36" />
       </configuration>
     </facet>
   </component>
@@ -40,12 +40,12 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="appengine-endpoints-1.9.28" level="project" />
-    <orderEntry type="library" exported="" name="appengine-endpoints-deps-1.9.28" level="project" />
-    <orderEntry type="library" exported="" name="objectify-5.0" level="project" />
+    <orderEntry type="library" exported="" name="appengine-endpoints-1.9.36" level="project" />
+    <orderEntry type="library" exported="" name="appengine-endpoints-deps-1.9.36" level="project" />
+    <orderEntry type="library" exported="" name="objectify-5.1.12" level="project" />
     <orderEntry type="library" exported="" name="servlet-api-2.5" level="project" />
-    <orderEntry type="library" exported="" name="appengine-api-1.0-sdk-1.9.28" level="project" />
-    <orderEntry type="library" exported="" name="guava-14.0.1" level="project" />
+    <orderEntry type="library" exported="" name="appengine-api-1.0-sdk-1.9.36" level="project" />
+    <orderEntry type="library" exported="" name="guava-18.0" level="project" />
     <orderEntry type="library" exported="" name="backend.backend-android-endpoints" level="project" />
   </component>
 </module>

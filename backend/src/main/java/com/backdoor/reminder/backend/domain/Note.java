@@ -1,6 +1,6 @@
 package com.backdoor.reminder.backend.domain;
 
-import com.backdoor.reminder.backend.form.GroupForm;
+import com.backdoor.reminder.backend.form.NoteForm;
 import com.google.api.server.spi.config.AnnotationBoolean;
 import com.google.api.server.spi.config.ApiResourceProperty;
 import com.googlecode.objectify.Key;
@@ -14,54 +14,62 @@ import java.util.UUID;
 
 @Entity
 @Cache
-public class Group {
-	
+public class Note {
+
 	@Id
     private long id;
-	
+
 	@Parent
     @ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     private Key<Profile> profileKey;
-	
+
 	@ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
     private String organizerUserId;
-	
+
     @Index
-	String name;
+	String text;
 
 	@Index
 	int color;
-	
+
 	@Index
 	String uuId;
-	
+
 	@Index
 	long dateTime;
 
-    private Group() {}
-	
-	public Group(final long id, final String organizerUserId, GroupForm groupForm) {
+    long reminderId;
+
+	byte[] image;
+
+    private Note() {}
+
+	public Note(final long id, final String organizerUserId, NoteForm noteForm) {
 		this.id = id;
 		this.profileKey = Key.create(Profile.class, organizerUserId);
         this.organizerUserId = organizerUserId;
-		this.uuId = groupForm.getUuId();
+		this.uuId = noteForm.getUuId();
 		if (uuId == null || uuId.matches("")) {
 			this.uuId = UUID.randomUUID().toString();
 		}
-		this.color = groupForm.getColor();
-		this.name = groupForm.getName();
+		this.color = noteForm.getColor();
+		this.text = noteForm.getText();
+        this.image = noteForm.getImage();
 		this.dateTime = System.currentTimeMillis();
+        this.reminderId = noteForm.getReminderId();
 	}
 	
-	public void update(GroupForm groupForm) {
-		if (groupForm == null) {
+	public void update(NoteForm noteForm) {
+		if (noteForm == null) {
 			return;
 		}
-		if (groupForm.getColor() != -1)
-            this.color = groupForm.getColor();
-        if (groupForm.getName() != null)
-            this.name = groupForm.getName();
+		if (noteForm.getColor() != -1)
+            this.color = noteForm.getColor();
+        if (noteForm.getText() != null)
+            this.text = noteForm.getText();
+        this.image = noteForm.getImage();
 		this.dateTime = System.currentTimeMillis();
+        this.reminderId = noteForm.getReminderId();
 	}
 
 	@ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
@@ -71,7 +79,7 @@ public class Group {
 
 	// Get a String version of the key
 	public String getWebsafeKey() {
-		return Key.create(profileKey, Group.class, id).getString();
+		return Key.create(profileKey, Note.class, id).getString();
 	}
 
 	@ApiResourceProperty(ignored = AnnotationBoolean.TRUE)
@@ -91,11 +99,19 @@ public class Group {
 		return id;
 	}
 	
-	public String getName() {
-		return name;
-	}
-	
 	public String getUuId() {
 		return uuId;
 	}
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public long getReminderId() {
+        return reminderId;
+    }
+
+    public String getText() {
+        return text;
+    }
 }

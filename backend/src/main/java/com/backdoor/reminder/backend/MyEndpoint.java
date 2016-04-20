@@ -7,9 +7,11 @@
 package com.backdoor.reminder.backend;
 
 import com.backdoor.reminder.backend.domain.Group;
+import com.backdoor.reminder.backend.domain.Note;
 import com.backdoor.reminder.backend.domain.Profile;
 import com.backdoor.reminder.backend.domain.Reminder;
 import com.backdoor.reminder.backend.form.GroupForm;
+import com.backdoor.reminder.backend.form.NoteForm;
 import com.backdoor.reminder.backend.form.ProfileForm;
 import com.backdoor.reminder.backend.form.ReminderForm;
 import com.google.api.server.spi.Constant;
@@ -72,12 +74,10 @@ public class MyEndpoint {
 
             profile = new Profile(userId, displayName, mainEmail);
         } else {
-            profile.update(displayName);
+            profile.update(displayName, profileForm.getPassword());
         }
 
         ofy().save().entity(profile).now();
-
-        // Return the profile
         return profile;
     }
 
@@ -91,8 +91,7 @@ public class MyEndpoint {
         }
 
         String userId = user.getUserId();
-        Profile profile = ofy().load().key(Key.create(Profile.class, userId)).now();
-        return profile;
+        return ofy().load().key(Key.create(Profile.class, userId)).now();
     }
 
     private static Profile getProfileFromUser(User user) {
@@ -139,25 +138,35 @@ public class MyEndpoint {
 
     @ApiMethod(
             name = "updateReminder",
-            path = "updateReminder/{websafeReminderKey}",
+            path = "updateReminder/{id}",
             httpMethod = ApiMethod.HttpMethod.POST)
     public Reminder updateReminder(final User user,
-                                   @Named("websafeReminderKey") final String websafeReminderKey, final ReminderForm reminderForm)
+                                   @Named("id") final long id, final ReminderForm reminderForm)
             throws UnauthorizedException, NotFoundException {
         if (user == null) {
             throw new UnauthorizedException("Authorization required");
         }
 
-        Key<Reminder> reminderKey = Key.create(websafeReminderKey);
-        Reminder reminder = ofy().load().key(reminderKey).now();
+        String userId = user.getUserId();
+        Key<Profile> profileKey = Key.create(Profile.class, userId);
+
+        List<Reminder> list = ofy().load().type(Reminder.class)
+                .ancestor(profileKey)
+                .order("eventTime").list();
+        Reminder reminder = null;
+        for (Reminder item : list) {
+            if (item.getId() == id) {
+                reminder = item;
+                break;
+            }
+        }
         if (reminder == null) {
-            throw new NotFoundException("No reminder found with key: " + websafeReminderKey);
+            throw new NotFoundException("No reminder found with id: " + id);
         } else {
             Profile profile = getProfileFromUser(user);
             reminder.update(reminderForm);
             ofy().save().entities(reminder, profile).now();
         }
-
         return reminder;
     }
 
@@ -166,7 +175,8 @@ public class MyEndpoint {
             path = "getRemindersList",
             httpMethod = ApiMethod.HttpMethod.POST
     )
-    public List<Reminder> getRemindersList(final User user) throws UnauthorizedException {
+    public List<Reminder> getRemindersList(final User user) throws UnauthorizedException,
+            NotFoundException {
         if (user == null) {
             throw new UnauthorizedException("Authorization required");
         }
@@ -174,47 +184,75 @@ public class MyEndpoint {
         String userId = user.getUserId();
         Key<Profile> profileKey = Key.create(Profile.class, userId);
 
-        return ofy().load().type(Reminder.class)
+        List<Reminder> list = ofy().load().type(Reminder.class)
                 .ancestor(profileKey)
                 .order("eventTime").list();
+
+        if (list == null || list.size() == 0) {
+            throw new NotFoundException("For now you don't have any reminder is DB.");
+        }
+
+        return list;
     }
 
     @ApiMethod(
             name = "getReminder",
-            path = "getReminder/{websafeReminderKey}",
+            path = "getReminder/{id}",
             httpMethod = ApiMethod.HttpMethod.GET
     )
     public Reminder getReminder(final User user,
-                                @Named("websafeReminderKey") final String websafeReminderKey)
+                                @Named("id") final long id)
             throws NotFoundException, UnauthorizedException {
         if (user == null) {
             throw new UnauthorizedException("Authorization required");
         }
-        Key<Reminder> reminderKey = Key.create(websafeReminderKey);
-        Reminder reminder = ofy().load().key(reminderKey).now();
+        String userId = user.getUserId();
+        Key<Profile> profileKey = Key.create(Profile.class, userId);
+
+        List<Reminder> list = ofy().load().type(Reminder.class)
+                .ancestor(profileKey)
+                .order("eventTime").list();
+        Reminder reminder = null;
+        for (Reminder item : list) {
+            if (item.getId() == id) {
+                reminder = item;
+                break;
+            }
+        }
         if (reminder == null) {
-            throw new NotFoundException("No reminder found with key: " + websafeReminderKey);
+            throw new NotFoundException("No reminder found with id: " + id);
         }
         return reminder;
     }
 
     @ApiMethod(
             name = "deleteReminder",
-            path = "deleteReminder/{websafeReminderKey}",
+            path = "deleteReminder/{id}",
             httpMethod = ApiMethod.HttpMethod.GET
     )
     public Reminder deleteReminder(final User user,
-                                   @Named("websafeReminderKey") final String websafeReminderKey)
+                                   @Named("id") final long id)
             throws NotFoundException, UnauthorizedException {
         if (user == null) {
             throw new UnauthorizedException("Authorization required");
         }
-        Key<Reminder> reminderKey = Key.create(websafeReminderKey);
-        Reminder reminder = ofy().load().key(reminderKey).now();
+        String userId = user.getUserId();
+        Key<Profile> profileKey = Key.create(Profile.class, userId);
+
+        List<Reminder> list = ofy().load().type(Reminder.class)
+                .ancestor(profileKey)
+                .order("eventTime").list();
+        Reminder reminder = null;
+        for (Reminder item : list) {
+            if (item.getId() == id) {
+                reminder = item;
+                break;
+            }
+        }
         if (reminder == null) {
-            throw new NotFoundException("No reminder found with key: " + websafeReminderKey);
+            throw new NotFoundException("No reminder found with id: " + id);
         } else {
-            ofy().delete().key(reminderKey).now();
+            ofy().delete().key(Key.create(reminder.getWebsafeKey())).now();
         }
         return reminder;
     }
@@ -249,19 +287,31 @@ public class MyEndpoint {
 
     @ApiMethod(
             name = "updateGroup",
-            path = "updateGroup/{websafeGroupKey}",
+            path = "updateGroup/{id}",
             httpMethod = ApiMethod.HttpMethod.POST)
     public Group updateGroup(final User user,
-                             @Named("websafeGroupKey") final String websafeGroupKey, final GroupForm groupForm)
+                             @Named("id") final long id, final GroupForm groupForm)
             throws UnauthorizedException, NotFoundException {
         if (user == null) {
             throw new UnauthorizedException("Authorization required");
         }
 
-        Key<Group> groupKey = Key.create(websafeGroupKey);
-        Group group = ofy().load().key(groupKey).now();
+        String userId = user.getUserId();
+        Key<Profile> profileKey = Key.create(Profile.class, userId);
+
+        List<Group> list = ofy().load().type(Group.class)
+                .ancestor(profileKey)
+                .order("name").list();
+        Group group = null;
+        for (Group item : list) {
+            if (item.getId() == id) {
+                group = item;
+                break;
+            }
+        }
+
         if (group == null) {
-            throw new NotFoundException("No group found with key: " + websafeGroupKey);
+            throw new NotFoundException("No group found with id: " + id);
         } else {
             Profile profile = getProfileFromUser(user);
             group.update(groupForm);
@@ -273,51 +323,63 @@ public class MyEndpoint {
 
     @ApiMethod(
             name = "deleteGroup",
-            path = "deleteGroup/{websafeGroupKey}",
+            path = "deleteGroup/{id}",
             httpMethod = ApiMethod.HttpMethod.GET
     )
     public Group deleteGroup(final User user,
-                             @Named("websafeGroupKey") final String websafeGroupKey)
+                             @Named("id") final long id)
             throws NotFoundException, UnauthorizedException {
         if (user == null) {
             throw new UnauthorizedException("Authorization required");
         }
-        Key<Group> groupKey = Key.create(websafeGroupKey);
-        Group group = ofy().load().key(groupKey).now();
+        String userId = user.getUserId();
+        Key<Profile> profileKey = Key.create(Profile.class, userId);
+
+        List<Group> list = ofy().load().type(Group.class)
+                .ancestor(profileKey)
+                .order("name").list();
+        Group group = null;
+        for (Group item : list) {
+            if (item.getId() == id) {
+                group = item;
+                break;
+            }
+        }
 
         if (group == null) {
-            throw new NotFoundException("No group found with key: " + websafeGroupKey);
+            throw new NotFoundException("No group found with id: " + id);
         } else {
-            String groupId = group.getUuId();
-            ofy().delete().key(groupKey).now();
-            Key<Profile> profileKey = Key.create(Profile.class, user.getUserId());
-
-            List<Reminder> list = ofy().load().type(Reminder.class)
-                    .ancestor(profileKey).list();
-            for (Reminder reminder : list) {
-                if (reminder.getCategory().matches(groupId)) {
-                    ofy().delete().entity(reminder);
-                }
-            }
+            ofy().delete().key(Key.create(group.getWebsafeKey())).now();
         }
         return group;
     }
 
     @ApiMethod(
             name = "getGroup",
-            path = "getGroup/{websafeGroupKey}",
+            path = "getGroup/{id}",
             httpMethod = ApiMethod.HttpMethod.GET
     )
     public Group getGroup(final User user,
-                          @Named("websafeGroupKey") final String websafeGroupKey)
+                          @Named("id") final long id)
             throws NotFoundException, UnauthorizedException {
         if (user == null) {
             throw new UnauthorizedException("Authorization required");
         }
-        Key<Group> groupKey = Key.create(websafeGroupKey);
-        Group group = ofy().load().key(groupKey).now();
+        String userId = user.getUserId();
+        Key<Profile> profileKey = Key.create(Profile.class, userId);
+
+        List<Group> list = ofy().load().type(Group.class)
+                .ancestor(profileKey)
+                .order("name").list();
+        Group group = null;
+        for (Group item : list) {
+            if (item.getId() == id) {
+                group = item;
+                break;
+            }
+        }
         if (group == null) {
-            throw new NotFoundException("No group found with key: " + websafeGroupKey);
+            throw new NotFoundException("No group found with id: " + id);
         }
         return group;
     }
@@ -327,14 +389,169 @@ public class MyEndpoint {
             path = "getGroupsList",
             httpMethod = ApiMethod.HttpMethod.POST
     )
-    public List<Group> getGroupsList(final User user) throws UnauthorizedException {
+    public List<Group> getGroupsList(final User user) throws UnauthorizedException, NotFoundException {
         if (user == null) {
             throw new UnauthorizedException("Authorization required");
         }
 
-        Key<Profile> profileKey = Key.create(Profile.class, user.getUserId());
-        return ofy().load().type(Group.class)
+        String userId = user.getUserId();
+        Key<Profile> profileKey = Key.create(Profile.class, userId);
+
+        List<Group> list = ofy().load().type(Group.class)
                 .ancestor(profileKey)
                 .order("name").list();
+        if (list == null || list.size() == 0) {
+            throw new NotFoundException("Not found any group entity in DB.");
+        }
+        return list;
+    }
+
+    @ApiMethod(
+            name = "insertNote",
+            path = "insertNote",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public Note insertNote(final User user, final NoteForm noteForm)
+            throws UnauthorizedException {
+        if (user == null) {
+            throw new UnauthorizedException("Authorization required");
+        }
+
+        final String userId = user.getUserId();
+        Key<Profile> profileKey = Key.create(Profile.class, userId);
+        final Key<Note> groupKey = factory().allocateId(profileKey, Note.class);
+        final long groupId = groupKey.getId();
+
+        Note note = ofy().transact(new Work<Note>() {
+            @Override
+            public Note run() {
+                Profile profile = getProfileFromUser(user);
+                Note note = new Note(groupId, userId, noteForm);
+                ofy().save().entities(note, profile).now();
+                return note;
+            }
+        });
+
+        return note;
+    }
+
+    @ApiMethod(
+            name = "updateNote",
+            path = "updateNote/{id}",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public Note updateNote(final User user,
+                             @Named("id") final long id, final NoteForm noteForm)
+            throws UnauthorizedException, NotFoundException {
+        if (user == null) {
+            throw new UnauthorizedException("Authorization required");
+        }
+
+        String userId = user.getUserId();
+        Key<Profile> profileKey = Key.create(Profile.class, userId);
+
+        List<Note> list = ofy().load().type(Note.class)
+                .ancestor(profileKey)
+                .order("dateTime").list();
+        Note note = null;
+        for (Note item : list) {
+            if (item.getId() == id) {
+                note = item;
+                break;
+            }
+        }
+
+        if (note == null) {
+            throw new NotFoundException("No note found with id: " + id);
+        } else {
+            Profile profile = getProfileFromUser(user);
+            note.update(noteForm);
+            ofy().save().entities(note, profile).now();
+        }
+
+        return note;
+    }
+
+    @ApiMethod(
+            name = "deleteNote",
+            path = "deleteNote/{id}",
+            httpMethod = ApiMethod.HttpMethod.GET
+    )
+    public Note deleteNote(final User user,
+                             @Named("id") final long id)
+            throws NotFoundException, UnauthorizedException {
+        if (user == null) {
+            throw new UnauthorizedException("Authorization required");
+        }
+        String userId = user.getUserId();
+        Key<Profile> profileKey = Key.create(Profile.class, userId);
+
+        List<Note> list = ofy().load().type(Note.class)
+                .ancestor(profileKey)
+                .order("dateTime").list();
+        Note note = null;
+        for (Note item : list) {
+            if (item.getId() == id) {
+                note = item;
+                break;
+            }
+        }
+
+        if (note == null) {
+            throw new NotFoundException("No note found with id: " + id);
+        } else {
+            ofy().delete().key(Key.create(note.getWebsafeKey())).now();
+        }
+        return note;
+    }
+
+    @ApiMethod(
+            name = "getNote",
+            path = "getNote/{id}",
+            httpMethod = ApiMethod.HttpMethod.GET
+    )
+    public Note getNote(final User user,
+                          @Named("id") final long id)
+            throws NotFoundException, UnauthorizedException {
+        if (user == null) {
+            throw new UnauthorizedException("Authorization required");
+        }
+        String userId = user.getUserId();
+        Key<Profile> profileKey = Key.create(Profile.class, userId);
+
+        List<Note> list = ofy().load().type(Note.class)
+                .ancestor(profileKey)
+                .order("dateTime").list();
+        Note note = null;
+        for (Note item : list) {
+            if (item.getId() == id) {
+                note = item;
+                break;
+            }
+        }
+        if (note == null) {
+            throw new NotFoundException("No note found with id: " + id);
+        }
+        return note;
+    }
+
+    @ApiMethod(
+            name = "getNotesList",
+            path = "getNotesList",
+            httpMethod = ApiMethod.HttpMethod.POST
+    )
+    public List<Note> getNotesList(final User user) throws UnauthorizedException, NotFoundException {
+        if (user == null) {
+            throw new UnauthorizedException("Authorization required");
+        }
+
+        String userId = user.getUserId();
+        Key<Profile> profileKey = Key.create(Profile.class, userId);
+
+        List<Note> list = ofy().load().type(Note.class)
+                .ancestor(profileKey)
+                .order("text").list();
+        if (list == null || list.size() == 0) {
+            throw new NotFoundException("Not found any notes entity in DB.");
+        }
+        return list;
     }
 }

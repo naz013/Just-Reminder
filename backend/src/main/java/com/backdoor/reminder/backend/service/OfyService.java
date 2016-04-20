@@ -1,6 +1,7 @@
 package com.backdoor.reminder.backend.service;
 
 import com.backdoor.reminder.backend.domain.Group;
+import com.backdoor.reminder.backend.domain.Note;
 import com.backdoor.reminder.backend.domain.Profile;
 import com.backdoor.reminder.backend.domain.Reminder;
 import com.googlecode.objectify.Objectify;
@@ -18,6 +19,7 @@ public class OfyService {
         factory().register(Reminder.class);
         factory().register(Group.class);
         factory().register(Profile.class);
+        factory().register(Note.class);
     }
 
     /**

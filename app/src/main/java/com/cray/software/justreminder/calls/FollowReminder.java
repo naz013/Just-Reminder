@@ -305,6 +305,9 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         }
     };
 
+    /**
+     * Save event to DB and enable reminder.
+     */
     private void saveDateTask(){
         String text = mMessageField.getText().toString().trim();
         if (text.matches("") && mMessageRadio.isChecked()){
@@ -426,6 +429,9 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         }
     }
 
+    /**
+     * Select time for event in next business day
+     */
     private void setUpNextBusiness() {
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(mNextWorkTime);
@@ -436,6 +442,9 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         mDay = c.get(Calendar.DAY_OF_MONTH);
     }
 
+    /**
+     * Set time of event for tomorrow
+     */
     private void setUpTomorrow() {
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(mTomorrowTime);
