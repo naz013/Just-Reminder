@@ -73,7 +73,7 @@ public class CalendarWeekdayFactory implements RemoteViewsService.RemoteViewsFac
     @Override
     public RemoteViews getViewAt(int i) {
         SharedPreferences sp = mContext.getSharedPreferences(
-                CalendarWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
+                CalendarWidgetConfig.CALENDAR_WIDGET_PREF, Context.MODE_PRIVATE);
         int theme = sp.getInt(CalendarWidgetConfig.CALENDAR_WIDGET_THEME + mWidgetId, 0);
         CalendarTheme item = CalendarTheme.getThemes(mContext).get(theme);
         int itemTextColor = item.getItemTextColor();

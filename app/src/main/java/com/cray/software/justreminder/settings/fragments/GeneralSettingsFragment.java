@@ -22,7 +22,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.WearService;
 import com.cray.software.justreminder.views.PrefsView;
-import com.cray.software.justreminder.app_widgets.utils.UpdatesHelper;
+import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 
 public class GeneralSettingsFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener {
     

@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.app_widgets.services;
+package com.cray.software.justreminder.app_widgets.notes;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -20,12 +20,12 @@ import com.cray.software.justreminder.constants.Prefs;
 
 import java.util.ArrayList;
 
-public class CurrentNotesFactory implements RemoteViewsService.RemoteViewsFactory {
+public class NotesFactory implements RemoteViewsService.RemoteViewsFactory {
 
     private ArrayList<Note> notes;
     private Context mContext;
 
-    CurrentNotesFactory(Context ctx, Intent intent) {
+    NotesFactory(Context ctx, Intent intent) {
         mContext = ctx;
         int widgetID = intent.getIntExtra(
                 AppWidgetManager.EXTRA_APPWIDGET_ID,

@@ -507,7 +507,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".app_widgets.configs.CurrentNotesWidgetConfig"
+            android:name=".app_widgets.notes.NotesWidgetConfig"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -574,7 +574,7 @@
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <receiver
-            android:name=".app_widgets.CurrentNotesWidget"
+            android:name=".app_widgets.notes.NotesWidget"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/notes">
             <intent-filter>
@@ -587,7 +587,7 @@
         </receiver>
 
         <service
-            android:name=".app_widgets.services.CurrentNotesService"
+            android:name=".app_widgets.notes.NotesService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <receiver
@@ -617,7 +617,7 @@
         </activity>
 
         <receiver
-            android:name=".app_widgets.CalendarWidget"
+            android:name=".app_widgets.calendar.CalendarWidget"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/calendar">
             <intent-filter>
@@ -732,7 +732,6 @@
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
                 <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
                 <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
                 <action android:name="com.google.android.gms.wearable.CAPABILITY_CHANGED" />

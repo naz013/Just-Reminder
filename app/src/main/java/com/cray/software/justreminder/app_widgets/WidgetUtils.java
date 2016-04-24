@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.app_widgets.utils;
+package com.cray.software.justreminder.app_widgets;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.modules.Module;

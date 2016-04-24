@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.app_widgets;
+package com.cray.software.justreminder.app_widgets.calendar;
 
 import android.annotation.TargetApi;
 import android.app.PendingIntent;
@@ -16,12 +16,6 @@ import android.widget.RemoteViews;
 import com.cray.software.justreminder.CalendarActivity;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
-import com.cray.software.justreminder.app_widgets.calendar.CalendarMonthService;
-import com.cray.software.justreminder.app_widgets.calendar.CalendarUpdateMinusService;
-import com.cray.software.justreminder.app_widgets.calendar.CalendarUpdateService;
-import com.cray.software.justreminder.app_widgets.calendar.CalendarWeekdayService;
-import com.cray.software.justreminder.app_widgets.calendar.CalendarWidgetConfig;
-import com.cray.software.justreminder.app_widgets.calendar.CalendarTheme;
 import com.cray.software.justreminder.app_widgets.configs.CurrentTaskWidgetConfig;
 import com.cray.software.justreminder.dialogs.VoiceWidgetDialog;
 
@@ -45,7 +39,7 @@ public class CalendarWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         SharedPreferences sp = context.getSharedPreferences(
-                CalendarWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
+                CalendarWidgetConfig.CALENDAR_WIDGET_PREF, Context.MODE_PRIVATE);
 
         for (int i : appWidgetIds) {
             updateWidget(context, appWidgetManager, sp, i);

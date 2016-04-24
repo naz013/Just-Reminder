@@ -33,7 +33,7 @@ import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
-import com.cray.software.justreminder.app_widgets.utils.UpdatesHelper;
+import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 
 import java.util.ArrayList;
 import java.util.Calendar;

@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-import com.cray.software.justreminder.app_widgets.utils.UpdatesHelper;
+import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 
 public class CalendarUpdateMinusService extends IntentService {
 
@@ -20,7 +20,7 @@ public class CalendarUpdateMinusService extends IntentService {
         int widgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
         SharedPreferences sp =
-                getSharedPreferences(CalendarWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
+                getSharedPreferences(CalendarWidgetConfig.CALENDAR_WIDGET_PREF, Context.MODE_PRIVATE);
         int month  = sp.getInt(CalendarWidgetConfig.CALENDAR_WIDGET_MONTH + widgetId, 0);
         int year  = sp.getInt(CalendarWidgetConfig.CALENDAR_WIDGET_YEAR + widgetId, 0);
         if (action != 0){

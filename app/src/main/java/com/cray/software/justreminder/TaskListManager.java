@@ -25,7 +25,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.app_widgets.utils.UpdatesHelper;
+import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 
 
 public class TaskListManager extends AppCompatActivity {

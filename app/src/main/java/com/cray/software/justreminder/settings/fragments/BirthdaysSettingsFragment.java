@@ -32,7 +32,7 @@ import com.cray.software.justreminder.services.BirthdayCheckAlarm;
 import com.cray.software.justreminder.services.BirthdayPermanentAlarm;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.views.PrefsView;
-import com.cray.software.justreminder.app_widgets.utils.UpdatesHelper;
+import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 
 import java.util.Calendar;
 

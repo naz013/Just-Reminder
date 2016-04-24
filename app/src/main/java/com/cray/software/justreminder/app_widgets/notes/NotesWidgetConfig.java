@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.app_widgets.calendar;
+package com.cray.software.justreminder.app_widgets.notes;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
@@ -20,20 +20,16 @@ import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
-public class CalendarWidgetConfig extends AppCompatActivity {
+public class NotesWidgetConfig extends AppCompatActivity {
 
     private int widgetID = AppWidgetManager.INVALID_APPWIDGET_ID;
     private Intent resultValue;
-    public final static String CALENDAR_WIDGET_PREF = "calendar_pref";
-    public final static String CALENDAR_WIDGET_THEME = "calendar_theme_";
-    public final static String CALENDAR_WIDGET_MONTH = "calendar_month_";
-    public final static String CALENDAR_WIDGET_YEAR = "calendar_year_";
+    public final static String NOTES_WIDGET_PREF = "notes_pref";
+    public final static String NOTES_WIDGET_THEME = "notes_theme_";
 
     private ViewPager mThemePager;
-    private ArrayList<CalendarTheme> mThemes;
+    private ArrayList<NotesTheme> mThemes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,17 +45,17 @@ public class CalendarWidgetConfig extends AppCompatActivity {
             finish();
         }
 
-        SharedPreferences sp = getSharedPreferences(CALENDAR_WIDGET_PREF, MODE_PRIVATE);
-        int theme = sp.getInt(CALENDAR_WIDGET_THEME + widgetID, 0);
+        SharedPreferences sp = getSharedPreferences(NOTES_WIDGET_PREF, MODE_PRIVATE);
+        int theme = sp.getInt(NOTES_WIDGET_THEME + widgetID, 0);
 
         resultValue = new Intent();
         resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
 
         setResult(RESULT_CANCELED, resultValue);
 
-        ColorSetter cSetter = new ColorSetter(CalendarWidgetConfig.this);
+        ColorSetter cSetter = new ColorSetter(NotesWidgetConfig.this);
         setTheme(cSetter.getStyle());
-        setContentView(R.layout.calendar_widget_config_layout);
+        setContentView(R.layout.note_widget_config_layout);
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
@@ -68,7 +64,7 @@ public class CalendarWidgetConfig extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
-        toolbar.setTitle(getString(R.string.calendar));
+        toolbar.setTitle(getString(R.string.notes));
 
         mThemePager = (ViewPager) findViewById(R.id.themePager);
         loadThemes();
@@ -76,7 +72,7 @@ public class CalendarWidgetConfig extends AppCompatActivity {
     }
 
     private void loadThemes(){
-        mThemes = CalendarTheme.getThemes(this);
+        mThemes = NotesTheme.getThemes(this);
         MyFragmentPagerAdapter adapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), mThemes);
         mThemePager.setAdapter(adapter);
     }
@@ -99,36 +95,29 @@ public class CalendarWidgetConfig extends AppCompatActivity {
     }
 
     private void updateWidget() {
-        SharedPreferences sp = getSharedPreferences(CALENDAR_WIDGET_PREF, MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences(NOTES_WIDGET_PREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
-        Calendar cal = new GregorianCalendar();
-        cal.setTimeInMillis(System.currentTimeMillis());
-        int month = cal.get(Calendar.MONTH);
-        int year = cal.get(Calendar.YEAR);
-        int position = mThemePager.getCurrentItem();
-        editor.putInt(CALENDAR_WIDGET_THEME + widgetID, position);
-        editor.putInt(CALENDAR_WIDGET_MONTH + widgetID, month);
-        editor.putInt(CALENDAR_WIDGET_YEAR + widgetID, year);
+        editor.putInt(NOTES_WIDGET_THEME + widgetID, mThemePager.getCurrentItem());
         editor.commit();
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-        CalendarWidget.updateWidget(CalendarWidgetConfig.this, appWidgetManager, sp, widgetID);
+        NotesWidget.updateWidget(NotesWidgetConfig.this, appWidgetManager, sp, widgetID);
         setResult(RESULT_OK, resultValue);
         finish();
     }
 
     private class MyFragmentPagerAdapter extends FragmentPagerAdapter {
 
-        ArrayList<CalendarTheme> arrayList;
+        ArrayList<NotesTheme> arrayList;
 
-        public MyFragmentPagerAdapter(FragmentManager fm, ArrayList<CalendarTheme> list) {
+        public MyFragmentPagerAdapter(FragmentManager fm, ArrayList<NotesTheme> list) {
             super(fm);
             this.arrayList = list;
         }
 
         @Override
         public Fragment getItem(int position) {
-            return CalendarThemeFragment.newInstance(position, mThemes);
+            return NotesThemeFragment.newInstance(position, mThemes);
         }
 
         @Override

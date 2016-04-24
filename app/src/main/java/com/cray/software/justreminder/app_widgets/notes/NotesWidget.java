@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.app_widgets;
+package com.cray.software.justreminder.app_widgets.notes;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -11,10 +11,8 @@ import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.NotesManager;
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.app_widgets.configs.CurrentNotesWidgetConfig;
-import com.cray.software.justreminder.app_widgets.services.CurrentNotesService;
 
-public class CurrentNotesWidget extends AppWidgetProvider {
+public class NotesWidget extends AppWidgetProvider {
 
     @Override
     public void onEnabled(Context context) {
@@ -30,7 +28,7 @@ public class CurrentNotesWidget extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
         SharedPreferences sp = context.getSharedPreferences(
-                CurrentNotesWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
+                NotesWidgetConfig.NOTES_WIDGET_PREF, Context.MODE_PRIVATE);
 
         for (int i : appWidgetIds) {
             updateWidget(context, appWidgetManager, sp, i);
@@ -43,34 +41,36 @@ public class CurrentNotesWidget extends AppWidgetProvider {
 
         RemoteViews rv = new RemoteViews(context.getPackageName(),
                 R.layout.note_widget_layout);
+        int theme = sp.getInt(NotesWidgetConfig.NOTES_WIDGET_THEME + widgetID, 0);
+        NotesTheme notesTheme = NotesTheme.getThemes(context).get(theme);
 
-        int widgetColor = sp.getInt(CurrentNotesWidgetConfig.CURRENT_WIDGET_HEADER_COLOR + widgetID, 0);
-        int widgetBgColor = sp.getInt(CurrentNotesWidgetConfig.CURRENT_WIDGET_COLOR + widgetID, 0);
-        int widgetTitleColor = sp.getInt(CurrentNotesWidgetConfig.CURRENT_WIDGET_TITLE_COLOR + widgetID, 0);
-        int widgetButton = sp.getInt(CurrentNotesWidgetConfig.CURRENT_WIDGET_BUTTON_COLOR + widgetID, 0);
-        int widgetButtonSettings = sp.getInt(CurrentNotesWidgetConfig.CURRENT_WIDGET_BUTTON_SETTINGS_COLOR + widgetID, 0);
+        int headerColor = notesTheme.getHeaderColor();
+        int backgroundColor = notesTheme.getBackgroundColor();
+        int titleColor = notesTheme.getTitleColor();
+        int plusIcon = notesTheme.getPlusIcon();
+        int settingsIcon = notesTheme.getSettingsIcon();
 
-        rv.setInt(R.id.headerBg, "setBackgroundColor", widgetColor);
-        rv.setInt(R.id.widgetBg, "setBackgroundColor", widgetBgColor);
-        rv.setTextColor(R.id.widgetTitle, widgetTitleColor);
-        rv.setInt(R.id.tasksCount, "setImageResource", widgetButton);
+        rv.setInt(R.id.headerBg, "setBackgroundResource", headerColor);
+        rv.setInt(R.id.widgetBg, "setBackgroundResource", backgroundColor);
+        rv.setTextColor(R.id.widgetTitle, titleColor);
+        rv.setInt(R.id.tasksCount, "setImageResource", plusIcon);
 
         Intent configIntent = new Intent(context, NotesManager.class);
         PendingIntent configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
         rv.setOnClickPendingIntent(R.id.tasksCount, configPendingIntent);
 
-        configIntent = new Intent(context, CurrentNotesWidgetConfig.class);
+        configIntent = new Intent(context, NotesWidgetConfig.class);
         configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
         configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
         rv.setOnClickPendingIntent(R.id.settingsButton, configPendingIntent);
-        rv.setInt(R.id.settingsButton, "setImageResource", widgetButtonSettings);
+        rv.setInt(R.id.settingsButton, "setImageResource", settingsIcon);
 
         Intent startActivityIntent = new Intent(context, NotesManager.class);
         PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0, startActivityIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         rv.setPendingIntentTemplate(android.R.id.list, startActivityPendingIntent);
 
-        Intent adapter = new Intent(context, CurrentNotesService.class);
+        Intent adapter = new Intent(context, NotesService.class);
         adapter.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
         rv.setRemoteAdapter(android.R.id.list, adapter);
         appWidgetManager.updateAppWidget(widgetID, rv);
@@ -83,10 +83,9 @@ public class CurrentNotesWidget extends AppWidgetProvider {
         super.onDeleted(context, appWidgetIds);
 
         SharedPreferences.Editor editor = context.getSharedPreferences(
-                CurrentNotesWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE).edit();
+                NotesWidgetConfig.NOTES_WIDGET_PREF, Context.MODE_PRIVATE).edit();
         for (int widgetID : appWidgetIds) {
-            editor.remove(CurrentNotesWidgetConfig.CURRENT_WIDGET_COLOR + widgetID);
-            editor.remove(CurrentNotesWidgetConfig.CURRENT_WIDGET_HEADER_COLOR + widgetID);
+            editor.remove(NotesWidgetConfig.NOTES_WIDGET_THEME + widgetID);
         }
         editor.commit();
     }

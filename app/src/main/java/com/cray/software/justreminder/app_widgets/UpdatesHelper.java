@@ -1,14 +1,12 @@
-package com.cray.software.justreminder.app_widgets.utils;
+package com.cray.software.justreminder.app_widgets;
 
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 
-import com.cray.software.justreminder.app_widgets.CalendarWidget;
-import com.cray.software.justreminder.app_widgets.CurrentNotesWidget;
-import com.cray.software.justreminder.app_widgets.CurrentTaskWidget;
-import com.cray.software.justreminder.app_widgets.TasksWidget;
+import com.cray.software.justreminder.app_widgets.calendar.CalendarWidget;
+import com.cray.software.justreminder.app_widgets.notes.NotesWidget;
 
 public class UpdatesHelper {
 
@@ -31,11 +29,11 @@ public class UpdatesHelper {
     }
 
     public void updateNotesWidget(){
-        Intent intent = new Intent(mContext, CurrentNotesWidget.class);
+        Intent intent = new Intent(mContext, NotesWidget.class);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 
         int ids[] = AppWidgetManager.getInstance(mContext).getAppWidgetIds(new
-                ComponentName(mContext, CurrentNotesWidget.class));
+                ComponentName(mContext, NotesWidget.class));
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
         mContext.sendBroadcast(intent);
     }

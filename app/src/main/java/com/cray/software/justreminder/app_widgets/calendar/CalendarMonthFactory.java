@@ -53,7 +53,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
         calendar.setTimeInMillis(System.currentTimeMillis());
 
         SharedPreferences sp =
-                mContext.getSharedPreferences(CalendarWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
+                mContext.getSharedPreferences(CalendarWidgetConfig.CALENDAR_WIDGET_PREF, Context.MODE_PRIVATE);
         int prefsMonth = sp.getInt(CalendarWidgetConfig.CALENDAR_WIDGET_MONTH + mWidgetId, 0);
 
         mYear = sp.getInt(CalendarWidgetConfig.CALENDAR_WIDGET_YEAR + mWidgetId, 0);
@@ -172,7 +172,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
     @Override
     public RemoteViews getViewAt(int i) {
         SharedPreferences sp = mContext.getSharedPreferences(
-                CalendarWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
+                CalendarWidgetConfig.CALENDAR_WIDGET_PREF, Context.MODE_PRIVATE);
         int theme = sp.getInt(CalendarWidgetConfig.CALENDAR_WIDGET_THEME + mWidgetId, 0);
         CalendarTheme calendarTheme = CalendarTheme.getThemes(mContext).get(theme);
         int itemTextColor = calendarTheme.getItemTextColor();

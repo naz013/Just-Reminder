@@ -21,7 +21,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.app_widgets.AddBirthdayWidget;
-import com.cray.software.justreminder.app_widgets.utils.WidgetUtils;
+import com.cray.software.justreminder.app_widgets.WidgetUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
