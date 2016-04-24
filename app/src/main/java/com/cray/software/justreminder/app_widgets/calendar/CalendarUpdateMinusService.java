@@ -21,15 +21,15 @@ public class CalendarUpdateMinusService extends IntentService {
                 AppWidgetManager.INVALID_APPWIDGET_ID);
         SharedPreferences sp =
                 getSharedPreferences(CalendarWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
-        int month  = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_MONTH + widgetId, 0);
-        int year  = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_YEAR + widgetId, 0);
+        int month  = sp.getInt(CalendarWidgetConfig.CALENDAR_WIDGET_MONTH + widgetId, 0);
+        int year  = sp.getInt(CalendarWidgetConfig.CALENDAR_WIDGET_YEAR + widgetId, 0);
         if (action != 0){
             SharedPreferences.Editor editor = sp.edit();
             if (month == 0) month = 11;
             else month -= 1;
-            editor.putInt(CalendarWidgetConfig.CURRENT_WIDGET_MONTH + widgetId, month);
+            editor.putInt(CalendarWidgetConfig.CALENDAR_WIDGET_MONTH + widgetId, month);
             if (month == 11) year -= 1;
-            editor.putInt(CalendarWidgetConfig.CURRENT_WIDGET_YEAR + widgetId, year);
+            editor.putInt(CalendarWidgetConfig.CALENDAR_WIDGET_YEAR + widgetId, year);
             editor.commit();
             new UpdatesHelper(CalendarUpdateMinusService.this).updateCalendarWidget();
             stopSelf();

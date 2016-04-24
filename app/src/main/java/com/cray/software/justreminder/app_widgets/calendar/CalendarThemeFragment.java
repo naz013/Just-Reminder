@@ -37,9 +37,9 @@ public class CalendarThemeFragment extends Fragment{
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
     static final String ARGUMENT_DATA = "arg_data";
     private int pageNumber;
-    private ArrayList<ThemeItem> list;
+    private ArrayList<CalendarTheme> list;
 
-    public static CalendarThemeFragment newInstance(int page, ArrayList<ThemeItem> list) {
+    public static CalendarThemeFragment newInstance(int page, ArrayList<CalendarTheme> list) {
         CalendarThemeFragment pageFragment = new CalendarThemeFragment();
         Bundle arguments = new Bundle();
         arguments.putInt(ARGUMENT_PAGE_NUMBER, page);
@@ -77,30 +77,30 @@ public class CalendarThemeFragment extends Fragment{
         GridView weekdayGrid = (GridView) view.findViewById(R.id.weekdayGrid);
         GridView monthGrid = (GridView) view.findViewById(R.id.monthGrid);
 
-        ThemeItem themeItem = list.get(pageNumber);
+        CalendarTheme calendarTheme = list.get(pageNumber);
 
-        int windowColor = themeItem.getWindowColor();
+        int windowColor = calendarTheme.getWindowColor();
         background.setBackgroundResource(windowColor);
-        int windowTextColor = themeItem.getWindowTextColor();
+        int windowTextColor = calendarTheme.getWindowTextColor();
         themeTitle.setTextColor(windowTextColor);
         helpTip.setTextColor(windowTextColor);
 
-        int itemTextColor = themeItem.getItemTextColor();
-        int widgetBgColor = themeItem.getWidgetBgColor();
-        int headerColor = themeItem.getHeaderColor();
-        int borderColor = themeItem.getBorderColor();
-        int titleColor = themeItem.getTitleColor();
-        int rowColor = themeItem.getRowColor();
+        int itemTextColor = calendarTheme.getItemTextColor();
+        int widgetBgColor = calendarTheme.getWidgetBgColor();
+        int headerColor = calendarTheme.getHeaderColor();
+        int borderColor = calendarTheme.getBorderColor();
+        int titleColor = calendarTheme.getTitleColor();
+        int rowColor = calendarTheme.getRowColor();
 
-        int leftArrow = themeItem.getLeftArrow();
-        int rightArrow = themeItem.getRightArrow();
-        int iconPlus = themeItem.getIconPlus();
-        int iconVoice = themeItem.getIconVoice();
-        int iconSettings = themeItem.getIconSettings();
+        int leftArrow = calendarTheme.getLeftArrow();
+        int rightArrow = calendarTheme.getRightArrow();
+        int iconPlus = calendarTheme.getIconPlus();
+        int iconVoice = calendarTheme.getIconVoice();
+        int iconSettings = calendarTheme.getIconSettings();
 
-        int currentMark = themeItem.getCurrentMark();
-        int birthdayMark = themeItem.getBirthdayMark();
-        int reminderMark = themeItem.getReminderMark();
+        int currentMark = calendarTheme.getCurrentMark();
+        int birthdayMark = calendarTheme.getBirthdayMark();
+        int reminderMark = calendarTheme.getReminderMark();
 
         weekdayGrid.setBackgroundResource(widgetBgColor);
         header.setBackgroundResource(headerColor);
@@ -123,7 +123,7 @@ public class CalendarThemeFragment extends Fragment{
                 monthYearFormatter, cal.getTimeInMillis(), cal.getTimeInMillis(), MONTH_YEAR_FLAG).toString();
         currentDate.setText(monthTitle.toUpperCase());
 
-        themeTitle.setText(themeItem.getTitle());
+        themeTitle.setText(calendarTheme.getTitle());
 
         weekdayGrid.setAdapter(new WeekdayAdapter(getActivity(), itemTextColor));
         monthGrid.setAdapter(new MonthGridAdapter(getActivity(), new int[]{itemTextColor, rowColor,

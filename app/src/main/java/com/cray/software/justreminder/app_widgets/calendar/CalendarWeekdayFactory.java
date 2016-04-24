@@ -8,9 +8,8 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.app_widgets.calendar.CalendarWidgetConfig;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.hexrain.flextcal.FlextHelper;
 
 import java.text.SimpleDateFormat;
@@ -22,15 +21,15 @@ import hirondelle.date4j.DateTime;
 
 public class CalendarWeekdayFactory implements RemoteViewsService.RemoteViewsFactory {
 
-    private ArrayList<String> weekdays;
+    private ArrayList<String> mWeekdaysList;
     private Context mContext;
-    private int widgetID;
+    private int mWidgetId;
     private int SUNDAY = 1;
     private int startDayOfWeek = SUNDAY;
 
     CalendarWeekdayFactory(Context ctx, Intent intent) {
         mContext = ctx;
-        widgetID = intent.getIntExtra(
+        mWidgetId = intent.getIntExtra(
                 AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
     }
@@ -42,8 +41,8 @@ public class CalendarWeekdayFactory implements RemoteViewsService.RemoteViewsFac
 
     @Override
     public void onDataSetChanged() {
-        weekdays = new ArrayList<>();
-        weekdays.clear();
+        mWeekdaysList = new ArrayList<>();
+        mWeekdaysList.clear();
         SimpleDateFormat fmt = new SimpleDateFormat("EEE", Locale.getDefault());
 
         // 17 Feb 2013 is Sunday
@@ -56,7 +55,7 @@ public class CalendarWeekdayFactory implements RemoteViewsService.RemoteViewsFac
 
         for (int i = 0; i < 7; i++) {
             Date date = FlextHelper.convertDateTimeToDate(nextDay);
-            weekdays.add(fmt.format(date).toUpperCase());
+            mWeekdaysList.add(fmt.format(date).toUpperCase());
             nextDay = nextDay.plusDays(1);
         }
     }
@@ -68,18 +67,20 @@ public class CalendarWeekdayFactory implements RemoteViewsService.RemoteViewsFac
 
     @Override
     public int getCount() {
-        return weekdays.size();
+        return mWeekdaysList.size();
     }
 
     @Override
     public RemoteViews getViewAt(int i) {
         SharedPreferences sp = mContext.getSharedPreferences(
                 CalendarWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
-        int itemTextColor = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_ITEM_TEXT_COLOR + widgetID, 0);
+        int theme = sp.getInt(CalendarWidgetConfig.CALENDAR_WIDGET_THEME + mWidgetId, 0);
+        CalendarTheme item = CalendarTheme.getThemes(mContext).get(theme);
+        int itemTextColor = item.getItemTextColor();
         RemoteViews rView = new RemoteViews(mContext.getPackageName(),
                 R.layout.weekday_grid);
 
-        rView.setTextViewText(R.id.textView1, weekdays.get(i));
+        rView.setTextViewText(R.id.textView1, mWeekdaysList.get(i));
         rView.setTextColor(R.id.textView1, itemTextColor);
 
         return rView;

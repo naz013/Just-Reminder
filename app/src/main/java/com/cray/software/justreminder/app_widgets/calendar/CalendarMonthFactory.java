@@ -16,7 +16,6 @@ import com.cray.software.justreminder.datas.WidgetDataProvider;
 import com.cray.software.justreminder.datas.models.WidgetItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.app_widgets.calendar.CalendarWidgetConfig;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,17 +24,17 @@ import hirondelle.date4j.DateTime;
 
 public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFactory {
 
-    private ArrayList<DateTime> datetimeList;
-    private ArrayList<WidgetItem> pagerData = new ArrayList<>();
-    private Context context;
-    private int widgetID;
+    private ArrayList<DateTime> mDateTimeList;
+    private ArrayList<WidgetItem> mPagerData = new ArrayList<>();
+    private Context mContext;
+    private int mWidgetId;
     private int mDay;
     private int mMonth;
     private int mYear;
 
     CalendarMonthFactory(Context ctx, Intent intent) {
-        context = ctx;
-        widgetID = intent.getIntExtra(
+        mContext = ctx;
+        mWidgetId = intent.getIntExtra(
                 AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
     }
@@ -47,17 +46,17 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
 
     @Override
     public void onDataSetChanged() {
-        datetimeList = new ArrayList<>();
-        datetimeList.clear();
+        mDateTimeList = new ArrayList<>();
+        mDateTimeList.clear();
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
 
         SharedPreferences sp =
-                context.getSharedPreferences(CalendarWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
-        int prefsMonth = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_MONTH + widgetID, 0);
+                mContext.getSharedPreferences(CalendarWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
+        int prefsMonth = sp.getInt(CalendarWidgetConfig.CALENDAR_WIDGET_MONTH + mWidgetId, 0);
 
-        mYear = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_YEAR + widgetID, 0);
+        mYear = sp.getInt(CalendarWidgetConfig.CALENDAR_WIDGET_YEAR + mWidgetId, 0);
         mDay = calendar.get(Calendar.DAY_OF_MONTH);
         mMonth = prefsMonth + 1;
 
@@ -68,7 +67,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
         // Add dates of first week from previous month
         int weekdayOfFirstDate = firstDateOfMonth.getWeekDay();
 
-        SharedPrefs prefs = new SharedPrefs(context);
+        SharedPrefs prefs = new SharedPrefs(mContext);
         int startDayOfWeek = prefs.loadInt(Prefs.START_DAY) + 1;
 
         // If weekdayOfFirstDate smaller than startDayOfWeek
@@ -85,13 +84,13 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
                 break;
             }
 
-            datetimeList.add(dateTime);
+            mDateTimeList.add(dateTime);
             weekdayOfFirstDate--;
         }
 
         // Add dates of current month
         for (int i = 0; i < lastDateOfMonth.getDay(); i++) {
-            datetimeList.add(firstDateOfMonth.plusDays(i));
+            mDateTimeList.add(firstDateOfMonth.plusDays(i));
         }
 
         // Add dates of last week from next month
@@ -105,7 +104,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
             int i = 1;
             while (true) {
                 DateTime nextDay = lastDateOfMonth.plusDays(i);
-                datetimeList.add(nextDay);
+                mDateTimeList.add(nextDay);
                 i++;
                 if (nextDay.getWeekDay() == endDayOfWeek) {
                     break;
@@ -114,12 +113,12 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
         }
 
         // Add more weeks to fill remaining rows
-        int size = datetimeList.size();
+        int size = mDateTimeList.size();
         int numOfDays = 42 - size;
-        DateTime lastDateTime = datetimeList.get(size - 1);
+        DateTime lastDateTime = mDateTimeList.get(size - 1);
         for (int i = 1; i <= numOfDays; i++) {
             DateTime nextDateTime = lastDateTime.plusDays(i);
-            datetimeList.add(nextDateTime);
+            mDateTimeList.add(nextDateTime);
         }
 
         showEvents();
@@ -132,19 +131,19 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
         int currentMonth;
         int currentYear;
 
-        SharedPrefs sPrefs = new SharedPrefs(context);
+        SharedPrefs sPrefs = new SharedPrefs(mContext);
         int hour = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_HOUR);
         int minute = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
         boolean isFeature = sPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
         boolean isRemindersEnabled = sPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR);
 
-        WidgetDataProvider provider = new WidgetDataProvider(context);
+        WidgetDataProvider provider = new WidgetDataProvider(mContext);
         provider.setTime(hour, minute);
         if (isRemindersEnabled) {
             provider.setFeature(isFeature);
         }
         provider.fillArray();
-        pagerData.clear();
+        mPagerData.clear();
 
         int position = 0;
         do {
@@ -153,7 +152,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
             currentYear = calendar.get(Calendar.YEAR);
             boolean hasReminders = provider.hasReminder(currentDay, currentMonth, currentYear);
             boolean hasBirthdays = provider.hasBirthday(currentDay, currentMonth);
-            pagerData.add(new WidgetItem(currentDay, currentMonth, currentYear,
+            mPagerData.add(new WidgetItem(currentDay, currentMonth, currentYear,
                     hasReminders, hasBirthdays));
             position++;
             calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
@@ -167,27 +166,29 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
 
     @Override
     public int getCount() {
-        return datetimeList.size();
+        return mDateTimeList.size();
     }
 
     @Override
     public RemoteViews getViewAt(int i) {
-        SharedPreferences sp = context.getSharedPreferences(
+        SharedPreferences sp = mContext.getSharedPreferences(
                 CalendarWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
-        int itemTextColor = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_ITEM_TEXT_COLOR + widgetID, 0);
-        int rowColor = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_ROW_COLOR + widgetID, 0);
-        int reminderM = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_REMINDER_COLOR + widgetID, 0);
-        int birthdayM = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_BIRTHDAY_COLOR + widgetID, 0);
-        int currentM = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_CURRENT_COLOR + widgetID, 0);
-        int prefsMonth = sp.getInt(CalendarWidgetConfig.CURRENT_WIDGET_MONTH + widgetID, 0);
-        RemoteViews rView = new RemoteViews(context.getPackageName(),
+        int theme = sp.getInt(CalendarWidgetConfig.CALENDAR_WIDGET_THEME + mWidgetId, 0);
+        CalendarTheme calendarTheme = CalendarTheme.getThemes(mContext).get(theme);
+        int itemTextColor = calendarTheme.getItemTextColor();
+        int rowColor = calendarTheme.getRowColor();
+        int reminderM = calendarTheme.getReminderMark();
+        int birthdayM = calendarTheme.getBirthdayMark();
+        int currentM = calendarTheme.getCurrentMark();
+        int prefsMonth = sp.getInt(CalendarWidgetConfig.CALENDAR_WIDGET_MONTH + mWidgetId, 0);
+        RemoteViews rView = new RemoteViews(mContext.getPackageName(),
                 R.layout.month_view_grid);
 
-        ColorSetter cs = new ColorSetter(context);
+        ColorSetter cs = new ColorSetter(mContext);
 
-        int selDay = datetimeList.get(i).getDay();
-        int selMonth = datetimeList.get(i).getMonth();
-        int selYear = datetimeList.get(i).getYear();
+        int selDay = mDateTimeList.get(i).getDay();
+        int selMonth = mDateTimeList.get(i).getMonth();
+        int selYear = mDateTimeList.get(i).getYear();
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
@@ -196,15 +197,15 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
 
         rView.setTextViewText(R.id.textView, String.valueOf(selDay));
         if (selMonth == prefsMonth + 1) rView.setTextColor(R.id.textView, itemTextColor);
-        else rView.setTextColor(R.id.textView, context.getResources().getColor(R.color.material_grey));
+        else rView.setTextColor(R.id.textView, mContext.getResources().getColor(R.color.material_grey));
         rView.setInt(R.id.background, "setBackgroundResource", rowColor);
 
         rView.setInt(R.id.currentMark, "setBackgroundColor", Color.TRANSPARENT);
         rView.setInt(R.id.reminderMark, "setBackgroundColor", Color.TRANSPARENT);
         rView.setInt(R.id.birthdayMark, "setBackgroundColor", Color.TRANSPARENT);
 
-        if (pagerData.size() > 0){
-            for (WidgetItem item : pagerData){
+        if (mPagerData.size() > 0){
+            for (WidgetItem item : mPagerData){
                 int day = item.getDay();
                 int month = item.getMonth() + 1;
                 int year = item.getYear();
@@ -214,7 +215,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
                             rView.setInt(R.id.reminderMark, "setBackgroundResource", reminderM);
                         } else {
                             rView.setInt(R.id.reminderMark, "setBackgroundColor",
-                                    context.getResources().getColor(cs.colorReminderCalendar()));
+                                    mContext.getResources().getColor(cs.colorReminderCalendar()));
                         }
                     } else rView.setInt(R.id.reminderMark, "setBackgroundColor", Color.TRANSPARENT);
                     if (item.isHasBirthdays()){
@@ -222,7 +223,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
                             rView.setInt(R.id.birthdayMark, "setBackgroundResource", birthdayM);
                         } else {
                             rView.setInt(R.id.birthdayMark, "setBackgroundColor",
-                                    context.getResources().getColor(cs.colorBirthdayCalendar()));
+                                    mContext.getResources().getColor(cs.colorBirthdayCalendar()));
                         }
                     } else rView.setInt(R.id.birthdayMark, "setBackgroundColor", Color.TRANSPARENT);
                     break;
@@ -236,7 +237,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
                 rView.setInt(R.id.currentMark, "setBackgroundResource", currentM);
             } else {
                 rView.setInt(R.id.currentMark, "setBackgroundColor",
-                        context.getResources().getColor(cs.colorCurrentCalendar()));
+                        mContext.getResources().getColor(cs.colorCurrentCalendar()));
             }
         } else {
             rView.setInt(R.id.currentMark, "setBackgroundColor", Color.TRANSPARENT);
