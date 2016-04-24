@@ -210,7 +210,11 @@ public class CloudLogin extends AsyncTask<Void, String, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        if (dialog != null && dialog.isShowing()) dialog.dismiss();
+        try {
+            if (dialog != null && dialog.isShowing()) dialog.dismiss();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
         if (listener != null) listener.onCloud();
     }
 
