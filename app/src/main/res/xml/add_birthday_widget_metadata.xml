@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:configure="com.cray.software.justreminder.widgets.configs.AddBirthdayWidgetConfig"
+    android:configure="com.cray.software.justreminder.app_widgets.configs.AddBirthdayWidgetConfig"
     android:initialLayout="@layout/add_birthday_widget_layout"
     android:minHeight="40dp"
     android:minWidth="40dp"

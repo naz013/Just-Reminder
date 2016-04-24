@@ -22,7 +22,7 @@ import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.views.PrefsView;
-import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
+import com.cray.software.justreminder.app_widgets.utils.UpdatesHelper;
 
 public class CalendarSettingsFragment extends Fragment implements View.OnClickListener {
 

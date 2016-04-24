@@ -37,7 +37,7 @@ import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.services.EventsCheckAlarm;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
+import com.cray.software.justreminder.app_widgets.utils.UpdatesHelper;
 
 import org.dmfs.rfc5545.recur.Freq;
 import org.dmfs.rfc5545.recur.InvalidRecurrenceRuleException;

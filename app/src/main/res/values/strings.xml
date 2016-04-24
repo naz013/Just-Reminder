@@ -154,7 +154,7 @@
     <string name="time">Time</string>
     <string name="google_tasks">Google Tasks</string>
     <string name="add_to_calendar">Add to Calendar</string>
-    <string name="swipe_to_change_theme">Swipe to change theme</string>
+    <string name="swipe_to_change_theme">Swipe to select theme</string>
     <string name="address">Address</string>
     <string name="no_places">No places</string>
     <string name="tasks">Tasks</string>

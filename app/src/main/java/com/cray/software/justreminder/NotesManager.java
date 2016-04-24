@@ -55,7 +55,7 @@ import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
-import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
+import com.cray.software.justreminder.app_widgets.utils.UpdatesHelper;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 

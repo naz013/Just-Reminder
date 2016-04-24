@@ -214,8 +214,8 @@
         <service android:name=".services.GeolocationService" />
         <service android:name=".services.TaskButlerService" />
         <service android:name=".services.CheckBirthdays" />
-        <service android:name=".widgets.services.CalendarUpdateService" />
-        <service android:name=".widgets.services.CalendarUpdateMinusService" />
+        <service android:name=".app_widgets.calendar.CalendarUpdateService" />
+        <service android:name=".app_widgets.calendar.CalendarUpdateMinusService" />
         <service android:name=".services.CheckPosition" />
 
         <activity
@@ -450,7 +450,7 @@
         </activity>
 
         <receiver
-            android:name=".widgets.AddReminderWidget"
+            android:name=".app_widgets.AddReminderWidget"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/add_reminder_menu">
             <intent-filter>
@@ -462,7 +462,7 @@
                 android:resource="@xml/add_reminder_widget_metadata" />
         </receiver>
         <receiver
-            android:name=".widgets.VoiceWidget"
+            android:name=".app_widgets.VoiceWidget"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/voice_control">
             <intent-filter>
@@ -474,7 +474,7 @@
                 android:resource="@xml/voice_widget_metadata" />
         </receiver>
         <receiver
-            android:name=".widgets.AddBirthdayWidget"
+            android:name=".app_widgets.AddBirthdayWidget"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/add_birthday">
             <intent-filter>
@@ -486,7 +486,7 @@
                 android:resource="@xml/add_birthday_widget_metadata" />
         </receiver>
         <receiver
-            android:name=".widgets.QuickReminderWidget"
+            android:name=".app_widgets.QuickReminderWidget"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/add_reminder_menu">
             <intent-filter>
@@ -499,7 +499,7 @@
         </receiver>
 
         <activity
-            android:name=".widgets.configs.CurrentTaskWidgetConfig"
+            android:name=".app_widgets.configs.CurrentTaskWidgetConfig"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -507,7 +507,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".widgets.configs.CurrentNotesWidgetConfig"
+            android:name=".app_widgets.configs.CurrentNotesWidgetConfig"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -515,7 +515,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".widgets.configs.AddReminderWidgetConfig"
+            android:name=".app_widgets.configs.AddReminderWidgetConfig"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -523,7 +523,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".widgets.configs.AddBirthdayWidgetConfig"
+            android:name=".app_widgets.configs.AddBirthdayWidgetConfig"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -531,7 +531,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".widgets.configs.QuickReminderWidgetConfig"
+            android:name=".app_widgets.configs.QuickReminderWidgetConfig"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -539,7 +539,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".widgets.configs.TasksWidgetConfig"
+            android:name=".app_widgets.configs.TasksWidgetConfig"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -547,7 +547,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".widgets.configs.VoiceWidgetConfig"
+            android:name=".app_widgets.configs.VoiceWidgetConfig"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -556,7 +556,7 @@
         </activity>
 
         <receiver
-            android:name=".widgets.CurrentTaskWidget"
+            android:name=".app_widgets.CurrentTaskWidget"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/active_reminders">
             <intent-filter>
@@ -570,11 +570,11 @@
         </receiver>
 
         <service
-            android:name=".widgets.services.CurrentTaskService"
+            android:name=".app_widgets.services.CurrentTaskService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <receiver
-            android:name=".widgets.CurrentNotesWidget"
+            android:name=".app_widgets.CurrentNotesWidget"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/notes">
             <intent-filter>
@@ -587,11 +587,11 @@
         </receiver>
 
         <service
-            android:name=".widgets.services.CurrentNotesService"
+            android:name=".app_widgets.services.CurrentNotesService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <receiver
-            android:name=".widgets.TasksWidget"
+            android:name=".app_widgets.TasksWidget"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/google_tasks">
             <intent-filter>
@@ -604,11 +604,11 @@
         </receiver>
 
         <service
-            android:name=".widgets.services.TasksService"
+            android:name=".app_widgets.services.TasksService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <activity
-            android:name=".widgets.configs.CalendarWidgetConfig"
+            android:name=".app_widgets.calendar.CalendarWidgetConfig"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -617,7 +617,7 @@
         </activity>
 
         <receiver
-            android:name=".widgets.CalendarWidget"
+            android:name=".app_widgets.CalendarWidget"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/calendar">
             <intent-filter>
@@ -630,10 +630,10 @@
         </receiver>
 
         <service
-            android:name=".widgets.services.CalendarWeekdayService"
+            android:name=".app_widgets.calendar.CalendarWeekdayService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
         <service
-            android:name=".widgets.services.CalendarMonthService"
+            android:name=".app_widgets.calendar.CalendarMonthService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <receiver

@@ -16,7 +16,7 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
+import com.cray.software.justreminder.app_widgets.utils.UpdatesHelper;
 
 public class CalendarStyle extends AppCompatActivity {
     private ImageButton red, green, blue, yellow, greenLight, blueLight, cyan, purple,

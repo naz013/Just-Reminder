@@ -26,7 +26,7 @@ import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.AutoSyncAlarm;
 import com.cray.software.justreminder.services.EventsCheckAlarm;
 import com.cray.software.justreminder.utils.MemoryUtil;
-import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
+import com.cray.software.justreminder.app_widgets.utils.UpdatesHelper;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -18,7 +18,7 @@ import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.Type;
 import com.cray.software.justreminder.utils.TimeUtil;
-import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
+import com.cray.software.justreminder.app_widgets.utils.UpdatesHelper;
 
 public class AlarmReceiver extends WakefulBroadcastReceiver {
 

@@ -11,7 +11,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.json.JExport;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JParser;
-import com.cray.software.justreminder.widgets.utils.UpdatesHelper;
+import com.cray.software.justreminder.app_widgets.utils.UpdatesHelper;
 
 public class Type {
 
