@@ -16,7 +16,6 @@ import android.widget.RemoteViews;
 import com.cray.software.justreminder.CalendarActivity;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
-import com.cray.software.justreminder.app_widgets.configs.CurrentTaskWidgetConfig;
 import com.cray.software.justreminder.dialogs.VoiceWidgetDialog;
 
 import java.util.Calendar;
@@ -136,7 +135,7 @@ public class CalendarWidget extends AppWidgetProvider {
         super.onDeleted(context, appWidgetIds);
 
         SharedPreferences.Editor editor = context.getSharedPreferences(
-                CurrentTaskWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE).edit();
+                CalendarWidgetConfig.CALENDAR_WIDGET_PREF, Context.MODE_PRIVATE).edit();
         for (int widgetID : appWidgetIds) {
             editor.remove(CalendarWidgetConfig.CALENDAR_WIDGET_THEME + widgetID);
             editor.remove(CalendarWidgetConfig.CALENDAR_WIDGET_MONTH + widgetID);

@@ -90,6 +90,9 @@ public class NotesWidgetConfig extends AppCompatActivity {
             case R.id.action_save:
                 updateWidget();
                 return true;
+            case android.R.id.home:
+                finish();
+                break;
         }
         return true;
     }

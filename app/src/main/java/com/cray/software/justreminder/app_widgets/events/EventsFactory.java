@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.app_widgets.services;
+package com.cray.software.justreminder.app_widgets.events;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -28,14 +28,13 @@ import com.cray.software.justreminder.json.JParser;
 import com.cray.software.justreminder.json.JPlace;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
-import com.cray.software.justreminder.app_widgets.configs.CurrentTaskWidgetConfig;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory {
+public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     private ArrayList<CalendarModel> data;
     private Map<Long, ArrayList<ShoppingList>> map;
@@ -43,7 +42,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
     private TimeCount mCount;
     private int widgetID;
 
-    CurrentTaskFactory(Context ctx, Intent intent) {
+    EventsFactory(Context ctx, Intent intent) {
         mContext = ctx;
         mCount = new TimeCount(ctx);
         widgetID = intent.getIntExtra(
@@ -165,11 +164,13 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
     @Override
     public RemoteViews getViewAt(int i) {
         SharedPreferences sp = mContext.getSharedPreferences(
-                CurrentTaskWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
-        int itemColor = sp.getInt(CurrentTaskWidgetConfig.CURRENT_WIDGET_ITEM_COLOR + widgetID, 0);
-        int itemTextColor = sp.getInt(CurrentTaskWidgetConfig.CURRENT_WIDGET_ITEM_TEXT_COLOR + widgetID, 0);
-        float itemTextSize = sp.getFloat(CurrentTaskWidgetConfig.CURRENT_WIDGET_TEXT_SIZE + widgetID, 0);
-        int widgetButton = sp.getInt(CurrentTaskWidgetConfig.CURRENT_WIDGET_BUTTON_COLOR + widgetID, 0);
+                EventsWidgetConfig.EVENTS_WIDGET_PREF, Context.MODE_PRIVATE);
+        int theme = sp.getInt(EventsWidgetConfig.EVENTS_WIDGET_THEME + widgetID, 0);
+        EventsTheme eventsTheme = EventsTheme.getThemes(mContext).get(theme);
+        int itemBackground = eventsTheme.getItemBackground();
+        int itemTextColor = eventsTheme.getItemTextColor();
+        float itemTextSize = sp.getFloat(EventsWidgetConfig.EVENTS_WIDGET_TEXT_SIZE + widgetID, 0);
+        int checkboxColor = eventsTheme.getCheckboxColor();
 
         RemoteViews rView = null;
         if (i < getCount()) {
@@ -177,7 +178,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
             if (item.getViewType() == 1) {
                 rView = new RemoteViews(mContext.getPackageName(),
                         R.layout.list_item_current_widget);
-                rView.setInt(R.id.itemBg, "setBackgroundColor", itemColor);
+                rView.setInt(R.id.itemBg, "setBackgroundResource", itemBackground);
 
                 String task = item.getName();
                 if (task == null || task.matches("")) task = Contacts.getNameFromNumber(
@@ -230,7 +231,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
             if (item.getViewType() == 2) {
                 rView = new RemoteViews(mContext.getPackageName(),
                         R.layout.list_item_current_widget_with_list);
-                rView.setInt(R.id.itemBg, "setBackgroundColor", itemColor);
+                rView.setInt(R.id.itemBg, "setBackgroundResource", itemBackground);
                 String task = item.getName();
                 rView.setTextViewText(R.id.taskText, task);
                 rView.setTextColor(R.id.taskText, itemTextColor);
@@ -247,7 +248,7 @@ public class CurrentTaskFactory implements RemoteViewsService.RemoteViewsFactory
                     RemoteViews view = new RemoteViews(mContext.getPackageName(),
                             R.layout.list_item_task_item_widget);
 
-                    boolean isBlack = widgetButton == R.drawable.ic_add_black_24dp;
+                    boolean isBlack = checkboxColor == 0;
                     if (list.isChecked() == 1) {
                         if (isBlack)
                             view.setInt(R.id.checkView, "setBackgroundResource", R.drawable.ic_check_box_black_24dp);

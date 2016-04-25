@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.cray.software.justreminder.app_widgets.calendar.CalendarWidget;
+import com.cray.software.justreminder.app_widgets.events.EventsWidget;
 import com.cray.software.justreminder.app_widgets.notes.NotesWidget;
 
 public class UpdatesHelper {
@@ -17,11 +18,11 @@ public class UpdatesHelper {
     }
 
     public void updateWidget(){
-        Intent intent = new Intent(mContext, CurrentTaskWidget.class);
+        Intent intent = new Intent(mContext, EventsWidget.class);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 
         int ids[] = AppWidgetManager.getInstance(mContext).getAppWidgetIds(new
-                ComponentName(mContext, CurrentTaskWidget.class));
+                ComponentName(mContext, EventsWidget.class));
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
         mContext.sendBroadcast(intent);
         updateCalendarWidget();

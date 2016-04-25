@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.app_widgets;
+package com.cray.software.justreminder.app_widgets.events;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -13,15 +13,13 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.activities.QuickAddReminder;
 import com.cray.software.justreminder.dialogs.VoiceWidgetDialog;
-import com.cray.software.justreminder.app_widgets.configs.CurrentTaskWidgetConfig;
-import com.cray.software.justreminder.app_widgets.services.CurrentTaskService;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-public class CurrentTaskWidget extends AppWidgetProvider {
+public class EventsWidget extends AppWidgetProvider {
 
     @Override
     public void onEnabled(Context context) {
@@ -36,7 +34,7 @@ public class CurrentTaskWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         SharedPreferences sp = context.getSharedPreferences(
-                CurrentTaskWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
+                EventsWidgetConfig.EVENTS_WIDGET_PREF, Context.MODE_PRIVATE);
 
         for (int i : appWidgetIds) {
             updateWidget(context, appWidgetManager, sp, i);
@@ -54,40 +52,41 @@ public class CurrentTaskWidget extends AppWidgetProvider {
         RemoteViews rv = new RemoteViews(context.getPackageName(),
                 R.layout.current_tasks_widget_layout);
         rv.setTextViewText(R.id.widgetDate, date);
+        int theme = sp.getInt(EventsWidgetConfig.EVENTS_WIDGET_THEME + widgetID, 0);
+        EventsTheme eventsTheme = EventsTheme.getThemes(context).get(theme);
+        int headerColor = eventsTheme.getHeaderColor();
+        int backgroundColor = eventsTheme.getBackgroundColor();
+        int titleColor = eventsTheme.getTitleColor();
+        int plusIcon = eventsTheme.getPlusIcon();
+        int voiceIcon = eventsTheme.getVoiceIcon();
+        int settingsIcon = eventsTheme.getSettingsIcon();
 
-        int widgetColor = sp.getInt(CurrentTaskWidgetConfig.CURRENT_WIDGET_HEADER_COLOR + widgetID, 0);
-        int widgetBgColor = sp.getInt(CurrentTaskWidgetConfig.CURRENT_WIDGET_COLOR + widgetID, 0);
-        int widgetTextColor = sp.getInt(CurrentTaskWidgetConfig.CURRENT_WIDGET_TEXT_COLOR + widgetID, 0);
-        int widgetButton = sp.getInt(CurrentTaskWidgetConfig.CURRENT_WIDGET_BUTTON_COLOR + widgetID, 0);
-        int widgetButtonVoice = sp.getInt(CurrentTaskWidgetConfig.CURRENT_WIDGET_BUTTON_VOICE_COLOR + widgetID, 0);
-        int widgetButtonSettings = sp.getInt(CurrentTaskWidgetConfig.CURRENT_WIDGET_BUTTON_SETTINGS_COLOR + widgetID, 0);
-
-        rv.setTextColor(R.id.widgetDate, widgetTextColor);
-        rv.setInt(R.id.headerBg, "setBackgroundColor", widgetColor);
-        rv.setInt(R.id.widgetBg, "setBackgroundColor", widgetBgColor);
+        rv.setTextColor(R.id.widgetDate, titleColor);
+        rv.setInt(R.id.headerBg, "setBackgroundResource", headerColor);
+        rv.setInt(R.id.widgetBg, "setBackgroundResource", backgroundColor);
 
         Intent configIntent = new Intent(context, QuickAddReminder.class);
         PendingIntent configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
         rv.setOnClickPendingIntent(R.id.tasksCount, configPendingIntent);
-        rv.setInt(R.id.tasksCount, "setImageResource", widgetButton);
+        rv.setInt(R.id.tasksCount, "setImageResource", plusIcon);
 
         configIntent = new Intent(context, VoiceWidgetDialog.class);
         configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
         rv.setOnClickPendingIntent(R.id.voiceButton, configPendingIntent);
-        rv.setInt(R.id.voiceButton, "setImageResource", widgetButtonVoice);
+        rv.setInt(R.id.voiceButton, "setImageResource", voiceIcon);
 
-        configIntent = new Intent(context, CurrentTaskWidgetConfig.class);
+        configIntent = new Intent(context, EventsWidgetConfig.class);
         configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
         configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
         rv.setOnClickPendingIntent(R.id.settingsButton, configPendingIntent);
-        rv.setInt(R.id.settingsButton, "setImageResource", widgetButtonSettings);
+        rv.setInt(R.id.settingsButton, "setImageResource", settingsIcon);
 
         Intent startActivityIntent = new Intent(context, ReminderManager.class);
         PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0,
                 startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         rv.setPendingIntentTemplate(android.R.id.list, startActivityPendingIntent);
 
-        Intent adapter = new Intent(context, CurrentTaskService.class);
+        Intent adapter = new Intent(context, EventsService.class);
         adapter.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
         rv.setRemoteAdapter(android.R.id.list, adapter);
         appWidgetManager.updateAppWidget(widgetID, rv);
@@ -100,11 +99,10 @@ public class CurrentTaskWidget extends AppWidgetProvider {
         super.onDeleted(context, appWidgetIds);
 
         SharedPreferences.Editor editor = context.getSharedPreferences(
-                CurrentTaskWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE).edit();
+                EventsWidgetConfig.EVENTS_WIDGET_PREF, Context.MODE_PRIVATE).edit();
         for (int widgetID : appWidgetIds) {
-            editor.remove(CurrentTaskWidgetConfig.CURRENT_WIDGET_COLOR + widgetID);
-            editor.remove(CurrentTaskWidgetConfig.CURRENT_WIDGET_HEADER_COLOR + widgetID);
-            editor.remove(CurrentTaskWidgetConfig.CURRENT_WIDGET_TEXT_COLOR + widgetID);
+            editor.remove(EventsWidgetConfig.EVENTS_WIDGET_THEME + widgetID);
+            editor.remove(EventsWidgetConfig.EVENTS_WIDGET_TEXT_SIZE + widgetID);
         }
         editor.commit();
     }

@@ -1,8 +1,12 @@
-package com.cray.software.justreminder.app_widgets.calendar;
+package com.cray.software.justreminder.app_widgets.events;
 
+import android.app.AlertDialog;
 import android.appwidget.AppWidgetManager;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,30 +14,32 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
-public class CalendarWidgetConfig extends AppCompatActivity {
+public class EventsWidgetConfig extends AppCompatActivity {
 
     private int widgetID = AppWidgetManager.INVALID_APPWIDGET_ID;
     private Intent resultValue;
-    public final static String CALENDAR_WIDGET_PREF = "calendar_pref";
-    public final static String CALENDAR_WIDGET_THEME = "calendar_theme_";
-    public final static String CALENDAR_WIDGET_MONTH = "calendar_month_";
-    public final static String CALENDAR_WIDGET_YEAR = "calendar_year_";
+    public final static String EVENTS_WIDGET_PREF = "widget_pref";
+    public final static String EVENTS_WIDGET_TEXT_SIZE = "widget_text_size_";
+    public final static String EVENTS_WIDGET_THEME = "widget_theme_";
+
+    private int textSize;
 
     private ViewPager mThemePager;
-    private ArrayList<CalendarTheme> mThemes;
+    private ArrayList<EventsTheme> mThemes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,18 +55,18 @@ public class CalendarWidgetConfig extends AppCompatActivity {
             finish();
         }
 
-        SharedPreferences sp = getSharedPreferences(CALENDAR_WIDGET_PREF, MODE_PRIVATE);
-        int theme = sp.getInt(CALENDAR_WIDGET_THEME + widgetID, 0);
+        SharedPreferences sp = getSharedPreferences(EVENTS_WIDGET_PREF, MODE_PRIVATE);
+        int theme = sp.getInt(EVENTS_WIDGET_THEME + widgetID, 0);
 
         resultValue = new Intent();
         resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
 
         setResult(RESULT_CANCELED, resultValue);
 
-        ColorSetter cSetter = new ColorSetter(CalendarWidgetConfig.this);
+        ColorSetter cSetter = new ColorSetter(EventsWidgetConfig.this);
         setTheme(cSetter.getStyle());
-        setContentView(R.layout.calendar_widget_config_layout);
-        if (Module.isLollipop()) {
+        setContentView(R.layout.current_widget_config_layout);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
@@ -68,7 +74,7 @@ public class CalendarWidgetConfig extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
-        toolbar.setTitle(getString(R.string.calendar));
+        toolbar.setTitle(getString(R.string.active_reminders));
 
         mThemePager = (ViewPager) findViewById(R.id.themePager);
         loadThemes();
@@ -76,7 +82,7 @@ public class CalendarWidgetConfig extends AppCompatActivity {
     }
 
     private void loadThemes(){
-        mThemes = CalendarTheme.getThemes(this);
+        mThemes = EventsTheme.getThemes(this);
         MyFragmentPagerAdapter adapter = new MyFragmentPagerAdapter(getSupportFragmentManager(), mThemes);
         mThemePager.setAdapter(adapter);
     }
@@ -92,7 +98,7 @@ public class CalendarWidgetConfig extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_save:
-                updateWidget();
+                showTextSizeDialog();
                 return true;
             case android.R.id.home:
                 finish();
@@ -101,37 +107,72 @@ public class CalendarWidgetConfig extends AppCompatActivity {
         return true;
     }
 
+    private void showTextSizeDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(true);
+        builder.setTitle(R.string.text_size);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.dialog_seekbar, null);
+        final TextView textView = (TextView) layout.findViewById(R.id.seekValue);
+        SeekBar seekBar = (SeekBar) layout.findViewById(R.id.dialogSeek);
+        seekBar.setMax(13);
+        seekBar.setProgress(2);
+        textSize = 2 + 12;
+        textView.setText(String.valueOf(textSize));
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                textSize = progress + 12;
+                textView.setText(String.valueOf(textSize));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        builder.setView(layout);
+        builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                updateWidget();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     private void updateWidget() {
-        SharedPreferences sp = getSharedPreferences(CALENDAR_WIDGET_PREF, MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences(EVENTS_WIDGET_PREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
-        Calendar cal = new GregorianCalendar();
-        cal.setTimeInMillis(System.currentTimeMillis());
-        int month = cal.get(Calendar.MONTH);
-        int year = cal.get(Calendar.YEAR);
-        int position = mThemePager.getCurrentItem();
-        editor.putInt(CALENDAR_WIDGET_THEME + widgetID, position);
-        editor.putInt(CALENDAR_WIDGET_MONTH + widgetID, month);
-        editor.putInt(CALENDAR_WIDGET_YEAR + widgetID, year);
+        editor.putInt(EVENTS_WIDGET_THEME + widgetID, mThemePager.getCurrentItem());
+        editor.putFloat(EVENTS_WIDGET_TEXT_SIZE + widgetID, textSize);
         editor.commit();
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-        CalendarWidget.updateWidget(CalendarWidgetConfig.this, appWidgetManager, sp, widgetID);
+        EventsWidget.updateWidget(EventsWidgetConfig.this, appWidgetManager, sp, widgetID);
         setResult(RESULT_OK, resultValue);
         finish();
     }
 
     private class MyFragmentPagerAdapter extends FragmentPagerAdapter {
 
-        ArrayList<CalendarTheme> arrayList;
+        ArrayList<EventsTheme> arrayList;
 
-        public MyFragmentPagerAdapter(FragmentManager fm, ArrayList<CalendarTheme> list) {
+        public MyFragmentPagerAdapter(FragmentManager fm, ArrayList<EventsTheme> list) {
             super(fm);
             this.arrayList = list;
         }
 
         @Override
         public Fragment getItem(int position) {
-            return CalendarThemeFragment.newInstance(position, mThemes);
+            return EventsThemeFragment.newInstance(position, mThemes);
         }
 
         @Override

@@ -499,7 +499,7 @@
         </receiver>
 
         <activity
-            android:name=".app_widgets.configs.CurrentTaskWidgetConfig"
+            android:name=".app_widgets.events.EventsWidgetConfig"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -556,7 +556,7 @@
         </activity>
 
         <receiver
-            android:name=".app_widgets.CurrentTaskWidget"
+            android:name=".app_widgets.events.EventsWidget"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/active_reminders">
             <intent-filter>
@@ -570,7 +570,7 @@
         </receiver>
 
         <service
-            android:name=".app_widgets.services.CurrentTaskService"
+            android:name=".app_widgets.events.EventsService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <receiver
