@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.app_widgets;
+package com.cray.software.justreminder.app_widgets.quick_reminder;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -9,17 +9,17 @@ import android.content.SharedPreferences;
 import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.dialogs.VoiceWidgetDialog;
-import com.cray.software.justreminder.app_widgets.configs.VoiceWidgetConfig;
+import com.cray.software.justreminder.activities.QuickAddReminder;
+import com.cray.software.justreminder.app_widgets.quick_reminder.QuickReminderWidgetConfig;
 
-public class VoiceWidget extends AppWidgetProvider{
+public class QuickReminderWidget extends AppWidgetProvider{
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
 
         SharedPreferences sp = context.getSharedPreferences(
-                VoiceWidgetConfig.VOICE_WIDGET_PREF, Context.MODE_PRIVATE);
+                QuickReminderWidgetConfig.QUICK_REMINDER_WIDGET_PREF, Context.MODE_PRIVATE);
 
         for (int i : appWidgetIds) {
             updateWidget(context, appWidgetManager, sp, i);
@@ -30,13 +30,13 @@ public class VoiceWidget extends AppWidgetProvider{
                                     SharedPreferences sp, int widgetID){
 
         RemoteViews rv = new RemoteViews(context.getPackageName(),
-                R.layout.voice_widget_layout);
+                R.layout.quick_reminder_widget_layout);
 
-        int widgetColor = sp.getInt(VoiceWidgetConfig.VOICE_WIDGET_COLOR + widgetID, 0);
+        int widgetColor = sp.getInt(QuickReminderWidgetConfig.QUICK_REMINDER_WIDGET_COLOR + widgetID, 0);
 
         rv.setInt(R.id.widgetBg, "setBackgroundResource", widgetColor);
 
-        Intent configIntent = new Intent(context, VoiceWidgetDialog.class);
+        Intent configIntent = new Intent(context, QuickAddReminder.class);
 
         PendingIntent configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
 

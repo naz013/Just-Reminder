@@ -8,6 +8,7 @@ import android.content.Intent;
 import com.cray.software.justreminder.app_widgets.calendar.CalendarWidget;
 import com.cray.software.justreminder.app_widgets.events.EventsWidget;
 import com.cray.software.justreminder.app_widgets.notes.NotesWidget;
+import com.cray.software.justreminder.app_widgets.tasks.TasksWidget;
 
 public class UpdatesHelper {
 

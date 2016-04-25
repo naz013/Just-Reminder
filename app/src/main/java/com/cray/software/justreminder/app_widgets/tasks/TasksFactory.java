@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.app_widgets.services;
+package com.cray.software.justreminder.app_widgets.tasks;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -16,7 +16,6 @@ import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.datas.models.Task;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.app_widgets.configs.TasksWidgetConfig;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -102,10 +101,12 @@ public class TasksFactory implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public RemoteViews getViewAt(int i) {
         SharedPreferences sp = mContext.getSharedPreferences(
-                TasksWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
+                TasksWidgetConfig.TASKS_WIDGET_PREF, Context.MODE_PRIVATE);
         RemoteViews rView = new RemoteViews(mContext.getPackageName(),
                 R.layout.list_item_tasks_widget);
-        int itemTextColor = sp.getInt(TasksWidgetConfig.CURRENT_WIDGET_ITEM_COLOR + widgetID, 0);
+        int theme = sp.getInt(TasksWidgetConfig.TASKS_WIDGET_THEME + widgetID, 0);
+        TasksTheme tasksTheme = TasksTheme.getThemes(mContext).get(theme);
+        int itemTextColor = tasksTheme.getItemTextColor();
 
         rView.setTextColor(R.id.task, itemTextColor);
         rView.setTextColor(R.id.note, itemTextColor);

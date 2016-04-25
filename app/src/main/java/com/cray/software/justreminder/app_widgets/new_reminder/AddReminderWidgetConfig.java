@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.app_widgets.configs;
+package com.cray.software.justreminder.app_widgets.new_reminder;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
@@ -20,19 +20,18 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.app_widgets.QuickReminderWidget;
 import com.cray.software.justreminder.app_widgets.WidgetUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class QuickReminderWidgetConfig extends AppCompatActivity {
+public class AddReminderWidgetConfig extends AppCompatActivity {
 
     private int widgetID = AppWidgetManager.INVALID_APPWIDGET_ID;
     private Intent resultValue;
-    public final static String QUICK_REMINDER_WIDGET_PREF = "widget_pref";
-    public final static String QUICK_REMINDER_WIDGET_COLOR = "widget_color_";
+    public final static String ADD_REMINDER_WIDGET_PREF = "widget_pref";
+    public final static String ADD_REMINDER_WIDGET_COLOR = "widget_color_";
     private int color;
 
     private LinearLayout widgetBg;
@@ -56,9 +55,9 @@ public class QuickReminderWidgetConfig extends AppCompatActivity {
 
         setResult(RESULT_CANCELED, resultValue);
 
-        ColorSetter cSetter = new ColorSetter(QuickReminderWidgetConfig.this);
+        ColorSetter cSetter = new ColorSetter(AddReminderWidgetConfig.this);
         setTheme(cSetter.getStyle());
-        setContentView(R.layout.quick_reminder_widget_config_layout);
+        setContentView(R.layout.add_reminder_widget_config_layout);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
@@ -110,13 +109,14 @@ public class QuickReminderWidgetConfig extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add:
-                SharedPreferences sp = getSharedPreferences(QUICK_REMINDER_WIDGET_PREF, MODE_PRIVATE);
+                SharedPreferences sp = getSharedPreferences(ADD_REMINDER_WIDGET_PREF, MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
-                editor.putInt(QUICK_REMINDER_WIDGET_COLOR + widgetID, color);
+                editor.putInt(ADD_REMINDER_WIDGET_COLOR + widgetID, color);
                 editor.commit();
 
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-                QuickReminderWidget.updateWidget(QuickReminderWidgetConfig.this, appWidgetManager, sp, widgetID);
+                AddReminderWidget.updateWidget(AddReminderWidgetConfig.this, appWidgetManager, sp, widgetID);
+
                 setResult(RESULT_OK, resultValue);
                 finish();
                 return true;

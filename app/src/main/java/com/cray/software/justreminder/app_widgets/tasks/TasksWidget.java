@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.app_widgets;
+package com.cray.software.justreminder.app_widgets.tasks;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -12,8 +12,6 @@ import android.widget.RemoteViews;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.TaskManager;
 import com.cray.software.justreminder.constants.TasksConstants;
-import com.cray.software.justreminder.app_widgets.configs.TasksWidgetConfig;
-import com.cray.software.justreminder.app_widgets.services.TasksService;
 
 public class TasksWidget extends AppWidgetProvider {
 
@@ -31,7 +29,7 @@ public class TasksWidget extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
         SharedPreferences sp = context.getSharedPreferences(
-                TasksWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE);
+                TasksWidgetConfig.TASKS_WIDGET_PREF, Context.MODE_PRIVATE);
 
         for (int i : appWidgetIds) {
             updateWidget(context, appWidgetManager, sp, i);
@@ -44,17 +42,18 @@ public class TasksWidget extends AppWidgetProvider {
 
         RemoteViews rv = new RemoteViews(context.getPackageName(),
                 R.layout.tasks_widget_layout);
+        int theme = sp.getInt(TasksWidgetConfig.TASKS_WIDGET_THEME + widgetID, 0);
+        TasksTheme tasksTheme = TasksTheme.getThemes(context).get(theme);
+        int headerColor = tasksTheme.getHeaderColor();
+        int backgroundColor = tasksTheme.getBackgroundColor();
+        int titleColor = tasksTheme.getTitleColor();
+        int plusIcon = tasksTheme.getPlusIcon();
+        int settingsIcon = tasksTheme.getSettingsIcon();
 
-        int widgetColor = sp.getInt(TasksWidgetConfig.CURRENT_WIDGET_HEADER_COLOR + widgetID, 0);
-        int widgetBgColor = sp.getInt(TasksWidgetConfig.CURRENT_WIDGET_COLOR + widgetID, 0);
-        int widgetTitleColor = sp.getInt(TasksWidgetConfig.CURRENT_WIDGET_TITLE_COLOR + widgetID, 0);
-        int widgetButton = sp.getInt(TasksWidgetConfig.CURRENT_WIDGET_BUTTON_COLOR + widgetID, 0);
-        int widgetButtonSettings = sp.getInt(TasksWidgetConfig.CURRENT_WIDGET_BUTTON_SETTINGS_COLOR + widgetID, 0);
-
-        rv.setInt(R.id.headerBg, "setBackgroundColor", widgetColor);
-        rv.setInt(R.id.widgetBg, "setBackgroundColor", widgetBgColor);
-        rv.setTextColor(R.id.widgetTitle, widgetTitleColor);
-        rv.setInt(R.id.tasksCount, "setImageResource", widgetButton);
+        rv.setInt(R.id.headerBg, "setBackgroundResource", headerColor);
+        rv.setInt(R.id.widgetBg, "setBackgroundResource", backgroundColor);
+        rv.setTextColor(R.id.widgetTitle, titleColor);
+        rv.setInt(R.id.tasksCount, "setImageResource", plusIcon);
 
         Intent configIntent = new Intent(context, TaskManager.class);
         configIntent.putExtra(TasksConstants.INTENT_ACTION, TasksConstants.CREATE);
@@ -66,7 +65,7 @@ public class TasksWidget extends AppWidgetProvider {
         configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
         configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
         rv.setOnClickPendingIntent(R.id.settingsButton, configPendingIntent);
-        rv.setInt(R.id.settingsButton, "setImageResource", widgetButtonSettings);
+        rv.setInt(R.id.settingsButton, "setImageResource", settingsIcon);
 
         Intent startActivityIntent = new Intent(context, TaskManager.class);
         PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0,
@@ -86,13 +85,9 @@ public class TasksWidget extends AppWidgetProvider {
         super.onDeleted(context, appWidgetIds);
 
         SharedPreferences.Editor editor = context.getSharedPreferences(
-                TasksWidgetConfig.CURRENT_WIDGET_PREF, Context.MODE_PRIVATE).edit();
+                TasksWidgetConfig.TASKS_WIDGET_PREF, Context.MODE_PRIVATE).edit();
         for (int widgetID : appWidgetIds) {
-            editor.remove(TasksWidgetConfig.CURRENT_WIDGET_COLOR + widgetID);
-            editor.remove(TasksWidgetConfig.CURRENT_WIDGET_HEADER_COLOR + widgetID);
-            editor.remove(TasksWidgetConfig.CURRENT_WIDGET_BUTTON_COLOR + widgetID);
-            editor.remove(TasksWidgetConfig.CURRENT_WIDGET_TITLE_COLOR + widgetID);
-            editor.remove(TasksWidgetConfig.CURRENT_WIDGET_ITEM_COLOR + widgetID);
+            editor.remove(TasksWidgetConfig.TASKS_WIDGET_THEME + widgetID);
         }
         editor.commit();
     }

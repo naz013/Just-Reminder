@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.app_widgets.configs;
+package com.cray.software.justreminder.app_widgets.voice_control;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
@@ -20,19 +20,18 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.app_widgets.AddReminderWidget;
 import com.cray.software.justreminder.app_widgets.WidgetUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class AddReminderWidgetConfig extends AppCompatActivity {
+public class VoiceWidgetConfig extends AppCompatActivity {
 
     private int widgetID = AppWidgetManager.INVALID_APPWIDGET_ID;
     private Intent resultValue;
-    public final static String ADD_REMINDER_WIDGET_PREF = "widget_pref";
-    public final static String ADD_REMINDER_WIDGET_COLOR = "widget_color_";
+    public final static String VOICE_WIDGET_PREF = "widget_pref";
+    public final static String VOICE_WIDGET_COLOR = "widget_color_";
     private int color;
 
     private LinearLayout widgetBg;
@@ -56,9 +55,9 @@ public class AddReminderWidgetConfig extends AppCompatActivity {
 
         setResult(RESULT_CANCELED, resultValue);
 
-        ColorSetter cSetter = new ColorSetter(AddReminderWidgetConfig.this);
+        ColorSetter cSetter = new ColorSetter(VoiceWidgetConfig.this);
         setTheme(cSetter.getStyle());
-        setContentView(R.layout.add_reminder_widget_config_layout);
+        setContentView(R.layout.voice_widget_config_layout);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
@@ -67,12 +66,12 @@ public class AddReminderWidgetConfig extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
-        toolbar.setTitle(getString(R.string.add_reminder_menu));
+        toolbar.setTitle(getString(R.string.voice_control));
 
         widgetBg = (LinearLayout) findViewById(R.id.widgetBg);
 
         Spinner headerBgColor = (Spinner) findViewById(R.id.headerBgColor);
-        boolean isPro = Module.isPro();
+            boolean isPro = Module.isPro();
         List<String> spinnerArray = new ArrayList<>();
         String[] colorsArray = getResources().getStringArray(R.array.color_list);
         Collections.addAll(spinnerArray, colorsArray);
@@ -110,13 +109,13 @@ public class AddReminderWidgetConfig extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add:
-                SharedPreferences sp = getSharedPreferences(ADD_REMINDER_WIDGET_PREF, MODE_PRIVATE);
+                SharedPreferences sp = getSharedPreferences(VOICE_WIDGET_PREF, MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
-                editor.putInt(ADD_REMINDER_WIDGET_COLOR + widgetID, color);
+                editor.putInt(VOICE_WIDGET_COLOR + widgetID, color);
                 editor.commit();
 
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-                AddReminderWidget.updateWidget(AddReminderWidgetConfig.this, appWidgetManager, sp, widgetID);
+                VoiceWidget.updateWidget(VoiceWidgetConfig.this, appWidgetManager, sp, widgetID);
 
                 setResult(RESULT_OK, resultValue);
                 finish();

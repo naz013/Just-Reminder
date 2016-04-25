@@ -221,6 +221,7 @@ public class EventsTheme implements Parcelable {
         titleColor = in.readInt();
         plusIcon = in.readInt();
         settingsIcon = in.readInt();
+        voiceIcon = in.readInt();
         windowColor = in.readInt();
         windowTextColor = in.readInt();
         itemBackgroud = in.readInt();
@@ -241,6 +242,7 @@ public class EventsTheme implements Parcelable {
         dest.writeInt(plusIcon);
         dest.writeInt(backgroundColor);
         dest.writeInt(settingsIcon);
+        dest.writeInt(voiceIcon);
         dest.writeInt(windowColor);
         dest.writeInt(windowTextColor);
         dest.writeInt(itemBackgroud);

@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.app_widgets;
+package com.cray.software.justreminder.app_widgets.voice_control;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -9,17 +9,16 @@ import android.content.SharedPreferences;
 import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ReminderManager;
-import com.cray.software.justreminder.app_widgets.configs.AddReminderWidgetConfig;
+import com.cray.software.justreminder.dialogs.VoiceWidgetDialog;
 
-public class AddReminderWidget extends AppWidgetProvider{
+public class VoiceWidget extends AppWidgetProvider{
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
 
         SharedPreferences sp = context.getSharedPreferences(
-                AddReminderWidgetConfig.ADD_REMINDER_WIDGET_PREF, Context.MODE_PRIVATE);
+                VoiceWidgetConfig.VOICE_WIDGET_PREF, Context.MODE_PRIVATE);
 
         for (int i : appWidgetIds) {
             updateWidget(context, appWidgetManager, sp, i);
@@ -30,13 +29,13 @@ public class AddReminderWidget extends AppWidgetProvider{
                                     SharedPreferences sp, int widgetID){
 
         RemoteViews rv = new RemoteViews(context.getPackageName(),
-                R.layout.add_reminder_widget_layout);
+                R.layout.voice_widget_layout);
 
-        int widgetColor = sp.getInt(AddReminderWidgetConfig.ADD_REMINDER_WIDGET_COLOR + widgetID, 0);
+        int widgetColor = sp.getInt(VoiceWidgetConfig.VOICE_WIDGET_COLOR + widgetID, 0);
 
         rv.setInt(R.id.widgetBg, "setBackgroundResource", widgetColor);
 
-        Intent configIntent = new Intent(context, ReminderManager.class);
+        Intent configIntent = new Intent(context, VoiceWidgetDialog.class);
 
         PendingIntent configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
 

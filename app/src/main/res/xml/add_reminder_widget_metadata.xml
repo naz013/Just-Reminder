@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:configure="com.cray.software.justreminder.app_widgets.configs.AddReminderWidgetConfig"
+    android:configure="com.cray.software.justreminder.app_widgets.new_reminder.AddReminderWidgetConfig"
     android:initialLayout="@layout/add_reminder_widget_layout"
     android:minHeight="40dp"
     android:minWidth="40dp"

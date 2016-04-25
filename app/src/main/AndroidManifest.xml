@@ -450,7 +450,7 @@
         </activity>
 
         <receiver
-            android:name=".app_widgets.AddReminderWidget"
+            android:name=".app_widgets.new_reminder.AddReminderWidget"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/add_reminder_menu">
             <intent-filter>
@@ -462,7 +462,7 @@
                 android:resource="@xml/add_reminder_widget_metadata" />
         </receiver>
         <receiver
-            android:name=".app_widgets.VoiceWidget"
+            android:name=".app_widgets.voice_control.VoiceWidget"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/voice_control">
             <intent-filter>
@@ -474,7 +474,7 @@
                 android:resource="@xml/voice_widget_metadata" />
         </receiver>
         <receiver
-            android:name=".app_widgets.AddBirthdayWidget"
+            android:name=".app_widgets.new_birthday.AddBirthdayWidget"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/add_birthday">
             <intent-filter>
@@ -486,7 +486,7 @@
                 android:resource="@xml/add_birthday_widget_metadata" />
         </receiver>
         <receiver
-            android:name=".app_widgets.QuickReminderWidget"
+            android:name=".app_widgets.quick_reminder.QuickReminderWidget"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/add_reminder_menu">
             <intent-filter>
@@ -515,7 +515,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".app_widgets.configs.AddReminderWidgetConfig"
+            android:name=".app_widgets.new_reminder.AddReminderWidgetConfig"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -523,7 +523,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".app_widgets.configs.AddBirthdayWidgetConfig"
+            android:name=".app_widgets.new_birthday.AddBirthdayWidgetConfig"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -531,7 +531,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".app_widgets.configs.QuickReminderWidgetConfig"
+            android:name=".app_widgets.quick_reminder.QuickReminderWidgetConfig"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -539,7 +539,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".app_widgets.configs.TasksWidgetConfig"
+            android:name=".app_widgets.tasks.TasksWidgetConfig"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -547,7 +547,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".app_widgets.configs.VoiceWidgetConfig"
+            android:name=".app_widgets.voice_control.VoiceWidgetConfig"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -591,7 +591,7 @@
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <receiver
-            android:name=".app_widgets.TasksWidget"
+            android:name=".app_widgets.tasks.TasksWidget"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/google_tasks">
             <intent-filter>
@@ -604,7 +604,7 @@
         </receiver>
 
         <service
-            android:name=".app_widgets.services.TasksService"
+            android:name=".app_widgets.tasks.TasksService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <activity

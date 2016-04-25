@@ -1,7 +1,9 @@
-package com.cray.software.justreminder.app_widgets.services;
+package com.cray.software.justreminder.app_widgets.tasks;
 
 import android.content.Intent;
 import android.widget.RemoteViewsService;
+
+import com.cray.software.justreminder.app_widgets.tasks.TasksFactory;
 
 public class TasksService extends RemoteViewsService {
     @Override
