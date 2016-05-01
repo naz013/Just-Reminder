@@ -690,7 +690,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.FileExplore"
+            android:name=".file_explorer.FileExploreActivity"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>

@@ -12,7 +12,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.activities.FileExplore;
+import com.cray.software.justreminder.file_explorer.FileExploreActivity;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.constants.Constants;
@@ -356,7 +356,7 @@ public class Dialogues {
                     } else {
                         prefs.saveBoolean(prefsToSave, true);
                         dialog.dismiss();
-                        context.startActivityForResult(new Intent(context, FileExplore.class), requestCode);
+                        context.startActivityForResult(new Intent(context, FileExploreActivity.class), requestCode);
                     }
                 }
             }

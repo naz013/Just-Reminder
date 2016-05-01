@@ -8,11 +8,6 @@ public class Configs {
     public static final int REPEAT_SEEKBAR_MAX = 365;
 
     /**
-     * Application code name.
-     */
-    public static final String CODENAME = "Honeydew melon";
-
-    /**
      * Application default theme.
      */
     public static final int DEFAULT_THEME = 8;

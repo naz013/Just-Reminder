@@ -32,7 +32,7 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.cray.software.justreminder.activities.FileExplore;
+import com.cray.software.justreminder.file_explorer.FileExploreActivity;
 import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
@@ -320,7 +320,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                         case R.id.action_custom_melody:
                             if(Permissions.checkPermission(ReminderManager.this,
                                     Permissions.READ_EXTERNAL)) {
-                                startActivityForResult(new Intent(ReminderManager.this, FileExplore.class),
+                                startActivityForResult(new Intent(ReminderManager.this, FileExploreActivity.class),
                                         Constants.REQUEST_CODE_SELECTED_MELODY);
                             } else {
                                 Permissions.requestPermission(ReminderManager.this, 330,
@@ -1499,13 +1499,13 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 break;
             case 330:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startActivityForResult(new Intent(ReminderManager.this, FileExplore.class),
+                    startActivityForResult(new Intent(ReminderManager.this, FileExploreActivity.class),
                             Constants.REQUEST_CODE_SELECTED_MELODY);
                 }
                 break;
             case 331:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startActivityForResult(new Intent(ReminderManager.this, FileExplore.class)
+                    startActivityForResult(new Intent(ReminderManager.this, FileExploreActivity.class)
                             .putExtra(Constants.FILE_TYPE, "any"), FILE_REQUEST);
                 }
                 break;

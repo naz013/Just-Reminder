@@ -2,7 +2,6 @@ package com.cray.software.justreminder.contacts;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 
@@ -50,7 +48,6 @@ public class ContactsActivity extends AppCompatActivity implements LoadListener,
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
         initSearchView();
         initRecyclerView();
-
         new ContactsAsync(this, this).execute();
     }
 
@@ -116,8 +113,10 @@ public class ContactsActivity extends AppCompatActivity implements LoadListener,
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
-        toolbar.setTitle(getString(R.string.contacts));
-        toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
+        if (toolbar != null) {
+            toolbar.setTitle(getString(R.string.contacts));
+            toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        }
     }
 
     @Override
@@ -159,18 +158,15 @@ public class ContactsActivity extends AppCompatActivity implements LoadListener,
                     c.moveToNext();
                 }
                 AlertDialog.Builder builder = new AlertDialog.Builder(ContactsActivity.this);
-                builder.setItems(numbers, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int item) {
-                        String number = (String) numbers[item];
-                        int index = number.indexOf(":");
-                        number = number.substring(index + 2);
-                        Intent intent = new Intent();
-                        intent.putExtra(Constants.SELECTED_CONTACT_NUMBER, number);
-                        intent.putExtra(Constants.SELECTED_CONTACT_NAME, name);
-                        setResult(RESULT_OK, intent);
-                        finish();
-                    }
+                builder.setItems(numbers, (dialog, item) -> {
+                    String number = (String) numbers[item];
+                    int index = number.indexOf(":");
+                    number = number.substring(index + 2);
+                    Intent intent = new Intent();
+                    intent.putExtra(Constants.SELECTED_CONTACT_NUMBER, number);
+                    intent.putExtra(Constants.SELECTED_CONTACT_NAME, name);
+                    setResult(RESULT_OK, intent);
+                    finish();
                 });
                 AlertDialog alert = builder.create();
                 alert.setOwnerActivity(ContactsActivity.this);

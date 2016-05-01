@@ -520,4 +520,6 @@
     <string name="enable_changing_theme_during_day">दिन के दौरान स्वचालित रूप से विषय बदलते सक्षम करें</string>
     <string name="move_backward">Move backward</string>
     <string name="create_task">Create task</string>
+    <string name="type_to_search">Type to search</string>
+    <string name="up">Up</string>
 </resources>

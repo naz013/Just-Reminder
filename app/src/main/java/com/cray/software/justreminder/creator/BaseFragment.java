@@ -22,7 +22,7 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 
 import com.cray.software.justreminder.ReminderManager;
-import com.cray.software.justreminder.activities.FileExplore;
+import com.cray.software.justreminder.file_explorer.FileExploreActivity;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.dialogs.ExclusionPickerDialog;
 import com.cray.software.justreminder.fragments.helpers.MapFragment;
@@ -89,7 +89,7 @@ public class BaseFragment extends Fragment {
         @Override
         public void onClick(View v) {
             if (Permissions.checkPermission(getActivity(), Permissions.READ_EXTERNAL)) {
-                getActivity().startActivityForResult(new Intent(getActivity(), FileExplore.class)
+                getActivity().startActivityForResult(new Intent(getActivity(), FileExploreActivity.class)
                         .putExtra(Constants.FILE_TYPE, "any"), ReminderManager.FILE_REQUEST);
             } else {
                 Permissions.requestPermission(getActivity(), 331,

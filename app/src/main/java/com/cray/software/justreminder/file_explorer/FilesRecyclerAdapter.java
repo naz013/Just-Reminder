@@ -1,9 +1,8 @@
-package com.cray.software.justreminder.contacts;
+package com.cray.software.justreminder.file_explorer;
 
 import android.content.Context;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.databinding.ContactListItemBinding;
+import com.cray.software.justreminder.contacts.RecyclerClickListener;
+import com.cray.software.justreminder.databinding.FileListItemBinding;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.squareup.picasso.Picasso;
 
@@ -20,14 +20,14 @@ import java.util.List;
 
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
-public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecyclerAdapter.ContactViewHolder> {
+public class FilesRecyclerAdapter extends RecyclerView.Adapter<FilesRecyclerAdapter.ContactViewHolder> {
 
     private Context mContext;
-    private List<ContactData> mDataList;
+    private List<FileDataItem> mDataList;
 
     private RecyclerClickListener mListener;
 
-    public ContactsRecyclerAdapter(Context context, List<ContactData> dataItemList, RecyclerClickListener listener) {
+    public FilesRecyclerAdapter(Context context, List<FileDataItem> dataItemList, RecyclerClickListener listener) {
         this.mContext = context;
         this.mDataList = new ArrayList<>(dataItemList);
         this.mListener = listener;
@@ -36,12 +36,12 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
     @Override
     public ContactViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        return new ContactViewHolder(DataBindingUtil.inflate(inflater, R.layout.contact_list_item, parent, false).getRoot());
+        return new ContactViewHolder(DataBindingUtil.inflate(inflater, R.layout.file_list_item, parent, false).getRoot());
     }
 
     @Override
     public void onBindViewHolder(ContactViewHolder holder, int position) {
-        ContactData item = mDataList.get(position);
+        FileDataItem item = mDataList.get(position);
         holder.binding.setItem(item);
     }
 
@@ -51,9 +51,7 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
     }
 
     public class ContactViewHolder extends RecyclerView.ViewHolder {
-
-        ContactListItemBinding binding;
-
+        FileListItemBinding binding;
         public ContactViewHolder(View itemView) {
             super(itemView);
             binding = DataBindingUtil.bind(itemView);
@@ -65,50 +63,54 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
         }
     }
 
-    public ContactData removeItem(int position) {
-        final ContactData model = mDataList.remove(position);
+    public FileDataItem getItem(int position) {
+        return mDataList.get(position);
+    }
+
+    public FileDataItem removeItem(int position) {
+        final FileDataItem model = mDataList.remove(position);
         notifyItemRemoved(position);
         return model;
     }
 
-    public void addItem(int position, ContactData model) {
+    public void addItem(int position, FileDataItem model) {
         mDataList.add(position, model);
         notifyItemInserted(position);
     }
 
     public void moveItem(int fromPosition, int toPosition) {
-        final ContactData model = mDataList.remove(fromPosition);
+        final FileDataItem model = mDataList.remove(fromPosition);
         mDataList.add(toPosition, model);
         notifyItemMoved(fromPosition, toPosition);
     }
 
-    public void animateTo(List<ContactData> models) {
+    public void animateTo(List<FileDataItem> models) {
         applyAndAnimateRemovals(models);
         applyAndAnimateAdditions(models);
         applyAndAnimateMovedItems(models);
     }
 
-    private void applyAndAnimateRemovals(List<ContactData> newModels) {
+    private void applyAndAnimateRemovals(List<FileDataItem> newModels) {
         for (int i = mDataList.size() - 1; i >= 0; i--) {
-            final ContactData model = mDataList.get(i);
+            final FileDataItem model = mDataList.get(i);
             if (!newModels.contains(model)) {
                 removeItem(i);
             }
         }
     }
 
-    private void applyAndAnimateAdditions(List<ContactData> newModels) {
+    private void applyAndAnimateAdditions(List<FileDataItem> newModels) {
         for (int i = 0, count = newModels.size(); i < count; i++) {
-            final ContactData model = newModels.get(i);
+            final FileDataItem model = newModels.get(i);
             if (!mDataList.contains(model)) {
                 addItem(i, model);
             }
         }
     }
 
-    private void applyAndAnimateMovedItems(List<ContactData> newModels) {
+    private void applyAndAnimateMovedItems(List<FileDataItem> newModels) {
         for (int toPosition = newModels.size() - 1; toPosition >= 0; toPosition--) {
-            final ContactData model = newModels.get(toPosition);
+            final FileDataItem model = newModels.get(toPosition);
             final int fromPosition = mDataList.indexOf(model);
             if (fromPosition >= 0 && fromPosition != toPosition) {
                 moveItem(fromPosition, toPosition);
@@ -117,13 +119,13 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
     }
 
     @BindingAdapter("app:loadImage")
-    public static void loadImage(ImageView imageView, String v) {
+    public static void loadImage(ImageView imageView, int v) {
         boolean isDark = new ColorSetter(imageView.getContext()).isDark();
         Picasso.with(imageView.getContext())
-                .load(Uri.parse(v))
+                .load(v)
                 .resize(100, 100)
-                .placeholder(isDark ? R.drawable.ic_person_outline_white_24dp : R.drawable.ic_person_outline_black_24dp)
-                .error(isDark ? R.drawable.ic_person_outline_white_24dp : R.drawable.ic_person_outline_black_24dp)
+                .placeholder(isDark ? R.drawable.ic_insert_drive_file_white_24dp : R.drawable.ic_insert_drive_file_black_24dp)
+                .error(isDark ? R.drawable.ic_insert_drive_file_white_24dp : R.drawable.ic_insert_drive_file_black_24dp)
                 .transform(new CropCircleTransformation())
                 .into(imageView);
     }
