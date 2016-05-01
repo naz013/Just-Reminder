@@ -178,11 +178,21 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     private Handler handler = new Handler();
 
     private Tracker mTracker;
+    private ColorSetter colorSetter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter colorSetter = new ColorSetter(ReminderManager.this);
+        Intent intent = getIntent();
+        id = intent.getLongExtra(Constants.EDIT_ID, 0);
+        String filePath = intent.getStringExtra(Constants.EDIT_PATH);
+        int i = intent.getIntExtra(Constants.EDIT_WIDGET, 0);
+        if (i != 0) Reminder.disable(this, id);
+
+        int selection = sPrefs.loadInt(Prefs.LAST_USED_REMINDER);
+        if (!Module.isPro() && selection == 12) selection = 0;
+
+        colorSetter = new ColorSetter(ReminderManager.this);
         setTheme(colorSetter.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, colorSetter.colorPrimaryDark()));
@@ -190,15 +200,120 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         setContentView(R.layout.create_edit_layout);
         setRequestedOrientation(colorSetter.getRequestOrientation());
 
-        isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
-        isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
-        isDark = colorSetter.isDark();
-        hasTasks = new GTasksHelper(this).isLinked();
+        initFlags();
+        initToolbar();
+        initLimitView();
+        setUpNavigation();
+        initFab();
+        findViewById(R.id.windowBackground).setBackgroundColor(colorSetter.getBackgroundStyle());
+        loadData();
 
+        spinner.setSelection(selection);
+        if (id != 0){
+            item = remControl.getItem(id);
+            readReminder();
+        } else if (filePath != null) {
+            File file = new File(filePath);
+            if (file.exists()) {
+                item = new JParser(SyncHelper.readFile(filePath)).parse();
+                uuId = item.getUuId();
+                readReminder();
+            } else {
+                Messages.toast(this, getString(R.string.something_went_wrong));
+                finish();
+            }
+        }
+
+        if (LocationUtil.isGooglePlayServicesAvailable(this)) {
+            ReminderApp application = (ReminderApp) getApplication();
+            mTracker = application.getDefaultTracker();
+        }
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ViewUtils.slideInDown(ReminderManager.this, toolbar);
+            }
+        }, 500);
+    }
+
+    private void loadData() {
+        DataBase db = new DataBase(this);
+        db.open();
+        Cursor c = db.queryCategories();
+        if (c != null && c.moveToFirst()) {
+            String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+            categoryId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+            category.setText(title);
+        }
+        if (c != null) c.close();
+        db.close();
+    }
+
+    private void initFab() {
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                save();
+            }
+        });
+        mFab.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                mFab.hide();
+                return false;
+            }
+        });
+    }
+
+    private void initLimitView() {
+        repeatFrame = (FrameLayout) findViewById(R.id.repeatFrame);
+        repeatFrame.setBackgroundResource(colorSetter.getCardDrawableStyle());
+        repeatLabel = (TextView) findViewById(R.id.repeatLabel);
+        repeatLabel.setVisibility(View.GONE);
+        repeatFrame.setVisibility(View.GONE);
+        SeekBar repeatSeek = (SeekBar) findViewById(R.id.repeatSeek);
+        repeatSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (progress == 0) {
+                    repeats = -1;
+                    repeatLabel.setText(R.string.no_limits);
+                } else {
+                    repeats = progress;
+                    repeatLabel.setText(String.valueOf(progress));
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                ViewUtils.fadeInAnimation(repeatLabel);
+                handler.removeCallbacks(seek);
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        ViewUtils.fadeOutAnimation(repeatLabel);
+                        ViewUtils.fadeOutAnimation(repeatFrame);
+                    }
+                }, 500);
+            }
+        });
+    }
+
+    private void initToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (Module.isLollipop()) toolbar.setElevation(R.dimen.toolbar_elevation);
         setSupportActionBar(toolbar);
-
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        toolbar.setVisibility(View.GONE);
         toolbar.setOnMenuItemClickListener(
                 new Toolbar.OnMenuItemClickListener() {
                     @Override
@@ -237,42 +352,6 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                     }
                 });
 
-        repeatFrame = (FrameLayout) findViewById(R.id.repeatFrame);
-        repeatFrame.setBackgroundResource(colorSetter.getCardDrawableStyle());
-        repeatLabel = (TextView) findViewById(R.id.repeatLabel);
-        repeatLabel.setVisibility(View.GONE);
-        repeatFrame.setVisibility(View.GONE);
-        SeekBar repeatSeek = (SeekBar) findViewById(R.id.repeatSeek);
-        repeatSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (progress == 0) {
-                    repeats = -1;
-                    repeatLabel.setText(R.string.no_limits);
-                } else {
-                    repeats = progress;
-                    repeatLabel.setText(String.valueOf(progress));
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                ViewUtils.fadeInAnimation(repeatLabel);
-                handler.removeCallbacks(seek);
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        ViewUtils.fadeOutAnimation(repeatLabel);
-                        ViewUtils.fadeOutAnimation(repeatFrame);
-                    }
-                }, 500);
-            }
-        });
-
         navContainer = (LinearLayout) findViewById(R.id.navContainer);
         spinner = (Spinner) findViewById(R.id.navSpinner);
         taskField = (FloatingEditText) findViewById(R.id.task_message);
@@ -306,9 +385,9 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             @Override
             public void onClick(View v) {
                 startActivityForResult(new Intent(ReminderManager.this, ExtraPickerDialog.class)
-                        .putExtra("type", getType())
-                        .putExtra("prefs", new int[]{voice, vibration, wake, unlock,
-                                notificationRepeat, auto}),
+                                .putExtra("type", getType())
+                                .putExtra("prefs", new int[]{voice, vibration, wake, unlock,
+                                        notificationRepeat, auto}),
                         REQUEST_EXTRA);
             }
         });
@@ -320,80 +399,13 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 Dialogues.selectCategory(ReminderManager.this, categoryId, ReminderManager.this);
             }
         });
+    }
 
-        findViewById(R.id.windowBackground).setBackgroundColor(colorSetter.getBackgroundStyle());
-
-        DataBase db = new DataBase(this);
-        db.open();
-        Cursor c = db.queryCategories();
-        if (c != null && c.moveToFirst()) {
-            String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-            categoryId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-            category.setText(title);
-        }
-        if (c != null) c.close();
-        db.close();
-
-        setUpNavigation();
-
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        toolbar.setVisibility(View.GONE);
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ViewUtils.slideInDown(ReminderManager.this, toolbar);
-            }
-        }, 500);
-
-        mFab = (FloatingActionButton) findViewById(R.id.fab);
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                save();
-            }
-        });
-        mFab.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                mFab.hide();
-                return false;
-            }
-        });
-
-        Intent intent = getIntent();
-        id = intent.getLongExtra(Constants.EDIT_ID, 0);
-        String filePath = intent.getStringExtra(Constants.EDIT_PATH);
-        int i = intent.getIntExtra(Constants.EDIT_WIDGET, 0);
-        if (i != 0) Reminder.disable(this, id);
-
-        int selection = sPrefs.loadInt(Prefs.LAST_USED_REMINDER);
-        if (!Module.isPro() && selection == 12) selection = 0;
-        spinner.setSelection(selection);
-
-        if (id != 0){
-            item = remControl.getItem(id);
-            readReminder();
-        } else if (filePath != null) {
-            File file = new File(filePath);
-            if (file.exists()) {
-                item = new JParser(SyncHelper.readFile(filePath)).parse();
-                uuId = item.getUuId();
-                readReminder();
-            } else {
-                Messages.toast(this, getString(R.string.something_went_wrong));
-                finish();
-            }
-        }
-
-        if (LocationUtil.isGooglePlayServicesAvailable(this)) {
-            ReminderApp application = (ReminderApp) getApplication();
-            mTracker = application.getDefaultTracker();
-        }
+    private void initFlags() {
+        isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
+        isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
+        isDark = colorSetter.isDark();
+        hasTasks = new GTasksHelper(this).isLinked();
     }
 
     private void selectVolume() {
@@ -626,13 +638,10 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachDateReminder(){
         taskField.setHint(getString(R.string.remind_me));
-
         DateFragment fragment = DateFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
-
         remControl = new DateType(this, Constants.TYPE_REMINDER, fragment);
-
         if (item != null && isSame()) {
             eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
@@ -646,13 +655,10 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachMonthDay(){
         taskField.setHint(getString(R.string.remind_me));
-
         MonthFragment fragment = MonthFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
-
         remControl = new DateType(this, Constants.TYPE_MONTHDAY, fragment);
-
         if (item != null && isSame()) {
             eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
@@ -666,13 +672,10 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachWeekDayReminder(){
         taskField.setHint(getString(R.string.remind_me));
-
         WeekFragment fragment = WeekFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
-
         remControl = new DateType(this, Constants.TYPE_WEEKDAY, fragment);
-
         if (item != null && isSame()) {
             eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
@@ -686,13 +689,10 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachTimeReminder(){
         taskField.setHint(getString(R.string.remind_me));
-
         TimerFragment fragment = TimerFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
-
         remControl = new DateType(this, Constants.TYPE_TIME, fragment);
-
         if (item != null && isSame()) {
             eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
@@ -707,13 +707,10 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachSkype(){
         taskField.setHint(getString(R.string.remind_me));
-
         SkypeFragment fragment = SkypeFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
-
         remControl = new DateType(this, Constants.TYPE_SKYPE, fragment);
-
         if (item != null && isSame()) {
             eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
@@ -727,13 +724,10 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachApplication(){
         taskField.setHint(getString(R.string.remind_me));
-
         ApplicationFragment fragment = ApplicationFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
-
         remControl = new DateType(this, Constants.TYPE_APPLICATION, fragment);
-
         if (item != null && isSame()) {
             eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
@@ -748,13 +742,10 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachCall(){
         taskField.setHint(getString(R.string.remind_me));
-
         CallFragment fragment = CallFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
-
         remControl = new DateType(this, Constants.TYPE_CALL, fragment);
-
         if (item != null && isSame()) {
             eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
@@ -768,13 +759,10 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachMessage(){
         taskField.setHint(getString(R.string.message));
-
         MessageFragment fragment = MessageFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
-
         remControl = new DateType(this, Constants.TYPE_MESSAGE, fragment);
-
         if (item != null && isSame()) {
             eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
@@ -788,13 +776,10 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachMail(){
         taskField.setHint(getString(R.string.subject));
-
         MailFragment fragment = MailFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
-
         remControl = new DateType(this, Constants.TYPE_MAIL, fragment);
-
         if (item != null && isSame()) {
             eventTime = item.getEventTime();
             repeatCode = item.getRecurrence().getRepeat();
@@ -827,13 +812,10 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachLocation() {
         taskField.setHint(getString(R.string.remind_me));
-
         LocationFragment fragment = LocationFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
-
         remControl = new LocationType(this, Constants.TYPE_LOCATION, fragment);
-
         if (item != null && isSame()) {
             String text = item.getSummary();
             eventTime = item.getStartTime();
@@ -849,13 +831,10 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachLocationOut() {
         taskField.setHint(getString(R.string.remind_me));
-
         OutLocationFragment fragment = OutLocationFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
-
         remControl = new LocationType(this, Constants.TYPE_LOCATION_OUT, fragment);
-
         if (item != null && isSame()) {
             String text = item.getSummary();
             eventTime = item.getStartTime();
@@ -871,13 +850,10 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachPLaces() {
         taskField.setHint(getString(R.string.remind_me));
-
         PlacesFragment fragment = PlacesFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
-
         remControl = new LocationType(this, Constants.TYPE_PLACES, fragment);
-
         if (item != null && isSame()) {
             String text = item.getSummary();
             eventTime = item.getStartTime();
@@ -891,13 +867,10 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachShoppingList(){
         taskField.setHint(R.string.title);
-
         ShoppingFragment fragment = ShoppingFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
-
         remControl = new DateType(this, Constants.TYPE_SHOPPING_LIST, fragment);
-
         if (item != null && isSame()) {
             eventTime = item.getEventTime();
             taskField.setText(item.getSummary());
@@ -1096,7 +1069,6 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     private JModel getData() {
         String type = getType();
         if (type == null) return null;
-
         ArrayList<JShopping> jShoppings = new ArrayList<>();
         if (isShoppingAttached()){
             ShoppingFragment fragment = (ShoppingFragment) baseFragment;
@@ -1121,8 +1093,6 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 myMinute = 0;
             }
         }
-
-
         ArrayList<Integer> weekdays = new ArrayList<>();
         if (isWeekDayReminderAttached()) {
             weekdays = ((WeekFragment) baseFragment).getDays();
@@ -1139,12 +1109,10 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 return null;
             }
         }
-
         String number = getNumber();
         if (type.contains(Constants.TYPE_MESSAGE) || type.contains(Constants.TYPE_CALL)) {
             if (!checkNumber(number)) return null;
         }
-
         if (isApplicationAttached()) {
             if (type.matches(Constants.TYPE_APPLICATION)) {
                 number = selectedPackage;
@@ -1162,7 +1130,6 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                     number = "http://" + number;
             }
         }
-
         String subjectString = null;
         if (isMailAttached()) {
             String email = baseFragment.getNumber();
@@ -1179,9 +1146,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             subjectString = task;
             task = subString;
         }
-
         String uuId = SyncHelper.generateID();
-
         Double latitude = 0.0;
         Double longitude = 0.0;
         int style = -1;
@@ -1224,7 +1189,6 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             latitude = dest.latitude;
             longitude = dest.longitude;
         }
-
         ArrayList<JPlace> places = new ArrayList<>();
         if (isPlacesAttached()) {
             if (!LocationUtil.checkLocationEnable(this)) {
@@ -1573,16 +1537,12 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.REQUEST_CODE_CONTACTS) {
             if (resultCode == RESULT_OK) {
-                //Use Data to get string
                 String number = data.getStringExtra(Constants.SELECTED_CONTACT_NUMBER);
                 if (isCallAttached()) ((CallFragment) baseFragment).setNumber(number);
                 if (isMessageAttached()) ((MessageFragment) baseFragment).setNumber(number);
                 if (isWeekDayReminderAttached()) ((WeekFragment) baseFragment).setNumber(number);
-
                 if (isMonthDayAttached()) ((MonthFragment) baseFragment).setNumber(number);
-
                 if (isLocationAttached()) ((LocationFragment) baseFragment).setNumber(number);
-
                 if (isLocationOutAttached()) ((OutLocationFragment) baseFragment).setNumber(number);
             }
         }
@@ -1691,7 +1651,6 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 int position = data.getIntExtra(Constants.SELECTED_LED_COLOR, -1);
                 String selColor = LED.getTitle(this, position);
                 ledColor = LED.getLED(position);
-
                 String str = String.format(getString(R.string.led_color_x), selColor);
                 showSnackbar(str, R.string.cancel, new View.OnClickListener() {
                     @Override
@@ -1719,7 +1678,6 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         if (requestCode == Constants.REQUEST_CODE_VOLUME) {
             if (resultCode == RESULT_OK){
                 volume = data.getIntExtra(Constants.SELECTED_VOLUME, -1);
-
                 String str = String.format(getString(R.string.selected_loudness_x_for_reminder), volume);
                 showSnackbar(str, R.string.cancel, new View.OnClickListener() {
                     @Override
@@ -1799,22 +1757,17 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             config.setMaskColor(coloring.getColor(coloring.colorAccent()));
             config.setContentTextColor(coloring.getColor(R.color.whitePrimary));
             config.setDismissTextColor(coloring.getColor(R.color.whitePrimary));
-
             MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this);
             sequence.setConfig(config);
-
             sequence.addSequenceItem(spinner,
                     getString(R.string.click_to_select_reminder_type),
                     getString(R.string.got_it));
-
             sequence.addSequenceItem(insertVoice,
                     getString(R.string.to_insert_task_by_voice),
                     getString(R.string.got_it));
-
             sequence.addSequenceItem(changeExtra,
                     getString(R.string.click_to_customize),
                     getString(R.string.got_it));
-
             sequence.addSequenceItem(category,
                     getString(R.string.click_to_change_reminder_group),
                     getString(R.string.got_it));
