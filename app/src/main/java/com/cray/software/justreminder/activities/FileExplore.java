@@ -78,7 +78,7 @@ public class FileExplore extends AppCompatActivity implements View.OnClickListen
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
-        list = (ListView) findViewById(R.id.list);
+        list = (ListView) findViewById(R.id.mDataList);
 
         isDark = cs.isDark();
 

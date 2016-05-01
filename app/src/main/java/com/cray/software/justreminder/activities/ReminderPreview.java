@@ -57,7 +57,7 @@ import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.databases.NotesBase;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.datas.models.CategoryModel;
-import com.cray.software.justreminder.datas.models.ReminderModel;
+import com.cray.software.justreminder.reminder.ReminderModel;
 import com.cray.software.justreminder.datas.models.ReminderNote;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;

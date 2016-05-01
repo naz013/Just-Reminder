@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.datas.models;
+package com.cray.software.justreminder.reminder;
 
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.json.JAction;

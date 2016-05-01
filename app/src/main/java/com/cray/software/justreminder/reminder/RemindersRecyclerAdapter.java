@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.adapters;
+package com.cray.software.justreminder.reminder;
 
 import android.app.AlarmManager;
 import android.content.Context;
@@ -21,7 +21,6 @@ import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
-import com.cray.software.justreminder.datas.models.ReminderModel;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.contacts.Contacts;
@@ -30,8 +29,6 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.reminder.ReminderDataProvider;
-import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.IntervalUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 
@@ -43,20 +40,34 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
     private Context mContext;
     private TimeCount mCount;
     private ColorSetter cs;
-    private ArrayList<ReminderModel> list;
+    private ArrayList<ReminderModel> mDataList;
     private RecyclerListener mEventListener;
     private boolean is24;
     private boolean isDark;
 
-    public RemindersRecyclerAdapter(Context context, ReminderDataProvider provider) {
+    public RemindersRecyclerAdapter(Context context, ArrayList<ReminderModel> list) {
         this.mContext = context;
-        list = provider.getData();
+        mDataList = new ArrayList<>(list);
         SharedPrefs prefs = new SharedPrefs(context);
         cs = new ColorSetter(context);
         mCount = new TimeCount(context);
         is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
         isDark = cs.isDark();
         setHasStableIds(true);
+    }
+
+    public ReminderModel getItem(int position) {
+        if (position < mDataList.size()) {
+            return mDataList.get(position);
+        } return null;
+    }
+
+    public void removeItem(int position) {
+        if (position < mDataList.size()) {
+            mDataList.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeRemoved(0, mDataList.size());
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
@@ -108,12 +119,9 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
-            check.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mEventListener != null) {
-                        mEventListener.onItemSwitched(getAdapterPosition(), check);
-                    }
+            check.setOnClickListener(v1 -> {
+                if (mEventListener != null) {
+                    mEventListener.onItemSwitched(getAdapterPosition(), check);
                 }
             });
 
@@ -124,7 +132,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         @Override
         public void onClick(View v) {
             View view = itemCard;
-            if (list.get(getAdapterPosition()).getViewType() == ReminderDataProvider.VIEW_REMINDER) {
+            if (mDataList.get(getAdapterPosition()).getViewType() == ReminderDataProvider.VIEW_REMINDER) {
                 view = check;
             }
             if (mEventListener != null) {
@@ -153,7 +161,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        final ReminderModel item = list.get(holder.getAdapterPosition());
+        final ReminderModel item = mDataList.get(holder.getAdapterPosition());
         String title = item.getTitle();
         String type = item.getType();
         String number = item.getNumber();
@@ -170,7 +178,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         holder.itemCard.setCardBackgroundColor(cs.getColor(cs.getCategoryColor(categoryColor)));
 
         if (archived == 1){
-            if (position > 0 && simpleDate.equals(TimeUtil.getSimpleDate(list.get(position - 1).getDue()))) {
+            if (position > 0 && simpleDate.equals(TimeUtil.getSimpleDate(mDataList.get(position - 1).getDue()))) {
                 holder.listHeader.setVisibility(View.GONE);
             } else {
                 if (due == 0){
@@ -186,17 +194,17 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 holder.listHeader.setVisibility(View.VISIBLE);
             }
         } else {
-            if (isDone == 1 && position > 0 && list.get(position - 1).getCompleted() == 0){
+            if (isDone == 1 && position > 0 && mDataList.get(position - 1).getCompleted() == 0){
                 simpleDate = mContext.getString(R.string.disabled);
                 holder.listHeader.setText(simpleDate);
                 holder.listHeader.setVisibility(View.VISIBLE);
-            } else if (isDone == 1 && position > 0 && list.get(position - 1).getCompleted() == 1){
+            } else if (isDone == 1 && position > 0 && mDataList.get(position - 1).getCompleted() == 1){
                 holder.listHeader.setVisibility(View.GONE);
             } else if (isDone == 1 && position == 0){
                 simpleDate = mContext.getString(R.string.disabled);
                 holder.listHeader.setText(simpleDate);
                 holder.listHeader.setVisibility(View.VISIBLE);
-            } else if (isDone == 0 && position > 0 && simpleDate.equals(TimeUtil.getSimpleDate(list.get(position - 1).getDue()))){
+            } else if (isDone == 0 && position > 0 && simpleDate.equals(TimeUtil.getSimpleDate(mDataList.get(position - 1).getDue()))){
                 holder.listHeader.setVisibility(View.GONE);
             } else {
                 if (due <= 0 || due < (System.currentTimeMillis() - AlarmManager.INTERVAL_DAY)){
@@ -316,12 +324,9 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 View view = LayoutInflater.from(mContext).inflate(R.layout.list_item_task_item_widget, null, false);
                 ImageView checkView = (ImageView) view.findViewById(R.id.checkView);
                 TextView textView = (TextView) view.findViewById(R.id.shopText);
-                checkView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (mEventListener != null) {
-                            mEventListener.onItemClicked(holder.getAdapterPosition(), holder.subBackground);
-                        }
+                checkView.setOnClickListener(v -> {
+                    if (mEventListener != null) {
+                        mEventListener.onItemClicked(holder.getAdapterPosition(), holder.subBackground);
                     }
                 });
                 if (list.isChecked() == 1) {
@@ -350,17 +355,17 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
     @Override
     public int getItemViewType(int position) {
-        return list.get(position).getViewType();
+        return mDataList.get(position).getViewType();
     }
 
     @Override
     public long getItemId(int position) {
-        return list.get(position).getId();
+        return mDataList.get(position).getId();
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return mDataList != null ? mDataList.size() : 0;
     }
 
     public void setEventListener(RecyclerListener eventListener) {

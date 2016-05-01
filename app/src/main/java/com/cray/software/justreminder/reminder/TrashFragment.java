@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.fragments;
+package com.cray.software.justreminder.reminder;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -19,24 +19,19 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
-import com.cray.software.justreminder.adapters.RemindersRecyclerAdapter;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.NextBase;
-import com.cray.software.justreminder.datas.models.ReminderModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
-import com.cray.software.justreminder.reminder.Reminder;
-import com.cray.software.justreminder.reminder.ReminderDataProvider;
 
 public class TrashFragment extends Fragment implements RecyclerListener{
 
     private RecyclerView currentList;
     private LinearLayout emptyItem;
-    private ReminderDataProvider provider;
+    private RemindersRecyclerAdapter mAdapter;
 
     private NavigationCallbacks mCallbacks;
 
@@ -132,20 +127,19 @@ public class TrashFragment extends Fragment implements RecyclerListener{
 
     public void loaderAdapter(){
         new SharedPrefs(getActivity()).saveBoolean(Prefs.REMINDER_CHANGED, false);
-        provider = new ReminderDataProvider(getActivity(), true, null);
-        reloadView();
-        RemindersRecyclerAdapter adapter = new RemindersRecyclerAdapter(getActivity(), provider);
-        adapter.setEventListener(this);
-        currentList.setAdapter(adapter);
+        ReminderDataProvider provider = new ReminderDataProvider(getActivity(), true, null);
+        mAdapter = new RemindersRecyclerAdapter(getActivity(), provider.getData());
+        mAdapter.setEventListener(this);
+        currentList.setAdapter(mAdapter);
         currentList.setItemAnimator(new DefaultItemAnimator());
         if (mCallbacks != null) {
             mCallbacks.onListChanged(currentList);
         }
+        reloadView();
     }
 
     private void reloadView() {
-        int size = provider.getCount();
-        if (size > 0){
+        if (mAdapter.getItemCount() > 0){
             currentList.setVisibility(View.VISIBLE);
             emptyItem.setVisibility(View.GONE);
         } else {
@@ -174,26 +168,23 @@ public class TrashFragment extends Fragment implements RecyclerListener{
 
     @Override
     public void onItemClicked(int position, View view) {
-        Reminder.edit(provider.getItem(position).getId(), getActivity());
+        Reminder.edit(mAdapter.getItem(position).getId(), getActivity());
     }
 
     @Override
     public void onItemLongClicked(final int position, View view) {
         final String[] items = {getString(R.string.edit), getString(R.string.delete)};
-        Dialogues.showLCAM(getActivity(), new LCAMListener() {
-            @Override
-            public void onAction(int item) {
-                ReminderModel item1 = provider.getItem(position);
-                if (item == 0) {
-                    Reminder.edit(item1.getId(), getActivity());
+        Dialogues.showLCAM(getActivity(), item -> {
+            ReminderModel item1 = mAdapter.getItem(position);
+            if (item == 0) {
+                Reminder.edit(item1.getId(), getActivity());
+            }
+            if (item == 1) {
+                Reminder.delete(item1.getId(), getActivity());
+                if (mCallbacks != null) {
+                    mCallbacks.showSnackbar(R.string.deleted);
                 }
-                if (item == 1) {
-                    Reminder.delete(item1.getId(), getActivity());
-                    if (mCallbacks != null) {
-                        mCallbacks.showSnackbar(R.string.deleted);
-                    }
-                    loaderAdapter();
-                }
+                loaderAdapter();
             }
         }, items);
     }
