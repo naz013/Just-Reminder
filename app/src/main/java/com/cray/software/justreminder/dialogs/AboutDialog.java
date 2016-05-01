@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.AssetsUtil;
 
@@ -20,30 +19,24 @@ public class AboutDialog extends Activity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         ColorSetter cs = new ColorSetter(AboutDialog.this);
-
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.about_dialog_layout);
-
         TextView appName = (TextView) findViewById(R.id.appName);
         appName.setTypeface(AssetsUtil.getMediumTypeface(this));
         String name;
         if (Module.isPro()) name = getString(R.string.app_name_pro);
         else name = getString(R.string.app_name);
         appName.setText(name.toUpperCase());
-
         TextView appVersion = (TextView) findViewById(R.id.appVersion);
         appVersion.setTypeface(AssetsUtil.getThinTypeface(this));
         PackageInfo pInfo;
         try {
             pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            String version = pInfo.versionName;
-            appVersion.setText(version + " (" + Configs.CODENAME + ")");
+            appVersion.setText(pInfo.versionName);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-
         TextView rights = (TextView) findViewById(R.id.rights);
         rights.setTypeface(AssetsUtil.getThinTypeface(this));
     }

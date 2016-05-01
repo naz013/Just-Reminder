@@ -145,7 +145,7 @@
             android:layout_weight="1"
             widget:paper_color="?attr/colorAccent"
             widget:paper_corner_radius="@dimen/log_in_button_corner_radius"
-            widget:paper_text="@string/mDataList"
+            widget:paper_text="@string/list"
             widget:paper_text_color="@color/blackPrimary"
             widget:paper_text_size="@dimen/create_text_size_normal" />
 
