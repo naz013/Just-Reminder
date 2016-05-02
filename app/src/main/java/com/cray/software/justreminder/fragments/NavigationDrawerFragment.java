@@ -1,7 +1,6 @@
 package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -116,10 +115,12 @@ public class NavigationDrawerFragment extends Fragment implements
         prefsButton.setOnClickListener(this);
 
         TextView helpButton = (TextView) rootView.findViewById(R.id.help);
-        helpButton.setOnClickListener(v -> selectItem(ScreenManager.HELP, false));
-
-        TextView report = (TextView) rootView.findViewById(R.id.report);
-        report.setOnClickListener(v -> selectItem(ScreenManager.REPORT, false));
+        helpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectItem(ScreenManager.HELP, false);
+            }
+        });
 
         TextView feedButton = (TextView) rootView.findViewById(R.id.feed);
         feedButton.setOnClickListener(this);
@@ -148,23 +149,32 @@ public class NavigationDrawerFragment extends Fragment implements
         archiveScreen.setOnClickListener(this);
 
         categories = (TextView) rootView.findViewById(R.id.categories);
-        categories.setOnClickListener(v -> {
-            selectItem(ScreenManager.FRAGMENT_GROUPS, true);
-            disableItem(ScreenManager.FRAGMENT_GROUPS);
+        categories.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectItem(ScreenManager.FRAGMENT_GROUPS, true);
+                disableItem(ScreenManager.FRAGMENT_GROUPS);
+            }
         });
         categories.setTypeface(typeface);
 
         places = (TextView) rootView.findViewById(R.id.places);
-        places.setOnClickListener(v -> {
-            selectItem(ScreenManager.FRAGMENT_PLACES, true);
-            disableItem(ScreenManager.FRAGMENT_PLACES);
+        places.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectItem(ScreenManager.FRAGMENT_PLACES, true);
+                disableItem(ScreenManager.FRAGMENT_PLACES);
+            }
         });
         places.setTypeface(typeface);
 
         templates = (TextView) rootView.findViewById(R.id.templates);
-        templates.setOnClickListener(v -> {
-            selectItem(ScreenManager.FRAGMENT_TEMPLATES, true);
-            disableItem(ScreenManager.FRAGMENT_TEMPLATES);
+        templates.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectItem(ScreenManager.FRAGMENT_TEMPLATES, true);
+                disableItem(ScreenManager.FRAGMENT_TEMPLATES);
+            }
         });
         templates.setTypeface(typeface);
         reloadItems();
@@ -180,9 +190,6 @@ public class NavigationDrawerFragment extends Fragment implements
         prefsButton.setTypeface(typeface);
         feedButton.setTypeface(typeface);
         helpButton.setTypeface(typeface);
-        report.setTypeface(typeface);
-
-        report.setVisibility(View.GONE);
 
         if (!Module.isPro()){
             RelativeLayout ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);
@@ -195,7 +202,12 @@ public class NavigationDrawerFragment extends Fragment implements
 
             if (!isAppInstalled("com.cray.software.justreminderpro")){
                 ads_container.setVisibility(View.VISIBLE);
-                ads_container.setOnClickListener(view -> selectItem(ScreenManager.MARKET, false));
+                ads_container.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        selectItem(ScreenManager.MARKET, false);
+                    }
+                });
             }
         }
 
@@ -327,7 +339,12 @@ public class NavigationDrawerFragment extends Fragment implements
             mDrawerLayout.openDrawer(mFragmentContainerView);
         }
 
-        mDrawerLayout.post(() -> mDrawerToggle.syncState());
+        mDrawerLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mDrawerToggle.syncState();
+            }
+        });
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
@@ -340,16 +357,19 @@ public class NavigationDrawerFragment extends Fragment implements
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
         if (mCallbacks != null) {
-            new Handler().postDelayed(() -> {
-                if (tag != null) {
-                    try {
-                        mCallbacks.onItemSelected(tag);
-                    } catch (NullPointerException e){
-                        e.printStackTrace();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (tag != null) {
+                        try {
+                            mCallbacks.onItemSelected(tag);
+                        } catch (NullPointerException e){
+                            e.printStackTrace();
+                            mCallbacks.onItemSelected(ScreenManager.FRAGMENT_ACTIVE);
+                        }
+                    } else {
                         mCallbacks.onItemSelected(ScreenManager.FRAGMENT_ACTIVE);
                     }
-                } else {
-                    mCallbacks.onItemSelected(ScreenManager.FRAGMENT_ACTIVE);
                 }
             }, 250);
         }
@@ -435,15 +455,7 @@ public class NavigationDrawerFragment extends Fragment implements
                 selectItem(ScreenManager.FRAGMENT_SETTINGS, false);
                 break;
             case R.id.feed:
-                final Intent emailIntent = new Intent( Intent.ACTION_SEND);
-                emailIntent.setType("plain/text");
-                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { "feedback.cray@gmail.com" });
-                if (Module.isPro()){
-                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Reminder PRO");
-                } else {
-                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Reminder");
-                }
-                getActivity().startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+                selectItem(ScreenManager.REPORT, false);
                 break;
             case R.id.geoScreen:
                 selectItem(ScreenManager.FRAGMENT_LOCATIONS, true);

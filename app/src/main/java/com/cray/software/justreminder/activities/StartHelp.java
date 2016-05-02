@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -59,22 +60,28 @@ public class StartHelp extends AppCompatActivity {
             }
         });
         doneButton = (Button) findViewById(R.id.doneButton);
-        doneButton.setOnClickListener(v -> {
-            if (introPager.getCurrentItem() == adapter.getCount() - 1) {
-                startActivity(new Intent(StartHelp.this, LogInActivity.class));
-                finish();
-            } else {
-                introPager.setCurrentItem(introPager.getCurrentItem() + 1, true);
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (introPager.getCurrentItem() == adapter.getCount() - 1) {
+                    startActivity(new Intent(StartHelp.this, LogInActivity.class));
+                    finish();
+                } else {
+                    introPager.setCurrentItem(introPager.getCurrentItem() + 1, true);
+                }
             }
         });
 
         skipButton = (Button) findViewById(R.id.skipButton);
-        skipButton.setOnClickListener(v -> {
-            if (introPager.getCurrentItem() == 0) {
-                startActivity(new Intent(StartHelp.this, LogInActivity.class));
-                finish();
-            } else {
-                introPager.setCurrentItem(introPager.getCurrentItem() - 1, true);
+        skipButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (introPager.getCurrentItem() == 0) {
+                    startActivity(new Intent(StartHelp.this, LogInActivity.class));
+                    finish();
+                } else {
+                    introPager.setCurrentItem(introPager.getCurrentItem() - 1, true);
+                }
             }
         });
 

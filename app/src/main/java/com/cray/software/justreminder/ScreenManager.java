@@ -36,6 +36,7 @@ import android.widget.TextView;
 import com.cray.software.justreminder.activities.AddPlace;
 import com.cray.software.justreminder.activities.Help;
 import com.cray.software.justreminder.activities.NewTemplate;
+import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.async.DelayedAsync;
 import com.cray.software.justreminder.async.GetTasksListsAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
@@ -49,7 +50,6 @@ import com.cray.software.justreminder.dialogs.ChangeDialog;
 import com.cray.software.justreminder.dialogs.RateDialog;
 import com.cray.software.justreminder.enums.QuickReturnViewType;
 import com.cray.software.justreminder.feedback.SendReportActivity;
-import com.cray.software.justreminder.reminder.ActiveFragment;
 import com.cray.software.justreminder.fragments.BackupsFragment;
 import com.cray.software.justreminder.fragments.EventsFragment;
 import com.cray.software.justreminder.fragments.GeolocationFragment;
@@ -59,7 +59,6 @@ import com.cray.software.justreminder.fragments.NotesFragment;
 import com.cray.software.justreminder.fragments.PlacesFragment;
 import com.cray.software.justreminder.fragments.TasksFragment;
 import com.cray.software.justreminder.fragments.TemplatesFragment;
-import com.cray.software.justreminder.reminder.TrashFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
@@ -70,8 +69,10 @@ import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.reminder.ActiveFragment;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
+import com.cray.software.justreminder.reminder.TrashFragment;
 import com.cray.software.justreminder.settings.SettingsActivity;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
@@ -79,7 +80,6 @@ import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.views.ReturnScrollListener;
-import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.auth.GoogleAuthException;
@@ -128,7 +128,7 @@ public class ScreenManager extends AppCompatActivity
     public static final String ACTION_CALENDAR = "action_calendar";
     public static final String FRAGMENT_EVENTS = "fragment_events";
     public static final String HELP = "help";
-    public static final String REPORT = "report";
+    public static final String REPORT = "feedback_report";
     public static final String MARKET = "market";
     public static final String VOICE_RECOGNIZER = "sync_reminder";
     public static final String TASKS_AUTHORIZATION = "authorize";
@@ -265,7 +265,6 @@ public class ScreenManager extends AppCompatActivity
                     @Override
                     public void onClick(View v) {
                         collapseViews();
-
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -281,7 +280,6 @@ public class ScreenManager extends AppCompatActivity
                     public void onClick(View v) {
                         if (new GTasksHelper(ScreenManager.this).isLinked()) {
                             collapseViews();
-
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
@@ -290,7 +288,6 @@ public class ScreenManager extends AppCompatActivity
                                             .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.CREATE));
                                 }
                             }, 150);
-
                         } else {
                             showSnackbar(getString(R.string.can_not_connect));
                         }
@@ -302,7 +299,6 @@ public class ScreenManager extends AppCompatActivity
                     @Override
                     public void onClick(View v) {
                         collapseViews();
-
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -317,7 +313,6 @@ public class ScreenManager extends AppCompatActivity
                     @Override
                     public void onClick(View v) {
                         collapseViews();
-
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -332,7 +327,6 @@ public class ScreenManager extends AppCompatActivity
                     @Override
                     public void onClick(View v) {
                         collapseViews();
-
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -349,7 +343,6 @@ public class ScreenManager extends AppCompatActivity
                     @Override
                     public void onClick(View v) {
                         collapseViews();
-
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -641,10 +634,7 @@ public class ScreenManager extends AppCompatActivity
         };
 
         calendarView.setCaldroidListener(listener);
-
-        if (calendarView != null) {
-            calendarView.refreshView();
-        }
+        calendarView.refreshView();
 
         boolean isReminder = mPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR);
         boolean isFeature = mPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
@@ -669,6 +659,7 @@ public class ScreenManager extends AppCompatActivity
                         getString(R.string.option_for_image_blurring) + "\n" +
                         getString(R.string.additional_app_themes))
                 .setPositiveButton(R.string.buy, new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -677,6 +668,7 @@ public class ScreenManager extends AppCompatActivity
                     }
                 })
                 .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
@@ -814,10 +806,10 @@ public class ScreenManager extends AppCompatActivity
         return new AlertDialog.Builder(this)
                 .setMessage(R.string.thank_you_for_buying_pro)
                 .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        new SharedPrefs(ScreenManager.this)
-                                .saveBoolean(Prefs.THANKS_SHOWN, true);
+                        new SharedPrefs(ScreenManager.this).saveBoolean(Prefs.THANKS_SHOWN, true);
                     }
                 })
                 .setCancelable(false)
@@ -881,7 +873,6 @@ public class ScreenManager extends AppCompatActivity
             public void onClick(View v) {
                 new Notifier(ScreenManager.this).showNoteNotification(note, id);
                 ViewUtils.hideReveal(noteStatusCard);
-
                 if (mPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER)){
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -897,7 +888,6 @@ public class ScreenManager extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 ViewUtils.hideReveal(noteStatusCard);
-
                 if (mPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER)){
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -999,7 +989,8 @@ public class ScreenManager extends AppCompatActivity
                 progressDlg.setCancelable(false);
                 progressDlg.setIndeterminate(false);
                 progressDlg.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    public void onCancel(DialogInterface d) {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
                         progressDlg.dismiss();
                         me.cancel(true);
                     }

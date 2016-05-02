@@ -134,21 +134,30 @@ public class TimerFragment extends BaseFragment implements
             deleteButton.setImageResource(R.drawable.ic_backspace_black_24dp);
             exclusionClear.setImageResource(R.drawable.ic_clear_black_24dp);
         }
-        deleteButton.setOnClickListener(v -> {
-            timeString = timeString.substring(0, timeString.length() - 1);
-            timeString = "0" + timeString;
-            updateTimeView();
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                timeString = timeString.substring(0, timeString.length() - 1);
+                timeString = "0" + timeString;
+                updateTimeView();
+            }
         });
-        deleteButton.setOnLongClickListener(v -> {
-            timeString = "000000";
-            updateTimeView();
-            return true;
+        deleteButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                timeString = "000000";
+                updateTimeView();
+                return true;
+            }
         });
-        exclusionClear.setOnClickListener(v -> {
-            if (exclusion != null){
-                exclusion = null;
-                selectExclusion.setText(getString(R.string.exclusion));
-                exclusionClear.setVisibility(View.INVISIBLE);
+        exclusionClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (exclusion != null){
+                    exclusion = null;
+                    selectExclusion.setText(getString(R.string.exclusion));
+                    exclusionClear.setVisibility(View.INVISIBLE);
+                }
             }
         });
 

@@ -294,9 +294,12 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                new Handler().postDelayed(() -> {
-                    ViewUtils.fadeOutAnimation(repeatLabel);
-                    ViewUtils.fadeOutAnimation(repeatFrame);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        ViewUtils.fadeOutAnimation(repeatLabel);
+                        ViewUtils.fadeOutAnimation(repeatFrame);
+                    }
                 }, 500);
             }
         });
@@ -312,38 +315,41 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setVisibility(View.GONE);
         toolbar.setOnMenuItemClickListener(
-                item1 -> {
-                    switch (item1.getItemId()) {
-                        case R.id.action_add:
-                            save();
-                            return true;
-                        case R.id.action_custom_melody:
-                            if(Permissions.checkPermission(ReminderManager.this,
-                                    Permissions.READ_EXTERNAL)) {
-                                startActivityForResult(new Intent(ReminderManager.this, FileExploreActivity.class),
-                                        Constants.REQUEST_CODE_SELECTED_MELODY);
-                            } else {
-                                Permissions.requestPermission(ReminderManager.this, 330,
-                                        Permissions.READ_EXTERNAL);
-                            }
-                            return true;
-                        case R.id.action_custom_radius:
-                            selectRadius();
-                            return true;
-                        case R.id.action_custom_color:
-                            chooseLEDColor();
-                            return true;
-                        case R.id.action_volume:
-                            selectVolume();
-                            return true;
-                        case R.id.action_limit:
-                            showLimit();
-                            return true;
-                        case MENU_ITEM_DELETE:
-                            deleteReminder();
-                            return true;
+                new Toolbar.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.action_add:
+                                save();
+                                return true;
+                            case R.id.action_custom_melody:
+                                if(Permissions.checkPermission(ReminderManager.this,
+                                        Permissions.READ_EXTERNAL)) {
+                                    startActivityForResult(new Intent(ReminderManager.this, FileExploreActivity.class),
+                                            Constants.REQUEST_CODE_SELECTED_MELODY);
+                                } else {
+                                    Permissions.requestPermission(ReminderManager.this, 330,
+                                            Permissions.READ_EXTERNAL);
+                                }
+                                return true;
+                            case R.id.action_custom_radius:
+                                selectRadius();
+                                return true;
+                            case R.id.action_custom_color:
+                                chooseLEDColor();
+                                return true;
+                            case R.id.action_volume:
+                                selectVolume();
+                                return true;
+                            case R.id.action_limit:
+                                showLimit();
+                                return true;
+                            case MENU_ITEM_DELETE:
+                                deleteReminder();
+                                return true;
+                        }
+                        return true;
                     }
-                    return true;
                 });
 
         navContainer = (LinearLayout) findViewById(R.id.navContainer);
@@ -368,16 +374,30 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         });
         insertVoice = (ImageButton) findViewById(R.id.insertVoice);
         changeExtra = (ImageButton) findViewById(R.id.changeExtra);
-        insertVoice.setOnClickListener(v -> SuperUtil.startVoiceRecognitionActivity(ReminderManager.this,
-                VOICE_RECOGNITION_REQUEST_CODE, true));
-        changeExtra.setOnClickListener(v -> startActivityForResult(new Intent(ReminderManager.this, ExtraPickerDialog.class)
-                        .putExtra("type", getType())
-                        .putExtra("prefs", new int[]{voice, vibration, wake, unlock,
-                                notificationRepeat, auto}),
-                REQUEST_EXTRA));
+        insertVoice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SuperUtil.startVoiceRecognitionActivity(ReminderManager.this,
+                        VOICE_RECOGNITION_REQUEST_CODE, true);
+            }
+        });
+        changeExtra.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(ReminderManager.this, ExtraPickerDialog.class)
+                                .putExtra("type", getType())
+                                .putExtra("prefs", new int[]{voice, vibration, wake, unlock,
+                                        notificationRepeat, auto}), REQUEST_EXTRA);
+            }
+        });
 
         category = (TextView) findViewById(R.id.category);
-        category.setOnClickListener(v -> Dialogues.selectCategory(ReminderManager.this, categoryId, ReminderManager.this));
+        category.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dialogues.selectCategory(ReminderManager.this, categoryId, ReminderManager.this);
+            }
+        });
     }
 
     private void initFlags() {
@@ -1538,8 +1558,11 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 if (melody != null) {
                     File musicFile = new File(melody);
                     showSnackbar(String.format(getString(R.string.melody_x), musicFile.getName()),
-                            R.string.cancel, v -> {
-                                melody = null;
+                            R.string.cancel, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    melody = null;
+                                }
                             });
                 }
             }
@@ -1554,9 +1577,12 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                     File file = new File(attachment);
                     ((MailFragment) baseFragment).setFileName(file.getPath());
                     showSnackbar(String.format(getString(R.string.file_x_attached), file.getName()),
-                            R.string.cancel, v -> {
-                                attachment = null;
-                                ((MailFragment) baseFragment).setFileName(null);
+                            R.string.cancel, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    attachment = null;
+                                    ((MailFragment) baseFragment).setFileName(null);
+                                }
                             });
                 }
             }
@@ -1567,14 +1593,17 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 radius = data.getIntExtra(Constants.SELECTED_RADIUS, -1);
                 if (radius != -1) {
                     String str = String.format(getString(R.string.radius_x_meters), radius);
-                    showSnackbar(str, R.string.cancel, v -> {
-                        radius = -1;
-                        if (isLocationAttached()) {
-                            ((LocationFragment) baseFragment).recreateMarkers(radius);
-                        }
-                        if (isLocationOutAttached()) {
-                            ((OutLocationFragment) baseFragment).recreateMarkers(radius);
-                            ((OutLocationFragment) baseFragment).setPointRadius(radius);
+                    showSnackbar(str, R.string.cancel, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            radius = -1;
+                            if (isLocationAttached()) {
+                                ((LocationFragment) baseFragment).recreateMarkers(radius);
+                            }
+                            if (isLocationOutAttached()) {
+                                ((OutLocationFragment) baseFragment).recreateMarkers(radius);
+                                ((OutLocationFragment) baseFragment).setPointRadius(radius);
+                            }
                         }
                     });
                     if (isLocationAttached()) {
@@ -1594,9 +1623,12 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             if (resultCode == RESULT_OK){
                 exclusion = data.getStringExtra("excl");
                 ((TimerFragment) baseFragment).setExclusion(exclusion);
-                showSnackbar(getString(R.string.exclusion_added), R.string.cancel, v -> {
-                    exclusion = null;
-                    ((TimerFragment) baseFragment).setExclusion(null);
+                showSnackbar(getString(R.string.exclusion_added), R.string.cancel, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        exclusion = null;
+                        ((TimerFragment) baseFragment).setExclusion(null);
+                    }
                 });
             }
         }
@@ -1619,8 +1651,11 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 String selColor = LED.getTitle(this, position);
                 ledColor = LED.getLED(position);
                 String str = String.format(getString(R.string.led_color_x), selColor);
-                showSnackbar(str, R.string.cancel, v -> {
-                    ledColor = -1;
+                showSnackbar(str, R.string.cancel, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ledColor = -1;
+                    }
                 });
             }
         }
@@ -1643,8 +1678,11 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             if (resultCode == RESULT_OK){
                 volume = data.getIntExtra(Constants.SELECTED_VOLUME, -1);
                 String str = String.format(getString(R.string.selected_loudness_x_for_reminder), volume);
-                showSnackbar(str, R.string.cancel, v -> {
-                    volume = -1;
+                showSnackbar(str, R.string.cancel, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        volume = -1;
+                    }
                 });
             }
         }

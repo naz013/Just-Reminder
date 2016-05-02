@@ -26,6 +26,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Permissions;
+import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.LocationUtil;
@@ -76,14 +77,17 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
         listView = (RecyclerView) findViewById(R.id.currentList);
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
-        mFab.setOnClickListener(v -> {
-            if (LocationUtil.checkGooglePlayServicesAvailability(PlacesList.this)) {
-                if (Permissions.checkPermission(PlacesList.this, Permissions.ACCESS_FINE_LOCATION)) {
-                    startActivity(new Intent(PlacesList.this, AddPlace.class)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                } else {
-                    Permissions.requestPermission(PlacesList.this, 101,
-                            Permissions.ACCESS_FINE_LOCATION);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (LocationUtil.checkGooglePlayServicesAvailability(PlacesList.this)) {
+                    if (Permissions.checkPermission(PlacesList.this, Permissions.ACCESS_FINE_LOCATION)) {
+                        startActivity(new Intent(PlacesList.this, AddPlace.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    } else {
+                        Permissions.requestPermission(PlacesList.this, 101,
+                                Permissions.ACCESS_FINE_LOCATION);
+                    }
                 }
             }
         });
@@ -159,12 +163,15 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
     @Override
     public void onItemLongClicked(final int position, View view) {
         final String[] items = {getString(R.string.edit), getString(R.string.delete)};
-        Dialogues.showLCAM(this, item -> {
-            if (item == 0) {
-                editPlace(position);
-            }
-            if (item == 1) {
-                deletePlace(position);
+        Dialogues.showLCAM(this, new LCAMListener() {
+            @Override
+            public void onAction(int item) {
+                if (item == 0) {
+                    editPlace(position);
+                }
+                if (item == 1) {
+                    deletePlace(position);
+                }
             }
         }, items);
     }

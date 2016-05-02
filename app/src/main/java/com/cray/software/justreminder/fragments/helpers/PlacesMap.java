@@ -339,10 +339,13 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
 
         setMyLocation();
 
-        map.setOnMapClickListener(latLng -> {
-            hideLayers();
-            hidePlaces();
-            hideStyles();
+        map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                hideLayers();
+                hidePlaces();
+                hideStyles();
+            }
         });
 
         initViews(view);
@@ -365,12 +368,15 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
 
             }
         });
-        cardSearch.setOnKeyListener((v, keyCode, event) -> {
-            if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
-                hideKeyboard();
-                loadPlaces();
-                return true;
-            } else return false;
+        cardSearch.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+                    hideKeyboard();
+                    loadPlaces();
+                    return true;
+                } else return false;
+            }
         });
 
         placesList = (RecyclerView) view.findViewById(R.id.placesList);

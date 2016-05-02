@@ -84,7 +84,12 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
         button.setOnClickListener(this);
 
         syncInterval = (Button) findViewById(R.id.syncInterval);
-        syncInterval.setOnClickListener(v -> Dialogues.selectInterval(EventsImport.this, Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL, R.string.interval));
+        syncInterval.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dialogues.selectInterval(EventsImport.this, Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL, R.string.interval);
+            }
+        });
 
         eventsCheck = (CheckBox) findViewById(R.id.eventsCheck);
         CheckBox autoCheck = (CheckBox) findViewById(R.id.autoCheck);

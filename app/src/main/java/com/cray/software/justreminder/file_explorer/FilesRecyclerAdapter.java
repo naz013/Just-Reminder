@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.contacts.AdapterListener;
 import com.cray.software.justreminder.contacts.RecyclerClickListener;
 import com.cray.software.justreminder.databinding.FileListItemBinding;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -55,9 +56,12 @@ public class FilesRecyclerAdapter extends RecyclerView.Adapter<FilesRecyclerAdap
         public ContactViewHolder(View itemView) {
             super(itemView);
             binding = DataBindingUtil.bind(itemView);
-            binding.setClick(view -> {
-                if (mListener != null) {
-                    mListener.onItemClick(getAdapterPosition());
+            binding.setClick(new AdapterListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mListener != null) {
+                        mListener.onItemClick(getAdapterPosition());
+                    }
                 }
             });
         }

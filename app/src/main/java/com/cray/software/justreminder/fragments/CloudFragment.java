@@ -54,6 +54,7 @@ import com.cray.software.justreminder.graph.PieSlice;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.interfaces.DataListener;
+import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
@@ -153,19 +154,32 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
         freeSpace.setTypeface(typefaceThin);
 
         PaperButton cloudFiles = (PaperButton) view.findViewById(R.id.cloudFiles);
-        cloudFiles.setOnClickListener(view1 -> {
-            if (filesCloudList.getVisibility() != View.VISIBLE) {
-                loadList();
-                ViewUtils.collapse(cloudContainer);
-                new android.os.Handler().postDelayed(() -> ViewUtils.fadeInAnimation(filesCloudList), 400);
-            } else {
-                reload();
+        cloudFiles.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (filesCloudList.getVisibility() != View.VISIBLE) {
+                    loadList();
+                    ViewUtils.collapse(cloudContainer);
+                    new android.os.Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            ViewUtils.fadeInAnimation(filesCloudList);
+                        }
+                    }, 400);
+                } else {
+                    reload();
+                }
             }
         });
 
         PaperButton deleteAllCloudButton = (PaperButton) view.findViewById(R.id.deleteAllCloudButton);
-        deleteAllCloudButton.setOnClickListener(view1 -> new DeleteAsync(getActivity(), mCallbacks,
-                CloudFragment.this, type).execute(getFolders()));
+        deleteAllCloudButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DeleteAsync(getActivity(), mCallbacks,
+                        CloudFragment.this, type).execute(getFolders());
+            }
+        });
 
         filesCloudList = (RecyclerView) view.findViewById(R.id.filesCloudList);
         filesCloudList.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -207,9 +221,12 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
         if (isDeleted) {
             new UserInfoAsync(getActivity(), type, this).execute();
         } else {
-            new android.os.Handler().postDelayed(() -> {
-                ViewUtils.expand(cloudContainer);
-                isDeleted = false;
+            new android.os.Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ViewUtils.expand(cloudContainer);
+                    isDeleted = false;
+                }
             }, 400);
         }
     }
@@ -266,10 +283,13 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
 
         cloudCount.setText(String.valueOf(model.count));
 
-        new android.os.Handler().postDelayed(() -> {
-            pieChart.setAnimation(new ScaleAnimation(0f, 100f, 0f, 100f, 50f, 50f));
-            pieChart.getAnimation().setDuration(500);
-            pieChart.animate();
+        new android.os.Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                pieChart.setAnimation(new ScaleAnimation(0f, 100f, 0f, 100f, 50f, 50f));
+                pieChart.getAnimation().setDuration(500);
+                pieChart.animate();
+            }
         }, 500);
     }
 
@@ -280,34 +300,40 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
             Picasso.with(getActivity()).load(image).into(userPhoto);
             userPhoto.setVisibility(View.VISIBLE);
         } else {
-            new Thread(() -> {
-                try {
-                    Bitmap bitmap = Picasso.with(getActivity())
-                            .load(photoLink)
-                            .get();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
                     try {
-                        File dir1 = MemoryUtil.getImagesDir();
-                        File image1 = new File(dir1, FILE_NAME);
-                        if (image1.createNewFile()) {
-                            FileOutputStream stream = new FileOutputStream(image1);
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                            stream.close();
+                        Bitmap bitmap = Picasso.with(getActivity())
+                                .load(photoLink)
+                                .get();
+                        try {
+                            File dir1 = MemoryUtil.getImagesDir();
+                            File image1 = new File(dir1, FILE_NAME);
+                            if (image1.createNewFile()) {
+                                FileOutputStream stream = new FileOutputStream(image1);
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                                stream.close();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
 
-                getActivity().runOnUiThread(() -> {
-                    File dir1 = MemoryUtil.getImagesDir();
-                    File image1 = new File(dir1, FILE_NAME);
-                    if (image1.exists()) {
-                        Picasso.with(getActivity()).load(image1).into(userPhoto);
-                        userPhoto.setVisibility(View.VISIBLE);
-                    }
-                });
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            File dir1 = MemoryUtil.getImagesDir();
+                            File image1 = new File(dir1, FILE_NAME);
+                            if (image1.exists()) {
+                                Picasso.with(getActivity()).load(image1).into(userPhoto);
+                                userPhoto.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    });
+                }
             }).start();
         }
     }
@@ -358,14 +384,17 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
     @Override
     public void onItemLongClicked(final int position, View view) {
         final String[] items = {getString(R.string.edit), getString(R.string.delete)};
-        Dialogues.showLCAM(getActivity(), item -> {
-            if (item == 0) {
-                editFile(position);
-            }
-            if (item == 1) {
-                new DeleteAsync(getActivity(), mCallbacks, CloudFragment.this, type)
-                        .execute(provider.getItem(position).getFilePath());
-                reload();
+        Dialogues.showLCAM(getActivity(), new LCAMListener() {
+            @Override
+            public void onAction(int item) {
+                if (item == 0) {
+                    editFile(position);
+                }
+                if (item == 1) {
+                    new DeleteAsync(getActivity(), mCallbacks, CloudFragment.this, type)
+                            .execute(provider.getItem(position).getFilePath());
+                    reload();
+                }
             }
         }, items);
     }

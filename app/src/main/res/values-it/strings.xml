@@ -521,4 +521,7 @@
     <string name="create_task">Create task</string>
     <string name="type_to_search">Type to search</string>
     <string name="up">Up</string>
+    <string name="move_forward">Move forward</string>
+    <string name="refresh">Refresh</string>
+    <string name="save_widget">Save widget</string>
 </resources>

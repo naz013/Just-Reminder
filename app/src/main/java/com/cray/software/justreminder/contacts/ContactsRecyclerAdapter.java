@@ -57,9 +57,12 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
         public ContactViewHolder(View itemView) {
             super(itemView);
             binding = DataBindingUtil.bind(itemView);
-            binding.setClick(view -> {
-                if (mListener != null) {
-                    mListener.onItemClick(getAdapterPosition());
+            binding.setClick(new AdapterListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mListener != null) {
+                        mListener.onItemClick(getAdapterPosition());
+                    }
                 }
             });
         }

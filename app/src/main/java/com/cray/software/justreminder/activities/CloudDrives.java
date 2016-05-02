@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -18,6 +19,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -84,34 +86,40 @@ public class CloudDrives extends AppCompatActivity {
         dbx.startSession();
 
         linkDropbox = (Button) findViewById(R.id.linkDropbox);
-        linkDropbox.setOnClickListener(view -> {
-            boolean isIn;
-            if (Module.isPro()) isIn = isAppInstalled(MARKET_APP_JUSTREMINDER);
-            else isIn = isAppInstalled(MARKET_APP_JUSTREMINDER_PRO);
-            if (isIn) {
-                checkDialog().show();
-            } else {
-                if (dbx.isLinked()) {
-                    if (dbx.unlink()) {
-                        linkDropbox.setText(getString(R.string.connect));
-                    }
+        linkDropbox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean isIn;
+                if (Module.isPro()) isIn = isAppInstalled(MARKET_APP_JUSTREMINDER);
+                else isIn = isAppInstalled(MARKET_APP_JUSTREMINDER_PRO);
+                if (isIn) {
+                    checkDialog().show();
                 } else {
-                    dbx.startLink();
+                    if (dbx.isLinked()) {
+                        if (dbx.unlink()) {
+                            linkDropbox.setText(getString(R.string.connect));
+                        }
+                    } else {
+                        dbx.startLink();
+                    }
                 }
+                prefs.saveBoolean(Prefs.UI_CHANGED, true);
             }
-            prefs.saveBoolean(Prefs.UI_CHANGED, true);
         });
 
         linkGDrive = (Button) findViewById(R.id.linkGDrive);
-        linkGDrive.setOnClickListener(v -> {
-            if (Permissions.checkPermission(CloudDrives.this,
-                    Permissions.GET_ACCOUNTS, Permissions.READ_EXTERNAL,
-                    Permissions.WRITE_EXTERNAL)) {
-                switchGdrive();
-            } else {
-                Permissions.requestPermission(CloudDrives.this, 103,
+        linkGDrive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Permissions.checkPermission(CloudDrives.this,
                         Permissions.GET_ACCOUNTS, Permissions.READ_EXTERNAL,
-                        Permissions.WRITE_EXTERNAL);
+                        Permissions.WRITE_EXTERNAL)) {
+                    switchGdrive();
+                } else {
+                    Permissions.requestPermission(CloudDrives.this, 103,
+                            Permissions.GET_ACCOUNTS, Permissions.READ_EXTERNAL,
+                            Permissions.WRITE_EXTERNAL);
+                }
             }
         });
 
@@ -188,22 +196,31 @@ public class CloudDrives extends AppCompatActivity {
     protected Dialog checkDialog() {
         return new AlertDialog.Builder(this)
                 .setMessage(getString(R.string.other_version_detected))
-                .setPositiveButton(getString(R.string.open), (dialog, which) -> {
-                    Intent i;
-                    PackageManager manager = getPackageManager();
-                    if (Module.isPro()) i = manager.getLaunchIntentForPackage(MARKET_APP_JUSTREMINDER);
-                    else i = manager.getLaunchIntentForPackage(MARKET_APP_JUSTREMINDER_PRO);
-                    i.addCategory(Intent.CATEGORY_LAUNCHER);
-                    startActivity(i);
+                .setPositiveButton(getString(R.string.open), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent i;
+                        PackageManager manager = getPackageManager();
+                        if (Module.isPro()) i = manager.getLaunchIntentForPackage(MARKET_APP_JUSTREMINDER);
+                        else i = manager.getLaunchIntentForPackage(MARKET_APP_JUSTREMINDER_PRO);
+                        i.addCategory(Intent.CATEGORY_LAUNCHER);
+                        startActivity(i);
+                    }
                 })
-                .setNegativeButton(getString(R.string.delete), (dialog, which) -> {
-                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                    if (Module.isPro()) intent.setData(Uri.parse("package:" + MARKET_APP_JUSTREMINDER));
-                    else intent.setData(Uri.parse("package:" + MARKET_APP_JUSTREMINDER_PRO));
-                    startActivity(intent);
+                .setNegativeButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        if (Module.isPro()) intent.setData(Uri.parse("package:" + MARKET_APP_JUSTREMINDER));
+                        else intent.setData(Uri.parse("package:" + MARKET_APP_JUSTREMINDER_PRO));
+                        startActivity(intent);
+                    }
                 })
-                .setNeutralButton(getString(R.string.cancel), (dialog, which) -> {
-                    dialog.dismiss();
+                .setNeutralButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
                 })
                 .setCancelable(true)
                 .create();
@@ -233,9 +250,12 @@ public class CloudDrives extends AppCompatActivity {
         if (!dbx.isLinked()) {
             if (dbx.checkLink()) {
                 linkDropbox.setText(getString(R.string.disconnect));
-                linkDropbox.setOnClickListener(view -> {
-                    if (dbx.unlink()){
-                        linkDropbox.setText(getString(R.string.connect));
+                linkDropbox.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (dbx.unlink()){
+                            linkDropbox.setText(getString(R.string.connect));
+                        }
                     }
                 });
             }
@@ -258,9 +278,12 @@ public class CloudDrives extends AppCompatActivity {
                 progressDlg.setMessage(getString(R.string.trying_to_log_in));
                 progressDlg.setCancelable(false);
                 progressDlg.setIndeterminate(false);
-                progressDlg.setOnCancelListener(d -> {
-                    progressDlg.dismiss();
-                    me.cancel(true);
+                progressDlg.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        progressDlg.dismiss();
+                        me.cancel(true);
+                    }
                 });
                 progressDlg.show();
             }

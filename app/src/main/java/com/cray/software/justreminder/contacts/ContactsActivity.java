@@ -2,6 +2,7 @@ package com.cray.software.justreminder.contacts;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -158,15 +159,19 @@ public class ContactsActivity extends AppCompatActivity implements LoadListener,
                     c.moveToNext();
                 }
                 AlertDialog.Builder builder = new AlertDialog.Builder(ContactsActivity.this);
-                builder.setItems(numbers, (dialog, item) -> {
-                    String number = (String) numbers[item];
-                    int index = number.indexOf(":");
-                    number = number.substring(index + 2);
-                    Intent intent = new Intent();
-                    intent.putExtra(Constants.SELECTED_CONTACT_NUMBER, number);
-                    intent.putExtra(Constants.SELECTED_CONTACT_NAME, name);
-                    setResult(RESULT_OK, intent);
-                    finish();
+                builder.setItems(numbers, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        String number = (String) numbers[which];
+                        int index = number.indexOf(":");
+                        number = number.substring(index + 2);
+                        Intent intent = new Intent();
+                        intent.putExtra(Constants.SELECTED_CONTACT_NUMBER, number);
+                        intent.putExtra(Constants.SELECTED_CONTACT_NAME, name);
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    }
                 });
                 AlertDialog alert = builder.create();
                 alert.setOwnerActivity(ContactsActivity.this);

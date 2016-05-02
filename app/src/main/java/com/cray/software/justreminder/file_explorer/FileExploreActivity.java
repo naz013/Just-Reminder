@@ -54,7 +54,12 @@ public class FileExploreActivity extends AppCompatActivity {
     private LinearLayout mPlayerLayout;
     private TextView mMelodyTitle;
     private EditText mSearchView;
-    private RecyclerClickListener recyclerClick = this::selectFile;
+    private RecyclerClickListener recyclerClick = new RecyclerClickListener() {
+        @Override
+        public void onItemClick(int position) {
+            selectFile(position);
+        }
+    };
 
     private void selectFile(int position) {
         FileDataItem item = mAdapter.getItem(position);
@@ -275,11 +280,13 @@ public class FileExploreActivity extends AppCompatActivity {
     }
 
     private void createFilteredFileList() {
-        FilenameFilter filter = (dir, filename) -> {
-            File sel = new File(dir, filename);
-            return (sel.isFile() || sel.isDirectory())
-                    && !sel.isHidden();
-
+        FilenameFilter filter = new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String filename) {
+                File sel = new File(dir, filename);
+                return (sel.isFile() || sel.isDirectory())
+                        && !sel.isHidden();
+            }
         };
 
         List<String> list = Arrays.asList(path.list(filter));

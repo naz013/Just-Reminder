@@ -127,7 +127,12 @@ public class CategoryManager extends AppCompatActivity {
         }
     }
 
-    private View.OnClickListener listener = v -> colorSwitch(v.getId());
+    private View.OnClickListener listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            colorSwitch(v.getId());
+        }
+    };
 
     private void saveCategory(){
         String text = editField.getText().toString().trim();

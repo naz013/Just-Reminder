@@ -24,6 +24,7 @@ import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 
@@ -174,17 +175,20 @@ public class TrashFragment extends Fragment implements RecyclerListener{
     @Override
     public void onItemLongClicked(final int position, View view) {
         final String[] items = {getString(R.string.edit), getString(R.string.delete)};
-        Dialogues.showLCAM(getActivity(), item -> {
-            ReminderModel item1 = mAdapter.getItem(position);
-            if (item == 0) {
-                Reminder.edit(item1.getId(), getActivity());
-            }
-            if (item == 1) {
-                Reminder.delete(item1.getId(), getActivity());
-                if (mCallbacks != null) {
-                    mCallbacks.showSnackbar(R.string.deleted);
+        Dialogues.showLCAM(getActivity(), new LCAMListener() {
+            @Override
+            public void onAction(int item) {
+                ReminderModel item1 = mAdapter.getItem(position);
+                if (item == 0) {
+                    Reminder.edit(item1.getId(), getActivity());
                 }
-                loaderAdapter();
+                if (item == 1) {
+                    Reminder.delete(item1.getId(), getActivity());
+                    if (mCallbacks != null) {
+                        mCallbacks.showSnackbar(R.string.deleted);
+                    }
+                    loaderAdapter();
+                }
             }
         }, items);
     }

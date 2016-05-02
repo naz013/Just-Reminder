@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
@@ -34,9 +35,14 @@ public class QuickSMS extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(cs.getFullscreenStyle());
-        runOnUiThread(() -> getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD));
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                        | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                        | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+            }
+        });
 
         setContentView(R.layout.quick_message_layout);
 
@@ -53,14 +59,17 @@ public class QuickSMS extends Activity {
         messagesList = (ListView) findViewById(R.id.messagesList);
 
         TextView buttonSend = (TextView) findViewById(R.id.buttonSend);
-        buttonSend.setOnClickListener(v -> {
-            int position = messagesList.getCheckedItemPosition();
-            Cursor c = (Cursor) messagesList.getAdapter().getItem(position);
-            if (c != null) {
-                String message = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                sendSMS(number, message);
+        buttonSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = messagesList.getCheckedItemPosition();
+                Cursor c = (Cursor) messagesList.getAdapter().getItem(position);
+                if (c != null) {
+                    String message = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+                    sendSMS(number, message);
+                }
+                if (c != null) c.close();
             }
-            if (c != null) c.close();
         });
         buttonSend.setTypeface(typeface);
 
