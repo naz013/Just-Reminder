@@ -10,8 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -74,22 +72,19 @@ public class SelectApplication extends AppCompatActivity {
 
         contactsList.setAdapter(adapter);
 
-        contactsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position != -1) {
-                    Intent intent = new Intent();
-                    String name = (String) parent.getItemAtPosition(position);
-                    String pName = null;
-                    for (int i = 0; i < contacts.size(); i++) {
-                        if (name.matches(contacts.get(i))) {
-                            pName = packageList.get(i);
-                        }
+        contactsList.setOnItemClickListener((parent, view, position, id) -> {
+            if (position != -1) {
+                Intent intent = new Intent();
+                String name = (String) parent.getItemAtPosition(position);
+                String pName = null;
+                for (int i = 0; i < contacts.size(); i++) {
+                    if (name.matches(contacts.get(i))) {
+                        pName = packageList.get(i);
                     }
-                    intent.putExtra(Constants.SELECTED_APPLICATION, pName);
-                    setResult(RESULT_OK, intent);
-                    finish();
                 }
+                intent.putExtra(Constants.SELECTED_APPLICATION, pName);
+                setResult(RESULT_OK, intent);
+                finish();
             }
         });
     }

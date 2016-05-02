@@ -20,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
@@ -37,7 +38,6 @@ import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.services.EventsCheckAlarm;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 
 import org.dmfs.rfc5545.recur.Freq;
 import org.dmfs.rfc5545.recur.InvalidRecurrenceRuleException;
@@ -75,7 +75,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setTitle(getString(R.string.import_events));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
@@ -84,12 +84,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
         button.setOnClickListener(this);
 
         syncInterval = (Button) findViewById(R.id.syncInterval);
-        syncInterval.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dialogues.selectInterval(EventsImport.this, Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL, R.string.interval);
-            }
-        });
+        syncInterval.setOnClickListener(v -> Dialogues.selectInterval(EventsImport.this, Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL, R.string.interval));
 
         eventsCheck = (CheckBox) findViewById(R.id.eventsCheck);
         CheckBox autoCheck = (CheckBox) findViewById(R.id.autoCheck);

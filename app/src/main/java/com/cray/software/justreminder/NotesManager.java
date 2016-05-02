@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -33,6 +32,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.cray.software.justreminder.activities.ImagePreview;
+import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.constants.Prefs;
@@ -55,7 +55,6 @@ import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.FloatingEditText;
-import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -120,38 +119,35 @@ public class NotesManager extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         toolbar.setOnMenuItemClickListener(
-                new Toolbar.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.action_color:
-                                startActivityForResult(new Intent(NotesManager.this,
-                                        ColorPicker.class), Constants.REQUEST_CODE_THEME);
-                                return true;
-                            case R.id.action_image:
-                                getImage();
-                                return true;
-                            case R.id.action_reminder:
-                                if (!isReminderAttached()) {
-                                    setDateTime();
-                                    ViewUtils.expand(remindContainer);
-                                } else {
-                                    ViewUtils.collapse(remindContainer);
-                                }
-                                return true;
-                            case R.id.action_font:
-                                startActivityForResult(new Intent(NotesManager.this,
-                                        FontStyleDialog.class), Constants.REQUEST_CODE_FONT_STYLE);
-                                return true;
-                            case R.id.action_share:
-                                shareNote();
-                                return true;
-                            case MENU_ITEM_DELETE:
-                                deleteDialog();
-                                return true;
-                            default:
-                                return false;
-                        }
+                item -> {
+                    switch (item.getItemId()) {
+                        case R.id.action_color:
+                            startActivityForResult(new Intent(NotesManager.this,
+                                    ColorPicker.class), Constants.REQUEST_CODE_THEME);
+                            return true;
+                        case R.id.action_image:
+                            getImage();
+                            return true;
+                        case R.id.action_reminder:
+                            if (!isReminderAttached()) {
+                                setDateTime();
+                                ViewUtils.expand(remindContainer);
+                            } else {
+                                ViewUtils.collapse(remindContainer);
+                            }
+                            return true;
+                        case R.id.action_font:
+                            startActivityForResult(new Intent(NotesManager.this,
+                                    FontStyleDialog.class), Constants.REQUEST_CODE_FONT_STYLE);
+                            return true;
+                        case R.id.action_share:
+                            shareNote();
+                            return true;
+                        case MENU_ITEM_DELETE:
+                            deleteDialog();
+                            return true;
+                        default:
+                            return false;
                     }
                 });
 
@@ -178,21 +174,11 @@ public class NotesManager extends AppCompatActivity {
 
         remindDate = (TextView) findViewById(R.id.remindDate);
         remindDate.setTypeface(typeface);
-        remindDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dateDialog().show();
-            }
-        });
+        remindDate.setOnClickListener(v -> dateDialog().show());
 
         remindTime = (TextView) findViewById(R.id.remindTime);
         remindTime.setTypeface(typeface);
-        remindTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timeDialog().show();
-            }
-        });
+        remindTime.setOnClickListener(v -> timeDialog().show());
 
         noteImage = (ImageView) findViewById(R.id.noteImage);
         if (image != null){
@@ -200,77 +186,60 @@ public class NotesManager extends AppCompatActivity {
         } else {
             imageContainer.setVisibility(View.GONE);
         }
-        noteImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                    Bitmap _bitmapScaled = img;
-                    _bitmapScaled.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        noteImage.setOnClickListener(v -> {
+            try {
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                Bitmap _bitmapScaled = img;
+                _bitmapScaled.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
 
-                    File sdPath = Environment.getExternalStorageDirectory();
-                    File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_IMAGE_CACHE);
-                    boolean isDirectory = false;
-                    if (!sdPathDr.exists()) {
-                        isDirectory = sdPathDr.mkdirs();
-                    }
-                    if (isDirectory) {
-                        String fileName = SyncHelper.generateID() + FileConfig.FILE_NAME_IMAGE;
-                        File f = new File(sdPathDr
-                                + File.separator + fileName);
-                        boolean isCreated = f.createNewFile();
-                        if (isCreated) {
-                            FileOutputStream fo = new FileOutputStream(f);
-                            fo.write(bytes.toByteArray());
-                            fo.close();
-
-                            startActivity(new Intent(NotesManager.this, ImagePreview.class)
-                                    .putExtra("image", f.toString()));
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                File sdPath = Environment.getExternalStorageDirectory();
+                File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_IMAGE_CACHE);
+                boolean isDirectory = false;
+                if (!sdPathDr.exists()) {
+                    isDirectory = sdPathDr.mkdirs();
                 }
+                if (isDirectory) {
+                    String fileName = SyncHelper.generateID() + FileConfig.FILE_NAME_IMAGE;
+                    File f = new File(sdPathDr
+                            + File.separator + fileName);
+                    boolean isCreated = f.createNewFile();
+                    if (isCreated) {
+                        FileOutputStream fo = new FileOutputStream(f);
+                        fo.write(bytes.toByteArray());
+                        fo.close();
+
+                        startActivity(new Intent(NotesManager.this, ImagePreview.class)
+                                .putExtra("image", f.toString()));
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
         discardReminder = (ImageButton) findViewById(R.id.discardReminder);
-        discardReminder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ViewUtils.collapse(remindContainer);
-            }
-        });
+        discardReminder.setOnClickListener(v -> ViewUtils.collapse(remindContainer));
 
         ImageButton deleteButton = (ImageButton) findViewById(R.id.deleteButton);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isImageAttached()) {
-                    ViewUtils.collapse(imageContainer);
-                    image = null;
-                    img = null;
-                }
+        deleteButton.setOnClickListener(v -> {
+            if (isImageAttached()) {
+                ViewUtils.collapse(imageContainer);
+                image = null;
+                img = null;
             }
         });
 
         setImages();
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sPrefs = new SharedPrefs(NotesManager.this);
-                sPrefs.saveBoolean("isNew", true);
-                saveNote();
-            }
+        mFab.setOnClickListener(v -> {
+            sPrefs = new SharedPrefs(NotesManager.this);
+            sPrefs.saveBoolean("isNew", true);
+            saveNote();
         });
-        mFab.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                mFab.hide();
-                return false;
-            }
+        mFab.setOnLongClickListener(v -> {
+            mFab.hide();
+            return false;
         });
         mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorPrimary(), cSetter.colorAccent()));
 
@@ -557,20 +526,14 @@ public class NotesManager extends AppCompatActivity {
     private void deleteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.delete_this_note));
-        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                NoteModel.deleteNote(id, NotesManager.this, null);
-                new SharedPrefs(NotesManager.this).saveBoolean("isNew", true);
-                finish();
-            }
+        builder.setPositiveButton(getString(R.string.yes), (dialog, which) -> {
+            dialog.dismiss();
+            NoteModel.deleteNote(id, NotesManager.this, null);
+            new SharedPrefs(NotesManager.this).saveBoolean("isNew", true);
+            finish();
         });
-        builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
+        builder.setNegativeButton(getString(R.string.no), (dialog, which) -> {
+            dialog.dismiss();
         });
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -599,25 +562,22 @@ public class NotesManager extends AppCompatActivity {
         builder.setTitle(getString(R.string.image));
         builder.setItems(new CharSequence[] {getString(R.string.gallery),
                         getString(R.string.take_a_shot)},
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case 0:
-                                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                                intent.setType("image/*");
-                                Intent chooser = Intent.createChooser(intent, getString(R.string.image));
-                                startActivityForResult(chooser, Constants.ACTION_REQUEST_GALLERY);
-                                break;
-                            case 1:
-                                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-                                    startActivityForResult(cameraIntent, Constants.ACTION_REQUEST_CAMERA);
-                                }
-                                break;
-                            default:
-                                break;
-                        }
+                (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                            intent.setType("image/*");
+                            Intent chooser = Intent.createChooser(intent, getString(R.string.image));
+                            startActivityForResult(chooser, Constants.ACTION_REQUEST_GALLERY);
+                            break;
+                        case 1:
+                            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+                                startActivityForResult(cameraIntent, Constants.ACTION_REQUEST_CAMERA);
+                            }
+                            break;
+                        default:
+                            break;
                     }
                 });
 

@@ -57,7 +57,7 @@ public class CategoryManager extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
@@ -127,12 +127,7 @@ public class CategoryManager extends AppCompatActivity {
         }
     }
 
-    private View.OnClickListener listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            colorSwitch(v.getId());
-        }
-    };
+    private View.OnClickListener listener = v -> colorSwitch(v.getId());
 
     private void saveCategory(){
         String text = editField.getText().toString().trim();

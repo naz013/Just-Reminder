@@ -28,7 +28,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -37,7 +36,6 @@ import com.cray.software.justreminder.adapters.TaskListRecyclerAdapter;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
-import com.cray.software.justreminder.reminder.ReminderModel;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -45,6 +43,7 @@ import com.cray.software.justreminder.json.JShopping;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
+import com.cray.software.justreminder.reminder.ReminderModel;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.WrapLayoutManager;
@@ -84,17 +83,14 @@ public class ShopsPreview extends AppCompatActivity {
         toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
 
         id = getIntent().getLongExtra(Constants.EDIT_ID, 0);
 
         reminderSwitch = (SwitchCompat) findViewById(R.id.reminderSwitch);
-        reminderSwitch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Reminder.toggle(id, ShopsPreview.this, null);
-                loadUi();
-            }
+        reminderSwitch.setOnClickListener(v -> {
+            Reminder.toggle(id, ShopsPreview.this, null);
+            loadUi();
         });
         reminderContainer = (RelativeLayout) findViewById(R.id.reminderContainer);
 
@@ -108,12 +104,9 @@ public class ShopsPreview extends AppCompatActivity {
         reminderContainer.setVisibility(View.GONE);
 
         CheckBox showHidden = (CheckBox) findViewById(R.id.showHidden);
-        showHidden.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                isHidden = isChecked;
-                loadUi();
-            }
+        showHidden.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            isHidden = isChecked;
+            loadUi();
         });
 
         todoList = (RecyclerView) findViewById(R.id.todoList);
@@ -124,23 +117,15 @@ public class ShopsPreview extends AppCompatActivity {
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorAccent(), cSetter.colorAccent()));
         mFab.setVisibility(View.GONE);
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (id != 0) {
-                    Reminder.edit(id, ShopsPreview.this);
-                }
+        mFab.setOnClickListener(v -> {
+            if (id != 0) {
+                Reminder.edit(id, ShopsPreview.this);
             }
         });
 
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
 
-        new android.os.Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mFab.show();
-            }
-        }, 500);
+        new android.os.Handler().postDelayed(() -> mFab.show(), 500);
     }
 
     @Override
@@ -228,14 +213,11 @@ public class ShopsPreview extends AppCompatActivity {
 
     private void closeScreen() {
         mFab.hide();
-        new android.os.Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (Module.isLollipop()) {
-                    finishAfterTransition();
-                } else {
-                    finish();
-                }
+        new android.os.Handler().postDelayed(() -> {
+            if (Module.isLollipop()) {
+                finishAfterTransition();
+            } else {
+                finish();
             }
         }, 350);
     }

@@ -79,13 +79,9 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ColorSetter cs = new ColorSetter(FollowReminder.this);
-        runOnUiThread(new Runnable() {
-            public void run() {
-                getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                        | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-                        | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-            }
-        });
+        runOnUiThread(() -> getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD));
         setTheme(cs.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
@@ -168,19 +164,13 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         mCustomYear = c.get(Calendar.YEAR);
         mCustomMonth = c.get(Calendar.MONTH);
         mCustomDay = c.get(Calendar.DAY_OF_MONTH);
-        mCustomDateView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCustomRadio.setChecked(true);
-                dateDialog();
-            }
+        mCustomDateView.setOnClickListener(v -> {
+            mCustomRadio.setChecked(true);
+            dateDialog();
         });
-        mCustomTimeView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCustomRadio.setChecked(true);
-                timeDialog().show();
-            }
+        mCustomTimeView.setOnClickListener(v -> {
+            mCustomRadio.setChecked(true);
+            timeDialog().show();
         });
 
         //Calculate tomorrow time
@@ -226,7 +216,7 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         }
         if (toolbar != null) {
             toolbar.setTitle(R.string.create_task);
-            toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
+            toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         }
     }
 
@@ -242,8 +232,7 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         spinnerArray.add(String.format(getString(R.string.x_hours), 3));
         spinnerArray.add(String.format(getString(R.string.x_hours), 4));
         spinnerArray.add(String.format(getString(R.string.x_hours), 5));
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, spinnerArray);
-        return spinnerArrayAdapter;
+        return new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, spinnerArray);
     }
 
     private int getAfterMins(int progress) {
@@ -318,7 +307,6 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         setUpTimes();
         DataBase db = new DataBase(FollowReminder.this);
         db.open();
-        SharedPrefs prefs = new SharedPrefs(FollowReminder.this);
         Cursor cf = db.queryCategories();
         String categoryId = null;
         if (cf != null && cf.moveToFirst()) {

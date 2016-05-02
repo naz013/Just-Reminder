@@ -13,7 +13,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -24,10 +23,10 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.models.BirthdayModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -92,7 +91,6 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ColorSetter cs = new ColorSetter(AddBirthday.this);
-        SharedPrefs sPrefs = new SharedPrefs(this);
         setTheme(cs.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
@@ -103,7 +101,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
@@ -123,12 +121,9 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         container.setVisibility(View.GONE);
 
         contactCheck = (CheckBox) findViewById(R.id.contactCheck);
-        contactCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) container.setVisibility(View.VISIBLE);
-                else container.setVisibility(View.GONE);
-            }
+        contactCheck.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) container.setVisibility(View.VISIBLE);
+            else container.setVisibility(View.GONE);
         });
 
         final Calendar calendar = Calendar.getInstance();

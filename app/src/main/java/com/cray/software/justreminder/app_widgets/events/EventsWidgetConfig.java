@@ -3,7 +3,6 @@ package com.cray.software.justreminder.app_widgets.events;
 import android.app.AlertDialog;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -73,7 +72,7 @@ public class EventsWidgetConfig extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setTitle(getString(R.string.active_reminders));
 
         mThemePager = (ViewPager) findViewById(R.id.themePager);
@@ -137,12 +136,9 @@ public class EventsWidgetConfig extends AppCompatActivity {
             }
         });
         builder.setView(layout);
-        builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                updateWidget();
-            }
+        builder.setPositiveButton(getString(R.string.ok), (dialog, which) -> {
+            dialog.dismiss();
+            updateWidget();
         });
         AlertDialog dialog = builder.create();
         dialog.show();

@@ -23,7 +23,6 @@ import com.cray.software.justreminder.enums.QuickReturnViewType;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
-import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
@@ -51,7 +50,7 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setTitle(getString(R.string.messages));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
@@ -72,12 +71,7 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
         listView = (RecyclerView) findViewById(R.id.currentList);
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(TemplatesList.this, NewTemplate.class));
-            }
-        });
+        mFab.setOnClickListener(v -> startActivity(new Intent(TemplatesList.this, NewTemplate.class)));
     }
 
     private void loadTemplates(){
@@ -147,15 +141,12 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
     @Override
     public void onItemLongClicked(final int position, View view) {
         final String[] items = {getString(R.string.edit), getString(R.string.delete)};
-        Dialogues.showLCAM(this, new LCAMListener() {
-            @Override
-            public void onAction(int item) {
-                if (item == 0) {
-                    editTemplate(position);
-                }
-                if (item == 1) {
-                    removeTemplate(position);
-                }
+        Dialogues.showLCAM(this, item -> {
+            if (item == 0) {
+                editTemplate(position);
+            }
+            if (item == 1) {
+                removeTemplate(position);
             }
         }, items);
     }

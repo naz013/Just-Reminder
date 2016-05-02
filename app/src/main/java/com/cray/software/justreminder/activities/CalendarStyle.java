@@ -10,13 +10,13 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 
 public class CalendarStyle extends AppCompatActivity {
     private ImageButton red, green, blue, yellow, greenLight, blueLight, cyan, purple,
@@ -40,7 +40,7 @@ public class CalendarStyle extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setTitle(getString(R.string.theme));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
@@ -89,12 +89,7 @@ public class CalendarStyle extends AppCompatActivity {
         }
     }
 
-    private View.OnClickListener listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            themeColorSwitch(v.getId());
-        }
-    };
+    private View.OnClickListener listener = v -> themeColorSwitch(v.getId());
 
     private void setUpRadio(){
         sPrefs = new SharedPrefs(CalendarStyle.this);

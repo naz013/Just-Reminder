@@ -64,7 +64,7 @@ public class AddPlace extends AppCompatActivity implements MapListener {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 

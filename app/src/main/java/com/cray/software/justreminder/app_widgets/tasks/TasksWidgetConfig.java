@@ -3,7 +3,6 @@ package com.cray.software.justreminder.app_widgets.tasks;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,6 +16,7 @@ import android.view.MenuItem;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.ArrayList;
@@ -56,14 +56,14 @@ public class TasksWidgetConfig extends AppCompatActivity {
         ColorSetter cSetter = new ColorSetter(TasksWidgetConfig.this);
         setTheme(cSetter.getStyle());
         setContentView(R.layout.tasks_widget_config_layout);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setTitle(getString(R.string.google_tasks));
 
         mThemePager = (ViewPager) findViewById(R.id.themePager);

@@ -43,7 +43,7 @@ public class ThemerDialog extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setTitle(getString(R.string.theme));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
@@ -86,12 +86,7 @@ public class ThemerDialog extends AppCompatActivity {
         }
     }
 
-    private View.OnClickListener listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            themeColorSwitch(v.getId());
-        }
-    };
+    private View.OnClickListener listener = v -> themeColorSwitch(v.getId());
 
     private void setUpRadio(){
         sPrefs = new SharedPrefs(ThemerDialog.this);

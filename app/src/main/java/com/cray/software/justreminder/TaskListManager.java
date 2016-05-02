@@ -1,7 +1,6 @@
 package com.cray.software.justreminder;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -16,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.async.TaskListAsync;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
@@ -25,7 +25,6 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 
 
 public class TaskListManager extends AppCompatActivity {
@@ -59,7 +58,7 @@ public class TaskListManager extends AppCompatActivity {
         sPrefs = new SharedPrefs(TaskListManager.this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -67,19 +66,16 @@ public class TaskListManager extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         toolbar.setOnMenuItemClickListener(
-                new Toolbar.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case MENU_ITEM_DELETE:
-                                deleteDialog();
-                                break;
-                            case R.id.action_add:
-                                saveTaskList();
-                                break;
-                        }
-                        return true;
+                item -> {
+                    switch (item.getItemId()) {
+                        case MENU_ITEM_DELETE:
+                            deleteDialog();
+                            break;
+                        case R.id.action_add:
+                            saveTaskList();
+                            break;
                     }
+                    return true;
                 });
 
         toolbar.inflateMenu(R.menu.save_menu);
@@ -152,12 +148,7 @@ public class TaskListManager extends AppCompatActivity {
         }
     }
 
-    private View.OnClickListener listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            colorSwitch(v.getId());
-        }
-    };
+    private View.OnClickListener listener = v -> colorSwitch(v.getId());
 
     private void saveTaskList() {
         sPrefs = new SharedPrefs(this);
@@ -224,19 +215,13 @@ public class TaskListManager extends AppCompatActivity {
     private void deleteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.delete_this_list));
-        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                deleteList();
-                finish();
-            }
+        builder.setPositiveButton(getString(R.string.yes), (dialog, which) -> {
+            dialog.dismiss();
+            deleteList();
+            finish();
         });
-        builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
+        builder.setNegativeButton(getString(R.string.no), (dialog, which) -> {
+            dialog.dismiss();
         });
         AlertDialog dialog = builder.create();
         dialog.show();

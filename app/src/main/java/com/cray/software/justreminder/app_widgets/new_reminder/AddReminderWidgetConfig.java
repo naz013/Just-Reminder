@@ -3,7 +3,6 @@ package com.cray.software.justreminder.app_widgets.new_reminder;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,10 +16,10 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.app_widgets.WidgetUtils;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.app_widgets.WidgetUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,14 +57,14 @@ public class AddReminderWidgetConfig extends AppCompatActivity {
         ColorSetter cSetter = new ColorSetter(AddReminderWidgetConfig.this);
         setTheme(cSetter.getStyle());
         setContentView(R.layout.add_reminder_widget_config_layout);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setTitle(getString(R.string.add_reminder_menu));
 
         widgetBg = (LinearLayout) findViewById(R.id.widgetBg);

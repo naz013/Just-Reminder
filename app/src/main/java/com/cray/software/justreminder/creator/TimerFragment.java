@@ -17,7 +17,6 @@
 package com.cray.software.justreminder.creator;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -31,7 +30,6 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.dialogs.ExclusionPickerDialog;
 import com.cray.software.justreminder.json.JExclusion;
 import com.cray.software.justreminder.json.JExport;
 import com.cray.software.justreminder.json.JModel;
@@ -136,30 +134,21 @@ public class TimerFragment extends BaseFragment implements
             deleteButton.setImageResource(R.drawable.ic_backspace_black_24dp);
             exclusionClear.setImageResource(R.drawable.ic_clear_black_24dp);
         }
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timeString = timeString.substring(0, timeString.length() - 1);
-                timeString = "0" + timeString;
-                updateTimeView();
-            }
+        deleteButton.setOnClickListener(v -> {
+            timeString = timeString.substring(0, timeString.length() - 1);
+            timeString = "0" + timeString;
+            updateTimeView();
         });
-        deleteButton.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                timeString = "000000";
-                updateTimeView();
-                return true;
-            }
+        deleteButton.setOnLongClickListener(v -> {
+            timeString = "000000";
+            updateTimeView();
+            return true;
         });
-        exclusionClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (exclusion != null){
-                    exclusion = null;
-                    selectExclusion.setText(getString(R.string.exclusion));
-                    exclusionClear.setVisibility(View.INVISIBLE);
-                }
+        exclusionClear.setOnClickListener(v -> {
+            if (exclusion != null){
+                exclusion = null;
+                selectExclusion.setText(getString(R.string.exclusion));
+                exclusionClear.setVisibility(View.INVISIBLE);
             }
         });
 

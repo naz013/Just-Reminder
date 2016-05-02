@@ -38,7 +38,7 @@ public class SendReportActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
         toolbar.setTitle(getString(R.string.feedback));
-        toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
 
         mWeb = (WebView) findViewById(R.id.webView);
         mWeb.getSettings().setJavaScriptEnabled(true); // enable javascript

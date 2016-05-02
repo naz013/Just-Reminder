@@ -8,7 +8,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Prefs;
@@ -49,7 +48,7 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setTitle(getString(R.string.time));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
@@ -125,74 +124,62 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
     }
 
     protected Dialog morningDialog() {
-        return new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                morningHour = hourOfDay;
-                morningMinute = minute;
-                String time = morningHour + ":" + morningMinute;
-                prefs.savePrefs(Prefs.TIME_MORNING, time);
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                calendar.set(Calendar.MINUTE, minute);
+        return new TimePickerDialog(this, (view, hourOfDay, minute) -> {
+            morningHour = hourOfDay;
+            morningMinute = minute;
+            String time = morningHour + ":" + morningMinute;
+            prefs.savePrefs(Prefs.TIME_MORNING, time);
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            calendar.set(Calendar.MINUTE, minute);
 
-                morningTime.setText(TimeUtil.getTime(calendar.getTime(),
-                        prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-            }
+            morningTime.setText(TimeUtil.getTime(calendar.getTime(),
+                    prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         }, morningHour, morningMinute, prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
 }
 
     protected Dialog dayDialog() {
-        return new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                dayHour = hourOfDay;
-                dayMinute = minute;
-                String time = dayHour + ":" + dayMinute;
-                prefs.savePrefs(Prefs.TIME_DAY, time);
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                calendar.set(Calendar.MINUTE, minute);
+        return new TimePickerDialog(this, (view, hourOfDay, minute) -> {
+            dayHour = hourOfDay;
+            dayMinute = minute;
+            String time = dayHour + ":" + dayMinute;
+            prefs.savePrefs(Prefs.TIME_DAY, time);
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            calendar.set(Calendar.MINUTE, minute);
 
-                dayTime.setText(TimeUtil.getTime(calendar.getTime(),
-                        prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-            }
+            dayTime.setText(TimeUtil.getTime(calendar.getTime(),
+                    prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         }, dayHour, dayMinute, prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
     }
 
     protected Dialog nightDialog() {
-        return new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                nightHour = hourOfDay;
-                nightMinute = minute;
-                String time = nightHour + ":" + nightMinute;
-                prefs.savePrefs(Prefs.TIME_NIGHT, time);
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                calendar.set(Calendar.MINUTE, minute);
+        return new TimePickerDialog(this, (view, hourOfDay, minute) -> {
+            nightHour = hourOfDay;
+            nightMinute = minute;
+            String time = nightHour + ":" + nightMinute;
+            prefs.savePrefs(Prefs.TIME_NIGHT, time);
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            calendar.set(Calendar.MINUTE, minute);
 
-                nightTime.setText(TimeUtil.getTime(calendar.getTime(),
-                        prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-            }
+            nightTime.setText(TimeUtil.getTime(calendar.getTime(),
+                    prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         }, nightHour, nightMinute, prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
     }
 
     protected Dialog eveningDialog() {
-        return new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                eveningHour = hourOfDay;
-                eveningMinute = minute;
-                String time = eveningHour + ":" + eveningMinute;
-                prefs.savePrefs(Prefs.TIME_EVENING, time);
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                calendar.set(Calendar.MINUTE, minute);
+        return new TimePickerDialog(this, (view, hourOfDay, minute) -> {
+            eveningHour = hourOfDay;
+            eveningMinute = minute;
+            String time = eveningHour + ":" + eveningMinute;
+            prefs.savePrefs(Prefs.TIME_EVENING, time);
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            calendar.set(Calendar.MINUTE, minute);
 
-                eveningTime.setText(TimeUtil.getTime(calendar.getTime(),
-                        prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-            }
+            eveningTime.setText(TimeUtil.getTime(calendar.getTime(),
+                    prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         }, eveningHour, eveningMinute, prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
     }
 

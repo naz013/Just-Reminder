@@ -56,11 +56,12 @@ public class QuickAddReminder extends AppCompatActivity {
 
     private SharedPrefs sPrefs = new SharedPrefs(QuickAddReminder.this);
     private GTasksHelper gtx = new GTasksHelper(QuickAddReminder.this);
+    private ColorSetter cs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(QuickAddReminder.this);
+        cs = new ColorSetter(QuickAddReminder.this);
         setTheme(cs.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
@@ -68,26 +69,10 @@ public class QuickAddReminder extends AppCompatActivity {
         setContentView(R.layout.quick_add_reminder_layout);
         setRequestedOrientation(cs.getRequestOrientation());
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
-
+        initActionBar();
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
-
-        ImageView timeIcon = (ImageView) findViewById(R.id.timeIcon);
-        ImageView repeatIcon = (ImageView) findViewById(R.id.repeatIcon);
-
-        if (cs.isDark()){
-            timeIcon.setImageResource(R.drawable.ic_alarm_white_24dp);
-            repeatIcon.setImageResource(R.drawable.ic_refresh_white_24dp);
-        } else {
-            timeIcon.setImageResource(R.drawable.ic_alarm_black_24dp);
-            repeatIcon.setImageResource(R.drawable.ic_refresh_black_24dp);
-        }
-
+        initIcons();
         task_text = (EditText) findViewById(R.id.task_text);
-
         Intent i = getIntent();
         long receivedDate = i.getLongExtra("date", 0);
 
@@ -109,23 +94,13 @@ public class QuickAddReminder extends AppCompatActivity {
         myDay = c.get(Calendar.DAY_OF_MONTH);
 
         dateField = (TextView) findViewById(R.id.dateField);
-        dateField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dateDialog();
-            }
-        });
+        dateField.setOnClickListener(v -> dateDialog());
 
         dateField.setText(TimeUtil.getDate(c.getTime()));
         dateField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
         timeField = (TextView) findViewById(R.id.timeField);
-        timeField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timeDialog().show();
-            }
-        });
+        timeField.setOnClickListener(v -> timeDialog().show());
         timeField.setText(TimeUtil.getTime(c.getTime(),
                 sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
         timeField.setTypeface(AssetsUtil.getMediumTypeface(this));
@@ -152,6 +127,25 @@ public class QuickAddReminder extends AppCompatActivity {
             }
         });
         repeatDays.setText(String.valueOf(repeatDateInt.getProgress()));
+    }
+
+    private void initIcons() {
+        ImageView timeIcon = (ImageView) findViewById(R.id.timeIcon);
+        ImageView repeatIcon = (ImageView) findViewById(R.id.repeatIcon);
+        if (cs.isDark()){
+            timeIcon.setImageResource(R.drawable.ic_alarm_white_24dp);
+            repeatIcon.setImageResource(R.drawable.ic_refresh_white_24dp);
+        } else {
+            timeIcon.setImageResource(R.drawable.ic_alarm_black_24dp);
+            repeatIcon.setImageResource(R.drawable.ic_refresh_black_24dp);
+        }
+    }
+
+    private void initActionBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
     }
 
     /**
