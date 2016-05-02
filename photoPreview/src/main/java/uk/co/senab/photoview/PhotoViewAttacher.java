@@ -21,7 +21,6 @@ import android.graphics.Matrix;
 import android.graphics.Matrix.ScaleToFit;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.util.FloatMath;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -147,7 +146,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
     private ScaleType mScaleType = ScaleType.FIT_CENTER;
 
     public PhotoViewAttacher(ImageView imageView) {
-        mImageView = new WeakReference<ImageView>(imageView);
+        mImageView = new WeakReference<>(imageView);
 
         imageView.setDrawingCacheEnabled(true);
         imageView.setOnTouchListener(this);
@@ -168,8 +167,6 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
 
         mGestureDetector = new GestureDetector(imageView.getContext(),
                 new GestureDetector.SimpleOnGestureListener() {
-
-                    // forward long click listener
                     @Override
                     public void onLongPress(MotionEvent e) {
                         if (null != mLongClickListener) {
@@ -437,8 +434,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
     @Override
     public void onScale(float scaleFactor, float focusX, float focusY) {
         if (DEBUG) {
-            LogManager.getLogger().d(
-                    LOG_TAG,
+            LogManager.getLogger().d(LOG_TAG,
                     String.format("onScale: scale: %.2f. fX: %.2f. fY: %.2f",
                             scaleFactor, focusX, focusY));
         }
