@@ -169,41 +169,29 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             toolbar.setLogo(item.getLogo());
         } else {
             if (item.getId() == DROPBOX_INT){
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        final boolean isC = SyncHelper.isConnected(getActivity());
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (isC) {
-                                    addFragment(CloudFragment.newInstance(DROPBOX_INT));
-                                    toolbar.setLogo(item.getLogo());
-                                } else {
-                                    spinner.setSelection(0);
-                                }
-                            }
-                        });
-                    }
+                new Thread(() -> {
+                    final boolean isC = SyncHelper.isConnected(getActivity());
+                    getActivity().runOnUiThread(() -> {
+                        if (isC) {
+                            addFragment(CloudFragment.newInstance(DROPBOX_INT));
+                            toolbar.setLogo(item.getLogo());
+                        } else {
+                            spinner.setSelection(0);
+                        }
+                    });
                 }).start();
             }
             if (item.getId() == GOOGLE_DRIVE_INT){
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        final boolean isC = SyncHelper.isConnected(getActivity());
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (isC) {
-                                    addFragment(CloudFragment.newInstance(GOOGLE_DRIVE_INT));
-                                    toolbar.setLogo(item.getLogo());
-                                } else {
-                                    spinner.setSelection(0);
-                                }
-                            }
-                        });
-                    }
+                new Thread(() -> {
+                    final boolean isC = SyncHelper.isConnected(getActivity());
+                    getActivity().runOnUiThread(() -> {
+                        if (isC) {
+                            addFragment(CloudFragment.newInstance(GOOGLE_DRIVE_INT));
+                            toolbar.setLogo(item.getLogo());
+                        } else {
+                            spinner.setSelection(0);
+                        }
+                    });
                 }).start();
             }
         }

@@ -339,13 +339,10 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
 
         setMyLocation();
 
-        map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                hideLayers();
-                hidePlaces();
-                hideStyles();
-            }
+        map.setOnMapClickListener(latLng -> {
+            hideLayers();
+            hidePlaces();
+            hideStyles();
         });
 
         initViews(view);
@@ -360,7 +357,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                loadPlaces();
             }
 
             @Override
@@ -368,14 +365,12 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
 
             }
         });
-        cardSearch.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
-                    loadPlaces();
-                    return true;
-                } else return false;
-            }
+        cardSearch.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+                hideKeyboard();
+                loadPlaces();
+                return true;
+            } else return false;
         });
 
         placesList = (RecyclerView) view.findViewById(R.id.placesList);
@@ -551,17 +546,17 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     }
 
     private void loadPlaces(){
-        String req = cardSearch.getText().toString().trim();
+        String req = cardSearch.getText().toString().trim().toLowerCase();
         if (req.matches("")) return;
+        cancelSearchTask();
+        placesTask = new PlacesTask(this, req, mLat, mLng);
+        placesTask.execute();
+    }
 
-        hideKeyboard();
-
+    private void cancelSearchTask() {
         if (placesTask != null && !placesTask.isCancelled()) {
             placesTask.cancel(true);
         }
-
-        placesTask = new PlacesTask(this, req, mLat, mLng);
-        placesTask.execute();
     }
 
     private void refreshAdapter(boolean show) {
@@ -791,6 +786,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     public void onDetach() {
         super.onDetach();
         removeUpdates();
+        cancelSearchTask();
     }
 
     @Override

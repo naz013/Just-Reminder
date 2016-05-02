@@ -116,20 +116,10 @@ public class NavigationDrawerFragment extends Fragment implements
         prefsButton.setOnClickListener(this);
 
         TextView helpButton = (TextView) rootView.findViewById(R.id.help);
-        helpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectItem(ScreenManager.HELP, false);
-            }
-        });
+        helpButton.setOnClickListener(v -> selectItem(ScreenManager.HELP, false));
 
         TextView report = (TextView) rootView.findViewById(R.id.report);
-        report.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectItem(ScreenManager.REPORT, false);
-            }
-        });
+        report.setOnClickListener(v -> selectItem(ScreenManager.REPORT, false));
 
         TextView feedButton = (TextView) rootView.findViewById(R.id.feed);
         feedButton.setOnClickListener(this);
@@ -158,32 +148,23 @@ public class NavigationDrawerFragment extends Fragment implements
         archiveScreen.setOnClickListener(this);
 
         categories = (TextView) rootView.findViewById(R.id.categories);
-        categories.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectItem(ScreenManager.FRAGMENT_GROUPS, true);
-                disableItem(ScreenManager.FRAGMENT_GROUPS);
-            }
+        categories.setOnClickListener(v -> {
+            selectItem(ScreenManager.FRAGMENT_GROUPS, true);
+            disableItem(ScreenManager.FRAGMENT_GROUPS);
         });
         categories.setTypeface(typeface);
 
         places = (TextView) rootView.findViewById(R.id.places);
-        places.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectItem(ScreenManager.FRAGMENT_PLACES, true);
-                disableItem(ScreenManager.FRAGMENT_PLACES);
-            }
+        places.setOnClickListener(v -> {
+            selectItem(ScreenManager.FRAGMENT_PLACES, true);
+            disableItem(ScreenManager.FRAGMENT_PLACES);
         });
         places.setTypeface(typeface);
 
         templates = (TextView) rootView.findViewById(R.id.templates);
-        templates.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectItem(ScreenManager.FRAGMENT_TEMPLATES, true);
-                disableItem(ScreenManager.FRAGMENT_TEMPLATES);
-            }
+        templates.setOnClickListener(v -> {
+            selectItem(ScreenManager.FRAGMENT_TEMPLATES, true);
+            disableItem(ScreenManager.FRAGMENT_TEMPLATES);
         });
         templates.setTypeface(typeface);
         reloadItems();
@@ -214,12 +195,7 @@ public class NavigationDrawerFragment extends Fragment implements
 
             if (!isAppInstalled("com.cray.software.justreminderpro")){
                 ads_container.setVisibility(View.VISIBLE);
-                ads_container.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        selectItem(ScreenManager.MARKET, false);
-                    }
-                });
+                ads_container.setOnClickListener(view -> selectItem(ScreenManager.MARKET, false));
             }
         }
 
@@ -351,12 +327,7 @@ public class NavigationDrawerFragment extends Fragment implements
             mDrawerLayout.openDrawer(mFragmentContainerView);
         }
 
-        mDrawerLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mDrawerToggle.syncState();
-            }
-        });
+        mDrawerLayout.post(() -> mDrawerToggle.syncState());
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
@@ -369,19 +340,16 @@ public class NavigationDrawerFragment extends Fragment implements
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
         if (mCallbacks != null) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (tag != null) {
-                        try {
-                            mCallbacks.onItemSelected(tag);
-                        } catch (NullPointerException e){
-                            e.printStackTrace();
-                            mCallbacks.onItemSelected(ScreenManager.FRAGMENT_ACTIVE);
-                        }
-                    } else {
+            new Handler().postDelayed(() -> {
+                if (tag != null) {
+                    try {
+                        mCallbacks.onItemSelected(tag);
+                    } catch (NullPointerException e){
+                        e.printStackTrace();
                         mCallbacks.onItemSelected(ScreenManager.FRAGMENT_ACTIVE);
                     }
+                } else {
+                    mCallbacks.onItemSelected(ScreenManager.FRAGMENT_ACTIVE);
                 }
             }, 250);
         }

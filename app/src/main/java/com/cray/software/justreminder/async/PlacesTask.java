@@ -84,7 +84,9 @@ public class PlacesTask extends AsyncTask<Void, Void, ArrayList<PlaceModel>> {
     @Override
     protected void onPostExecute(ArrayList<PlaceModel> result) {
         super.onPostExecute(result);
-        if (listener != null) listener.onFinish(result);
+        if (listener != null) {
+            listener.onFinish(result);
+        }
     }
 
     private String downloadUrl(String strUrl) throws IOException {

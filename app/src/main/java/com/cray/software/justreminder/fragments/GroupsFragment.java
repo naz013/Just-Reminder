@@ -25,7 +25,6 @@ import com.cray.software.justreminder.datas.CategoryDataProvider;
 import com.cray.software.justreminder.datas.models.CategoryModel;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
@@ -96,7 +95,7 @@ public class GroupsFragment extends Fragment implements SimpleListener {
         provider = new CategoryDataProvider(getActivity());
         CategoryRecyclerAdapter adapter = new CategoryRecyclerAdapter(getActivity(), provider);
         adapter.setEventListener(this);
-        listView.setAdapter(adapter);  // requires *wrapped* adapter
+        listView.setAdapter(adapter);
         listView.setItemAnimator(new DefaultItemAnimator());
         if (mCallbacks != null) {
             mCallbacks.onListChanged(listView);
@@ -134,21 +133,18 @@ public class GroupsFragment extends Fragment implements SimpleListener {
         String[] items = {getString(R.string.change_color), getString(R.string.edit), getString(R.string.delete)};
         if (provider.getCount() == 1)
             items = new String[]{getString(R.string.change_color), getString(R.string.edit)};
-        Dialogues.showLCAM(getActivity(), new LCAMListener() {
-            @Override
-            public void onAction(int item) {
-                switch (item){
-                    case 0:
-                        changeColor(provider.getItem(position).getId());
-                        break;
-                    case 1:
-                        startActivity(new Intent(getActivity(), CategoryManager.class)
-                                .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
-                        break;
-                    case 2:
-                        removeGroup(position);
-                        break;
-                }
+        Dialogues.showLCAM(getActivity(), item -> {
+            switch (item){
+                case 0:
+                    changeColor(provider.getItem(position).getId());
+                    break;
+                case 1:
+                    startActivity(new Intent(getActivity(), CategoryManager.class)
+                            .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
+                    break;
+                case 2:
+                    removeGroup(position);
+                    break;
             }
         }, items);
     }
@@ -170,12 +166,9 @@ public class GroupsFragment extends Fragment implements SimpleListener {
                     getString(R.string.dark_purple), getString(R.string.dark_orange),
                     getString(R.string.lime), getString(R.string.indigo)};
         }
-        Dialogues.showLCAM(getActivity(), new LCAMListener() {
-            @Override
-            public void onAction(int item) {
-                CategoryModel.setNewIndicator(getActivity(), id, item);
-                loadCategories();
-            }
+        Dialogues.showLCAM(getActivity(), item -> {
+            CategoryModel.setNewIndicator(getActivity(), id, item);
+            loadCategories();
         }, items);
     }
 }

@@ -27,7 +27,7 @@ public class RequestBuilder {
         if (Module.isPro()) key = "AIzaSyD80IRgaabOQoZ_mRP_RL36CJKeDO96yKw";
         key = "&key=" + key;
         String req = name.replaceAll("\\s+", "+");
-        String params = "location=" + lat + "," + lng + req + "&language=" + "&radius=50000&name="  + getLocale();
+        String params = "location=" + lat + "," + lng + req + "&language=" + getLocale() + "&radius=50000&name=" + name;
         return "https://maps.googleapis.com/maps/api/place/nearbysearch/json?" + params + key;
     }
 

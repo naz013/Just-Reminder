@@ -2,7 +2,6 @@ package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
@@ -38,7 +37,6 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
@@ -187,21 +185,19 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                 getActivity().getString(R.string.name_za)};
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.order));
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                SharedPrefs prefs = new SharedPrefs(getActivity());
-                if (item == 0) {
-                    prefs.savePrefs(Prefs.NOTES_ORDER, Constants.ORDER_DATE_A_Z);
-                } else if (item == 1) {
-                    prefs.savePrefs(Prefs.NOTES_ORDER, Constants.ORDER_DATE_Z_A);
-                } else if (item == 2) {
-                    prefs.savePrefs(Prefs.NOTES_ORDER, Constants.ORDER_NAME_A_Z);
-                } else if (item == 3) {
-                    prefs.savePrefs(Prefs.NOTES_ORDER, Constants.ORDER_NAME_Z_A);
-                }
-                dialog.dismiss();
-                loaderAdapter();
+        builder.setItems(items, (dialog, item) -> {
+            SharedPrefs prefs = new SharedPrefs(getActivity());
+            if (item == 0) {
+                prefs.savePrefs(Prefs.NOTES_ORDER, Constants.ORDER_DATE_A_Z);
+            } else if (item == 1) {
+                prefs.savePrefs(Prefs.NOTES_ORDER, Constants.ORDER_DATE_Z_A);
+            } else if (item == 2) {
+                prefs.savePrefs(Prefs.NOTES_ORDER, Constants.ORDER_NAME_A_Z);
+            } else if (item == 3) {
+                prefs.savePrefs(Prefs.NOTES_ORDER, Constants.ORDER_NAME_Z_A);
             }
+            dialog.dismiss();
+            loaderAdapter();
         });
         AlertDialog alert = builder.create();
         alert.show();
@@ -240,19 +236,13 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setCancelable(true);
         builder.setMessage(R.string.delete_all_notes);
-        builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
+        builder.setNegativeButton(getString(R.string.no), (dialog, which) -> {
+            dialog.dismiss();
         });
-        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                deleteAll();
-                loaderAdapter();
-            }
+        builder.setPositiveButton(getString(R.string.yes), (dialog, which) -> {
+            dialog.dismiss();
+            deleteAll();
+            loaderAdapter();
         });
 
         AlertDialog dialog = builder.create();
@@ -314,37 +304,34 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     public void onItemLongClicked(final int position, final View view) {
         final String[] items = {getString(R.string.open), getString(R.string.share),
                 getString(R.string.change_color), getString(R.string.edit), getString(R.string.delete)};
-        Dialogues.showLCAM(getActivity(), new LCAMListener() {
-            @Override
-            public void onAction(int item) {
-                long id = provider.getItem(position).getId();
-                switch (item){
-                    case 0:
-                        previewNote(id, view);
-                        break;
-                    case 1:
-                        if (NoteModel.shareNote(id, getActivity())){
-                            Messages.toast(getActivity(), getActivity().getString(R.string.sent));
+        Dialogues.showLCAM(getActivity(), item -> {
+            long id = provider.getItem(position).getId();
+            switch (item){
+                case 0:
+                    previewNote(id, view);
+                    break;
+                case 1:
+                    if (NoteModel.shareNote(id, getActivity())){
+                        Messages.toast(getActivity(), getActivity().getString(R.string.sent));
+                    } else {
+                        if (mCallbacks != null) {
+                            mCallbacks.showSnackbar(R.string.error_sending);
                         } else {
-                            if (mCallbacks != null) {
-                                mCallbacks.showSnackbar(R.string.error_sending);
-                            } else {
-                                Messages.toast(getActivity(), R.string.error_sending);
-                            }
+                            Messages.toast(getActivity(), R.string.error_sending);
                         }
-                        break;
-                    case 2:
-                        selectColor(id);
-                        break;
-                    case 3:
-                        getActivity().startActivity(new Intent(getActivity(), NotesManager.class)
-                                .putExtra(Constants.EDIT_ID, id));
-                        break;
-                    case 4:
-                        NoteModel.deleteNote(id, getActivity(), mCallbacks);
-                        loaderAdapter();
-                        break;
-                }
+                    }
+                    break;
+                case 2:
+                    selectColor(id);
+                    break;
+                case 3:
+                    getActivity().startActivity(new Intent(getActivity(), NotesManager.class)
+                            .putExtra(Constants.EDIT_ID, id));
+                    break;
+                case 4:
+                    NoteModel.deleteNote(id, getActivity(), mCallbacks);
+                    loaderAdapter();
+                    break;
             }
         }, items);
     }
@@ -366,12 +353,9 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                     getString(R.string.dark_purple), getString(R.string.dark_orange),
                     getString(R.string.lime), getString(R.string.indigo)};
         }
-        Dialogues.showLCAM(getActivity(), new LCAMListener() {
-            @Override
-            public void onAction(int item) {
-                NoteModel.setNewColor(getActivity(), id, item);
-                loaderAdapter();
-            }
+        Dialogues.showLCAM(getActivity(), item -> {
+            NoteModel.setNewColor(getActivity(), id, item);
+            loaderAdapter();
         }, items);
     }
 }

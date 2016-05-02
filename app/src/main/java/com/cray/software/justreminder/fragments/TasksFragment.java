@@ -2,7 +2,6 @@ package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -173,23 +172,21 @@ public class TasksFragment extends Fragment {
                 getString(R.string.completed_first)};
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(getString(R.string.order));
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                SharedPrefs prefs = new SharedPrefs(activity);
-                if (item == 0) {
-                    prefs.savePrefs(Prefs.TASKS_ORDER, Constants.ORDER_DEFAULT);
-                } else if (item == 1) {
-                    prefs.savePrefs(Prefs.TASKS_ORDER, Constants.ORDER_DATE_A_Z);
-                } else if (item == 2) {
-                    prefs.savePrefs(Prefs.TASKS_ORDER, Constants.ORDER_DATE_Z_A);
-                } else if (item == 3) {
-                    prefs.savePrefs(Prefs.TASKS_ORDER, Constants.ORDER_COMPLETED_Z_A);
-                } else if (item == 4) {
-                    prefs.savePrefs(Prefs.TASKS_ORDER, Constants.ORDER_COMPLETED_A_Z);
-                }
-                dialog.dismiss();
-                loadData();
+        builder.setItems(items, (dialog, item) -> {
+            SharedPrefs prefs = new SharedPrefs(activity);
+            if (item == 0) {
+                prefs.savePrefs(Prefs.TASKS_ORDER, Constants.ORDER_DEFAULT);
+            } else if (item == 1) {
+                prefs.savePrefs(Prefs.TASKS_ORDER, Constants.ORDER_DATE_A_Z);
+            } else if (item == 2) {
+                prefs.savePrefs(Prefs.TASKS_ORDER, Constants.ORDER_DATE_Z_A);
+            } else if (item == 3) {
+                prefs.savePrefs(Prefs.TASKS_ORDER, Constants.ORDER_COMPLETED_Z_A);
+            } else if (item == 4) {
+                prefs.savePrefs(Prefs.TASKS_ORDER, Constants.ORDER_COMPLETED_A_Z);
             }
+            dialog.dismiss();
+            loadData();
         });
         AlertDialog alert = builder.create();
         alert.show();
@@ -199,20 +196,14 @@ public class TasksFragment extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setCancelable(true);
         builder.setMessage(getString(R.string.delete_this_list));
-        builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
+        builder.setNegativeButton(getString(R.string.no), (dialog, which) -> {
+            dialog.dismiss();
         });
-        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                deleteList();
-                dialog.dismiss();
-                if (mCallbacks != null) {
-                    mCallbacks.onItemSelected(ScreenManager.FRAGMENT_TASKS);
-                }
+        builder.setPositiveButton(getString(R.string.yes), (dialog, which) -> {
+            deleteList();
+            dialog.dismiss();
+            if (mCallbacks != null) {
+                mCallbacks.onItemSelected(ScreenManager.FRAGMENT_TASKS);
             }
         });
 
