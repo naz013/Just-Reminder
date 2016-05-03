@@ -524,4 +524,5 @@
     <string name="move_forward">Move forward</string>
     <string name="refresh">Refresh</string>
     <string name="save_widget">Save widget</string>
+    <string name="app_title">"Recordatorio"</string>
 </resources>

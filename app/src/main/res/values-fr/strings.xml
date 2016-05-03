@@ -513,7 +513,7 @@
     <string name="x_year">"%s l'année"</string>
     <string name="x_yearzz">"%s nombre d'années"</string>
     <string name="application_not_selected">Application non sélectionné</string>
-    <string name="app_title">"Rappel PRO"</string>
+    <string name="app_title">"Rappel"</string>
     <string name="report">Rapport à propos de bug</string>
     <string name="describe_your_problem">Décrivez votre problème</string>
     <string name="day_night">Jour/Nuit</string>

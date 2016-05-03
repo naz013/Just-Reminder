@@ -18,6 +18,14 @@ public class Module {
     }
 
     /**
+     * Check if application is for Cloud Test.
+     * @return boolean
+     */
+    public static boolean isCloud(){
+        return BuildConfig.IS_CLOUD;
+    }
+
+    /**
      * Check if device runs on Lollipop and above.
      * @return boolean
      */

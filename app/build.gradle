@@ -32,6 +32,12 @@ android {
             keyAlias 'com.cray.software.justreminder'
             keyPassword 'nazar19912014'
         }
+        cloudApp {
+            storeFile file('justreminder.jks')
+            storePassword 'justreminder140419912014'
+            keyAlias 'com.cray.software.justreminder'
+            keyPassword 'nazar19912014'
+        }
         proApp {
             storeFile file('justReminderPro.jks')
             storePassword 'justreminderpro24072014'
@@ -44,11 +50,18 @@ android {
         free {
             applicationId 'com.cray.software.justreminder'
             buildConfigField "boolean", "IS_PRO", "false"
+            buildConfigField "boolean", "IS_CLOUD", "false"
         }
         pro {
             applicationId 'com.cray.software.justreminderpro'
             buildConfigField "boolean", "IS_PRO", "true"
+            buildConfigField "boolean", "IS_CLOUD", "false"
             versionCode 104
+        }
+        cloud {
+            applicationId 'com.cray.software.justreminder'
+            buildConfigField "boolean", "IS_PRO", "false"
+            buildConfigField "boolean", "IS_CLOUD", "true"
         }
     }
 
@@ -63,11 +76,13 @@ android {
         release {
             minifyEnabled true
             productFlavors.pro.proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            productFlavors.cloud.proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             productFlavors.free.proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-free.pro'
             debuggable false
             zipAlignEnabled true
             jniDebuggable false
             productFlavors.free.signingConfig signingConfigs.freeApp
+            productFlavors.cloud.signingConfig signingConfigs.cloudApp
             productFlavors.pro.signingConfig signingConfigs.proApp
         }
         debug {

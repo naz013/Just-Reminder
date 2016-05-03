@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -202,6 +201,8 @@ public class SplashScreen extends AppCompatActivity {
 
         if (BuildConfig.DEBUG) {
             startActivity(new Intent(SplashScreen.this, TestActivity.class));
+        } else if (Module.isCloud()) {
+            startActivity(new Intent(SplashScreen.this, ScreenManager.class));
         } else {
             if (isFirstTime() && !prefs.loadBoolean(Prefs.CONTACTS_IMPORT_DIALOG)) {
                 startActivity(new Intent(SplashScreen.this, LogInActivity.class));

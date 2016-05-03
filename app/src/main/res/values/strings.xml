@@ -1,5 +1,5 @@
 <resources>
-
+    <string name="app_title">"Reminder"</string>
     <string name="app_name">"Reminder"</string>
     <string name="app_name_pro">"Reminder PRO"</string>
     <string name="action_settings">"Settings"</string>
