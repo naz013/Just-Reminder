@@ -219,7 +219,7 @@ public class NavigationDrawerFragment extends Fragment implements
         appNameBanner.setTextColor(ViewUtils.getColor(getActivity(), R.color.whitePrimary));
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        double width = metrics.widthPixels * 0.8;
+        double width = metrics.widthPixels * 0.5;
         int height = QuickReturnUtils.dp2px(getActivity(), 275);
         Picasso.with(getActivity())
                 .load(R.drawable.photo_main)
