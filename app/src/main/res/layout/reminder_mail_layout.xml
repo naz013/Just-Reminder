@@ -75,10 +75,8 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/create_margin"
                 android:background="@android:color/transparent"
-                android:ems="10"
                 android:hint="@string/message"
-                android:inputType="text"
-                android:maxLength="50"
+                android:inputType="textMultiLine"
                 android:padding="10dp"
                 android:singleLine="true"
                 android:textSize="@dimen/create_text_size_normal" />
