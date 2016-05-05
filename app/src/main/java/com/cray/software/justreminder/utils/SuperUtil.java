@@ -11,7 +11,7 @@ import android.speech.RecognizerIntent;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.contacts.ContactsActivity;
-import com.cray.software.justreminder.activities.SelectApplication;
+import com.cray.software.justreminder.apps.ApplicationActivity;
 import com.cray.software.justreminder.constants.Language;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.Messages;
@@ -69,7 +69,7 @@ public class SuperUtil {
      * @param requestCode result request code.
      */
     public static void selectApplication(final Activity activity, final int requestCode){
-        activity.startActivityForResult(new Intent(activity, SelectApplication.class), requestCode);
+        activity.startActivityForResult(new Intent(activity, ApplicationActivity.class), requestCode);
     }
 
     /**

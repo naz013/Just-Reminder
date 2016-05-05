@@ -442,7 +442,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.SelectApplication"
+            android:name=".apps.ApplicationActivity"
             android:configChanges="keyboardHidden|orientation">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />

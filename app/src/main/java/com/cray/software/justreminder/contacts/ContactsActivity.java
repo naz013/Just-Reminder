@@ -38,7 +38,7 @@ public class ContactsActivity extends AppCompatActivity implements LoadListener,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(ContactsActivity.this);
+        ColorSetter cs = new ColorSetter(this);
         setTheme(cs.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
