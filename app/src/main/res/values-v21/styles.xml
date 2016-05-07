@@ -4,6 +4,7 @@
     <style name="HomeWhite" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimaryDark">@color/bluePrimaryDark</item>
         <item name="windowActionBar">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
     <style name="HomeWhite.Blue" parent="HomeWhite">
@@ -107,6 +108,7 @@
         <item name="colorPrimary">@color/bluePrimary</item>
         <item name="colorAccent">@color/yellowAccent</item>
         <item name="windowActionBar">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
     <style name="HomeDark.Blue" parent="HomeDark">
