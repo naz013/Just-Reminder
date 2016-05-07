@@ -9,8 +9,7 @@ import android.content.SharedPreferences;
 import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ReminderManager;
-import com.cray.software.justreminder.app_widgets.new_reminder.AddReminderWidgetConfig;
+import com.cray.software.justreminder.reminder.ReminderManager;
 
 public class AddReminderWidget extends AppWidgetProvider{
 

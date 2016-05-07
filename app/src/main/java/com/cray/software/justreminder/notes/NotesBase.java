@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.databases;
+package com.cray.software.justreminder.notes;
 
 import android.content.ContentValues;
 import android.content.Context;

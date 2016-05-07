@@ -1,11 +1,9 @@
-package com.cray.software.justreminder.datas;
+package com.cray.software.justreminder.notes;
 
 import android.content.Context;
 import android.database.Cursor;
 
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.databases.NotesBase;
-import com.cray.software.justreminder.datas.models.NoteModel;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -525,4 +525,5 @@
     <string name="refresh">Refresh</string>
     <string name="save_widget">Save widget</string>
     <string name="app_title">"Anımsatıcı"</string>
+    <string name="you_dont_select_any_hours">You don\'t check any hours!</string>
 </resources>

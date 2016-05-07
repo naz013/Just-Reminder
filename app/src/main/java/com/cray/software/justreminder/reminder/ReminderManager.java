@@ -1,4 +1,4 @@
-package com.cray.software.justreminder;
+package com.cray.software.justreminder.reminder;
 
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +32,8 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.ReminderApp;
 import com.cray.software.justreminder.file_explorer.FileExploreActivity;
 import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
@@ -80,10 +82,6 @@ import com.cray.software.justreminder.json.JPlace;
 import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.json.JShopping;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.reminder.DateType;
-import com.cray.software.justreminder.reminder.LocationType;
-import com.cray.software.justreminder.reminder.Reminder;
-import com.cray.software.justreminder.reminder.Type;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.spinner.SpinnerItem;

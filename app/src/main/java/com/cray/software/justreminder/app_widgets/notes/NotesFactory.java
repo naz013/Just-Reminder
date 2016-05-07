@@ -11,7 +11,7 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.databases.NotesBase;
+import com.cray.software.justreminder.notes.NotesBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;

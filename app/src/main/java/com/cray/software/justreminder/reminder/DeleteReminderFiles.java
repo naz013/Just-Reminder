@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.async;
+package com.cray.software.justreminder.reminder;
 
 import android.content.Context;
 import android.os.AsyncTask;

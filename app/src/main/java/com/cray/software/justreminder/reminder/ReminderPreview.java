@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.activities;
+package com.cray.software.justreminder.reminder;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -48,13 +48,14 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.TaskManager;
+import com.cray.software.justreminder.notes.NotePreview;
 import com.cray.software.justreminder.async.SwitchTaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.NextBase;
-import com.cray.software.justreminder.databases.NotesBase;
+import com.cray.software.justreminder.notes.NotesBase;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.datas.models.CategoryModel;
 import com.cray.software.justreminder.datas.models.ReminderNote;
@@ -63,10 +64,6 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.ActionCallbacks;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.reminder.Reminder;
-import com.cray.software.justreminder.reminder.ReminderDataProvider;
-import com.cray.software.justreminder.reminder.ReminderModel;
-import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.IntervalUtil;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.TimeUtil;

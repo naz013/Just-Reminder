@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
@@ -20,7 +19,6 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.json.JExclusion;
 import com.cray.software.justreminder.utils.TimeUtil;
-import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,7 +27,6 @@ import java.util.List;
 public class ExclusionPickerDialog extends Activity implements CompoundButton.OnCheckedChangeListener {
 
     private CheckBox selectInterval, selectHours;
-    private LinearLayout intervalContainer, hoursContainer;
     private TextView from, to;
 
     private int fromHour, fromMinute;
@@ -81,12 +78,11 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
                 saveResult();
             }
         });
-
         initButtons();
+        initCheckBoxes();
+    }
 
-        intervalContainer = (LinearLayout) findViewById(R.id.intervalContainer);
-        hoursContainer = (LinearLayout) findViewById(R.id.hoursContainer);
-
+    private void initCheckBoxes() {
         selectInterval = (CheckBox) findViewById(R.id.selectInterval);
         selectHours = (CheckBox) findViewById(R.id.selectHours);
         selectInterval.setChecked(true);
@@ -99,7 +95,7 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
             JExclusion recurrence = new JExclusion();
             List<Integer> list = getSelectedList();
             if(list.size() == 0) {
-                Messages.toast(this, "You don't check any hours!");
+                Messages.toast(this, getString(R.string.you_dont_select_any_hours));
                 return;
             }
             recurrence.addExclusion(list);
@@ -219,30 +215,18 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
                 if (isChecked) {
                     selectInterval.setChecked(true);
                     selectHours.setChecked(false);
-                    if (hoursContainer.getVisibility() == View.VISIBLE)
-                        ViewUtils.hide(hoursContainer);
-                    ViewUtils.show(intervalContainer);
                 } else {
                     selectInterval.setChecked(false);
                     selectHours.setChecked(true);
-                    if (intervalContainer.getVisibility() == View.VISIBLE)
-                        ViewUtils.hide(intervalContainer);
-                    ViewUtils.show(hoursContainer);
                 }
                 break;
             case R.id.selectHours:
                 if (isChecked) {
                     selectInterval.setChecked(false);
                     selectHours.setChecked(true);
-                    if (intervalContainer.getVisibility() == View.VISIBLE)
-                        ViewUtils.hide(intervalContainer);
-                    ViewUtils.show(hoursContainer);
                 } else {
                     selectInterval.setChecked(true);
                     selectHours.setChecked(false);
-                    if (hoursContainer.getVisibility() == View.VISIBLE)
-                        ViewUtils.hide(hoursContainer);
-                    ViewUtils.show(intervalContainer);
                 }
                 break;
         }

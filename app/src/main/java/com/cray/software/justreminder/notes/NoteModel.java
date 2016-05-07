@@ -1,13 +1,13 @@
-package com.cray.software.justreminder.datas.models;
+package com.cray.software.justreminder.notes;
 
 import android.content.Context;
 import android.database.Cursor;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.async.DeleteNoteFilesAsync;
+import com.cray.software.justreminder.notes.DeleteNoteFilesAsync;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.NotesBase;
+import com.cray.software.justreminder.notes.NotesBase;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;

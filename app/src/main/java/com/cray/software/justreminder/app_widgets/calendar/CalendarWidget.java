@@ -15,7 +15,7 @@ import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.CalendarActivity;
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ReminderManager;
+import com.cray.software.justreminder.reminder.ReminderManager;
 import com.cray.software.justreminder.dialogs.VoiceWidgetDialog;
 
 import java.util.Calendar;

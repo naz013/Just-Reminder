@@ -16,9 +16,9 @@ import android.support.v4.app.TaskStackBuilder;
 import android.view.View;
 import android.widget.RemoteViews;
 
-import com.cray.software.justreminder.NotesManager;
+import com.cray.software.justreminder.notes.NotesManager;
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ReminderManager;
+import com.cray.software.justreminder.reminder.ReminderManager;
 import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.activities.ReminderDialog;
 import com.cray.software.justreminder.constants.Constants;

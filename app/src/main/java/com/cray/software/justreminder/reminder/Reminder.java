@@ -7,9 +7,7 @@ import android.database.Cursor;
 import android.view.View;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ReminderManager;
 import com.cray.software.justreminder.async.BackupTask;
-import com.cray.software.justreminder.async.DeleteReminderFiles;
 import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;

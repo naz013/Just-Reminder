@@ -27,7 +27,6 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
-import com.cray.software.justreminder.activities.ReminderPreview;
 import com.cray.software.justreminder.activities.ShopsPreview;
 import com.cray.software.justreminder.async.SyncTask;
 import com.cray.software.justreminder.constants.Constants;

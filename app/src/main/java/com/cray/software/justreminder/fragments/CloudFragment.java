@@ -36,9 +36,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.CategoryManager;
-import com.cray.software.justreminder.NotesManager;
+import com.cray.software.justreminder.notes.NotesManager;
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ReminderManager;
+import com.cray.software.justreminder.reminder.ReminderManager;
 import com.cray.software.justreminder.activities.AddBirthday;
 import com.cray.software.justreminder.adapters.FileRecyclerAdapter;
 import com.cray.software.justreminder.async.DeleteAsync;

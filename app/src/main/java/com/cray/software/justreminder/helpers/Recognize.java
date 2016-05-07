@@ -18,7 +18,7 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Language;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.databases.NotesBase;
+import com.cray.software.justreminder.notes.NotesBase;
 import com.cray.software.justreminder.datas.models.CategoryModel;
 import com.cray.software.justreminder.dialogs.SelectVolume;
 import com.cray.software.justreminder.dialogs.VoiceHelp;

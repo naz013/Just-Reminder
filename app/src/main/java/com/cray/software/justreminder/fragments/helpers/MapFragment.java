@@ -978,10 +978,19 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 toggleMarkers();
                 break;
             case R.id.backButton:
+                restoreScaleButton();
                 if (listener != null) {
                     listener.onBackClick();
                 }
                 break;
+        }
+    }
+
+    private void restoreScaleButton() {
+        if (isDark) {
+            zoomOut.setImageResource(R.drawable.ic_arrow_upward_white_24dp);
+        } else {
+            zoomOut.setImageResource(R.drawable.ic_arrow_upward_black_24dp);
         }
     }
 }

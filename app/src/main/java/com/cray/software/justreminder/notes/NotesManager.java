@@ -1,4 +1,4 @@
-package com.cray.software.justreminder;
+package com.cray.software.justreminder.notes;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -32,14 +32,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.ReminderApp;
 import com.cray.software.justreminder.activities.ImagePreview;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.databases.NotesBase;
-import com.cray.software.justreminder.datas.models.NoteModel;
 import com.cray.software.justreminder.dialogs.ColorPicker;
 import com.cray.software.justreminder.dialogs.FontStyleDialog;
 import com.cray.software.justreminder.helpers.ColorSetter;

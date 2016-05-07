@@ -9,7 +9,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.widget.RemoteViews;
 
-import com.cray.software.justreminder.NotesManager;
+import com.cray.software.justreminder.notes.NotesManager;
 import com.cray.software.justreminder.R;
 
 public class NotesWidget extends AppWidgetProvider {

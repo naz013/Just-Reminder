@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.adapters;
+package com.cray.software.justreminder.notes;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,8 +13,6 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
-import com.cray.software.justreminder.datas.NoteDataProvider;
-import com.cray.software.justreminder.datas.models.NoteModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.activities;
+package com.cray.software.justreminder.notes;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -40,14 +40,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.cray.software.justreminder.NotesManager;
+import com.cray.software.justreminder.activities.ImagePreview;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.NextBase;
-import com.cray.software.justreminder.databases.NotesBase;
-import com.cray.software.justreminder.datas.models.NoteModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;

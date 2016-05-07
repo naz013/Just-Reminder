@@ -98,7 +98,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ReminderManager"
+            android:name=".reminder.ReminderManager"
             android:configChanges="keyboardHidden|orientation|keyboard">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -160,7 +160,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".NotesManager">
+        <activity android:name=".notes.NotesManager">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -703,10 +703,10 @@
             android:enabled="true" />
 
         <activity
-            android:name=".activities.NotePreview"
+            android:name=".notes.NotePreview"
             android:theme="@style/HomeWhite.Blue" />
         <activity
-            android:name=".activities.ReminderPreview"
+            android:name=".reminder.ReminderPreview"
             android:theme="@style/HomeWhite.Blue" />
         <activity
             android:name=".activities.ShopsPreview"

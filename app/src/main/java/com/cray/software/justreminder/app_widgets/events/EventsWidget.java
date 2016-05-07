@@ -10,7 +10,7 @@ import android.support.annotation.NonNull;
 import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ReminderManager;
+import com.cray.software.justreminder.reminder.ReminderManager;
 import com.cray.software.justreminder.activities.QuickAddReminder;
 import com.cray.software.justreminder.dialogs.VoiceWidgetDialog;
 
