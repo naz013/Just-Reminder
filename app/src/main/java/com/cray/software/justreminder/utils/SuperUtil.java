@@ -143,9 +143,13 @@ public class SuperUtil {
      */
     public static void installSkype(Context context) {
         Uri marketUri = Uri.parse("market://details?id=com.skype.raider");
-        Intent myIntent = new Intent(Intent.ACTION_VIEW, marketUri);
-        myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(myIntent);
+        Intent intent = new Intent(Intent.ACTION_VIEW, marketUri);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try {
+            context.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

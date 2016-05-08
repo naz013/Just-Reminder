@@ -12,14 +12,14 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.cray.software.justreminder.activities.Help;
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.activities.Help;
 import com.cray.software.justreminder.activities.ThanksDialog;
 import com.cray.software.justreminder.dialogs.AboutDialog;
 import com.cray.software.justreminder.dialogs.ChangeDialog;
-import com.cray.software.justreminder.dialogs.RateDialog;
 import com.cray.software.justreminder.dialogs.PermissionsList;
 import com.cray.software.justreminder.feedback.SendReportActivity;
+import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.modules.Module;
 
 public class OtherSettingsFragment extends Fragment {
@@ -62,10 +62,7 @@ public class OtherSettingsFragment extends Fragment {
         rateApp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getApplicationContext()
-                        .startActivity(new Intent(getActivity().getApplicationContext(),
-                                RateDialog.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                Dialogues.rateDialog(getActivity());
             }
         });
 

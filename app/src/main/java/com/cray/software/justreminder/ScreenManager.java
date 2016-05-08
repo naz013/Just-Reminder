@@ -44,10 +44,8 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.notes.NotesBase;
 import com.cray.software.justreminder.dialogs.ActionPickerDialog;
 import com.cray.software.justreminder.dialogs.ChangeDialog;
-import com.cray.software.justreminder.dialogs.RateDialog;
 import com.cray.software.justreminder.enums.QuickReturnViewType;
 import com.cray.software.justreminder.feedback.SendReportActivity;
 import com.cray.software.justreminder.fragments.BackupsFragment;
@@ -60,6 +58,7 @@ import com.cray.software.justreminder.fragments.PlacesFragment;
 import com.cray.software.justreminder.fragments.TasksFragment;
 import com.cray.software.justreminder.fragments.TemplatesFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Permissions;
@@ -69,6 +68,7 @@ import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.notes.NotesBase;
 import com.cray.software.justreminder.notes.NotesManager;
 import com.cray.software.justreminder.reminder.ActiveFragment;
 import com.cray.software.justreminder.reminder.DateType;
@@ -795,7 +795,7 @@ public class ScreenManager extends AppCompatActivity
                     sPrefs.saveInt(Prefs.APP_RUNS_COUNT, counts + 1);
                 } else {
                     sPrefs.saveInt(Prefs.APP_RUNS_COUNT, 0);
-                    startActivity(new Intent(this, RateDialog.class));
+                    Dialogues.rateDialog(this);
                 }
             }
         } else {

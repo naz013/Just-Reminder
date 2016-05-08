@@ -2,9 +2,11 @@ package com.cray.software.justreminder.helpers;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -12,7 +14,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.file_explorer.FileExploreActivity;
+import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.constants.Constants;
@@ -21,12 +23,12 @@ import com.cray.software.justreminder.constants.Language;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.CategoryDataProvider;
 import com.cray.software.justreminder.datas.models.CategoryModel;
+import com.cray.software.justreminder.file_explorer.FileExploreActivity;
 import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.AutoSyncAlarm;
 import com.cray.software.justreminder.services.EventsCheckAlarm;
 import com.cray.software.justreminder.utils.MemoryUtil;
-import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -47,6 +49,51 @@ import java.util.ArrayList;
  * limitations under the License.
  */
 public class Dialogues {
+
+    /**
+     * Sound stream selecting dialogue.
+     * @param context application context.
+     */
+    public static void rateDialog(final Activity context){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+        builder.setMessage(context.getString(R.string.can_you_rate_this_application));
+        builder.setPositiveButton(context.getString(R.string.rate), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                new SharedPrefs(context).saveBoolean(Prefs.RATE_SHOW, true);
+                launchMarket(context);
+            }
+        });
+        builder.setNeutralButton(context.getString(R.string.later), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                new SharedPrefs(context).saveBoolean(Prefs.RATE_SHOW, false);
+                new SharedPrefs(context).saveInt(Prefs.APP_RUNS_COUNT, 0);
+            }
+        });
+        builder.setNegativeButton(context.getString(R.string.never), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                new SharedPrefs(context).saveBoolean(Prefs.RATE_SHOW, true);
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private static void launchMarket(Activity activity) {
+        Uri uri = Uri.parse("market://details?id=" + activity.getPackageName());
+        Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+        try {
+            activity.startActivity(goToMarket);
+        } catch (ActivityNotFoundException e) {
+            Messages.toast(activity, activity.getString(R.string.could_not_launch_market));
+        }
+    }
 
     /**
      * Show long click action dialogue for lists.
