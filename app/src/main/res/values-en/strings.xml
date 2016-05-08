@@ -12,23 +12,6 @@
         <item>@string/hybrid</item>
     </array>
 
-    <array name="colors_list">
-        <item>@string/white</item>
-        <item>@string/red</item>
-        <item>@string/purple</item>
-        <item>@string/green_light</item>
-        <item>@string/green</item>
-        <item>@string/blue_light</item>
-        <item>@string/blue</item>
-        <item>@string/yellow</item>
-        <item>@string/orange</item>
-        <item>@string/cyan</item>
-        <item>@string/pink</item>
-        <item>@string/dark_green</item>
-        <item>@string/amber</item>
-        <item>@string/black</item>
-    </array>
-
     <array name="color_list">
         <item>@string/red</item>
         <item>@string/purple</item>
@@ -517,7 +500,7 @@
     <string name="describe_your_problem">Describe your problem</string>
     <string name="day_night">Day/Night</string>
     <string name="enable_changing_theme_during_day">Enable changing theme during day</string>
-    <string name="move_backward">Move backward</string>
+    <string name="move_backward">Return back</string>
     <string name="create_task">Create task</string>
     <string name="type_to_search">Type to search</string>
     <string name="up">Up</string>
@@ -525,5 +508,6 @@
     <string name="refresh">Refresh</string>
     <string name="save_widget">Save widget</string>
     <string name="app_title">"Reminder"</string>
-    <string name="you_dont_select_any_hours">You don\'t check any hours!</string>
+    <string name="you_dont_select_any_hours">You don\'t select any hours!</string>
+    <string name="could_not_launch_market">Couldn\'t launch market</string>
 </resources>

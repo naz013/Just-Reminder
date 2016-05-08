@@ -12,23 +12,6 @@
         <item>@string/hybrid</item>
     </array>
 
-    <array name="colors_list">
-        <item>@string/white</item>
-        <item>@string/red</item>
-        <item>@string/purple</item>
-        <item>@string/green_light</item>
-        <item>@string/green</item>
-        <item>@string/blue_light</item>
-        <item>@string/blue</item>
-        <item>@string/yellow</item>
-        <item>@string/orange</item>
-        <item>@string/cyan</item>
-        <item>@string/pink</item>
-        <item>@string/dark_green</item>
-        <item>@string/amber</item>
-        <item>@string/black</item>
-    </array>
-
     <array name="color_list">
         <item>@string/red</item>
         <item>@string/purple</item>
@@ -517,13 +500,14 @@
     <string name="describe_your_problem">Descrivere il problema</string>
     <string name="day_night">Giorno/Notte</string>
     <string name="enable_changing_theme_during_day">Abilita cambiando tema automaticamente durante il giorno</string>
-    <string name="move_backward">Move backward</string>
-    <string name="create_task">Create task</string>
-    <string name="type_to_search">Type to search</string>
+    <string name="move_backward">Rientro</string>
+    <string name="create_task">Crea attività</string>
+    <string name="type_to_search">Digita per cercare</string>
     <string name="up">Up</string>
-    <string name="move_forward">Move forward</string>
-    <string name="refresh">Refresh</string>
-    <string name="save_widget">Save widget</string>
+    <string name="move_forward">Vai avanti</string>
+    <string name="refresh">Ricaricare</string>
+    <string name="save_widget">Salva widget di</string>
     <string name="app_title">"Promemoria"</string>
-    <string name="you_dont_select_any_hours">You don\'t check any hours!</string>
+    <string name="you_dont_select_any_hours">Non si seleziona le ore!</string>
+    <string name="could_not_launch_market">Impossibile avviare mercato</string>
 </resources>
