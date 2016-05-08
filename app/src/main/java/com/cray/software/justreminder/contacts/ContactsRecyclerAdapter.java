@@ -119,6 +119,11 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
         }
     }
 
+    public ContactData getItem(int position) {
+        if (position < mDataList.size()) return mDataList.get(position);
+        else return null;
+    }
+
     @BindingAdapter("app:loadImage")
     public static void loadImage(ImageView imageView, String v) {
         boolean isDark = new ColorSetter(imageView.getContext()).isDark();

@@ -205,7 +205,7 @@ public class ContactsActivity extends AppCompatActivity implements LoadListener,
     @Override
     public void onItemClick(int position) {
         if (position != -1) {
-            name = mData.get(position).getName();
+            name = mAdapter.getItem(position).getName();
             selectNumber();
         }
     }

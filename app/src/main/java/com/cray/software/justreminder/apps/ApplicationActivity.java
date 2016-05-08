@@ -132,7 +132,7 @@ public class ApplicationActivity extends AppCompatActivity implements LoadListen
     @Override
     public void onItemClick(int position) {
         Intent intent = new Intent();
-        String packageName = mData.get(position).getPackageName();
+        String packageName = mAdapter.getItem(position).getPackageName();
         intent.putExtra(Constants.SELECTED_APPLICATION, packageName);
         setResult(RESULT_OK, intent);
         finish();

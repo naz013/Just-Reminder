@@ -1307,7 +1307,9 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
 
     @Override
     public void onBackPressed() {
-        if (baseFragment.onBackPressed()) return;
+        if (baseFragment != null) {
+            if (baseFragment.onBackPressed()) return;
+        }
 
         if (mFab.getVisibility() == View.GONE){
             mFab.show();
