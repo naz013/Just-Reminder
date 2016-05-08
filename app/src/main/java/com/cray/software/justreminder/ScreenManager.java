@@ -102,8 +102,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
 
-public class ScreenManager extends AppCompatActivity
-        implements NavigationCallbacks {
+public class ScreenManager extends AppCompatActivity implements NavigationCallbacks {
 
     private Toolbar toolbar;
     private FloatingEditText quickNote;
