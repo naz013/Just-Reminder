@@ -118,10 +118,8 @@ dependencies {
     compile 'com.google.apis:google-api-services-drive:v3-rev16-1.21.0' exclude module: 'httpclient'
     compile 'com.google.apis:google-api-services-tasks:v1-rev43-1.21.0' exclude module: 'httpclient'
     compile 'com.google.http-client:google-http-client-gson:1.21.0' exclude module: 'httpclient'
-    //Github libraries
     compile project(':photoPreview')
     compile project(':flextcal')
-    //Additional modules
     compile project(':shared')
     //wearApp project(':wear')
     compile "com.android.support:cardview-v7:${supportLibraryVersion}"
@@ -142,7 +140,7 @@ dependencies {
     compile 'com.github.deano2390:MaterialShowcaseView:1.1.0'
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'org.apache.commons:commons-lang3:3.4'
-    compile project(path: ':backend', configuration: 'android-endpoints')
+    //compile project(path: ':backend', configuration: 'android-endpoints')
 }
 
 apply plugin: 'com.google.gms.google-services'

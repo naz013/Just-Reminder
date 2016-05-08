@@ -233,6 +233,6 @@ public class EventsFragment extends Fragment {
             }
         });
 
-        pager.setCurrentItem(lastPosition != -1 ? lastPosition : targetPosition);
+        pager.setCurrentItem(targetPosition);
     }
 }
