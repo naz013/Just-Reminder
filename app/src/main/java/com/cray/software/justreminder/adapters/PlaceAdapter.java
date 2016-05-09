@@ -17,16 +17,14 @@
 package com.cray.software.justreminder.adapters;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.interfaces.SimpleListener;
-import com.cray.software.justreminder.utils.AssetsUtil;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 import java.util.ArrayList;
 
@@ -36,11 +34,6 @@ import java.util.ArrayList;
 public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> {
 
     private ArrayList<String> array = new ArrayList<>();
-
-    /**
-     * Font typeface for text view's.
-     */
-    private Typeface typeface;
 
     /**
      * Action listener for adapter.
@@ -54,7 +47,6 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> 
      */
     public PlaceAdapter(final Context context, ArrayList<String> array) {
         this.array = array;
-        typeface = AssetsUtil.getLightTypeface(context);
         setHasStableIds(true);
     }
 
@@ -67,7 +59,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> 
         /**
          * Place title.
          */
-        public TextView textView;
+        public RoboTextView textView;
 
         /**
          * View holder constructor.
@@ -75,9 +67,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> 
          */
         public ViewHolder(final View v) {
             super(v);
-            textView = (TextView) v.findViewById(R.id.text1);
-            textView.setTypeface(typeface);
-
+            textView = (RoboTextView) v.findViewById(R.id.text1);
             v.setOnClickListener(this);
         }
 

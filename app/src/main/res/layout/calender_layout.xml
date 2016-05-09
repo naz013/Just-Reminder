@@ -15,6 +15,7 @@
   -->
 
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:widget="http://schemas.android.com/tools"
     android:id="@+id/windowBackground"
     android:layout_width="match_parent"
@@ -25,8 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -47,7 +47,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:src="@drawable/ic_mic_white_24dp" />
 
-                <Button
+                <com.cray.software.justreminder.roboto_views.RoboButton
                     android:id="@+id/currentEvent"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -56,9 +56,10 @@
                     android:text="30/6/2015"
                     android:textColor="@color/whitePrimary"
                     android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    app:button_font_style="roboto_light" />
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -67,15 +68,15 @@
                     android:text="@string/calendar"
                     android:textColor="@color/whitePrimary"
                     android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    app:font_style="roboto_regular" />
 
             </RelativeLayout>
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <RelativeLayout
         android:id="@+id/wrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

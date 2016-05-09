@@ -23,9 +23,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
@@ -36,7 +34,8 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.json.JExport;
 import com.cray.software.justreminder.json.JModel;
-import com.cray.software.justreminder.utils.AssetsUtil;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.IntervalUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.views.ActionView;
@@ -57,7 +56,7 @@ public class WeekFragment extends BaseFragment implements
     private ToggleButton mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck,
             fridayCheck, saturdayCheck, sundayCheck;
     private ActionView actionView;
-    private TextView timeField;
+    private RoboTextView timeField;
 
     public ArrayList<Integer> getDays() {
         return IntervalUtil.getWeekRepeat(mondayCheck.isChecked(),
@@ -121,20 +120,22 @@ public class WeekFragment extends BaseFragment implements
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reminder_weekdays_layout, container, false);
 
-        CheckBox dateExport = (CheckBox) view.findViewById(R.id.dateExport);
-        if (hasCalendar || hasStock)
+        RoboCheckBox dateExport = (RoboCheckBox) view.findViewById(R.id.dateExport);
+        if (hasCalendar || hasStock) {
             dateExport.setVisibility(View.VISIBLE);
+        }
 
-        CheckBox dateTaskExport = (CheckBox) view.findViewById(R.id.dateTaskExport);
-        if (hasTasks) dateTaskExport.setVisibility(View.VISIBLE);
+        RoboCheckBox dateTaskExport = (RoboCheckBox) view.findViewById(R.id.dateTaskExport);
+        if (hasTasks) {
+            dateTaskExport.setVisibility(View.VISIBLE);
+        }
         dateExport.setOnCheckedChangeListener(this);
         dateTaskExport.setOnCheckedChangeListener(this);
 
-        timeField = (TextView) view.findViewById(R.id.timeField);
+        timeField = (RoboTextView) view.findViewById(R.id.timeField);
         timeField.setOnClickListener(timeClick);
         timeField.setText(TimeUtil.getTime(updateTime(System.currentTimeMillis(), false),
                 new SharedPrefs(getActivity()).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-        timeField.setTypeface(AssetsUtil.getMediumTypeface(getActivity()));
 
         ColorSetter cs = new ColorSetter(getActivity());
         mondayCheck = (ToggleButton) view.findViewById(R.id.mondayCheck);
@@ -165,23 +166,28 @@ public class WeekFragment extends BaseFragment implements
             number = item.getAction().getTarget();
             ArrayList<Integer> weekdays = item.getRecurrence().getWeekdays();
 
-            if (exp == 1) dateExport.setChecked(true);
-            if (expTasks == Constants.SYNC_GTASKS_ONLY)
+            if (exp == 1) {
+                dateExport.setChecked(true);
+            }
+            if (expTasks == Constants.SYNC_GTASKS_ONLY) {
                 dateTaskExport.setChecked(true);
+            }
 
             timeField.setText(TimeUtil.getTime(updateTime(eventTime, true),
                     new SharedPrefs(getActivity()).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
 
             setCheckForDays(weekdays);
 
-            if (type.matches(Constants.TYPE_WEEKDAY))
+            if (type.matches(Constants.TYPE_WEEKDAY)) {
                 actionView.setAction(false);
-            else {
+            } else {
                 actionView.setAction(true);
                 actionView.setNumber(number);
-                if (type.matches(Constants.TYPE_WEEKDAY_CALL))
+                if (type.matches(Constants.TYPE_WEEKDAY_CALL)) {
                     actionView.setType(ActionView.TYPE_CALL);
-                else actionView.setType(ActionView.TYPE_MESSAGE);
+                } else {
+                    actionView.setType(ActionView.TYPE_MESSAGE);
+                }
             }
         }
         return view;
@@ -192,33 +198,33 @@ public class WeekFragment extends BaseFragment implements
      * @param weekdays weekday string.
      */
     private void setCheckForDays(ArrayList<Integer> weekdays){
-        if (weekdays.get(0) == Constants.DAY_CHECKED)
+        if (weekdays.get(0) == Constants.DAY_CHECKED) {
             sundayCheck.setChecked(true);
-        else sundayCheck.setChecked(false);
+        } else sundayCheck.setChecked(false);
 
-        if (weekdays.get(1) == Constants.DAY_CHECKED)
+        if (weekdays.get(1) == Constants.DAY_CHECKED) {
             mondayCheck.setChecked(true);
-        else mondayCheck.setChecked(false);
+        } else mondayCheck.setChecked(false);
 
-        if (weekdays.get(2) == Constants.DAY_CHECKED)
+        if (weekdays.get(2) == Constants.DAY_CHECKED) {
             tuesdayCheck.setChecked(true);
-        else tuesdayCheck.setChecked(false);
+        } else tuesdayCheck.setChecked(false);
 
-        if (weekdays.get(3) == Constants.DAY_CHECKED)
+        if (weekdays.get(3) == Constants.DAY_CHECKED) {
             wednesdayCheck.setChecked(true);
-        else wednesdayCheck.setChecked(false);
+        } else wednesdayCheck.setChecked(false);
 
-        if (weekdays.get(4) == Constants.DAY_CHECKED)
+        if (weekdays.get(4) == Constants.DAY_CHECKED) {
             thursdayCheck.setChecked(true);
-        else thursdayCheck.setChecked(false);
+        } else thursdayCheck.setChecked(false);
 
-        if (weekdays.get(5) == Constants.DAY_CHECKED)
+        if (weekdays.get(5) == Constants.DAY_CHECKED) {
             fridayCheck.setChecked(true);
-        else fridayCheck.setChecked(false);
+        } else fridayCheck.setChecked(false);
 
-        if (weekdays.get(6) == Constants.DAY_CHECKED)
+        if (weekdays.get(6) == Constants.DAY_CHECKED) {
             saturdayCheck.setChecked(true);
-        else saturdayCheck.setChecked(false);
+        } else saturdayCheck.setChecked(false);
     }
 
     @Override

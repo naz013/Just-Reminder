@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/windowBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,7 +17,7 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-        <EditText
+        <com.cray.software.justreminder.roboto_views.RoboEditText
             android:id="@+id/birthName"
             android:layout_width="match_parent"
             android:layout_height="72dp"
@@ -27,7 +28,8 @@
             android:background="@android:color/transparent"
             android:hint="@string/name"
             android:textColorHint="@color/whitePrimary"
-            android:textSize="@dimen/create_text_size_secondary" />
+            android:textSize="@dimen/create_text_size_secondary"
+            app:edit_font_style="roboto_light" />
 
     </android.support.v7.widget.Toolbar>
 
@@ -59,7 +61,7 @@
                         android:scaleType="center"
                         android:src="@drawable/ic_event_black_24dp" />
 
-                    <TextView
+                    <com.cray.software.justreminder.roboto_views.RoboTextView
                         android:id="@+id/birthDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -67,7 +69,8 @@
                         android:background="?android:attr/selectableItemBackground"
                         android:gravity="center"
                         android:text="25/05/1985"
-                        android:textSize="@dimen/add_birthday_text_size_primary" />
+                        android:textSize="@dimen/add_birthday_text_size_primary"
+                        app:font_style="roboto_medium" />
 
                 </TableRow>
 
@@ -80,14 +83,15 @@
                 android:layout_marginTop="@dimen/view_margin_top"
                 android:background="?attr/colorAccent" />
 
-            <CheckBox
+            <com.cray.software.justreminder.roboto_views.RoboCheckBox
                 android:id="@+id/contactCheck"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"
                 android:gravity="center"
                 android:text="@string/contact"
-                android:textSize="@dimen/add_birthday_text_size_primary" />
+                android:textSize="@dimen/add_birthday_text_size_primary"
+                app:check_font_style="roboto_light" />
 
             <LinearLayout
                 android:id="@+id/container"
@@ -109,7 +113,7 @@
                     android:src="@drawable/ic_person_add_black_24dp"
                     android:textSize="@dimen/add_birthday_text_size_primary" />
 
-                <EditText
+                <com.cray.software.justreminder.roboto_views.RoboEditText
                     android:id="@+id/phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -117,7 +121,8 @@
                     android:ems="10"
                     android:hint="@string/phone"
                     android:inputType="phone"
-                    android:textSize="@dimen/add_birthday_text_size_primary" />
+                    android:textSize="@dimen/add_birthday_text_size_primary"
+                    app:edit_font_style="roboto_light" />
             </LinearLayout>
         </LinearLayout>
 

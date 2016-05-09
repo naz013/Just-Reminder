@@ -7,10 +7,7 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
@@ -18,6 +15,9 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.json.JExclusion;
+import com.cray.software.justreminder.roboto_views.RoboButton;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.TimeUtil;
 
 import java.util.ArrayList;
@@ -26,8 +26,8 @@ import java.util.List;
 
 public class ExclusionPickerDialog extends Activity implements CompoundButton.OnCheckedChangeListener {
 
-    private CheckBox selectInterval, selectHours;
-    private TextView from, to;
+    private RoboCheckBox selectInterval, selectHours;
+    private RoboTextView from, to;
 
     private int fromHour, fromMinute;
     private int toHour, toMinute;
@@ -41,8 +41,8 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.dialog_select_exlusion);
 
-        from = (TextView) findViewById(R.id.from);
-        to = (TextView) findViewById(R.id.to);
+        from = (RoboTextView) findViewById(R.id.from);
+        to = (RoboTextView) findViewById(R.id.to);
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
@@ -71,7 +71,7 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
             }
         });
 
-        Button buttonOk = (Button) findViewById(R.id.buttonOk);
+        RoboButton buttonOk = (RoboButton) findViewById(R.id.buttonOk);
         buttonOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,8 +83,8 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
     }
 
     private void initCheckBoxes() {
-        selectInterval = (CheckBox) findViewById(R.id.selectInterval);
-        selectHours = (CheckBox) findViewById(R.id.selectHours);
+        selectInterval = (RoboCheckBox) findViewById(R.id.selectInterval);
+        selectHours = (RoboCheckBox) findViewById(R.id.selectHours);
         selectInterval.setChecked(true);
         selectInterval.setOnCheckedChangeListener(this);
         selectHours.setOnCheckedChangeListener(this);

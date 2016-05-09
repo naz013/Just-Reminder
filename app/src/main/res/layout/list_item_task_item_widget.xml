@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/background"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,14 +9,15 @@
     android:layout_marginRight="5dp"
     android:focusable="false">
 
-    <TextView
+    <com.cray.software.justreminder.roboto_views.RoboTextView
         android:id="@+id/shopText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="10dp"
         android:layout_toRightOf="@+id/checkView"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        app:font_style="roboto_light" />
 
     <ImageView
         android:id="@+id/checkView"

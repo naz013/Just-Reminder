@@ -6,18 +6,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.datas.models.EventsItem;
 import com.cray.software.justreminder.enums.EventType;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 
@@ -84,8 +84,7 @@ public class CalendarEventsAdapter extends RecyclerView.Adapter<CalendarEventsAd
         /**
          * TextViews in holder.
          */
-        public TextView eventText, eventColor, eventType, eventDate,
-                eventNumber;
+        public RoboTextView eventText, eventColor, eventType, eventDate, eventNumber;
 
         /**
          * CardView field.
@@ -98,11 +97,11 @@ public class CalendarEventsAdapter extends RecyclerView.Adapter<CalendarEventsAd
          */
         public ViewHolder(final View v) {
             super(v);
-            eventText = (TextView) v.findViewById(R.id.eventText);
-            eventColor = (TextView) v.findViewById(R.id.eventColor);
-            eventType = (TextView) v.findViewById(R.id.eventType);
-            eventDate = (TextView) v.findViewById(R.id.eventDate);
-            eventNumber = (TextView) v.findViewById(R.id.eventNumber);
+            eventText = (RoboTextView) v.findViewById(R.id.eventText);
+            eventColor = (RoboTextView) v.findViewById(R.id.eventColor);
+            eventType = (RoboTextView) v.findViewById(R.id.eventType);
+            eventDate = (RoboTextView) v.findViewById(R.id.eventDate);
+            eventNumber = (RoboTextView) v.findViewById(R.id.eventNumber);
             itemCard = (CardView) v.findViewById(R.id.itemCard);
             itemCard.setCardBackgroundColor(cs.getCardStyle());
             if (Module.isLollipop()) {

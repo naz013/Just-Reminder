@@ -30,11 +30,9 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderApp;
-import com.cray.software.justreminder.file_explorer.FileExploreActivity;
 import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
@@ -61,6 +59,7 @@ import com.cray.software.justreminder.dialogs.ExtraPickerDialog;
 import com.cray.software.justreminder.dialogs.LedColor;
 import com.cray.software.justreminder.dialogs.SelectVolume;
 import com.cray.software.justreminder.dialogs.TargetRadius;
+import com.cray.software.justreminder.file_explorer.FileExploreActivity;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
@@ -82,6 +81,7 @@ import com.cray.software.justreminder.json.JPlace;
 import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.json.JShopping;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.spinner.SpinnerItem;
@@ -122,7 +122,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      * Extra options views.
      */
     private FrameLayout repeatFrame;
-    private TextView repeatLabel;
+    private RoboTextView repeatLabel;
 
     /**
      * General views.
@@ -130,7 +130,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     private Toolbar toolbar;
     private Spinner spinner;
     private FloatingEditText taskField;
-    private TextView category;
+    private RoboTextView category;
     private FloatingActionButton mFab;
     private LinearLayout navContainer;
     private ImageButton insertVoice, changeExtra;
@@ -268,7 +268,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     private void initLimitView() {
         repeatFrame = (FrameLayout) findViewById(R.id.repeatFrame);
         repeatFrame.setBackgroundResource(colorSetter.getCardDrawableStyle());
-        repeatLabel = (TextView) findViewById(R.id.repeatLabel);
+        repeatLabel = (RoboTextView) findViewById(R.id.repeatLabel);
         repeatLabel.setVisibility(View.GONE);
         repeatFrame.setVisibility(View.GONE);
         SeekBar repeatSeek = (SeekBar) findViewById(R.id.repeatSeek);
@@ -389,7 +389,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             }
         });
 
-        category = (TextView) findViewById(R.id.category);
+        category = (RoboTextView) findViewById(R.id.category);
         category.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

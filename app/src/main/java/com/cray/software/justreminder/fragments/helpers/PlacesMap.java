@@ -36,11 +36,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.GooglePlacesAdapter;
@@ -57,6 +55,8 @@ import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.json.JPlace;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.roboto_views.RoboEditText;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.google.android.gms.maps.CameraUpdate;
@@ -84,7 +84,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     private CardView layersContainer;
     private CardView styleCard;
     private CardView placesListCard;
-    private EditText cardSearch;
+    private RoboEditText cardSearch;
     private ImageButton zoomOut;
     private ImageButton places;
     private ImageButton markers;
@@ -350,7 +350,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
 
         initViews(view);
 
-        cardSearch = (EditText) view.findViewById(R.id.cardSearch);
+        cardSearch = (RoboEditText) view.findViewById(R.id.cardSearch);
         cardSearch.setHint(R.string.search_place);
         cardSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -474,10 +474,10 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         markers.setOnClickListener(this);
         places.setOnClickListener(this);
 
-        TextView typeNormal = (TextView) view.findViewById(R.id.typeNormal);
-        TextView typeSatellite = (TextView) view.findViewById(R.id.typeSatellite);
-        TextView typeHybrid = (TextView) view.findViewById(R.id.typeHybrid);
-        TextView typeTerrain = (TextView) view.findViewById(R.id.typeTerrain);
+        RoboTextView typeNormal = (RoboTextView) view.findViewById(R.id.typeNormal);
+        RoboTextView typeSatellite = (RoboTextView) view.findViewById(R.id.typeSatellite);
+        RoboTextView typeHybrid = (RoboTextView) view.findViewById(R.id.typeHybrid);
+        RoboTextView typeTerrain = (RoboTextView) view.findViewById(R.id.typeTerrain);
         typeNormal.setOnClickListener(this);
         typeSatellite.setOnClickListener(this);
         typeHybrid.setOnClickListener(this);

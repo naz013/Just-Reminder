@@ -8,14 +8,14 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-        <EditText
+        <com.cray.software.justreminder.roboto_views.RoboEditText
             android:id="@+id/editField"
             android:layout_width="match_parent"
             android:layout_height="72dp"
@@ -26,7 +26,8 @@
             android:background="@android:color/transparent"
             android:hint="@string/task"
             android:textColorHint="@color/whitePrimary"
-            android:textSize="@dimen/create_text_size_secondary" />
+            android:textSize="@dimen/create_text_size_secondary"
+            app:edit_font_style="roboto_light" />
 
     </android.support.v7.widget.Toolbar>
 
@@ -55,7 +56,7 @@
                         android:scaleType="center"
                         android:src="@drawable/ic_event_note_black_24dp" />
 
-                    <EditText
+                    <com.cray.software.justreminder.roboto_views.RoboEditText
                         android:id="@+id/noteField"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -64,7 +65,8 @@
                         android:background="@android:color/transparent"
                         android:gravity="center_vertical"
                         android:hint="@string/note"
-                        android:textSize="@dimen/create_text_size_secondary" />
+                        android:textSize="@dimen/create_text_size_secondary"
+                        app:edit_font_style="roboto_light" />
 
                 </TableRow>
 
@@ -85,7 +87,7 @@
                         android:scaleType="center"
                         android:src="@drawable/ic_event_black_24dp" />
 
-                    <TextView
+                    <com.cray.software.justreminder.roboto_views.RoboTextView
                         android:id="@+id/dateField"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -113,7 +115,7 @@
                         android:scaleType="center"
                         android:src="@drawable/ic_alarm_black_24dp" />
 
-                    <TextView
+                    <com.cray.software.justreminder.roboto_views.RoboTextView
                         android:id="@+id/timeField"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -141,7 +143,7 @@
                         android:scaleType="center"
                         android:src="@drawable/ic_view_list_black_24dp" />
 
-                    <TextView
+                    <com.cray.software.justreminder.roboto_views.RoboTextView
                         android:id="@+id/listText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

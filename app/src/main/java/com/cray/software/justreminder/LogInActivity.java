@@ -19,24 +19,24 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.async.CloudLogin;
 import com.cray.software.justreminder.async.LocalLogin;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.LoginListener;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.views.PaperButton;
 import com.google.android.gms.auth.GoogleAuthException;
@@ -59,8 +59,8 @@ public class LogInActivity extends Activity implements LoginListener {
     private SharedPrefs sPrefs;
     private ColorSetter cs = new ColorSetter(LogInActivity.this);
     private PaperButton connectGDrive, connectDropbox;
-    private CheckBox checkBox;
-    private TextView skipButton;
+    private RoboCheckBox checkBox;
+    private RoboTextView skipButton;
 
     private DropboxHelper dbx;
     private static final int REQUEST_AUTHORIZATION = 1;
@@ -94,7 +94,7 @@ public class LogInActivity extends Activity implements LoginListener {
 
         connectGDrive = (PaperButton) findViewById(R.id.connectGDrive);
         connectDropbox = (PaperButton) findViewById(R.id.connectDropbox);
-        checkBox = (CheckBox) findViewById(R.id.checkBox);
+        checkBox = (RoboCheckBox) findViewById(R.id.checkBox);
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -105,7 +105,7 @@ public class LogInActivity extends Activity implements LoginListener {
                 }
             }
         });
-        skipButton = (TextView) findViewById(R.id.skipButton);
+        skipButton = (RoboTextView) findViewById(R.id.skipButton);
         String text = skipButton.getText().toString();
         skipButton.setText(SuperUtil.appendString(text, " (", getString(R.string.local_sync), ")"));
 

@@ -31,7 +31,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.activities.AddPlace;
 import com.cray.software.justreminder.activities.Help;
@@ -75,6 +74,7 @@ import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.reminder.ReminderManager;
 import com.cray.software.justreminder.reminder.TrashFragment;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.settings.SettingsActivity;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
@@ -107,10 +107,10 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
     private Toolbar toolbar;
     private FloatingEditText quickNote;
     private CardView noteCard, noteStatusCard, noteReminderCard;
-    private TextView buttonYes;
-    private TextView buttonNo;
-    private TextView buttonReminderYes;
-    private TextView buttonReminderNo;
+    private RoboTextView buttonYes;
+    private RoboTextView buttonNo;
+    private RoboTextView buttonReminderYes;
+    private RoboTextView buttonReminderNo;
     private FloatingActionButton mFab;
 
     private ColorSetter cSetter = new ColorSetter(this);
@@ -179,17 +179,17 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         noteStatusCard.setCardBackgroundColor(cSetter.getCardStyle());
         noteReminderCard.setCardBackgroundColor(cSetter.getCardStyle());
 
-        buttonYes = (TextView) findViewById(R.id.buttonYes);
-        TextView buttonSave = (TextView) findViewById(R.id.buttonSave);
+        buttonYes = (RoboTextView) findViewById(R.id.buttonYes);
+        RoboTextView buttonSave = (RoboTextView) findViewById(R.id.buttonSave);
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveNote();
             }
         });
-        buttonNo = (TextView) findViewById(R.id.buttonNo);
-        buttonReminderYes = (TextView) findViewById(R.id.buttonReminderYes);
-        buttonReminderNo = (TextView) findViewById(R.id.buttonReminderNo);
+        buttonNo = (RoboTextView) findViewById(R.id.buttonNo);
+        buttonReminderYes = (RoboTextView) findViewById(R.id.buttonReminderYes);
+        buttonReminderNo = (RoboTextView) findViewById(R.id.buttonReminderNo);
 
         initButton();
 

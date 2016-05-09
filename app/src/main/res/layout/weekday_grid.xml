@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.cray.software.justreminder.roboto_views.RoboTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/textView1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
     android:textColor="@color/blackPrimary"
-    android:textSize="12sp" />
+    android:textSize="12sp"
+    app:font_style="roboto_light" />

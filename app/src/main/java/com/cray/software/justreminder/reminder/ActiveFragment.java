@@ -23,11 +23,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
-import com.cray.software.justreminder.activities.ShopsPreview;
 import com.cray.software.justreminder.async.SyncTask;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
@@ -41,6 +39,7 @@ import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
@@ -58,7 +57,7 @@ public class ActiveFragment extends Fragment implements
     private RecyclerView mRecyclerView;
     private LinearLayout mEmptyLayout;
     private LinearLayout mFilterLayout;
-    private TextView mDateEnd;
+    private RoboTextView mDateEnd;
 
     /**
      * Reminder data provider for recycler view.
@@ -157,8 +156,8 @@ public class ActiveFragment extends Fragment implements
         View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
 
         mFilterLayout = (LinearLayout) rootView.findViewById(R.id.filterLayout);
-        TextView dateStart = (TextView) rootView.findViewById(R.id.dateStart);
-        mDateEnd = (TextView) rootView.findViewById(R.id.dateEnd);
+        RoboTextView dateStart = (RoboTextView) rootView.findViewById(R.id.dateStart);
+        mDateEnd = (RoboTextView) rootView.findViewById(R.id.dateEnd);
         SeekBar dateSeek = (SeekBar) rootView.findViewById(R.id.dateSeek);
 
         dateStart.setText(TimeUtil.getSimpleDate(System.currentTimeMillis()));

@@ -35,6 +35,8 @@ import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.roboto_views.RoboButton;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -52,8 +54,8 @@ public class CloudDrives extends AppCompatActivity {
     private GDriveHelper gdx = new GDriveHelper(CloudDrives.this);
     private SharedPrefs prefs = new SharedPrefs(CloudDrives.this);
 
-    private Button linkDropbox, linkGDrive;
-    private TextView gDriveTitle, dropboxTitle;
+    private RoboButton linkDropbox, linkGDrive;
+    private RoboTextView gDriveTitle, dropboxTitle;
     private static final int REQUEST_AUTHORIZATION = 1;
     private static final int REQUEST_ACCOUNT_PICKER = 3;
 
@@ -85,7 +87,7 @@ public class CloudDrives extends AppCompatActivity {
 
         dbx.startSession();
 
-        linkDropbox = (Button) findViewById(R.id.linkDropbox);
+        linkDropbox = (RoboButton) findViewById(R.id.linkDropbox);
         linkDropbox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,7 +109,7 @@ public class CloudDrives extends AppCompatActivity {
             }
         });
 
-        linkGDrive = (Button) findViewById(R.id.linkGDrive);
+        linkGDrive = (RoboButton) findViewById(R.id.linkGDrive);
         linkGDrive.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -123,11 +125,9 @@ public class CloudDrives extends AppCompatActivity {
             }
         });
 
-        dropboxTitle = (TextView) findViewById(R.id.dropboxTitle);
-        gDriveTitle = (TextView) findViewById(R.id.gDriveTitle);
-
+        dropboxTitle = (RoboTextView) findViewById(R.id.dropboxTitle);
+        gDriveTitle = (RoboTextView) findViewById(R.id.gDriveTitle);
         setUpButton();
-
         setImage();
     }
 

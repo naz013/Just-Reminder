@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 import java.util.ArrayList;
 
@@ -51,13 +51,13 @@ public class TasksThemeFragment extends Fragment{
         ImageButton plusButton = (ImageButton) view.findViewById(R.id.tasksCount);
         ImageButton settingsButton = (ImageButton) view.findViewById(R.id.optionsButton);
 
-        TextView widgetTitle = (TextView) view.findViewById(R.id.widgetTitle);
-        TextView themeTitle = (TextView) view.findViewById(R.id.themeTitle);
-        TextView themeTip = (TextView) view.findViewById(R.id.themeTip);
+        RoboTextView widgetTitle = (RoboTextView) view.findViewById(R.id.widgetTitle);
+        RoboTextView themeTitle = (RoboTextView) view.findViewById(R.id.themeTitle);
+        RoboTextView themeTip = (RoboTextView) view.findViewById(R.id.themeTip);
 
-        TextView taskText = (TextView) view.findViewById(R.id.task);
-        TextView note = (TextView) view.findViewById(R.id.note);
-        TextView taskDate = (TextView) view.findViewById(R.id.taskDate);
+        RoboTextView taskText = (RoboTextView) view.findViewById(R.id.task);
+        RoboTextView note = (RoboTextView) view.findViewById(R.id.note);
+        RoboTextView taskDate = (RoboTextView) view.findViewById(R.id.taskDate);
 
         TasksTheme eventsTheme = mList.get(mPageNumber);
 

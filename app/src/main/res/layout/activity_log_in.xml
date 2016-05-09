@@ -7,13 +7,14 @@
     android:orientation="vertical"
     android:padding="@dimen/dimen_log_in_padding">
 
-    <TextView
+    <com.cray.software.justreminder.roboto_views.RoboTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:text="@string/connect_to_cloud"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="@dimen/log_in_title_text_size" />
+        android:textSize="@dimen/log_in_title_text_size"
+        widget:font_style="roboto_light" />
 
     <com.cray.software.justreminder.views.PaperButton
         android:id="@+id/connectGDrive"
@@ -39,15 +40,16 @@
         widget:paper_text_color="@color/whitePrimary"
         widget:paper_text_size="@dimen/log_in_button_text_size" />
 
-    <CheckBox
+    <com.cray.software.justreminder.roboto_views.RoboCheckBox
         android:id="@+id/checkBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/log_in_check_margin_top"
-        android:text="@string/import_birthdays" />
+        android:text="@string/import_birthdays"
+        widget:check_font_style="roboto_regular" />
 
-    <TextView
+    <com.cray.software.justreminder.roboto_views.RoboTextView
         android:id="@+id/skipButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -55,6 +57,7 @@
         android:layout_marginTop="@dimen/log_in_skip_margin_top"
         android:text="@string/skip"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textSize="@dimen/log_in_skip_text_size" />
+        android:textSize="@dimen/log_in_skip_text_size"
+        widget:font_style="roboto_light" />
 
 </LinearLayout>

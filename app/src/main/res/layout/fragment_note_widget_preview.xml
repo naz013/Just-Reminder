@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent">
 
-    <TextView
+    <com.cray.software.justreminder.roboto_views.RoboTextView
         android:id="@+id/themeTip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,7 +16,7 @@
         android:text="@string/swipe_to_change_theme"
         android:textSize="20sp" />
 
-    <TextView
+    <com.cray.software.justreminder.roboto_views.RoboTextView
         android:id="@+id/themeTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,14 +24,15 @@
         android:layout_marginBottom="45dp"
         android:layout_marginTop="40dp"
         android:gravity="center"
-        android:textSize="30sp" />
+        android:textSize="30sp"
+        app:font_style="roboto_medium" />
 
     <LinearLayout
+        android:id="@+id/noteLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_alignParentBottom="true"
-        android:id="@+id/noteLayout"
+        android:orientation="vertical"
         android:padding="15dp">
 
         <RelativeLayout
@@ -63,7 +65,7 @@
                 android:src="@drawable/ic_settings_black_24dp"
                 android:visibility="visible" />
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/widgetTitle"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -74,17 +76,18 @@
                 android:text="@string/notes"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/whitePrimary"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                app:font_style="roboto_light" />
         </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/widgetBg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:minHeight="150dp"
             android:background="@color/material_divider"
-            android:orientation="vertical">
+            android:minHeight="150dp"
+            android:orientation="vertical"
+            android:padding="5dp">
 
             <LinearLayout
                 android:id="@+id/listItemCard"
@@ -93,7 +96,7 @@
                 android:background="@color/pinkAccent"
                 android:orientation="vertical">
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/note"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

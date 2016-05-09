@@ -28,20 +28,20 @@ import com.cray.software.justreminder.R;
  * limitations under the License.
  */
 public class PrefsView extends RelativeLayout {
-    
-    int check = 0;
-    int text = 2;
-    int view = 1;
-    int none = 3;
 
-    CheckBox checkBox;
-    TextView title;
-    TextView detail;
-    TextView prefsValue;
-    View dividerTop, dividerBottom, prefsView;
-    
-    boolean isChecked;
-    int viewType = check;
+    private int check = 0;
+    private int text = 2;
+    private int view = 1;
+    private int none = 3;
+
+    private CheckBox checkBox;
+    private TextView title;
+    private TextView detail;
+    private TextView prefsValue;
+    private View dividerTop, dividerBottom, prefsView;
+
+    private boolean isChecked;
+    private int viewType = check;
     
     public PrefsView(Context context) {
         super(context);

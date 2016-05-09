@@ -24,11 +24,8 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
-import android.widget.RadioButton;
-import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.cray.software.justreminder.R;
@@ -38,7 +35,9 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.ActionCallbacks;
 import com.cray.software.justreminder.json.JExport;
 import com.cray.software.justreminder.json.JModel;
-import com.cray.software.justreminder.utils.AssetsUtil;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboRadioButton;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.ActionView;
@@ -54,10 +53,10 @@ public class MonthFragment extends BaseFragment implements
     private DateTimeView.OnSelectListener mListener;
     private ActionCallbacks mActionCallbacks;
 
-    private TextView monthDayField;
-    private RadioButton dayCheck, lastCheck;
+    private RoboTextView monthDayField;
+    private RoboRadioButton dayCheck, lastCheck;
     private ActionView actionView;
-    private TextView timeField;
+    private RoboTextView timeField;
 
     public boolean isLast() {
         return lastCheck.isChecked();
@@ -129,23 +128,22 @@ public class MonthFragment extends BaseFragment implements
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reminder_day_of_month_layout, container, false);
 
-        monthDayField = (TextView) view.findViewById(R.id.monthDayField);
+        monthDayField = (RoboTextView) view.findViewById(R.id.monthDayField);
         monthDayField.setOnClickListener(dateClick);
 
-        CheckBox dateExport = (CheckBox) view.findViewById(R.id.dateExport);
+        RoboCheckBox dateExport = (RoboCheckBox) view.findViewById(R.id.dateExport);
         if (hasCalendar || hasStock)
             dateExport.setVisibility(View.VISIBLE);
 
-        CheckBox dateTaskExport = (CheckBox) view.findViewById(R.id.dateTaskExport);
+        RoboCheckBox dateTaskExport = (RoboCheckBox) view.findViewById(R.id.dateTaskExport);
         if (hasTasks) dateTaskExport.setVisibility(View.VISIBLE);
         dateExport.setOnCheckedChangeListener(this);
         dateTaskExport.setOnCheckedChangeListener(this);
 
-        timeField = (TextView) view.findViewById(R.id.timeField);
+        timeField = (RoboTextView) view.findViewById(R.id.timeField);
         timeField.setOnClickListener(timeClick);
         timeField.setText(TimeUtil.getTime(updateTime(System.currentTimeMillis(), false),
                 new SharedPrefs(getActivity()).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-        timeField.setTypeface(AssetsUtil.getMediumTypeface(getActivity()));
 
         String dayStr;
         if (myDay > 28) myDay = 28;
@@ -153,11 +151,10 @@ public class MonthFragment extends BaseFragment implements
         else dayStr = String.valueOf(myDay);
 
         monthDayField.setText(dayStr);
-        monthDayField.setTypeface(AssetsUtil.getMediumTypeface(getActivity()));
 
-        dayCheck = (RadioButton) view.findViewById(R.id.dayCheck);
+        dayCheck = (RoboRadioButton) view.findViewById(R.id.dayCheck);
         dayCheck.setChecked(true);
-        lastCheck = (RadioButton) view.findViewById(R.id.lastCheck);
+        lastCheck = (RoboRadioButton) view.findViewById(R.id.lastCheck);
         dayCheck.setOnCheckedChangeListener(this);
         lastCheck.setOnCheckedChangeListener(this);
 

@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/noteText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -42,7 +42,8 @@
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
                 android:paddingTop="25dp"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                app:font_style="roboto_regular" />
 
             <LinearLayout
                 android:id="@+id/reminderContainer"
@@ -51,14 +52,15 @@
                 android:layout_below="@id/noteText"
                 android:orientation="vertical">
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingLeft="15dp"
                     android:paddingTop="30dp"
                     android:text="@string/type"
                     android:textAllCaps="true"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    app:font_style="roboto_medium" />
 
                 <View
                     android:layout_width="match_parent"
@@ -66,7 +68,7 @@
                     android:layout_marginLeft="15dp"
                     android:background="@android:color/darker_gray" />
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/reminderTime"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -74,7 +76,8 @@
                     android:paddingLeft="15dp"
                     android:paddingRight="15dp"
                     android:paddingTop="15dp"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    app:font_style="roboto_regular" />
 
                 <LinearLayout
                     android:id="@+id/buttonContainer"
@@ -83,20 +86,22 @@
                     android:gravity="right"
                     android:orientation="horizontal">
 
-                    <Button
+                    <com.cray.software.justreminder.roboto_views.RoboButton
                         android:id="@+id/editReminder"
                         style="?android:attr/borderlessButtonStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/edit" />
+                        android:text="@string/edit"
+                        app:button_font_style="roboto_light" />
 
-                    <Button
+                    <com.cray.software.justreminder.roboto_views.RoboButton
                         android:id="@+id/deleteReminder"
                         style="?android:attr/borderlessButtonStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="15dp"
-                        android:text="@string/delete" />
+                        android:text="@string/delete"
+                        app:button_font_style="roboto_light" />
 
                 </LinearLayout>
 

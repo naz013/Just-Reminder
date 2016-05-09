@@ -35,7 +35,6 @@ import com.cray.software.justreminder.json.JExport;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.utils.TimeUtil;
-import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.RepeatView;
 
 public class TimerFragment extends BaseFragment implements
@@ -121,7 +120,6 @@ public class TimerFragment extends BaseFragment implements
         minutesView = (TextView) view.findViewById(R.id.minutesView);
         secondsView = (TextView) view.findViewById(R.id.secondsView);
         selectExclusion = (TextView) view.findViewById(R.id.selectExclusion);
-        ViewUtils.setTypeFont(getActivity(), hoursView, minutesView, secondsView, selectExclusion);
         selectExclusion.setOnClickListener(exclusionClick);
 
         deleteButton = (ImageButton) view.findViewById(R.id.deleteButton);

@@ -29,7 +29,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.cray.software.justreminder.R;
@@ -50,7 +49,7 @@ import com.cray.software.justreminder.helpers.Telephony;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
-import com.cray.software.justreminder.utils.AssetsUtil;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -89,7 +88,7 @@ public class NotesManager extends AppCompatActivity {
     private Bitmap img;
     private RelativeLayout layoutContainer, imageContainer;
     private LinearLayout remindContainer;
-    private TextView remindDate, remindTime;
+    private RoboTextView remindDate, remindTime;
     private ImageButton discardReminder;
     private ImageView noteImage;
 
@@ -174,10 +173,8 @@ public class NotesManager extends AppCompatActivity {
         remindContainer = (LinearLayout) findViewById(R.id.remindContainer);
 
         ViewUtils.fadeInAnimation(layoutContainer);
-        Typeface typeface = AssetsUtil.getLightTypeface(this);
 
-        remindDate = (TextView) findViewById(R.id.remindDate);
-        remindDate.setTypeface(typeface);
+        remindDate = (RoboTextView) findViewById(R.id.remindDate);
         remindDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -185,8 +182,7 @@ public class NotesManager extends AppCompatActivity {
             }
         });
 
-        remindTime = (TextView) findViewById(R.id.remindTime);
-        remindTime.setTypeface(typeface);
+        remindTime = (RoboTextView) findViewById(R.id.remindTime);
         remindTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

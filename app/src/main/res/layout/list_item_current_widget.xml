@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/itemBg"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -16,22 +17,24 @@
         android:paddingLeft="10dp"
         android:paddingRight="5dp">
 
-        <TextView
+        <com.cray.software.justreminder.roboto_views.RoboTextView
             android:id="@+id/taskText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.8"
             android:singleLine="true"
-            android:textColor="@color/blackPrimary" />
+            android:textColor="@color/blackPrimary"
+            app:font_style="roboto_medium" />
 
-        <TextView
+        <com.cray.software.justreminder.roboto_views.RoboTextView
             android:id="@+id/taskDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
             android:singleLine="true"
-            android:textColor="@color/blackPrimary" />
+            android:textColor="@color/blackPrimary"
+            app:font_style="roboto_light" />
 
     </LinearLayout>
 
@@ -44,29 +47,32 @@
         android:paddingLeft="10dp"
         android:paddingRight="5dp">
 
-        <TextView
+        <com.cray.software.justreminder.roboto_views.RoboTextView
             android:id="@+id/taskNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.8"
             android:singleLine="true"
-            android:textColor="@color/blackPrimary" />
+            android:textColor="@color/blackPrimary"
+            app:font_style="roboto_light" />
 
-        <TextView
+        <com.cray.software.justreminder.roboto_views.RoboTextView
             android:id="@+id/taskTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
             android:singleLine="true"
-            android:textColor="@color/blackPrimary" />
+            android:textColor="@color/blackPrimary"
+            app:font_style="roboto_medium" />
     </LinearLayout>
 
-    <TextView
+    <com.cray.software.justreminder.roboto_views.RoboTextView
         android:id="@+id/leftTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:singleLine="true"
-        android:textColor="@color/blackPrimary" />
+        android:textColor="@color/blackPrimary"
+        app:font_style="roboto_regular" />
 </LinearLayout>

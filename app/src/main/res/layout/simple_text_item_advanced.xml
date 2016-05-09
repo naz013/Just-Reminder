@@ -15,6 +15,7 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/listItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -31,7 +32,7 @@
         android:scaleType="fitCenter"
         android:src="@drawable/ic_local_atm_black_24dp" />
 
-    <CheckBox
+    <com.cray.software.justreminder.roboto_views.RoboCheckBox
         android:id="@+id/placeCheck"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -46,20 +47,22 @@
         android:layout_toRightOf="@+id/placeIcon"
         android:orientation="vertical">
 
-        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        <com.cray.software.justreminder.roboto_views.RoboTextView
             android:id="@+id/text1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:text="Text 1"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            app:font_style="roboto_medium" />
 
-        <TextView
+        <com.cray.software.justreminder.roboto_views.RoboTextView
             android:id="@+id/text2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:text="Text 2" />
+            android:text="Text 2"
+            app:font_style="roboto_light" />
 
     </LinearLayout>
 </RelativeLayout>

@@ -22,6 +22,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.utils.ViewUtils;
 
 import org.json.JSONException;
@@ -29,7 +30,7 @@ import org.json.JSONException;
 public class CategoryManager extends AppCompatActivity {
 
     private ColorSetter cs = new ColorSetter(CategoryManager.this);
-    private EditText editField;
+    private RoboEditText editField;
     private ImageButton red_checkbox, violet_checkbox, green_checkbox, light_green_checkbox,
             blue_checkbox, light_blue_checkbox, yellow_checkbox, orange_checkbox, grey_checkbox,
             pink_checkbox, sand_checkbox, brown_checkbox, deepPurple, indigoCheckbox, limeCheckbox,
@@ -61,7 +62,7 @@ public class CategoryManager extends AppCompatActivity {
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
-        editField = (EditText) findViewById(R.id.editField);
+        editField = (RoboEditText) findViewById(R.id.editField);
         if (id != 0) {
             DataBase db = new DataBase(CategoryManager.this);
             db.open();

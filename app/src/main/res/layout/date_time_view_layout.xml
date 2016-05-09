@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -7,22 +8,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
+        <com.cray.software.justreminder.roboto_views.RoboTextView
             android:id="@+id/dateField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="15dp"
             android:layout_toLeftOf="@+id/timeField"
             android:text="Tue, 5 Nov 2015"
-            android:textSize="@dimen/create_text_size_normal" />
+            android:textSize="@dimen/create_text_size_normal"
+            app:font_style="roboto_medium" />
 
-        <TextView
+        <com.cray.software.justreminder.roboto_views.RoboTextView
             android:id="@+id/timeField"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:text="14:05"
-            android:textSize="@dimen/create_text_size_normal" />
+            android:textSize="@dimen/create_text_size_normal"
+            app:font_style="roboto_medium" />
 
     </RelativeLayout>
 </merge>

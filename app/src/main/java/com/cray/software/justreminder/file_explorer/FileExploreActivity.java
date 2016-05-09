@@ -12,10 +12,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
@@ -24,6 +22,8 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Sound;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.roboto_views.RoboEditText;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.io.File;
@@ -52,8 +52,8 @@ public class FileExploreActivity extends AppCompatActivity {
 
     private RecyclerView mFilesList;
     private LinearLayout mPlayerLayout;
-    private TextView mMelodyTitle;
-    private EditText mSearchView;
+    private RoboTextView mMelodyTitle;
+    private RoboEditText mSearchView;
     private RecyclerClickListener recyclerClick = new RecyclerClickListener() {
         @Override
         public void onItemClick(int position) {
@@ -137,7 +137,7 @@ public class FileExploreActivity extends AppCompatActivity {
     private void initPlayer() {
         mPlayerLayout = (LinearLayout) findViewById(R.id.playerLayout);
         mPlayerLayout.setVisibility(View.GONE);
-        mMelodyTitle = (TextView) findViewById(R.id.currentMelody);
+        mMelodyTitle = (RoboTextView) findViewById(R.id.currentMelody);
     }
 
     private void initRecyclerView() {
@@ -154,7 +154,7 @@ public class FileExploreActivity extends AppCompatActivity {
     }
 
     private void initSearch() {
-        mSearchView = (EditText) findViewById(R.id.searchField);
+        mSearchView = (RoboEditText) findViewById(R.id.searchField);
         mSearchView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

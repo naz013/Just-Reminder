@@ -19,7 +19,6 @@ package com.cray.software.justreminder.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -33,12 +32,9 @@ import android.view.ViewGroup;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.CategoryManager;
-import com.cray.software.justreminder.notes.NotesManager;
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.reminder.ReminderManager;
 import com.cray.software.justreminder.activities.AddBirthday;
 import com.cray.software.justreminder.adapters.FileRecyclerAdapter;
 import com.cray.software.justreminder.async.DeleteAsync;
@@ -59,7 +55,9 @@ import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.utils.AssetsUtil;
+import com.cray.software.justreminder.notes.NotesManager;
+import com.cray.software.justreminder.reminder.ReminderManager;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.MemoryUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.PaperButton;
@@ -74,10 +72,10 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
     private static final String TYPE = "window_type";
     private static final String FILE_NAME = "Google_photo.jpg";
 
-    private TextView cloudUser;
-    private TextView cloudCount;
-    private TextView usedSpace;
-    private TextView freeSpace;
+    private RoboTextView cloudUser;
+    private RoboTextView cloudCount;
+    private RoboTextView usedSpace;
+    private RoboTextView freeSpace;
     private RecyclerView filesCloudList;
     private PieGraph pieChart;
     private LinearLayout cloudContainer;
@@ -114,9 +112,6 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.cloud_layout, container, false);
 
-        Typeface typefaceMedium = AssetsUtil.getMediumTypeface(getActivity());
-        Typeface typefaceThin = AssetsUtil.getThinTypeface(getActivity());
-
         cloudContainer = (LinearLayout) view.findViewById(R.id.cloudContainer);
         cloudContainer.setVisibility(View.VISIBLE);
 
@@ -133,25 +128,13 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
             card1.setCardElevation(Configs.CARD_ELEVATION_REMINDER);
         }
 
-        cloudUser = (TextView) view.findViewById(R.id.cloudUser);
-        cloudUser.setTypeface(typefaceThin);
-
+        cloudUser = (RoboTextView) view.findViewById(R.id.cloudUser);
         userPhoto = (ImageView) view.findViewById(R.id.userPhoto);
         userPhoto.setVisibility(View.INVISIBLE);
-
         pieChart = (PieGraph) view.findViewById(R.id.usedSizeGraph);
-
-        TextView cloudText = (TextView) view.findViewById(R.id.cloudText);
-        cloudText.setTypeface(typefaceThin);
-
-        cloudCount = (TextView) view.findViewById(R.id.cloudCount);
-        cloudCount.setTypeface(typefaceMedium);
-
-        usedSpace = (TextView) view.findViewById(R.id.usedSpace);
-        usedSpace.setTypeface(typefaceThin);
-
-        freeSpace = (TextView) view.findViewById(R.id.freeSpace);
-        freeSpace.setTypeface(typefaceThin);
+        cloudCount = (RoboTextView) view.findViewById(R.id.cloudCount);
+        usedSpace = (RoboTextView) view.findViewById(R.id.usedSpace);
+        freeSpace = (RoboTextView) view.findViewById(R.id.freeSpace);
 
         PaperButton cloudFiles = (PaperButton) view.findViewById(R.id.cloudFiles);
         cloudFiles.setOnClickListener(new View.OnClickListener() {

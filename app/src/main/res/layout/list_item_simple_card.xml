@@ -11,7 +11,7 @@
     card_view:cardCornerRadius="3dp"
     card_view:cardUseCompatPadding="true">
 
-    <TextView
+    <com.cray.software.justreminder.roboto_views.RoboTextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

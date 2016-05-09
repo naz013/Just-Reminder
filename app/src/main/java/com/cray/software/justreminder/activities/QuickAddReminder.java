@@ -12,12 +12,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.cray.software.justreminder.R;
@@ -35,7 +32,9 @@ import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.ReminderUtils;
-import com.cray.software.justreminder.utils.AssetsUtil;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboEditText;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
@@ -43,10 +42,10 @@ import java.util.Calendar;
 
 public class QuickAddReminder extends AppCompatActivity {
 
-    private EditText task_text;
-    private EditText repeatDays;
-    private CheckBox taskExport;
-    private TextView dateField, timeField;
+    private RoboEditText task_text;
+    private RoboEditText repeatDays;
+    private RoboCheckBox taskExport;
+    private RoboTextView dateField, timeField;
 
     private int myHour = 0;
     private int myMinute = 0;
@@ -72,11 +71,11 @@ public class QuickAddReminder extends AppCompatActivity {
         initActionBar();
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
         initIcons();
-        task_text = (EditText) findViewById(R.id.task_text);
+        task_text = (RoboEditText) findViewById(R.id.task_text);
         Intent i = getIntent();
         long receivedDate = i.getLongExtra("date", 0);
 
-        taskExport = (CheckBox) findViewById(R.id.taskExport);
+        taskExport = (RoboCheckBox) findViewById(R.id.taskExport);
         if (gtx.isLinked()) {
             taskExport.setVisibility(View.VISIBLE);
         }
@@ -93,18 +92,16 @@ public class QuickAddReminder extends AppCompatActivity {
         myMonth = c.get(Calendar.MONTH);
         myDay = c.get(Calendar.DAY_OF_MONTH);
 
-        dateField = (TextView) findViewById(R.id.dateField);
+        dateField = (RoboTextView) findViewById(R.id.dateField);
         dateField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dateDialog();
             }
         });
-
         dateField.setText(TimeUtil.getDate(c.getTime()));
-        dateField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
-        timeField = (TextView) findViewById(R.id.timeField);
+        timeField = (RoboTextView) findViewById(R.id.timeField);
         timeField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,10 +110,8 @@ public class QuickAddReminder extends AppCompatActivity {
         });
         timeField.setText(TimeUtil.getTime(c.getTime(),
                 sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-        timeField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
-        repeatDays = (EditText) findViewById(R.id.repeatDays);
-        repeatDays.setTypeface(AssetsUtil.getLightTypeface(this));
+        repeatDays = (RoboEditText) findViewById(R.id.repeatDays);
 
         SeekBar repeatDateInt = (SeekBar) findViewById(R.id.repeatDateInt);
         repeatDateInt.setMax(Configs.REPEAT_SEEKBAR_MAX);

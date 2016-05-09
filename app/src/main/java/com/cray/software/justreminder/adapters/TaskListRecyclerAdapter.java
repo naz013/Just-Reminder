@@ -6,16 +6,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.ViewUtils;
 
 /**
@@ -66,7 +66,7 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
         /**
          * Title text view.
          */
-        TextView textView;
+        RoboTextView textView;
 
         /**
          * Background container.
@@ -76,7 +76,7 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
         /**
          * Item status checkbox.
          */
-        CheckBox itemCheck;
+        RoboCheckBox itemCheck;
 
         /**
          * Remove item button.
@@ -89,10 +89,10 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
          */
         public ViewHolder(final View v) {
             super(v);
-            textView = (TextView) v.findViewById(R.id.shopText);
+            textView = (RoboTextView) v.findViewById(R.id.shopText);
             clearButton = (ImageButton) v.findViewById(R.id.clearButton);
             background = (RelativeLayout) v.findViewById(R.id.background);
-            itemCheck = (CheckBox) v.findViewById(R.id.itemCheck);
+            itemCheck = (RoboCheckBox) v.findViewById(R.id.itemCheck);
         }
     }
 
@@ -101,9 +101,6 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
         // create a new view
         View itemLayoutView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_task_item_card, parent, false);
-
-        // create ViewHolder
-
         return new ViewHolder(itemLayoutView);
     }
 

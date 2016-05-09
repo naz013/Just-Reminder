@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
@@ -10,7 +11,7 @@
     android:paddingRight="24dp"
     android:paddingTop="24dp">
 
-    <TextView
+    <com.cray.software.justreminder.roboto_views.RoboTextView
         android:id="@+id/dialogTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,13 +19,15 @@
         android:layout_marginBottom="@dimen/create_margin"
         android:gravity="center"
         android:text="@string/exclusion"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        app:font_style="roboto_regular" />
 
-    <CheckBox
+    <com.cray.software.justreminder.roboto_views.RoboCheckBox
         android:id="@+id/selectInterval"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/interval" />
+        android:text="@string/interval"
+        app:check_font_style="roboto_light" />
 
     <LinearLayout
         android:id="@+id/intervalContainer"
@@ -33,29 +36,32 @@
         android:gravity="center"
         android:orientation="horizontal">
 
-        <TextView
+        <com.cray.software.justreminder.roboto_views.RoboTextView
             android:id="@+id/from"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/create_margin"
             android:text="From: 8"
-            android:textSize="@dimen/create_text_size_normal" />
+            android:textSize="@dimen/create_text_size_normal"
+            app:font_style="roboto_medium" />
 
-        <TextView
+        <com.cray.software.justreminder.roboto_views.RoboTextView
             android:id="@+id/to"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="To: 15"
-            android:textSize="@dimen/create_text_size_normal" />
+            android:textSize="@dimen/create_text_size_normal"
+            app:font_style="roboto_medium" />
 
     </LinearLayout>
 
-    <CheckBox
+    <com.cray.software.justreminder.roboto_views.RoboCheckBox
         android:id="@+id/selectHours"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/create_margin"
-        android:text="@string/hours" />
+        android:text="@string/hours"
+        app:check_font_style="roboto_light" />
 
     <LinearLayout
         android:id="@+id/hoursContainer"
@@ -347,7 +353,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <Button
+    <com.cray.software.justreminder.roboto_views.RoboButton
         android:id="@+id/buttonOk"
         style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
         android:layout_width="wrap_content"
@@ -357,5 +363,6 @@
         android:clickable="false"
         android:gravity="center"
         android:text="@string/ok"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        app:button_font_style="roboto_light" />
 </LinearLayout>

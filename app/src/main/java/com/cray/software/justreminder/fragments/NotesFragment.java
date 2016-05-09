@@ -21,19 +21,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.cray.software.justreminder.notes.NotesManager;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
-import com.cray.software.justreminder.notes.NotePreview;
-import com.cray.software.justreminder.notes.NoteRecyclerAdapter;
-import com.cray.software.justreminder.notes.SyncNotes;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.notes.NotesBase;
-import com.cray.software.justreminder.notes.NoteDataProvider;
-import com.cray.software.justreminder.notes.NoteModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
@@ -43,6 +35,14 @@ import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.notes.NoteDataProvider;
+import com.cray.software.justreminder.notes.NoteModel;
+import com.cray.software.justreminder.notes.NotePreview;
+import com.cray.software.justreminder.notes.NoteRecyclerAdapter;
+import com.cray.software.justreminder.notes.NotesBase;
+import com.cray.software.justreminder.notes.NotesManager;
+import com.cray.software.justreminder.notes.SyncNotes;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 public class NotesFragment extends Fragment implements SyncListener, SimpleListener {
 
@@ -131,7 +131,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         emptyItem = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
 
-        TextView emptyText = (TextView) rootView.findViewById(R.id.emptyText);
+        RoboTextView emptyText = (RoboTextView) rootView.findViewById(R.id.emptyText);
         emptyText.setText(getActivity().getString(R.string.no_notes));
         emptyItem.setVisibility(View.VISIBLE);
 

@@ -8,8 +8,7 @@
     android:layout_gravity="center"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,7 +17,7 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-        <EditText
+        <com.cray.software.justreminder.roboto_views.RoboEditText
             android:id="@+id/editField"
             android:layout_width="match_parent"
             android:layout_height="72dp"
@@ -29,7 +28,8 @@
             android:background="@android:color/transparent"
             android:hint="@string/title"
             android:textColorHint="@color/whitePrimary"
-            android:textSize="@dimen/create_text_size_secondary" />
+            android:textSize="@dimen/create_text_size_secondary"
+            app:edit_font_style="roboto_light" />
 
     </android.support.v7.widget.Toolbar>
 
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -55,7 +55,8 @@
                 android:textAllCaps="true"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textSize="@dimen/create_text_size_normal"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                app:font_style="roboto_medium" />
 
             <LinearLayout
                 android:layout_width="wrap_content"

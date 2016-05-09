@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -50,7 +51,7 @@
                 android:src="@drawable/ic_settings_black_24dp"
                 android:visibility="visible" />
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/widgetDate"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
@@ -59,7 +60,8 @@
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/blackPrimary"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                app:font_style="roboto_light" />
         </RelativeLayout>
 
         <LinearLayout
@@ -78,11 +80,12 @@
                 android:dividerHeight="5dp"
                 android:scrollbars="none"></ListView>
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@android:id/empty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/no_events" />
+                android:text="@string/no_events"
+                app:font_style="roboto_regular" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

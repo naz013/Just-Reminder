@@ -32,7 +32,7 @@
                     android:layout_centerVertical="true"
                     android:scaleType="centerCrop" />
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/cloudUser"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -40,7 +40,8 @@
                     android:layout_marginLeft="15dp"
                     android:layout_toRightOf="@+id/userPhoto"
                     android:gravity="center_vertical"
-                    android:textSize="@dimen/create_text_size_secondary" />
+                    android:textSize="@dimen/create_text_size_secondary"
+                    widget:font_style="roboto_light" />
 
             </RelativeLayout>
 
@@ -76,19 +77,21 @@
                     android:gravity="center"
                     android:orientation="vertical">
 
-                    <TextView
+                    <com.cray.software.justreminder.roboto_views.RoboTextView
                         android:id="@+id/usedSpace"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/redPrimary"
-                        android:textSize="@dimen/create_text_size_normal" />
+                        android:textSize="@dimen/create_text_size_normal"
+                        widget:font_style="roboto_light" />
 
-                    <TextView
+                    <com.cray.software.justreminder.roboto_views.RoboTextView
                         android:id="@+id/freeSpace"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/greenPrimary"
-                        android:textSize="@dimen/create_text_size_normal" />
+                        android:textSize="@dimen/create_text_size_normal"
+                        widget:font_style="roboto_light" />
 
                 </LinearLayout>
 
@@ -109,7 +112,7 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/cloudText"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -117,15 +120,17 @@
                     android:gravity="center_vertical"
                     android:singleLine="true"
                     android:text="@string/files"
-                    android:textSize="@dimen/create_text_size_secondary" />
+                    android:textSize="@dimen/create_text_size_secondary"
+                    widget:font_style="roboto_regular" />
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/cloudCount"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center_vertical|center_horizontal"
-                    android:textSize="@dimen/create_text_size_primary" />
+                    android:textSize="@dimen/create_text_size_primary"
+                    widget:font_style="roboto_medium" />
 
             </LinearLayout>
         </android.support.v7.widget.CardView>

@@ -16,7 +16,7 @@
         android:layout_height="90dp"
         android:focusable="false">
 
-        <TextView
+        <com.cray.software.justreminder.roboto_views.RoboTextView
             android:id="@+id/eventColor"
             android:layout_width="10dp"
             android:layout_height="match_parent"
@@ -40,14 +40,15 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/eventType"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Type" />
+                    android:text="Type"
+                    card_view:font_style="roboto_light" />
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/eventDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -56,7 +57,8 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:lines="2"
-                    android:text="Date" />
+                    android:text="Date"
+                    card_view:font_style="roboto_light" />
 
             </LinearLayout>
 
@@ -67,14 +69,15 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/eventText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Text" />
+                    android:text="Text"
+                    card_view:font_style="roboto_medium" />
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/eventNumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -83,7 +86,8 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:lines="2"
-                    android:text="Number" />
+                    android:text="Number"
+                    card_view:font_style="roboto_light" />
 
             </LinearLayout>
 

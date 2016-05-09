@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/windowBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -28,7 +29,7 @@
                 android:layout_marginTop="15dp"
                 android:orientation="horizontal">
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/dropboxTitle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -37,14 +38,16 @@
                     android:drawablePadding="10dp"
                     android:gravity="center|left"
                     android:text="@string/dropbox"
-                    android:textSize="@dimen/clouds_text_size" />
+                    android:textSize="@dimen/clouds_text_size"
+                    app:font_style="roboto_regular" />
 
-                <Button
+                <com.cray.software.justreminder.roboto_views.RoboButton
                     android:id="@+id/linkDropbox"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="@string/connect" />
+                    android:text="@string/connect"
+                    app:button_font_style="roboto_light" />
 
             </LinearLayout>
 
@@ -54,7 +57,7 @@
                 android:layout_marginTop="@dimen/clouds_margin_top"
                 android:orientation="horizontal">
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/gDriveTitle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -63,14 +66,16 @@
                     android:drawablePadding="10dp"
                     android:gravity="center|left"
                     android:text="@string/google"
-                    android:textSize="@dimen/clouds_text_size" />
+                    android:textSize="@dimen/clouds_text_size"
+                    app:font_style="roboto_regular" />
 
-                <Button
+                <com.cray.software.justreminder.roboto_views.RoboButton
                     android:id="@+id/linkGDrive"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="@string/connect" />
+                    android:text="@string/connect"
+                    app:button_font_style="roboto_light" />
 
             </LinearLayout>
 

@@ -15,6 +15,7 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
@@ -24,7 +25,7 @@
     android:paddingRight="24dp"
     android:paddingTop="24dp">
 
-    <TextView
+    <com.cray.software.justreminder.roboto_views.RoboTextView
         android:id="@+id/dialogTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -32,60 +33,69 @@
         android:layout_marginBottom="@dimen/create_margin"
         android:gravity="center"
         android:text="@string/personalization"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        app:font_style="roboto_regular" />
 
-    <android.support.v7.widget.SwitchCompat
+    <com.cray.software.justreminder.roboto_views.RoboSwitchCompat
         android:id="@+id/extraSwitch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/default_string" />
+        android:text="@string/default_string"
+        app:switch_font_style="roboto_medium" />
 
-    <TextView
+    <com.cray.software.justreminder.roboto_views.RoboTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:maxLines="3"
         android:text="@string/allow_customizing_notification"
-        android:textStyle="italic" />
+        android:textStyle="italic"
+        app:font_style="roboto_thin" />
 
-    <CheckBox
+    <com.cray.software.justreminder.roboto_views.RoboCheckBox
         android:id="@+id/vibrationCheck"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text="@string/vibrate" />
+        android:text="@string/vibrate"
+        app:check_font_style="roboto_light" />
 
-    <CheckBox
+    <com.cray.software.justreminder.roboto_views.RoboCheckBox
         android:id="@+id/voiceCheck"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/voice_notification" />
+        android:text="@string/voice_notification"
+        app:check_font_style="roboto_light" />
 
-    <CheckBox
+    <com.cray.software.justreminder.roboto_views.RoboCheckBox
         android:id="@+id/wakeCheck"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/turn_on_screen" />
+        android:text="@string/turn_on_screen"
+        app:check_font_style="roboto_light" />
 
-    <CheckBox
+    <com.cray.software.justreminder.roboto_views.RoboCheckBox
         android:id="@+id/unlockCheck"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/unlock_screen" />
+        android:text="@string/unlock_screen"
+        app:check_font_style="roboto_light" />
 
-    <CheckBox
+    <com.cray.software.justreminder.roboto_views.RoboCheckBox
         android:id="@+id/repeatCheck"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/repeat_notification" />
+        android:text="@string/repeat_notification"
+        app:check_font_style="roboto_light" />
 
-    <CheckBox
+    <com.cray.software.justreminder.roboto_views.RoboCheckBox
         android:id="@+id/autoCheck"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/enable_sending_sms_automatically" />
+        android:text="@string/enable_sending_sms_automatically"
+        app:check_font_style="roboto_light" />
 
-    <Button
+    <com.cray.software.justreminder.roboto_views.RoboButton
         android:id="@+id/buttonOk"
         style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
         android:layout_width="wrap_content"
@@ -95,5 +105,6 @@
         android:clickable="false"
         android:gravity="center"
         android:text="@string/ok"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        app:button_font_style="roboto_light" />
 </LinearLayout>

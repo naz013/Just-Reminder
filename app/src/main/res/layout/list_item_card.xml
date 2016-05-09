@@ -9,7 +9,7 @@
     android:layout_marginRight="5dp"
     android:orientation="vertical">
 
-    <TextView
+    <com.cray.software.justreminder.roboto_views.RoboTextView
         android:id="@+id/listHeader"
         style="?android:attr/listSeparatorTextViewStyle"
         android:layout_width="match_parent"
@@ -22,7 +22,8 @@
         android:text="15 November"
         android:textColor="?attr/colorAccent"
         android:textSize="14sp"
-        android:visibility="gone" />
+        android:visibility="gone"
+        card_view:font_style="roboto_light" />
 
     <android.support.v7.widget.CardView
         android:id="@+id/itemCard"
@@ -43,14 +44,15 @@
             android:focusable="false"
             android:padding="8dp">
 
-            <android.support.v7.widget.SwitchCompat
+            <com.cray.software.justreminder.roboto_views.RoboSwitchCompat
                 android:id="@+id/itemCheck"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:focusable="false"
-                android:visibility="visible" />
+                android:visibility="visible"
+                card_view:switch_font_style="roboto_medium" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -61,15 +63,16 @@
                 android:focusable="false"
                 android:orientation="vertical">
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/reminder_type"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="false"
                     android:singleLine="true"
-                    android:text="Type" />
+                    android:text="Type"
+                    card_view:font_style="roboto_light" />
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/taskText"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -78,9 +81,10 @@
                     android:gravity="center_vertical"
                     android:singleLine="true"
                     android:text="Task"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    card_view:font_style="roboto_medium" />
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/reminder_phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -88,9 +92,10 @@
                     android:layout_weight="0.75"
                     android:focusable="false"
                     android:singleLine="true"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    card_view:font_style="roboto_light" />
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/taskDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -107,16 +112,17 @@
                     android:layout_marginTop="5dp"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <com.cray.software.justreminder.roboto_views.RoboTextView
                         android:id="@+id/repeatInterval"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:focusable="false"
                         android:gravity="left"
-                        android:textSize="15sp" />
+                        android:textSize="15sp"
+                        card_view:font_style="roboto_light" />
 
-                    <TextView
+                    <com.cray.software.justreminder.roboto_views.RoboTextView
                         android:id="@+id/remainingTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -127,7 +133,8 @@
                         android:singleLine="true"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textStyle="italic"
-                        android:visibility="visible" />
+                        android:visibility="visible"
+                        card_view:font_style="roboto_medium" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -148,7 +155,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/shoppingTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -157,7 +164,8 @@
                     android:focusable="false"
                     android:gravity="center_vertical"
                     android:singleLine="true"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    card_view:font_style="roboto_medium" />
 
                 <View
                     android:layout_width="fill_parent"
@@ -180,13 +188,14 @@
                 android:scrollbars="none"
                 android:visibility="visible" />
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/shoppingTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:drawablePadding="@dimen/reminder_preview_margin_top"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                card_view:font_style="roboto_medium" />
 
         </LinearLayout>
 

@@ -35,13 +35,11 @@ import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.cray.software.justreminder.activities.ImagePreview;
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.activities.ImagePreview;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.constants.Prefs;
@@ -53,6 +51,8 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
+import com.cray.software.justreminder.roboto_views.RoboButton;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
@@ -74,7 +74,7 @@ public class NotePreview extends AppCompatActivity {
     private Toolbar toolbar;
     private LinearLayout reminderContainer, buttonContainer;
     private ImageView imageView;
-    private TextView noteText, reminderTime;
+    private RoboTextView noteText, reminderTime;
     private FloatingActionButton mFab;
 
     @Override
@@ -134,8 +134,8 @@ public class NotePreview extends AppCompatActivity {
                 openImage();
             }
         });
-        noteText = (TextView) findViewById(R.id.noteText);
-        reminderTime = (TextView) findViewById(R.id.reminderTime);
+        noteText = (RoboTextView) findViewById(R.id.noteText);
+        reminderTime = (RoboTextView) findViewById(R.id.reminderTime);
         reminderTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,7 +158,7 @@ public class NotePreview extends AppCompatActivity {
             }
         });
 
-        Button editReminder = (Button) findViewById(R.id.editReminder);
+        RoboButton editReminder = (RoboButton) findViewById(R.id.editReminder);
         editReminder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -167,7 +167,7 @@ public class NotePreview extends AppCompatActivity {
                 }
             }
         });
-        Button deleteReminder = (Button) findViewById(R.id.deleteReminder);
+        RoboButton deleteReminder = (RoboButton) findViewById(R.id.deleteReminder);
         deleteReminder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -20,7 +20,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.cray.software.justreminder.activities.ShopsPreview">
+    tools:context=".reminder.ShopsPreview">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"

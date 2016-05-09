@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
@@ -18,6 +17,7 @@ import com.cray.software.justreminder.datas.models.FileModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 import java.util.ArrayList;
 
@@ -71,7 +71,7 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
         /**
          * TextView fields
          */
-        public TextView fileName, lastModified;
+        public RoboTextView fileName, lastModified;
         public ImageView fileIcon;
 
         /**
@@ -80,9 +80,9 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
          */
         public ViewHolder(final View v) {
             super(v);
-            fileName = (TextView) v.findViewById(R.id.fileName);
+            fileName = (RoboTextView) v.findViewById(R.id.fileName);
             fileIcon = (ImageView) v.findViewById(R.id.fileIcon);
-            lastModified = (TextView) v.findViewById(R.id.lastModified);
+            lastModified = (RoboTextView) v.findViewById(R.id.lastModified);
             itemCard = (CardView) v.findViewById(R.id.itemCard);
             itemCard.setCardBackgroundColor(cs.getCardStyle());
             if (Module.isLollipop()) {

@@ -46,7 +46,7 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/userName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -54,10 +54,10 @@
                     android:layout_marginTop="@dimen/reminder_margin_top"
                     android:gravity="center"
                     android:text="Contact"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textSize="@dimen/reminder_text_size_normal" />
+                    android:textSize="@dimen/reminder_text_size_normal"
+                    app:font_style="roboto_medium" />
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/userNumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -65,10 +65,10 @@
                     android:layout_marginTop="@dimen/reminder_margin_top"
                     android:gravity="center"
                     android:text="+31234567890"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textSize="@dimen/reminder_text_size_normal" />
+                    android:textSize="@dimen/reminder_text_size_normal"
+                    app:font_style="roboto_light" />
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/userYears"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -76,8 +76,8 @@
                     android:layout_marginTop="@dimen/reminder_margin_top"
                     android:gravity="center"
                     android:text="26 years"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textSize="@dimen/reminder_text_size_normal" />
+                    android:textSize="@dimen/reminder_text_size_normal"
+                    app:font_style="roboto_bold" />
 
             </LinearLayout>
 

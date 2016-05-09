@@ -9,14 +9,15 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <CheckBox
+        <com.cray.software.justreminder.roboto_views.RoboCheckBox
             android:id="@+id/actionCheck"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
             android:text="@string/action"
-            android:textSize="@dimen/checkbox_text_size" />
+            android:textSize="@dimen/checkbox_text_size"
+            app:check_font_style="roboto_regular" />
 
         <LinearLayout
             android:id="@+id/actionBlock"
@@ -31,20 +32,22 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <RadioButton
+                <com.cray.software.justreminder.roboto_views.RoboRadioButton
                     android:id="@+id/callAction"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/make_call"
-                    android:textSize="@dimen/create_text_size_normal" />
+                    android:textSize="@dimen/create_text_size_normal"
+                    app:radio_font_style="roboto_regular" />
 
-                <RadioButton
+                <com.cray.software.justreminder.roboto_views.RoboRadioButton
                     android:id="@+id/messageAction"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
                     android:text="@string/sms"
-                    android:textSize="@dimen/create_text_size_normal" />
+                    android:textSize="@dimen/create_text_size_normal"
+                    app:radio_font_style="roboto_regular" />
             </RadioGroup>
 
             <LinearLayout

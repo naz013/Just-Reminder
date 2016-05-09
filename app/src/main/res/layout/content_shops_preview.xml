@@ -22,7 +22,7 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.cray.software.justreminder.activities.ShopsPreview"
+    tools:context=".reminder.ShopsPreview"
     tools:showIn="@layout/activity_shops_preview">
 
     <RelativeLayout
@@ -38,15 +38,16 @@
             android:layout_marginRight="88dp"
             android:layout_marginTop="@dimen/reminder_preview_margin_top">
 
-            <android.support.v7.widget.SwitchCompat
+            <com.cray.software.justreminder.roboto_views.RoboSwitchCompat
                 android:id="@+id/reminderSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="15dp" />
+                android:layout_marginLeft="15dp"
+                app:switch_font_style="roboto_medium" />
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -55,11 +56,12 @@
                 android:layout_toLeftOf="@+id/reminderSwitch"
                 android:drawableLeft="@drawable/ic_access_time_black_24dp"
                 android:drawablePadding="@dimen/reminder_preview_margin_top"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                app:font_style="roboto_light" />
 
         </RelativeLayout>
 
-        <CheckBox
+        <com.cray.software.justreminder.roboto_views.RoboCheckBox
             android:id="@+id/showHidden"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -67,7 +69,8 @@
             android:layout_marginLeft="15dp"
             android:layout_marginRight="88dp"
             android:layout_marginTop="@dimen/reminder_preview_margin_top"
-            android:text="@string/show_hidden" />
+            android:text="@string/show_hidden"
+            app:check_font_style="roboto_light" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/todoList"

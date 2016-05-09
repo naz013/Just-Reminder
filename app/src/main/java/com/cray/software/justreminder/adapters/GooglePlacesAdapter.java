@@ -17,21 +17,19 @@
 package com.cray.software.justreminder.adapters;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.datas.models.PlaceModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.SimpleListener;
-import com.cray.software.justreminder.utils.AssetsUtil;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 import java.util.ArrayList;
 
@@ -41,11 +39,6 @@ import java.util.ArrayList;
 public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapter.ViewHolder> {
 
     private ArrayList<PlaceModel> array = new ArrayList<>();
-
-    /**
-     * Font typeface for text view's.
-     */
-    private Typeface typeface;
 
     /**
      * Action listener for adapter.
@@ -60,7 +53,6 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
      */
     public GooglePlacesAdapter(final Context context, ArrayList<PlaceModel> array) {
         this.array = array;
-        typeface = AssetsUtil.getLightTypeface(context);
         isDark = new ColorSetter(context).isDark();
         setHasStableIds(true);
     }
@@ -74,10 +66,10 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
         /**
          * Place title.
          */
-        public TextView textView, text2;
+        public RoboTextView textView, text2;
         public RelativeLayout listItem;
         public ImageView placeIcon;
-        public CheckBox placeCheck;
+        public RoboCheckBox placeCheck;
 
         /**
          * View holder constructor.
@@ -87,11 +79,9 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
             super(v);
             listItem = (RelativeLayout) v.findViewById(R.id.listItem);
             placeIcon = (ImageView) v.findViewById(R.id.placeIcon);
-            placeCheck = (CheckBox) v.findViewById(R.id.placeCheck);
-            textView = (TextView) v.findViewById(R.id.text1);
-            text2 = (TextView) v.findViewById(R.id.text2);
-            textView.setTypeface(typeface);
-            text2.setTypeface(typeface);
+            placeCheck = (RoboCheckBox) v.findViewById(R.id.placeCheck);
+            textView = (RoboTextView) v.findViewById(R.id.text1);
+            text2 = (RoboTextView) v.findViewById(R.id.text2);
 
             v.setOnClickListener(this);
             placeCheck.setOnClickListener(new View.OnClickListener() {
@@ -107,7 +97,6 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
 
         @Override
         public void onClick(final View v) {
-
             if (getAdapterPosition() == getLast() && getItemCount() > 1) {
                 for (PlaceModel item : array) item.setSelected(1);
                 notifyDataSetChanged();

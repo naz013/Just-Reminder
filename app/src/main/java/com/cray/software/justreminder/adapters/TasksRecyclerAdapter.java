@@ -7,9 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.TaskManager;
@@ -21,6 +19,8 @@ import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.datas.models.Task;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.SyncListener;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,20 +46,20 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtTitle;
-        TextView txtDate;
-        CheckBox checkBox;
-        TextView listColor;
-        TextView note;
+        RoboTextView txtTitle;
+        RoboTextView txtDate;
+        RoboCheckBox checkBox;
+        RoboTextView listColor;
+        RoboTextView note;
         CardView card;
 
         public ViewHolder(View v) {
             super(v);
-            checkBox = (CheckBox) v.findViewById(R.id.checkDone);
-            txtTitle = (TextView) v.findViewById(R.id.task);
-            txtDate = (TextView) v.findViewById(R.id.taskDate);
-            listColor = (TextView) v.findViewById(R.id.listColor);
-            note = (TextView) v.findViewById(R.id.note);
+            checkBox = (RoboCheckBox) v.findViewById(R.id.checkDone);
+            txtTitle = (RoboTextView) v.findViewById(R.id.task);
+            txtDate = (RoboTextView) v.findViewById(R.id.taskDate);
+            listColor = (RoboTextView) v.findViewById(R.id.listColor);
+            note = (RoboTextView) v.findViewById(R.id.note);
             card = (CardView) v.findViewById(R.id.card);
             checkBox.setFocusableInTouchMode(false);
             checkBox.setFocusable(false);
@@ -77,9 +77,6 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
         // create a new view
         View itemLayoutView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_task, parent, false);
-
-        // create ViewHolder
-
         return new ViewHolder(itemLayoutView);
     }
 

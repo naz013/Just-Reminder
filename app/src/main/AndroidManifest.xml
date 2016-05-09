@@ -186,14 +186,6 @@
                 <data android:pathPattern=".*\\.note" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activities.StartHelp"
-            android:configChanges="keyboardHidden|orientation"
-            android:theme="@style/HomeWhiteFullscreen">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
 
         <receiver android:name=".services.AlarmReceiver" />
         <receiver android:name=".services.BirthdayCheckAlarm" />
@@ -290,14 +282,6 @@
         </activity>
         <activity
             android:name=".dialogs.ChangeDialog"
-            android:configChanges="keyboardHidden|orientation"
-            android:theme="@style/HomeWhiteDialog">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".dialogs.BirthdaysVoiceList"
             android:configChanges="keyboardHidden|orientation"
             android:theme="@style/HomeWhiteDialog">
             <intent-filter>
@@ -701,7 +685,7 @@
             android:name=".reminder.ReminderPreview"
             android:theme="@style/HomeWhite.Blue" />
         <activity
-            android:name=".activities.ShopsPreview"
+            android:name=".reminder.ShopsPreview"
             android:theme="@style/HomeWhite.Blue" />
 
         <receiver

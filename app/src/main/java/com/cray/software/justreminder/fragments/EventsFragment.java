@@ -32,7 +32,6 @@ public class EventsFragment extends Fragment {
     private long dateMills;
     private ViewPager pager;
     private ArrayList<EventsPagerItem> pagerData = new ArrayList<>();
-    private int lastPosition = -1;
     private String dayString;
 
     private NavigationCallbacks mCallbacks;
@@ -55,7 +54,6 @@ public class EventsFragment extends Fragment {
 
         Bundle intent = getArguments();
         dateMills = intent.getLong("date", 0);
-        lastPosition = intent.getInt("pos", -1);
     }
 
     @Override
@@ -221,7 +219,6 @@ public class EventsFragment extends Fragment {
                 calendar1.set(Calendar.MONTH, month);
                 calendar1.set(Calendar.YEAR, year);
                 dateMills = calendar1.getTimeInMillis();
-                lastPosition = i;
                 if (mCallbacks != null) {
                     mCallbacks.onDateChanged(dateMills, i);
                 }

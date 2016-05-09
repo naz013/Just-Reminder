@@ -81,16 +81,17 @@
                     android:orientation="horizontal"
                     android:visibility="gone">
 
-                    <TextView
+                    <com.cray.software.justreminder.roboto_views.RoboTextView
                         android:id="@+id/remindDate"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="27/11/2014"
                         android:textColor="@color/blackPrimary"
-                        android:textSize="@dimen/create_note_text_size_secondary" />
+                        android:textSize="@dimen/create_note_text_size_secondary"
+                        app:font_style="roboto_medium" />
 
-                    <TextView
+                    <com.cray.software.justreminder.roboto_views.RoboTextView
                         android:id="@+id/remindTime"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
@@ -99,7 +100,8 @@
                         android:gravity="center"
                         android:text="20:00"
                         android:textColor="@color/blackPrimary"
-                        android:textSize="@dimen/create_note_text_size_secondary" />
+                        android:textSize="@dimen/create_note_text_size_secondary"
+                        app:font_style="roboto_medium" />
 
                     <ImageButton
                         android:id="@+id/discardReminder"

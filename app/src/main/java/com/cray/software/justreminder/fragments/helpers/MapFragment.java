@@ -39,7 +39,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.PlaceAdapter;
@@ -58,6 +57,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.google.android.gms.maps.CameraUpdate;
@@ -669,10 +669,10 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         places.setOnClickListener(this);
         backButton.setOnClickListener(this);
 
-        TextView typeNormal = (TextView) view.findViewById(R.id.typeNormal);
-        TextView typeSatellite = (TextView) view.findViewById(R.id.typeSatellite);
-        TextView typeHybrid = (TextView) view.findViewById(R.id.typeHybrid);
-        TextView typeTerrain = (TextView) view.findViewById(R.id.typeTerrain);
+        RoboTextView typeNormal = (RoboTextView) view.findViewById(R.id.typeNormal);
+        RoboTextView typeSatellite = (RoboTextView) view.findViewById(R.id.typeSatellite);
+        RoboTextView typeHybrid = (RoboTextView) view.findViewById(R.id.typeHybrid);
+        RoboTextView typeTerrain = (RoboTextView) view.findViewById(R.id.typeTerrain);
         typeNormal.setOnClickListener(this);
         typeSatellite.setOnClickListener(this);
         typeHybrid.setOnClickListener(this);

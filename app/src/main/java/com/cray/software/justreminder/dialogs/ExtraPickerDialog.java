@@ -19,20 +19,20 @@ package com.cray.software.justreminder.dialogs;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.SwitchCompat;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboSwitchCompat;
 
 public class ExtraPickerDialog extends Activity {
 
-    CheckBox vibrationCheck, voiceCheck, wakeCheck, unlockCheck, repeatCheck, autoCheck;
-    SwitchCompat extraSwitch;
+    private RoboCheckBox vibrationCheck, voiceCheck, wakeCheck, unlockCheck, repeatCheck, autoCheck;
+    private RoboSwitchCompat extraSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +46,7 @@ public class ExtraPickerDialog extends Activity {
         int[] array = intent.getIntArrayExtra("prefs");
         String type = intent.getStringExtra("type");
 
-        extraSwitch = (SwitchCompat) findViewById(R.id.extraSwitch);
+        extraSwitch = (RoboSwitchCompat) findViewById(R.id.extraSwitch);
         extraSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -56,16 +56,16 @@ public class ExtraPickerDialog extends Activity {
             }
         });
 
-        autoCheck = (CheckBox) findViewById(R.id.autoCheck);
-        vibrationCheck = (CheckBox) findViewById(R.id.vibrationCheck);
-        voiceCheck = (CheckBox) findViewById(R.id.voiceCheck);
-        wakeCheck = (CheckBox) findViewById(R.id.wakeCheck);
-        unlockCheck = (CheckBox) findViewById(R.id.unlockCheck);
-        repeatCheck = (CheckBox) findViewById(R.id.repeatCheck);
+        autoCheck = (RoboCheckBox) findViewById(R.id.autoCheck);
+        vibrationCheck = (RoboCheckBox) findViewById(R.id.vibrationCheck);
+        voiceCheck = (RoboCheckBox) findViewById(R.id.voiceCheck);
+        wakeCheck = (RoboCheckBox) findViewById(R.id.wakeCheck);
+        unlockCheck = (RoboCheckBox) findViewById(R.id.unlockCheck);
+        repeatCheck = (RoboCheckBox) findViewById(R.id.repeatCheck);
 
-        if (type.contains(Constants.TYPE_MESSAGE))
+        if (type.contains(Constants.TYPE_MESSAGE)) {
             autoCheck.setVisibility(View.VISIBLE);
-        else autoCheck.setVisibility(View.GONE);
+        } else autoCheck.setVisibility(View.GONE);
 
         if (type.contains(Constants.TYPE_APPLICATION)) {
             autoCheck.setText(R.string.launch_application);

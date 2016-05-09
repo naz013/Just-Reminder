@@ -18,14 +18,15 @@
         android:focusable="false"
         android:padding="10dp">
 
-        <TextView
+        <com.cray.software.justreminder.roboto_views.RoboTextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginRight="15dp"
             android:layout_toLeftOf="@+id/indicator"
-            android:textSize="19sp" />
+            android:textSize="19sp"
+            card_view:font_style="roboto_light" />
 
         <View
             android:id="@+id/indicator"

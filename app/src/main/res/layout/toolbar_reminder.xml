@@ -73,7 +73,7 @@
                 android:layout_marginRight="10dp"
                 android:src="@drawable/ic_tune_white_24dp" />
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/category"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -88,7 +88,8 @@
                 android:padding="2dp"
                 android:textColor="@color/whitePrimary"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                app:font_style="roboto_light" />
 
         </RelativeLayout>
     </LinearLayout>

@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -19,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
@@ -30,6 +28,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.squareup.picasso.Picasso;
@@ -46,18 +45,18 @@ public class NavigationDrawerFragment extends Fragment implements
     private ActionBarDrawerToggle mDrawerToggle;
 
     private DrawerLayout mDrawerLayout;
-    private TextView archiveScreen;
-    private TextView activeScreen;
-    private TextView geoScreen;
-    private TextView calendar;
-    private TextView manageBackup;
-    private TextView notes;
-    private TextView googleTasks;
-    private TextView templates;
-    private TextView places;
-    private TextView categories;
-    private TextView prefsButton;
-    private TextView appNameBanner;
+    private RoboTextView archiveScreen;
+    private RoboTextView activeScreen;
+    private RoboTextView geoScreen;
+    private RoboTextView calendar;
+    private RoboTextView manageBackup;
+    private RoboTextView notes;
+    private RoboTextView googleTasks;
+    private RoboTextView templates;
+    private RoboTextView places;
+    private RoboTextView categories;
+    private RoboTextView prefsButton;
+    private RoboTextView appNameBanner;
     private View mFragmentContainerView;
     private ImageView image;
 
@@ -95,14 +94,8 @@ public class NavigationDrawerFragment extends Fragment implements
         View rootView = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
 
         rootView.findViewById(R.id.drawerBg).setBackgroundColor(new ColorSetter(getActivity()).getBackgroundStyle());
-
-        Typeface typeface = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Roboto-Light.ttf");
-
         image = (ImageView) rootView.findViewById(R.id.image);
-
-        appNameBanner = (TextView) rootView.findViewById(R.id.appNameBanner);
-        appNameBanner.setTypeface(typeface);
-
+        appNameBanner = (RoboTextView) rootView.findViewById(R.id.appNameBanner);
         String appName;
         if (Module.isPro()) {
             appName = getString(R.string.app_name_pro);
@@ -111,10 +104,10 @@ public class NavigationDrawerFragment extends Fragment implements
         }
         appNameBanner.setText(appName.toUpperCase());
 
-        prefsButton = (TextView) rootView.findViewById(R.id.settings);
+        prefsButton = (RoboTextView) rootView.findViewById(R.id.settings);
         prefsButton.setOnClickListener(this);
 
-        TextView helpButton = (TextView) rootView.findViewById(R.id.help);
+        RoboTextView helpButton = (RoboTextView) rootView.findViewById(R.id.help);
         helpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,33 +115,33 @@ public class NavigationDrawerFragment extends Fragment implements
             }
         });
 
-        TextView feedButton = (TextView) rootView.findViewById(R.id.feed);
+        RoboTextView feedButton = (RoboTextView) rootView.findViewById(R.id.feed);
         feedButton.setOnClickListener(this);
 
-        geoScreen = (TextView) rootView.findViewById(R.id.geoScreen);
+        geoScreen = (RoboTextView) rootView.findViewById(R.id.geoScreen);
         geoScreen.setOnClickListener(this);
 
-        manageBackup = (TextView) rootView.findViewById(R.id.manageBackup);
+        manageBackup = (RoboTextView) rootView.findViewById(R.id.manageBackup);
         manageBackup.setOnClickListener(this);
 
-        calendar = (TextView) rootView.findViewById(R.id.calendar);
+        calendar = (RoboTextView) rootView.findViewById(R.id.calendar);
         calendar.setOnClickListener(this);
 
-        notes = (TextView) rootView.findViewById(R.id.notes);
+        notes = (RoboTextView) rootView.findViewById(R.id.notes);
         notes.setOnClickListener(this);
 
-        googleTasks = (TextView) rootView.findViewById(R.id.googleTasks);
+        googleTasks = (RoboTextView) rootView.findViewById(R.id.googleTasks);
         googleTasks.setOnClickListener(this);
 
-        activeScreen = (TextView) rootView.findViewById(R.id.activeScreen);
+        activeScreen = (RoboTextView) rootView.findViewById(R.id.activeScreen);
         activeScreen.setOnClickListener(this);
         activeScreen.setEnabled(false);
 
-        archiveScreen = (TextView) rootView.findViewById(R.id.archiveScreen);
+        archiveScreen = (RoboTextView) rootView.findViewById(R.id.archiveScreen);
         archiveScreen.setVisibility(View.VISIBLE);
         archiveScreen.setOnClickListener(this);
 
-        categories = (TextView) rootView.findViewById(R.id.categories);
+        categories = (RoboTextView) rootView.findViewById(R.id.categories);
         categories.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -156,9 +149,8 @@ public class NavigationDrawerFragment extends Fragment implements
                 disableItem(ScreenManager.FRAGMENT_GROUPS);
             }
         });
-        categories.setTypeface(typeface);
 
-        places = (TextView) rootView.findViewById(R.id.places);
+        places = (RoboTextView) rootView.findViewById(R.id.places);
         places.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -166,9 +158,8 @@ public class NavigationDrawerFragment extends Fragment implements
                 disableItem(ScreenManager.FRAGMENT_PLACES);
             }
         });
-        places.setTypeface(typeface);
 
-        templates = (TextView) rootView.findViewById(R.id.templates);
+        templates = (RoboTextView) rootView.findViewById(R.id.templates);
         templates.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,20 +167,7 @@ public class NavigationDrawerFragment extends Fragment implements
                 disableItem(ScreenManager.FRAGMENT_TEMPLATES);
             }
         });
-        templates.setTypeface(typeface);
         reloadItems();
-
-        geoScreen.setTypeface(typeface);
-        calendar.setTypeface(typeface);
-        notes.setTypeface(typeface);
-        googleTasks.setTypeface(typeface);
-        activeScreen.setTypeface(typeface);
-        archiveScreen.setTypeface(typeface);
-        manageBackup.setTypeface(typeface);
-        googleTasks.setTypeface(typeface);
-        prefsButton.setTypeface(typeface);
-        feedButton.setTypeface(typeface);
-        helpButton.setTypeface(typeface);
 
         if (!Module.isPro()){
             RelativeLayout ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);

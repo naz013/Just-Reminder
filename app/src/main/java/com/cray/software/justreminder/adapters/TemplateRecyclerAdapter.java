@@ -1,13 +1,11 @@
 package com.cray.software.justreminder.adapters;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
@@ -16,31 +14,28 @@ import com.cray.software.justreminder.datas.models.TemplateModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.utils.AssetsUtil;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 public class TemplateRecyclerAdapter extends RecyclerView.Adapter<TemplateRecyclerAdapter.ViewHolder> {
 
     private ColorSetter cs;
     private TemplateDataProvider provider;
-    private Typeface typeface;
     private SimpleListener mEventListener;
 
     public TemplateRecyclerAdapter(Context context, TemplateDataProvider provider) {
         this.provider = provider;
         cs = new ColorSetter(context);
-        typeface = AssetsUtil.getLightTypeface(context);
         setHasStableIds(true);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
 
-        public TextView textView;
+        public RoboTextView textView;
         public CardView itemCard;
 
         public ViewHolder(View v) {
             super(v);
-            textView = (TextView) v.findViewById(R.id.textView);
-            textView.setTypeface(typeface);
+            textView = (RoboTextView) v.findViewById(R.id.textView);
             itemCard = (CardView) v.findViewById(R.id.itemCard);
             itemCard.setCardBackgroundColor(cs.getCardStyle());
             if (Module.isLollipop()) {

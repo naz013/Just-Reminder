@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,7 +21,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.backdoor.shared.SharedConst;
 import com.cray.software.justreminder.R;
@@ -30,17 +28,17 @@ import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Language;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.Telephony;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
-import com.cray.software.justreminder.utils.AssetsUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -177,8 +175,6 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
 
         loadImage();
 
-        Typeface typeface = AssetsUtil.getLightTypeface(this);
-
         FloatingActionButton buttonOk = (FloatingActionButton) findViewById(R.id.buttonOk);
         buttonOk.setOnClickListener(this);
         FloatingActionButton buttonCall = (FloatingActionButton) findViewById(R.id.buttonCall);
@@ -207,23 +203,20 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
             number = Contacts.getNumber(name, ShowBirthday.this);
         }
         CircleImageView contactPhoto = (CircleImageView) findViewById(R.id.contactPhoto);
-        if (contactId == 0 && number != null)
+        if (contactId == 0 && number != null) {
             contactId = Contacts.getIdFromNumber(number, ShowBirthday.this);
+        }
         Uri photo = Contacts.getPhoto(contactId);
-        if (photo != null)
-            contactPhoto.setImageURI(photo);
+        if (photo != null) contactPhoto.setImageURI(photo);
         else contactPhoto.setVisibility(View.GONE);
 
         String years =  TimeUtil.getAgeFormatted(this, birthDate);
 
-        TextView userName = (TextView) findViewById(R.id.userName);
-        userName.setTypeface(typeface);
+        RoboTextView userName = (RoboTextView) findViewById(R.id.userName);
         userName.setText(name);
-        TextView userNumber = (TextView) findViewById(R.id.userNumber);
-        userNumber.setTypeface(typeface);
+        RoboTextView userNumber = (RoboTextView) findViewById(R.id.userNumber);
 
-        TextView userYears = (TextView) findViewById(R.id.userYears);
-        userYears.setTypeface(typeface);
+        RoboTextView userYears = (RoboTextView) findViewById(R.id.userYears);
         userYears.setText(years);
 
         wearMessage = name + "\n" + years;

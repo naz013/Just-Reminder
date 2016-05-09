@@ -39,13 +39,13 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
                     android:text="@string/title" />
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
@@ -59,7 +59,7 @@
                 android:layout_marginTop="5dp"
                 android:orientation="horizontal">
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/fileName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
                     android:singleLine="true"
                     android:text="file" />
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/lastModified"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawerBg"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -28,18 +29,19 @@
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop" />
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/appNameBanner"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="@string/app_name"
                     android:textColor="@color/whitePrimary"
-                    android:textSize="25sp" />
+                    android:textSize="25sp"
+                    app:font_style="roboto_light" />
 
             </RelativeLayout>
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/activeScreen"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -55,7 +57,7 @@
                 android:textSize="@dimen/main_drawer_fragment_settings_t_size"
                 android:visibility="visible" />
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/notes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -71,7 +73,7 @@
                 android:textSize="@dimen/main_drawer_fragment_settings_t_size"
                 android:visibility="visible" />
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/googleTasks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -87,7 +89,7 @@
                 android:textSize="@dimen/main_drawer_fragment_settings_t_size"
                 android:visibility="gone" />
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/calendar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -103,7 +105,7 @@
                 android:textSize="@dimen/main_drawer_fragment_settings_t_size"
                 android:visibility="visible" />
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/geoScreen"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -119,7 +121,7 @@
                 android:textSize="@dimen/main_drawer_fragment_settings_t_size"
                 android:visibility="visible" />
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/categories"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -135,7 +137,7 @@
                 android:textSize="@dimen/main_drawer_fragment_settings_t_size"
                 android:visibility="visible" />
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/places"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -151,7 +153,7 @@
                 android:textSize="@dimen/main_drawer_fragment_settings_t_size"
                 android:visibility="gone" />
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/templates"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -167,7 +169,7 @@
                 android:textSize="@dimen/main_drawer_fragment_settings_t_size"
                 android:visibility="gone" />
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/manageBackup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -183,7 +185,7 @@
                 android:textSize="@dimen/main_drawer_fragment_settings_t_size"
                 android:visibility="visible" />
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/archiveScreen"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -199,7 +201,7 @@
                 android:textSize="@dimen/main_drawer_fragment_settings_t_size"
                 android:visibility="visible" />
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/settings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -220,7 +222,7 @@
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray" />
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/feed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -231,9 +233,10 @@
                 android:paddingLeft="10dp"
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:text="@string/feedback"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                app:font_style="roboto_light" />
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/help"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -244,7 +247,8 @@
                 android:paddingLeft="10dp"
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:text="@string/help"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                app:font_style="roboto_light" />
 
         </LinearLayout>
 
@@ -268,7 +272,7 @@
             android:paddingTop="7dp"
             android:visibility="gone">
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -276,7 +280,8 @@
                 android:clickable="false"
                 android:gravity="center|left"
                 android:text="@string/buy_pro"
-                android:textSize="25sp" />
+                android:textSize="25sp"
+                app:font_style="roboto_light" />
 
             <ImageView
                 android:id="@+id/basket"

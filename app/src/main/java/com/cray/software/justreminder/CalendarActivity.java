@@ -11,10 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.adapters.CalendarPagerAdapter;
 import com.cray.software.justreminder.constants.Configs;
@@ -26,6 +24,8 @@ import com.cray.software.justreminder.dialogs.ActionPickerDialog;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Recognize;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.roboto_views.RoboButton;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.CircularProgress;
@@ -38,8 +38,8 @@ public class CalendarActivity extends AppCompatActivity {
 
     private SharedPrefs sPrefs;
     private long dateMills;
-    private Button currentEvent;
-    private TextView title;
+    private RoboButton currentEvent;
+    private RoboTextView title;
     private ViewPager pager;
     private FrameLayout calendarLayout;
     private CircularProgress progress;
@@ -66,7 +66,7 @@ public class CalendarActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        title = (TextView) findViewById(R.id.title);
+        title = (RoboTextView) findViewById(R.id.title);
         title.setText(getString(R.string.calendar));
 
         ImageButton voiceButton = (ImageButton) findViewById(R.id.voiceButton);
@@ -78,7 +78,7 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
 
-        currentEvent = (Button) findViewById(R.id.currentEvent);
+        currentEvent = (RoboButton) findViewById(R.id.currentEvent);
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
         int day = cal.get(Calendar.DAY_OF_MONTH);

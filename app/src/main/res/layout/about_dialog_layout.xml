@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
@@ -26,25 +27,27 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/appName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="@string/app_name"
-                android:textSize="@dimen/about_app_title_size" />
+                android:textSize="@dimen/about_app_title_size"
+                app:font_style="roboto_medium" />
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/appVersion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="5dp"
                 android:gravity="center"
-                android:textSize="@dimen/about_secondary_text_size" />
+                android:textSize="@dimen/about_secondary_text_size"
+                app:font_style="roboto_thin" />
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/rights"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -52,7 +55,8 @@
                 android:layout_marginTop="25dp"
                 android:gravity="center"
                 android:text="@string/copyright"
-                android:textSize="@dimen/about_secondary_text_size" />
+                android:textSize="@dimen/about_secondary_text_size"
+                app:font_style="roboto_thin" />
 
         </LinearLayout>
     </LinearLayout>

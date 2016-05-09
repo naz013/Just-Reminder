@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.TasksRecyclerAdapter;
@@ -19,6 +18,7 @@ import com.cray.software.justreminder.datas.models.Task;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SyncListener;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 import java.util.ArrayList;
 
@@ -56,7 +56,7 @@ public class TaskListFragment extends Fragment implements SyncListener {
         emptyItem = (LinearLayout) view.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
 
-        TextView emptyText = (TextView) view.findViewById(R.id.emptyText);
+        RoboTextView emptyText = (RoboTextView) view.findViewById(R.id.emptyText);
         emptyText.setText(R.string.no_google_tasks);
         emptyItem.setVisibility(View.VISIBLE);
 

@@ -3,7 +3,6 @@ package com.cray.software.justreminder.utils;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.ColorInt;
@@ -20,7 +19,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.view.animation.Transformation;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
@@ -150,18 +148,6 @@ public class ViewUtils {
         if (isDark){
             ib.setImageResource(R.drawable.ic_person_add_white_24dp);
         } else ib.setImageResource(R.drawable.ic_person_add_black_24dp);
-    }
-
-    /**
-     * Set light typeface for selected TextView's.
-     * @param context application context.
-     * @param views TextView's.
-     */
-    public static void setTypeFont(Context context, TextView... views){
-        Typeface typeface = AssetsUtil.getLightTypeface(context);
-        for (TextView v : views){
-            v.setTypeface(typeface);
-        }
     }
 
     public static void fadeInAnimation(View view){

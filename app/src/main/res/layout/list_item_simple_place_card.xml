@@ -24,14 +24,15 @@
             android:scaleType="center"
             android:src="@drawable/marker_blue" />
 
-        <TextView
+        <com.cray.software.justreminder.roboto_views.RoboTextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_margin="8dp"
             android:layout_toLeftOf="@+id/markerImage"
-            android:textSize="21sp" />
+            android:textSize="21sp"
+            card_view:font_style="roboto_light" />
 
     </RelativeLayout>
 </android.support.v7.widget.CardView>

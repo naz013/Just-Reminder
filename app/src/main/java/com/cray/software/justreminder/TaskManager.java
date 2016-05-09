@@ -20,9 +20,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CursorAdapter;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
@@ -42,7 +40,8 @@ import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
-import com.cray.software.justreminder.utils.AssetsUtil;
+import com.cray.software.justreminder.roboto_views.RoboEditText;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
@@ -55,10 +54,10 @@ public class TaskManager extends AppCompatActivity {
 
     private long id;
     private Toolbar toolbar;
-    private EditText editField, noteField;
-    private TextView dateField;
-    private TextView timeField;
-    private TextView listText;
+    private RoboEditText editField, noteField;
+    private RoboTextView dateField;
+    private RoboTextView timeField;
+    private RoboTextView listText;
 
     private int color;
     private int myHour = 0;
@@ -99,9 +98,9 @@ public class TaskManager extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        editField = (EditText) findViewById(R.id.editField);
-        noteField = (EditText) findViewById(R.id.noteField);
-        listText = (TextView) findViewById(R.id.listText);
+        editField = (RoboEditText) findViewById(R.id.editField);
+        noteField = (RoboEditText) findViewById(R.id.noteField);
+        listText = (RoboTextView) findViewById(R.id.listText);
         listText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,7 +118,7 @@ public class TaskManager extends AppCompatActivity {
         myMonth = calendar.get(Calendar.MONTH);
         myDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-        dateField = (TextView) findViewById(R.id.dateField);
+        dateField = (RoboTextView) findViewById(R.id.dateField);
         dateField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,16 +126,13 @@ public class TaskManager extends AppCompatActivity {
             }
         });
 
-        dateField.setTypeface(AssetsUtil.getMediumTypeface(this));
-
-        timeField = (TextView) findViewById(R.id.timeField);
+        timeField = (RoboTextView) findViewById(R.id.timeField);
         timeField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 selectDateAction(2);
             }
         });
-        timeField.setTypeface(AssetsUtil.getMediumTypeface(this));
 
         ImageView noteIcon = (ImageView) findViewById(R.id.noteIcon);
         ImageView dateIcon = (ImageView) findViewById(R.id.dateIcon);
@@ -601,14 +597,11 @@ public class TaskManager extends AppCompatActivity {
         public View getView(final int position, View convertView, ViewGroup parent) {
             c.moveToPosition(position);
             if (convertView == null) {
-                convertView = inflater.inflate(android.R.layout.simple_list_item_1, null);
+                convertView = inflater.inflate(R.layout.list_item_simple_text1, null);
             }
-
             String text = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
-
-            TextView textView = (TextView) convertView.findViewById(android.R.id.text1);
+            RoboTextView textView = (RoboTextView) convertView.findViewById(R.id.text1);
             textView.setText(text);
-
             return convertView;
         }
 

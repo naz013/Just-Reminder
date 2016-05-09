@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.activities;
+package com.cray.software.justreminder.reminder;
 
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -22,15 +22,12 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.TaskListRecyclerAdapter;
@@ -42,9 +39,9 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.json.JShopping;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.reminder.Reminder;
-import com.cray.software.justreminder.reminder.ReminderDataProvider;
-import com.cray.software.justreminder.reminder.ReminderModel;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboSwitchCompat;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.WrapLayoutManager;
@@ -53,14 +50,14 @@ import java.util.ArrayList;
 
 public class ShopsPreview extends AppCompatActivity {
 
-    private TextView time;
+    private RoboTextView time;
     private RecyclerView todoList;
     private Toolbar toolbar;
     private CollapsingToolbarLayout toolbarLayout;
     private FloatingActionButton mFab;
     private AppBarLayout appBarLayout;
     private RelativeLayout reminderContainer;
-    private SwitchCompat reminderSwitch;
+    private RoboSwitchCompat reminderSwitch;
 
     private ShoppingListDataProvider provider;
     private ColorSetter cSetter;
@@ -88,7 +85,7 @@ public class ShopsPreview extends AppCompatActivity {
 
         id = getIntent().getLongExtra(Constants.EDIT_ID, 0);
 
-        reminderSwitch = (SwitchCompat) findViewById(R.id.reminderSwitch);
+        reminderSwitch = (RoboSwitchCompat) findViewById(R.id.reminderSwitch);
         reminderSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,7 +95,7 @@ public class ShopsPreview extends AppCompatActivity {
         });
         reminderContainer = (RelativeLayout) findViewById(R.id.reminderContainer);
 
-        time = (TextView) findViewById(R.id.time);
+        time = (RoboTextView) findViewById(R.id.time);
         if (cSetter.isDark()) {
             time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_alarm_white_24dp, 0, 0, 0);
         } else {
@@ -107,7 +104,7 @@ public class ShopsPreview extends AppCompatActivity {
 
         reminderContainer.setVisibility(View.GONE);
 
-        CheckBox showHidden = (CheckBox) findViewById(R.id.showHidden);
+        RoboCheckBox showHidden = (RoboCheckBox) findViewById(R.id.showHidden);
         showHidden.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

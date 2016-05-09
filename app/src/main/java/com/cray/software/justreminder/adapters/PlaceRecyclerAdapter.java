@@ -1,14 +1,12 @@
 package com.cray.software.justreminder.adapters;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
@@ -17,7 +15,7 @@ import com.cray.software.justreminder.datas.models.MarkerModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.utils.AssetsUtil;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 /**
  * Recycler view adapter for frequently used places.
@@ -33,11 +31,6 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
      * Data provider for markers.
      */
     private PlaceDataProvider provider;
-
-    /**
-     * Font typeface for text view's.
-     */
-    private Typeface typeface;
 
     /**
      * Action listener for adapter.
@@ -56,7 +49,6 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
         this.provider = provider;
         this.showMarker = showMarker;
         cs = new ColorSetter(context);
-        typeface = AssetsUtil.getLightTypeface(context);
         setHasStableIds(true);
     }
 
@@ -66,7 +58,7 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
     public class ViewHolder extends RecyclerView.ViewHolder implements
             View.OnClickListener, View.OnLongClickListener {
 
-        public TextView textView;
+        public RoboTextView textView;
         public ImageView markerImage;
         public CardView itemCard;
 
@@ -76,9 +68,8 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
          */
         public ViewHolder(final View v) {
             super(v);
-            textView = (TextView) v.findViewById(R.id.textView);
+            textView = (RoboTextView) v.findViewById(R.id.textView);
             markerImage = (ImageView) v.findViewById(R.id.markerImage);
-            textView.setTypeface(typeface);
             itemCard = (CardView) v.findViewById(R.id.itemCard);
             itemCard.setCardBackgroundColor(cs.getCardStyle());
             if (Module.isLollipop()) {

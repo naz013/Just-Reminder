@@ -10,9 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -58,14 +58,14 @@ public class EventsThemeFragment extends Fragment{
         ImageButton voiceButton = (ImageButton) view.findViewById(R.id.voiceButton);
         ImageButton settingsButton = (ImageButton) view.findViewById(R.id.optionsButton);
 
-        TextView widgetTitle = (TextView) view.findViewById(R.id.widgetDate);
-        TextView themeTitle = (TextView) view.findViewById(R.id.themeTitle);
-        TextView themeTip = (TextView) view.findViewById(R.id.themeTip);
+        RoboTextView widgetTitle = (RoboTextView) view.findViewById(R.id.widgetDate);
+        RoboTextView themeTitle = (RoboTextView) view.findViewById(R.id.themeTitle);
+        RoboTextView themeTip = (RoboTextView) view.findViewById(R.id.themeTip);
 
-        TextView taskText = (TextView) view.findViewById(R.id.taskText);
-        TextView taskNumber = (TextView) view.findViewById(R.id.taskNumber);
-        TextView taskDate = (TextView) view.findViewById(R.id.taskDate);
-        TextView taskTime = (TextView) view.findViewById(R.id.taskTime);
+        RoboTextView taskText = (RoboTextView) view.findViewById(R.id.taskText);
+        RoboTextView taskNumber = (RoboTextView) view.findViewById(R.id.taskNumber);
+        RoboTextView taskDate = (RoboTextView) view.findViewById(R.id.taskDate);
+        RoboTextView taskTime = (RoboTextView) view.findViewById(R.id.taskTime);
 
         EventsTheme eventsTheme = mList.get(mPageNumber);
 

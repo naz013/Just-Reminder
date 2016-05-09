@@ -32,6 +32,9 @@ import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboEditText;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
@@ -51,7 +54,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
     /**
      * Edit text fields.
      */
-    private EditText birthName, phone;
+    private RoboEditText birthName, phone;
 
     /**
      * Container.
@@ -61,12 +64,12 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
     /**
      * Date of birth text view.
      */
-    private TextView birthDate;
+    private RoboTextView birthDate;
 
     /**
      * Attack contact check.
      */
-    private CheckBox contactCheck;
+    private RoboCheckBox contactCheck;
 
     /**
      * Contact phone number.
@@ -106,9 +109,9 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
-        birthName = (EditText) findViewById(R.id.birthName);
-        birthDate = (TextView) findViewById(R.id.birthDate);
-        phone = (EditText) findViewById(R.id.phone);
+        birthName = (RoboEditText) findViewById(R.id.birthName);
+        birthDate = (RoboTextView) findViewById(R.id.birthDate);
+        phone = (RoboEditText) findViewById(R.id.phone);
         birthDate.setOnClickListener(this);
 
         ImageView dateIcon = (ImageView) findViewById(R.id.dateIcon);
@@ -121,7 +124,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         container = (LinearLayout) findViewById(R.id.container);
         container.setVisibility(View.GONE);
 
-        contactCheck = (CheckBox) findViewById(R.id.contactCheck);
+        contactCheck = (RoboCheckBox) findViewById(R.id.contactCheck);
         contactCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

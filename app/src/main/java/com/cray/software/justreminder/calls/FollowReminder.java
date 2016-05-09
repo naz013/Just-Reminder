@@ -15,13 +15,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
-import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
-import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.cray.software.justreminder.R;
@@ -39,7 +36,9 @@ import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.ReminderUtils;
-import com.cray.software.justreminder.utils.AssetsUtil;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboRadioButton;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
@@ -52,12 +51,12 @@ import java.util.List;
 public class FollowReminder extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
     private FloatingEditText mMessageField;
-    private TextView mCustomDateView;
-    private TextView mCustomTimeView;
-    private RadioButton mMessageRadio, mCallRadio, mTomorrowRadio, mNextWorkingRadio, mAfterRadio, mCustomRadio;
+    private RoboTextView mCustomDateView;
+    private RoboTextView mCustomTimeView;
+    private RoboRadioButton mMessageRadio, mCallRadio, mTomorrowRadio, mNextWorkingRadio, mAfterRadio, mCustomRadio;
     private Spinner mAfterSpinner;
-    private CheckBox mTasksCheck;
-    private CheckBox mCalendarCheck;
+    private RoboCheckBox mTasksCheck;
+    private RoboCheckBox mCalendarCheck;
 
     private int mHour = 0, mCustomHour = 0;
     private int mMinute = 0, mCustomMinute = 0;
@@ -110,35 +109,34 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         mMessageField = (FloatingEditText) findViewById(R.id.textField);
         mMessageField.setHint(getString(R.string.message));
 
-        TextView contactInfo = (TextView) findViewById(R.id.contactInfo);
-        contactInfo.setTypeface(AssetsUtil.getMediumTypeface(this));
+        RoboTextView contactInfo = (RoboTextView) findViewById(R.id.contactInfo);
         if (name != null && !name.matches("")) {
             contactInfo.setText(SuperUtil.appendString(name, "\n", mNumber));
         } else {
             contactInfo.setText(mNumber);
         }
 
-        TextView tomorrowTime = (TextView) findViewById(R.id.tomorrowTime);
-        TextView nextWorkingTime = (TextView) findViewById(R.id.nextWorkingTime);
-        mCustomTimeView = (TextView) findViewById(R.id.customTime);
-        mCustomDateView = (TextView) findViewById(R.id.customDate);
+        RoboTextView tomorrowTime = (RoboTextView) findViewById(R.id.tomorrowTime);
+        RoboTextView nextWorkingTime = (RoboTextView) findViewById(R.id.nextWorkingTime);
+        mCustomTimeView = (RoboTextView) findViewById(R.id.customTime);
+        mCustomDateView = (RoboTextView) findViewById(R.id.customDate);
 
-        mMessageRadio = (RadioButton) findViewById(R.id.typeMessage);
-        mCallRadio = (RadioButton) findViewById(R.id.typeCall);
+        mMessageRadio = (RoboRadioButton) findViewById(R.id.typeMessage);
+        mCallRadio = (RoboRadioButton) findViewById(R.id.typeCall);
         mCallRadio.setChecked(true);
 
-        mTomorrowRadio = (RadioButton) findViewById(R.id.timeTomorrow);
+        mTomorrowRadio = (RoboRadioButton) findViewById(R.id.timeTomorrow);
         mTomorrowRadio.setOnCheckedChangeListener(this);
-        mAfterRadio = (RadioButton) findViewById(R.id.timeAfter);
+        mAfterRadio = (RoboRadioButton) findViewById(R.id.timeAfter);
         mAfterRadio.setOnCheckedChangeListener(this);
-        mCustomRadio = (RadioButton) findViewById(R.id.timeCustom);
+        mCustomRadio = (RoboRadioButton) findViewById(R.id.timeCustom);
         mCustomRadio.setOnCheckedChangeListener(this);
-        mNextWorkingRadio = (RadioButton) findViewById(R.id.timeNextWorking);
+        mNextWorkingRadio = (RoboRadioButton) findViewById(R.id.timeNextWorking);
         mNextWorkingRadio.setOnCheckedChangeListener(this);
         mTomorrowRadio.setChecked(true);
 
-        mCalendarCheck = (CheckBox) findViewById(R.id.exportCheck);
-        mTasksCheck = (CheckBox) findViewById(R.id.taskExport);
+        mCalendarCheck = (RoboCheckBox) findViewById(R.id.exportCheck);
+        mTasksCheck = (RoboCheckBox) findViewById(R.id.taskExport);
 
         mCalendar = mShared.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
         mStock = mShared.loadBoolean(Prefs.EXPORT_TO_STOCK);

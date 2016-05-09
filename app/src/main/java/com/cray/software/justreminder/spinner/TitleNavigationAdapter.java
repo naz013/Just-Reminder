@@ -8,10 +8,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 import java.util.ArrayList;
 
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class TitleNavigationAdapter extends BaseAdapter {
 
     private ImageView imgIcon;
-    private TextView txtTitle;
+    private RoboTextView txtTitle;
     private ArrayList<SpinnerItem> spinnerNavItem;
     private Context context;
     private ColorSetter cs;
@@ -55,8 +55,7 @@ public class TitleNavigationAdapter extends BaseAdapter {
         }
 
         imgIcon = (ImageView) convertView.findViewById(R.id.imgIcon);
-        txtTitle = (TextView) convertView.findViewById(R.id.txtTitle);
-
+        txtTitle = (RoboTextView) convertView.findViewById(R.id.txtTitle);
         imgIcon.setImageResource(spinnerNavItem.get(position).getIcon());
         imgIcon.setVisibility(View.GONE);
         txtTitle.setText(spinnerNavItem.get(position).getTitle());
@@ -77,7 +76,7 @@ public class TitleNavigationAdapter extends BaseAdapter {
         itemBg.setBackgroundColor(cs.getSpinnerStyle());
 
         imgIcon = (ImageView) convertView.findViewById(R.id.imgIcon);
-        txtTitle = (TextView) convertView.findViewById(R.id.txtTitle);
+        txtTitle = (RoboTextView) convertView.findViewById(R.id.txtTitle);
 
         imgIcon.setImageResource(spinnerNavItem.get(position).getIcon());
         if (new ColorSetter(context).isDark()){

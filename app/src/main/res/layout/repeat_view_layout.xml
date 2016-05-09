@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -13,7 +14,7 @@
             android:layout_height="wrap_content"
             android:gravity="left|center">
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/text1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -21,9 +22,10 @@
                 android:layout_centerVertical="true"
                 android:gravity="center|left"
                 android:text="@string/repeat"
-                android:textSize="@dimen/create_text_size_normal" />
+                android:textSize="@dimen/create_text_size_normal"
+                app:font_style="roboto_light" />
 
-            <EditText
+            <com.cray.software.justreminder.roboto_views.RoboEditText
                 android:id="@+id/repeatTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -35,9 +37,10 @@
                 android:inputType="number"
                 android:maxLength="3"
                 android:minWidth="50dp"
-                android:textSize="@dimen/create_text_size_normal" />
+                android:textSize="@dimen/create_text_size_normal"
+                app:edit_font_style="roboto_medium" />
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/repeatType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -45,7 +48,8 @@
                 android:layout_toRightOf="@+id/repeatTitle"
                 android:gravity="center|left"
                 android:text="@string/days"
-                android:textSize="@dimen/create_text_size_normal" />
+                android:textSize="@dimen/create_text_size_normal"
+                app:font_style="roboto_light" />
 
         </RelativeLayout>
 

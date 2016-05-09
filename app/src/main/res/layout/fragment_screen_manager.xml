@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -26,13 +27,14 @@
             android:layout_marginBottom="35dp"
             android:src="@drawable/alarm" />
 
-        <TextView
+        <com.cray.software.justreminder.roboto_views.RoboTextView
             android:id="@+id/emptyText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center|top"
             android:text="@string/no_events"
-            android:textSize="30sp" />
+            android:textSize="30sp"
+            app:font_style="roboto_light" />
 
     </LinearLayout>
 
@@ -50,7 +52,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/dateStart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -58,7 +60,7 @@
                 android:gravity="start"
                 android:text="12 Jan 2016" />
 
-            <TextView
+            <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/dateEnd"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

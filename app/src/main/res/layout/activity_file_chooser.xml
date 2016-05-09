@@ -29,7 +29,7 @@
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_clear_white_24dp" />
 
-            <EditText
+            <com.cray.software.justreminder.roboto_views.RoboEditText
                 android:id="@+id/searchField"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
@@ -39,7 +39,8 @@
                 android:hint="@string/type_to_search"
                 android:paddingLeft="8dp"
                 android:textColor="@color/colorWhite"
-                android:textColorHint="@color/colorWhite" />
+                android:textColorHint="@color/colorWhite"
+                app:edit_font_style="roboto_light" />
 
         </RelativeLayout>
 
@@ -78,7 +79,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
+                    <com.cray.software.justreminder.roboto_views.RoboTextView
                         android:id="@+id/currentMelody"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -87,7 +88,8 @@
                         android:layout_marginTop="8dp"
                         android:singleLine="true"
                         android:text="Melody"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"
+                        app:font_style="roboto_regular" />
 
                     <LinearLayout
                         android:layout_width="match_parent"

@@ -15,6 +15,7 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -132,7 +133,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <EditText
+                <com.cray.software.justreminder.roboto_views.RoboEditText
                     android:id="@+id/cardSearch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -141,7 +142,8 @@
                     android:layout_toLeftOf="@+id/cardClear"
                     android:hint="@string/search_place"
                     android:singleLine="true"
-                    android:textSize="@dimen/create_text_size_normal" />
+                    android:textSize="@dimen/create_text_size_normal"
+                    app:edit_font_style="roboto_light" />
 
                 <ImageButton
                     android:id="@+id/cardClear"
@@ -176,41 +178,45 @@
                     android:orientation="vertical"
                     android:padding="10dp">
 
-                    <TextView
+                    <com.cray.software.justreminder.roboto_views.RoboTextView
                         android:id="@+id/typeNormal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:clickable="true"
                         android:padding="7dp"
                         android:text="@string/normal"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"
+                        app:font_style="roboto_light" />
 
-                    <TextView
+                    <com.cray.software.justreminder.roboto_views.RoboTextView
                         android:id="@+id/typeSatellite"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:clickable="true"
                         android:padding="7dp"
                         android:text="@string/satellite"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"
+                        app:font_style="roboto_light" />
 
-                    <TextView
+                    <com.cray.software.justreminder.roboto_views.RoboTextView
                         android:id="@+id/typeHybrid"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:clickable="true"
                         android:padding="7dp"
                         android:text="@string/hybrid"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"
+                        app:font_style="roboto_light" />
 
-                    <TextView
+                    <com.cray.software.justreminder.roboto_views.RoboTextView
                         android:id="@+id/typeTerrain"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:clickable="true"
                         android:padding="7dp"
                         android:text="@string/terrain"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"
+                        app:font_style="roboto_light" />
 
                 </LinearLayout>
 
@@ -287,7 +293,7 @@
                     android:layout_marginBottom="15dp"
                     android:src="@drawable/ic_directions_white_24dp" />
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/emptyText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

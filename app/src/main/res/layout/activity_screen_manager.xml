@@ -71,7 +71,7 @@
                             android:inputType="textMultiLine"
                             fab:floating_edit_text_highlighted_color="?attr/colorAccent" />
 
-                        <TextView
+                        <com.cray.software.justreminder.roboto_views.RoboTextView
                             android:id="@+id/buttonSave"
                             style="?android:buttonStyle"
                             android:layout_width="wrap_content"
@@ -81,7 +81,8 @@
                             android:background="?android:attr/selectableItemBackground"
                             android:gravity="center"
                             android:text="@string/save"
-                            android:textSize="18sp" />
+                            android:textSize="18sp"
+                            fab:font_style="roboto_light" />
 
                     </LinearLayout>
 
@@ -104,7 +105,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center">
 
-                        <TextView
+                        <com.cray.software.justreminder.roboto_views.RoboTextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_above="@+id/buttonNo"
@@ -112,9 +113,10 @@
                             android:layout_marginRight="5dp"
                             android:gravity="center"
                             android:text="@string/show_in_status_bar"
-                            android:textSize="20sp" />
+                            android:textSize="20sp"
+                            fab:font_style="roboto_medium" />
 
-                        <TextView
+                        <com.cray.software.justreminder.roboto_views.RoboTextView
                             android:id="@+id/buttonYes"
                             style="?android:buttonStyle"
                             android:layout_width="wrap_content"
@@ -124,9 +126,10 @@
                             android:layout_toLeftOf="@+id/buttonNo"
                             android:background="?android:attr/selectableItemBackground"
                             android:text="@string/yes"
-                            android:textSize="20sp" />
+                            android:textSize="20sp"
+                            fab:font_style="roboto_light" />
 
-                        <TextView
+                        <com.cray.software.justreminder.roboto_views.RoboTextView
                             android:id="@+id/buttonNo"
                             style="?android:buttonStyle"
                             android:layout_width="wrap_content"
@@ -136,7 +139,8 @@
                             android:layout_marginRight="5dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:text="@string/no"
-                            android:textSize="20sp" />
+                            android:textSize="20sp"
+                            fab:font_style="roboto_light" />
 
                     </RelativeLayout>
 
@@ -159,7 +163,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center">
 
-                        <TextView
+                        <com.cray.software.justreminder.roboto_views.RoboTextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_above="@+id/buttonReminderNo"
@@ -167,9 +171,10 @@
                             android:layout_marginRight="5dp"
                             android:gravity="center"
                             android:text="@string/add_reminder"
-                            android:textSize="20sp" />
+                            android:textSize="20sp"
+                            fab:font_style="roboto_medium" />
 
-                        <TextView
+                        <com.cray.software.justreminder.roboto_views.RoboTextView
                             android:id="@+id/buttonReminderYes"
                             style="?android:buttonStyle"
                             android:layout_width="wrap_content"
@@ -179,9 +184,10 @@
                             android:layout_toLeftOf="@+id/buttonReminderNo"
                             android:background="?android:attr/selectableItemBackground"
                             android:text="@string/yes"
-                            android:textSize="20sp" />
+                            android:textSize="20sp"
+                            fab:font_style="roboto_light" />
 
-                        <TextView
+                        <com.cray.software.justreminder.roboto_views.RoboTextView
                             android:id="@+id/buttonReminderNo"
                             style="?android:buttonStyle"
                             android:layout_width="wrap_content"
@@ -191,7 +197,8 @@
                             android:layout_marginRight="5dp"
                             android:background="?android:attr/selectableItemBackground"
                             android:text="@string/no"
-                            android:textSize="20sp" />
+                            android:textSize="20sp"
+                            fab:font_style="roboto_light" />
 
                     </RelativeLayout>
 

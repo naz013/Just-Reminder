@@ -7,28 +7,28 @@ import android.content.pm.PackageManager;
 import android.graphics.Paint;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.helpers.Recurrence;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.roboto_views.RoboSwitchCompat;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.IntervalUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 
@@ -73,12 +73,12 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
             View.OnLongClickListener {
 
-        public TextView leftTime, taskTitle, taskDate, reminder_type, reminder_phone,
+        public RoboTextView leftTime, taskTitle, taskDate, reminder_type, reminder_phone,
                 repeatInterval, listHeader;
-        public SwitchCompat check;
+        public RoboSwitchCompat check;
         public CardView itemCard;
 
-        public TextView shoppingTitle, shoppingTime;
+        public RoboTextView shoppingTitle, shoppingTime;
         public LinearLayout todoList;
         public LinearLayout subBackground, titleContainer, endContainer;
         public RelativeLayout reminderContainer;
@@ -86,21 +86,21 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         public ViewHolder(View v) {
             super(v);
             reminderContainer = (RelativeLayout) v.findViewById(R.id.reminderContainer);
-            leftTime = (TextView) v.findViewById(R.id.remainingTime);
-            listHeader = (TextView) v.findViewById(R.id.listHeader);
-            check = (SwitchCompat) v.findViewById(R.id.itemCheck);
+            leftTime = (RoboTextView) v.findViewById(R.id.remainingTime);
+            listHeader = (RoboTextView) v.findViewById(R.id.listHeader);
+            check = (RoboSwitchCompat) v.findViewById(R.id.itemCheck);
             check.setVisibility(View.VISIBLE);
-            taskDate = (TextView) v.findViewById(R.id.taskDate);
+            taskDate = (RoboTextView) v.findViewById(R.id.taskDate);
             taskDate.setText("");
-            reminder_type = (TextView) v.findViewById(R.id.reminder_type);
+            reminder_type = (RoboTextView) v.findViewById(R.id.reminder_type);
             reminder_type.setText("");
-            reminder_phone = (TextView) v.findViewById(R.id.reminder_phone);
+            reminder_phone = (RoboTextView) v.findViewById(R.id.reminder_phone);
             reminder_phone.setText("");
-            repeatInterval = (TextView) v.findViewById(R.id.repeatInterval);
+            repeatInterval = (RoboTextView) v.findViewById(R.id.repeatInterval);
             repeatInterval.setText("");
 
-            taskTitle = (TextView) v.findViewById(R.id.taskText);
-            shoppingTime = (TextView) v.findViewById(R.id.shoppingTime);
+            taskTitle = (RoboTextView) v.findViewById(R.id.taskText);
+            shoppingTime = (RoboTextView) v.findViewById(R.id.shoppingTime);
             shoppingTime.setVisibility(View.GONE);
             taskTitle.setText("");
             itemCard = (CardView) v.findViewById(R.id.itemCard);
@@ -114,7 +114,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             todoList.setVisibility(View.VISIBLE);
             subBackground = (LinearLayout) v.findViewById(R.id.subBackground);
             titleContainer = (LinearLayout) v.findViewById(R.id.titleContainer);
-            shoppingTitle = (TextView) v.findViewById(R.id.shoppingTitle);
+            shoppingTitle = (RoboTextView) v.findViewById(R.id.shoppingTitle);
             shoppingTitle.setText("");
 
             v.setOnClickListener(this);
@@ -326,7 +326,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
             for (ShoppingList list : provider.getData()){
                 View view = LayoutInflater.from(mContext).inflate(R.layout.list_item_task_item_widget, null, false);
                 ImageView checkView = (ImageView) view.findViewById(R.id.checkView);
-                TextView textView = (TextView) view.findViewById(R.id.shopText);
+                RoboTextView textView = (RoboTextView) view.findViewById(R.id.shopText);
                 checkView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

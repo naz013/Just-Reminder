@@ -13,11 +13,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
@@ -36,6 +33,9 @@ import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
+import com.cray.software.justreminder.roboto_views.RoboButton;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.services.EventsCheckAlarm;
 import com.cray.software.justreminder.utils.ViewUtils;
 
@@ -52,9 +52,9 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
 
     private SharedPrefs prefs = new SharedPrefs(EventsImport.this);
 
-    private CheckBox eventsCheck;
+    private RoboCheckBox eventsCheck;
     private Spinner eventCalendar;
-    private Button syncInterval;
+    private RoboButton syncInterval;
 
     private ArrayList<CalendarManager.CalendarItem> list;
 
@@ -80,10 +80,10 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
-        TextView button = (TextView) findViewById(R.id.button);
+        RoboTextView button = (RoboTextView) findViewById(R.id.button);
         button.setOnClickListener(this);
 
-        syncInterval = (Button) findViewById(R.id.syncInterval);
+        syncInterval = (RoboButton) findViewById(R.id.syncInterval);
         syncInterval.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,8 +91,8 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        eventsCheck = (CheckBox) findViewById(R.id.eventsCheck);
-        CheckBox autoCheck = (CheckBox) findViewById(R.id.autoCheck);
+        eventsCheck = (RoboCheckBox) findViewById(R.id.eventsCheck);
+        RoboCheckBox autoCheck = (RoboCheckBox) findViewById(R.id.autoCheck);
         eventsCheck.setOnCheckedChangeListener(this);
         autoCheck.setOnCheckedChangeListener(this);
         autoCheck.setChecked(prefs.loadBoolean(Prefs.AUTO_CHECK_FOR_EVENTS));
@@ -107,7 +107,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
     private void loadCalendars() {
         list = new CalendarManager(this).getCalendarsList();
 
-        if (list == null || list.size() == 0){
+        if (list == null || list.size() == 0) {
             Messages.toast(EventsImport.this, getString(R.string.no_calendars_found));
             finish();
         }
@@ -140,7 +140,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.button:
                 if (Permissions.checkPermission(EventsImport.this, Permissions.READ_CALENDAR,
                         Permissions.WRITE_CALENDAR)) {
@@ -159,7 +159,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
             return;
         }
 
-        if (eventCalendar.getSelectedItemPosition() == 0){
+        if (eventCalendar.getSelectedItemPosition() == 0) {
             Messages.toast(EventsImport.this, getString(R.string.you_dont_select_any_calendar));
             return;
         }
@@ -183,7 +183,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        switch (buttonView.getId()){
+        switch (buttonView.getId()) {
             case R.id.eventsCheck:
                 if (isChecked) eventCalendar.setEnabled(true);
                 else eventCalendar.setEnabled(false);
@@ -204,16 +204,16 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
+        switch (requestCode) {
             case 101:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     autoCheck(true);
                 } else {
                     Permissions.showInfo(EventsImport.this, Permissions.READ_CALENDAR);
                 }
                 break;
             case 102:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     importEvents();
                 } else {
                     Permissions.showInfo(EventsImport.this, Permissions.READ_CALENDAR);
@@ -230,12 +230,12 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
         else alarm.cancelAlarm(this);
     }
 
-    public class Import extends AsyncTask<HashMap<String, Integer>, Void, Integer>{
+    public class Import extends AsyncTask<HashMap<String, Integer>, Void, Integer> {
 
         private Context context;
         private ProgressDialog dialog;
 
-        public Import(Context context){
+        public Import(Context context) {
             this.context = context;
         }
 
@@ -248,28 +248,28 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
         @SafeVarargs
         @Override
         protected final Integer doInBackground(HashMap<String, Integer>... params) {
-            if (params == null){
+            if (params == null) {
                 return 0;
             }
             CalendarManager cm = new CalendarManager(context);
             long currTime = System.currentTimeMillis();
 
             int eventsCount = 0;
-            HashMap <String, Integer> map = params[0];
-            if (map.containsKey(EVENT_KEY)){
+            HashMap<String, Integer> map = params[0];
+            if (map.containsKey(EVENT_KEY)) {
                 ArrayList<CalendarManager.EventItem> eventItems = cm.getEvents(map.get(EVENT_KEY));
-                if (eventItems != null && eventItems.size() > 0){
+                if (eventItems != null && eventItems.size() > 0) {
                     DataBase DB = new DataBase(context);
                     DB.open();
                     Cursor c = DB.getCalendarEvents();
                     ArrayList<Long> ids = new ArrayList<>();
-                    if (c != null && c.moveToFirst()){
+                    if (c != null && c.moveToFirst()) {
                         do {
                             long eventId = c.getLong(c.getColumnIndex(Constants.COLUMN_EVENT_ID));
                             ids.add(eventId);
                         } while (c.moveToNext());
                     }
-                    for (CalendarManager.EventItem item : eventItems){
+                    for (CalendarManager.EventItem item : eventItems) {
                         long itemId = item.getId();
                         if (!ids.contains(itemId)) {
                             String rrule = item.getRrule();
@@ -303,7 +303,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
                             Calendar calendar = Calendar.getInstance();
                             long dtStart = item.getDtStart();
                             calendar.setTimeInMillis(dtStart);
-                            if (dtStart >= currTime){
+                            if (dtStart >= currTime) {
                                 eventsCount += 1;
                                 JRecurrence jRecurrence = new JRecurrence(0, repeat, -1, null, 0);
                                 JModel jModel = new JModel(summary, Constants.TYPE_REMINDER, categoryId, uuID, dtStart,

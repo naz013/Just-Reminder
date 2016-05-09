@@ -34,28 +34,23 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.TaskManager;
-import com.cray.software.justreminder.notes.NotePreview;
 import com.cray.software.justreminder.async.SwitchTaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.NextBase;
-import com.cray.software.justreminder.notes.NotesBase;
 import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.datas.models.CategoryModel;
 import com.cray.software.justreminder.datas.models.ReminderNote;
@@ -64,6 +59,11 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.ActionCallbacks;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.notes.NotePreview;
+import com.cray.software.justreminder.notes.NotesBase;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboSwitchCompat;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.IntervalUtil;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -85,11 +85,11 @@ import java.util.Locale;
 
 public class ReminderPreview extends AppCompatActivity implements ActionCallbacks {
 
-    private TextView statusText, time, location, group, type, number, repeat, melody;
-    private SwitchCompat statusSwitch;
+    private RoboTextView statusText, time, location, group, type, number, repeat, melody;
+    private RoboSwitchCompat statusSwitch;
     private LinearLayout tasksContainer, notesContainer, mapContainer, background;
-    private TextView listColor, taskText, taskNote, taskDate, noteText;
-    private CheckBox checkDone;
+    private RoboTextView listColor, taskText, taskNote, taskDate, noteText;
+    private RoboCheckBox checkDone;
     private ImageView imageView;
     private CircularProgress progress;
     private Toolbar toolbar;
@@ -147,29 +147,29 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
             }
         });
 
-        statusText = (TextView) findViewById(R.id.statusText);
-        statusSwitch = (SwitchCompat) findViewById(R.id.statusSwitch);
+        statusText = (RoboTextView) findViewById(R.id.statusText);
+        statusSwitch = (RoboSwitchCompat) findViewById(R.id.statusSwitch);
         if (Module.isLollipop()) statusSwitch.setTransitionName("toolbar");
 
-        time = (TextView) findViewById(R.id.time);
-        location = (TextView) findViewById(R.id.location);
-        group = (TextView) findViewById(R.id.group);
-        type = (TextView) findViewById(R.id.type);
-        number = (TextView) findViewById(R.id.number);
-        repeat = (TextView) findViewById(R.id.repeat);
-        melody = (TextView) findViewById(R.id.melody);
+        time = (RoboTextView) findViewById(R.id.time);
+        location = (RoboTextView) findViewById(R.id.location);
+        group = (RoboTextView) findViewById(R.id.group);
+        type = (RoboTextView) findViewById(R.id.type);
+        number = (RoboTextView) findViewById(R.id.number);
+        repeat = (RoboTextView) findViewById(R.id.repeat);
+        melody = (RoboTextView) findViewById(R.id.melody);
 
         tasksContainer = (LinearLayout) findViewById(R.id.tasksContainer);
         tasksContainer.setVisibility(View.GONE);
-        listColor = (TextView) findViewById(R.id.listColor);
-        taskText = (TextView) findViewById(R.id.taskText);
-        taskNote = (TextView) findViewById(R.id.taskNote);
-        taskDate = (TextView) findViewById(R.id.taskDate);
-        checkDone = (CheckBox) findViewById(R.id.checkDone);
+        listColor = (RoboTextView) findViewById(R.id.listColor);
+        taskText = (RoboTextView) findViewById(R.id.taskText);
+        taskNote = (RoboTextView) findViewById(R.id.taskNote);
+        taskDate = (RoboTextView) findViewById(R.id.taskDate);
+        checkDone = (RoboCheckBox) findViewById(R.id.checkDone);
 
         notesContainer = (LinearLayout) findViewById(R.id.notesContainer);
         notesContainer.setVisibility(View.GONE);
-        noteText = (TextView) findViewById(R.id.noteText);
+        noteText = (RoboTextView) findViewById(R.id.noteText);
         imageView = (ImageView) findViewById(R.id.imageView);
 
         progress = (CircularProgress) findViewById(R.id.progress);

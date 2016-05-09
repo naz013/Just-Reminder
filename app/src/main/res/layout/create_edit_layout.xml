@@ -53,13 +53,14 @@
 
         </FrameLayout>
 
-        <TextView
+        <com.cray.software.justreminder.roboto_views.RoboTextView
             android:id="@+id/repeatLabel"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/repeatFrame"
             android:gravity="center"
-            android:textSize="70sp" />
+            android:textSize="70sp"
+            app:font_style="roboto_bold" />
 
     </RelativeLayout>
 

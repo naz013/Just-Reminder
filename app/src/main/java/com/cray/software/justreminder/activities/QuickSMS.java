@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.view.View;
@@ -13,7 +12,6 @@ import android.view.WindowManager;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
@@ -21,7 +19,8 @@ import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.utils.AssetsUtil;
+import com.cray.software.justreminder.roboto_views.RoboButton;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
@@ -53,12 +52,9 @@ public class QuickSMS extends Activity {
 
         Intent i = getIntent();
         number = i.getStringExtra(Constants.ITEM_ID_INTENT);
-
-        Typeface typeface = AssetsUtil.getLightTypeface(this);
-
         messagesList = (ListView) findViewById(R.id.messagesList);
 
-        TextView buttonSend = (TextView) findViewById(R.id.buttonSend);
+        RoboButton buttonSend = (RoboButton) findViewById(R.id.buttonSend);
         buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,12 +67,10 @@ public class QuickSMS extends Activity {
                 if (c != null) c.close();
             }
         });
-        buttonSend.setTypeface(typeface);
 
         String name = Contacts.getNameFromNumber(number, QuickSMS.this);
 
-        TextView contactInfo = (TextView) findViewById(R.id.contactInfo);
-        contactInfo.setTypeface(typeface);
+        RoboTextView contactInfo = (RoboTextView) findViewById(R.id.contactInfo);
         contactInfo.setText(SuperUtil.appendString(name, "\n", number));
 
         loadTemplates();

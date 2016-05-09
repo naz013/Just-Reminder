@@ -3,7 +3,6 @@ package com.cray.software.justreminder.views;
 import android.app.AlarmManager;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Typeface;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -16,7 +15,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.utils.AssetsUtil;
 
 /**
  * Copyright 2015 Nazar Suhovich
@@ -62,15 +60,7 @@ public class RepeatView extends LinearLayout implements SeekBar.OnSeekBarChangeL
         setOrientation(VERTICAL);
         repeatTitle = (EditText) findViewById(R.id.repeatTitle);
         TextView repeatType = (TextView) findViewById(R.id.repeatType);
-        TextView text1 = (TextView) findViewById(R.id.text1);
         repeatViewSeek = (SeekBar) findViewById(R.id.repeatViewSeek);
-
-        Typeface slim = AssetsUtil.getLightTypeface(context);
-        Typeface medium = AssetsUtil.getMediumTypeface(context);
-
-        repeatType.setTypeface(slim);
-        text1.setTypeface(slim);
-        repeatTitle.setTypeface(medium);
 
         repeatViewSeek.setOnSeekBarChangeListener(this);
         repeatTitle.addTextChangedListener(this);
