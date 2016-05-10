@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Prefs;
@@ -70,7 +71,7 @@ public class CalendarThemeFragment extends Fragment{
         ImageButton nextMonth = (ImageButton) view.findViewById(R.id.nextMonth);
         ImageButton prevMonth = (ImageButton) view.findViewById(R.id.prevMonth);
 
-        RoboTextView currentDate = (RoboTextView) view.findViewById(R.id.currentDate);
+        TextView currentDate = (TextView) view.findViewById(R.id.currentDate);
         RoboTextView themeTitle = (RoboTextView) view.findViewById(R.id.themeTitle);
         RoboTextView helpTip = (RoboTextView) view.findViewById(R.id.note);
 
@@ -185,7 +186,7 @@ public class CalendarThemeFragment extends Fragment{
                 convertView = inflater.inflate(R.layout.weekday_grid, null);
             }
 
-            RoboTextView textView = (RoboTextView) convertView.findViewById(R.id.textView1);
+            TextView textView = (TextView) convertView.findViewById(R.id.textView1);
             textView.setText(weekdays.get(position));
             textView.setTextColor(textColor);
 
@@ -323,10 +324,10 @@ public class CalendarThemeFragment extends Fragment{
             int selDay = datetimeList.get(position).getDay();
 
             FrameLayout background = (FrameLayout) convertView.findViewById(R.id.background);
-            RoboTextView textView = (RoboTextView) convertView.findViewById(R.id.textView);
-            RoboTextView currentMark = (RoboTextView) convertView.findViewById(R.id.currentMark);
-            RoboTextView reminderMark = (RoboTextView) convertView.findViewById(R.id.reminderMark);
-            RoboTextView birthdayMark = (RoboTextView) convertView.findViewById(R.id.birthdayMark);
+            TextView textView = (TextView) convertView.findViewById(R.id.textView);
+            TextView currentMark = (TextView) convertView.findViewById(R.id.currentMark);
+            TextView reminderMark = (TextView) convertView.findViewById(R.id.reminderMark);
+            TextView birthdayMark = (TextView) convertView.findViewById(R.id.birthdayMark);
 
             textView.setText(String.valueOf(selDay));
             textView.setTextColor(textColor);

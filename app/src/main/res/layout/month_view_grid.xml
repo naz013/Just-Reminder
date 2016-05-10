@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,21 +11,21 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.cray.software.justreminder.roboto_views.RoboTextView
+        <TextView
             android:id="@+id/currentMark"
             android:layout_width="match_parent"
             android:layout_height="12dp"
             android:layout_weight="1"
             android:background="@color/bluePrimary" />
 
-        <com.cray.software.justreminder.roboto_views.RoboTextView
+        <TextView
             android:id="@+id/reminderMark"
             android:layout_width="match_parent"
             android:layout_height="12dp"
             android:layout_weight="1"
             android:background="@color/redPrimary" />
 
-        <com.cray.software.justreminder.roboto_views.RoboTextView
+        <TextView
             android:id="@+id/birthdayMark"
             android:layout_width="match_parent"
             android:layout_height="11dp"
@@ -35,7 +34,7 @@
 
     </LinearLayout>
 
-    <com.cray.software.justreminder.roboto_views.RoboTextView
+    <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -43,7 +42,6 @@
         android:gravity="center|center_vertical"
         android:minHeight="35dp"
         android:text="25"
-        android:textColor="@color/blackPrimary"
-        app:font_style="roboto_light" />
+        android:textColor="@color/blackPrimary" />
 
 </FrameLayout>

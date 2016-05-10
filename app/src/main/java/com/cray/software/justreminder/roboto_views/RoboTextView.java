@@ -32,6 +32,7 @@ public class RoboTextView extends TextView {
     }
 
     private void init(AttributeSet attrs) {
+        setDrawingCacheEnabled(true);
         if (attrs != null) {
             TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.RoboTextView);
             int fontCode = a.getInt(R.styleable.RoboTextView_font_style, -1);

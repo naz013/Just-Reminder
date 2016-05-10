@@ -81,7 +81,6 @@ public class NotesWidget extends AppWidgetProvider {
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         super.onDeleted(context, appWidgetIds);
-
         SharedPreferences.Editor editor = context.getSharedPreferences(
                 NotesWidgetConfig.NOTES_WIDGET_PREF, Context.MODE_PRIVATE).edit();
         for (int widgetID : appWidgetIds) {

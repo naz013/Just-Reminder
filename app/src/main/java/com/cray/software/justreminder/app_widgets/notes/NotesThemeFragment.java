@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
@@ -51,7 +52,7 @@ public class NotesThemeFragment extends Fragment{
         ImageButton plusButton = (ImageButton) view.findViewById(R.id.tasksCount);
         ImageButton settingsButton = (ImageButton) view.findViewById(R.id.settingsButton);
 
-        RoboTextView widgetTitle = (RoboTextView) view.findViewById(R.id.widgetTitle);
+        TextView widgetTitle = (TextView) view.findViewById(R.id.widgetTitle);
         RoboTextView themeTitle = (RoboTextView) view.findViewById(R.id.themeTitle);
         RoboTextView themeTip = (RoboTextView) view.findViewById(R.id.themeTip);
 
