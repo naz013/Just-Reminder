@@ -148,9 +148,7 @@ public class GDriveHelper {
                     fileMetadata.setDescription("Reminder Backup");
                     fileMetadata.setParents(Collections.singletonList(folderId));
                     FileContent mediaContent = new FileContent("text/plain", file);
-
                     deleteReminder(file.getName());
-
                     driveService.files().create(fileMetadata, mediaContent)
                             .setFields("id")
                             .execute();
@@ -182,9 +180,7 @@ public class GDriveHelper {
                     fileMetadata.setDescription("Note Backup");
                     fileMetadata.setParents(Collections.singletonList(folderId));
                     FileContent mediaContent = new FileContent("text/plain", file);
-
                     deleteNote(file.getName());
-
                     driveService.files().create(fileMetadata, mediaContent)
                             .setFields("id")
                             .execute();
@@ -216,9 +212,7 @@ public class GDriveHelper {
                     fileMetadata.setDescription("Group Backup");
                     fileMetadata.setParents(Collections.singletonList(folderId));
                     FileContent mediaContent = new FileContent("text/plain", file);
-
                     deleteGroup(file.getName());
-
                     driveService.files().create(fileMetadata, mediaContent)
                             .setFields("id")
                             .execute();
@@ -250,9 +244,7 @@ public class GDriveHelper {
                     fileMetadata.setDescription("Birthday Backup");
                     fileMetadata.setParents(Collections.singletonList(folderId));
                     FileContent mediaContent = new FileContent("text/plain", file);
-
                     deleteBirthday(file.getName());
-
                     driveService.files().create(fileMetadata, mediaContent)
                             .setFields("id")
                             .execute();
@@ -488,6 +480,8 @@ public class GDriveHelper {
      * @param title file name.
      */
     public void deleteReminder(String title){
+        String[] strs = title.split(".");
+        title = strs[0];
         if (isLinked()) {
             authorize();
             Drive.Files.List request = null;
@@ -508,7 +502,6 @@ public class GDriveHelper {
                     ArrayList<com.google.api.services.drive.model.File> fileList = (ArrayList<com.google.api.services.drive.model.File>) files.getFiles();
                     for (com.google.api.services.drive.model.File f : fileList) {
                         String fileTitle = f.getName();
-
                         if (fileTitle.endsWith(FileConfig.FILE_NAME_REMINDER) && fileTitle.contains(title)) {
                             try {
                                 driveService.files().delete(f.getId()).execute();
@@ -528,6 +521,8 @@ public class GDriveHelper {
      * @param title file name.
      */
     public void deleteNote (String title){
+        String[] strs = title.split(".");
+        title = strs[0];
         if (isLinked()) {
             authorize();
             Drive.Files.List request = null;
@@ -548,7 +543,6 @@ public class GDriveHelper {
                     ArrayList<com.google.api.services.drive.model.File> fileList = (ArrayList<com.google.api.services.drive.model.File>) files.getFiles();
                     for (com.google.api.services.drive.model.File f : fileList) {
                         String fileTitle = f.getName();
-
                         if (fileTitle.endsWith(FileConfig.FILE_NAME_NOTE) && fileTitle.contains(title)) {
                             try {
                                 driveService.files().delete(f.getId()).execute();
@@ -568,6 +562,8 @@ public class GDriveHelper {
      * @param title file name.
      */
     public void deleteGroup (String title){
+        String[] strs = title.split(".");
+        title = strs[0];
         if (isLinked()) {
             authorize();
             Drive.Files.List request = null;
@@ -588,7 +584,6 @@ public class GDriveHelper {
                     ArrayList<com.google.api.services.drive.model.File> fileList = (ArrayList<com.google.api.services.drive.model.File>) files.getFiles();
                     for (com.google.api.services.drive.model.File f : fileList) {
                         String fileTitle = f.getName();
-
                         if (fileTitle.endsWith(FileConfig.FILE_NAME_GROUP) && fileTitle.contains(title)) {
                             try {
                                 driveService.files().delete(f.getId()).execute();
@@ -608,6 +603,8 @@ public class GDriveHelper {
      * @param title file name.
      */
     public void deleteBirthday(String title){
+        String[] strs = title.split(".");
+        title = strs[0];
         if (isLinked()) {
             authorize();
             Drive.Files.List request = null;
@@ -628,7 +625,6 @@ public class GDriveHelper {
                     ArrayList<com.google.api.services.drive.model.File> fileList = (ArrayList<com.google.api.services.drive.model.File>) files.getFiles();
                     for (com.google.api.services.drive.model.File f : fileList) {
                         String fileTitle = f.getName();
-
                         if (fileTitle.endsWith(FileConfig.FILE_NAME_BIRTHDAY) && fileTitle.contains(title)) {
                             try {
                                 driveService.files().delete(f.getId()).execute();
