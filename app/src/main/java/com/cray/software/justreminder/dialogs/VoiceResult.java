@@ -6,19 +6,16 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.SwitchCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.reminder.ReminderModel;
-import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.contacts.Contacts;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Recurrence;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -26,7 +23,10 @@ import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
+import com.cray.software.justreminder.reminder.ReminderModel;
 import com.cray.software.justreminder.reminder.ReminderUtils;
+import com.cray.software.justreminder.roboto_views.RoboSwitchCompat;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.IntervalUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 
@@ -38,7 +38,6 @@ public class VoiceResult extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.voice_dialog_layout);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -46,8 +45,7 @@ public class VoiceResult extends Activity {
         Intent intent = getIntent();
         id = intent.getLongExtra("ids", 0);
 
-        TextView buttonEdit = (TextView) findViewById(R.id.buttonEdit);
-        buttonEdit.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.buttonEdit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Reminder.edit(id, VoiceResult.this);
@@ -64,19 +62,19 @@ public class VoiceResult extends Activity {
         });
 
         RelativeLayout reminderContainer = (RelativeLayout) findViewById(R.id.reminderContainer);
-        TextView leftTime = (TextView) findViewById(R.id.remainingTime);
-        SwitchCompat check = (SwitchCompat) findViewById(R.id.itemCheck);
+        RoboTextView leftTime = (RoboTextView) findViewById(R.id.remainingTime);
+        RoboSwitchCompat check = (RoboSwitchCompat) findViewById(R.id.itemCheck);
         check.setVisibility(View.GONE);
-        TextView taskDate = (TextView) findViewById(R.id.taskDate);
+        RoboTextView taskDate = (RoboTextView) findViewById(R.id.taskDate);
         taskDate.setText("");
-        TextView reminder_type = (TextView) findViewById(R.id.reminder_type);
+        RoboTextView reminder_type = (RoboTextView) findViewById(R.id.reminder_type);
         reminder_type.setText("");
-        TextView reminder_phone = (TextView) findViewById(R.id.reminder_phone);
+        RoboTextView reminder_phone = (RoboTextView) findViewById(R.id.reminder_phone);
         reminder_phone.setText("");
-        TextView repeatInterval = (TextView) findViewById(R.id.repeatInterval);
+        RoboTextView repeatInterval = (RoboTextView) findViewById(R.id.repeatInterval);
         repeatInterval.setText("");
 
-        TextView taskTitle = (TextView) findViewById(R.id.taskText);
+        RoboTextView taskTitle = (RoboTextView) findViewById(R.id.taskText);
         taskTitle.setText("");
         CardView itemCard = (CardView) findViewById(R.id.itemCard);
         itemCard.setCardBackgroundColor(cs.getCardStyle());

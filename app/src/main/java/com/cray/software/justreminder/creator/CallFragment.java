@@ -24,7 +24,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 
@@ -33,9 +32,10 @@ import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.json.JExport;
 import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.DateTimeView;
-import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.views.RepeatView;
 
 public class CallFragment extends BaseFragment implements
@@ -43,7 +43,7 @@ public class CallFragment extends BaseFragment implements
 
     private DateTimeView.OnSelectListener mCallbacks;
     private RepeatView.OnRepeatListener mRepeatCallbacks;
-    private FloatingEditText phoneNumber;
+    private RoboEditText phoneNumber;
 
     public static CallFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
                                                   boolean hasStock, boolean hasTasks) {
@@ -94,7 +94,7 @@ public class CallFragment extends BaseFragment implements
         addNumberButton.setOnClickListener(contactClick);
         ViewUtils.setImage(addNumberButton, isDark);
 
-        phoneNumber = (FloatingEditText) view.findViewById(R.id.phoneNumber);
+        phoneNumber = (RoboEditText) view.findViewById(R.id.phoneNumber);
         phoneNumber.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -117,10 +117,10 @@ public class CallFragment extends BaseFragment implements
         eventTime = System.currentTimeMillis();
         dateView.setDateTime(updateCalendar(eventTime, false));
 
-        CheckBox dateExport = (CheckBox) view.findViewById(R.id.dateExport);
+        RoboCheckBox dateExport = (RoboCheckBox) view.findViewById(R.id.dateExport);
         if (hasCalendar || hasStock) dateExport.setVisibility(View.VISIBLE);
 
-        CheckBox dateTaskExport = (CheckBox) view.findViewById(R.id.dateTaskExport);
+        RoboCheckBox dateTaskExport = (RoboCheckBox) view.findViewById(R.id.dateTaskExport);
         if (hasTasks) dateTaskExport.setVisibility(View.VISIBLE);
         dateExport.setOnCheckedChangeListener(this);
         dateTaskExport.setOnCheckedChangeListener(this);

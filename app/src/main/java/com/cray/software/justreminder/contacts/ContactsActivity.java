@@ -20,8 +20,8 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.views.FloatingEditText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,7 @@ public class ContactsActivity extends AppCompatActivity implements LoadListener,
     private List<ContactData> mData;
     private String name = "";
 
-    private FloatingEditText searchField;
+    private RoboEditText searchField;
     private RecyclerView mRecyclerView;
 
     @Override
@@ -59,7 +59,7 @@ public class ContactsActivity extends AppCompatActivity implements LoadListener,
     }
 
     private void initSearchView() {
-        searchField = (FloatingEditText) findViewById(R.id.searchField);
+        searchField = (RoboEditText) findViewById(R.id.searchField);
         searchField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

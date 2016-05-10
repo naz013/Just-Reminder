@@ -14,9 +14,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
-import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.roboto_views.RoboButton;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 import java.util.ArrayList;
 
@@ -52,10 +54,10 @@ public class FontStyleDialog extends Activity{
         FontAdapter adapter = new FontAdapter(FontStyleDialog.this, contacts);
         musicList.setAdapter(adapter);
 
-        TextView dialogTitle = (TextView) findViewById(R.id.dialogTitle);
+        RoboTextView dialogTitle = (RoboTextView) findViewById(R.id.dialogTitle);
         dialogTitle.setText(getString(R.string.font_style));
 
-        TextView musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
+        RoboButton musicDialogOk = (RoboButton) findViewById(R.id.musicDialogOk);
         musicDialogOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,12 +74,11 @@ public class FontStyleDialog extends Activity{
         });
     }
 
-    public class FontAdapter extends BaseAdapter{
-
-        Context cContext;
-        LayoutInflater inflater;
-        ArrayList<String> list;
-        Typeface typeface, typeface1, typeface2, typeface3, typeface4,
+    public class FontAdapter extends BaseAdapter {
+        private Context cContext;
+        private LayoutInflater inflater;
+        private ArrayList<String> list;
+        private Typeface typeface, typeface1, typeface2, typeface3, typeface4,
             typeface5, typeface6, typeface7, typeface8, typeface9, typeface10, typeface11;
 
         public FontAdapter(Context context, ArrayList<String> fonts){
@@ -157,7 +158,6 @@ public class FontStyleDialog extends Activity{
             TextView textView = (TextView) convertView.findViewById(android.R.id.text1);
             textView.setTypeface(getTypeface(position));
             textView.setText(list.get(position));
-
             return convertView;
         }
     }

@@ -12,18 +12,19 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.LED;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
+import com.cray.software.justreminder.roboto_views.RoboButton;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 public class LedColor extends Activity{
 
     private ListView musicList;
-    private TextView musicDialogOk;
+    private RoboButton musicDialogOk;
     private NotificationManagerCompat mNotifyMgr;
     private NotificationCompat.Builder builder;
 
@@ -35,7 +36,7 @@ public class LedColor extends Activity{
         setContentView(R.layout.music_list_dilog);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        TextView dialogTitle = (TextView) findViewById(R.id.dialogTitle);
+        RoboTextView dialogTitle = (RoboTextView) findViewById(R.id.dialogTitle);
         dialogTitle.setText(getString(R.string.led_color));
 
         musicList = (ListView) findViewById(R.id.musicList);
@@ -60,7 +61,7 @@ public class LedColor extends Activity{
             }
         });
 
-        musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
+        musicDialogOk = (RoboButton) findViewById(R.id.musicDialogOk);
         musicDialogOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

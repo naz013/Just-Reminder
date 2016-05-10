@@ -17,6 +17,8 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Permissions;
+import com.cray.software.justreminder.roboto_views.RoboButton;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 import java.util.ArrayList;
 
@@ -33,7 +35,7 @@ public class PermissionsList extends Activity{
         setContentView(R.layout.music_list_dilog);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        TextView dialogTitle = (TextView) findViewById(R.id.dialogTitle);
+        RoboTextView dialogTitle = (RoboTextView) findViewById(R.id.dialogTitle);
         dialogTitle.setText(getString(R.string.allow_permission));
 
         musicList = (ListView) findViewById(R.id.musicList);
@@ -46,7 +48,7 @@ public class PermissionsList extends Activity{
             }
         });
 
-        TextView musicDialogOk = (TextView) findViewById(R.id.musicDialogOk);
+        RoboButton musicDialogOk = (RoboButton) findViewById(R.id.musicDialogOk);
         musicDialogOk.setVisibility(View.INVISIBLE);
 
         load();

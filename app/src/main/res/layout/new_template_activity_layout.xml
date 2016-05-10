@@ -17,7 +17,7 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-        <EditText
+        <com.cray.software.justreminder.roboto_views.RoboEditText
             android:id="@+id/placeName"
             android:layout_width="match_parent"
             android:layout_height="72dp"
@@ -29,11 +29,12 @@
             android:hint="@string/message"
             android:maxLength="120"
             android:textColorHint="@color/whitePrimary"
-            android:textSize="@dimen/create_text_size_secondary" />
+            android:textSize="@dimen/create_text_size_secondary"
+            app:edit_font_style="roboto_light" />
 
     </android.support.v7.widget.Toolbar>
 
-    <TextView
+    <com.cray.software.justreminder.roboto_views.RoboTextView
         android:id="@+id/leftCharacters"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -41,5 +42,6 @@
         android:layout_marginRight="@dimen/create_margin"
         android:layout_marginTop="@dimen/create_margin"
         android:text="152"
-        android:textSize="@dimen/create_text_size_normal" />
+        android:textSize="@dimen/create_text_size_normal"
+        app:font_style="roboto_light" />
 </LinearLayout>

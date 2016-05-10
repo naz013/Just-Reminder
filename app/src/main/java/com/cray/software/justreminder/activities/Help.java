@@ -11,8 +11,8 @@ import android.webkit.WebView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.views.FloatingEditText;
 
 import java.util.Locale;
 
@@ -60,7 +60,7 @@ public class Help extends AppCompatActivity {
 
         helpView.loadUrl(url);
 
-        FloatingEditText searchEdit = (FloatingEditText) findViewById(R.id.searchEdit);
+        RoboEditText searchEdit = (RoboEditText) findViewById(R.id.searchEdit);
         searchEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

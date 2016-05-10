@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <com.cray.software.justreminder.views.FloatingEditText
+                <com.cray.software.justreminder.roboto_views.RoboEditText
                     android:id="@+id/task_message"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -42,8 +42,7 @@
                     android:textColor="@color/blackPrimary"
                     android:textColorHint="@color/blackPrimary"
                     android:textSize="@dimen/create_note_text_size"
-                    app:floating_edit_text_color="@color/blackPrimary"
-                    app:floating_edit_text_highlighted_color="@color/blackPrimary" />
+                    app:edit_font_style="roboto_light" />
 
                 <RelativeLayout
                     android:id="@+id/imageContainer"

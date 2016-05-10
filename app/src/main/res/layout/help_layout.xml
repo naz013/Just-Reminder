@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.cray.software.justreminder.views.FloatingEditText
+        <com.cray.software.justreminder.roboto_views.RoboEditText
             android:id="@+id/searchEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:hint="@string/search"
-            app:floating_edit_text_highlighted_color="?attr/colorAccent" />
+            app:edit_font_style="roboto_light" />
 
         <WebView
             android:id="@+id/helpView"

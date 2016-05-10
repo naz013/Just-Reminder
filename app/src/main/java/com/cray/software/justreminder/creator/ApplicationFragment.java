@@ -26,22 +26,21 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
-import android.widget.RadioButton;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.json.JExport;
 import com.cray.software.justreminder.json.JModel;
-import com.cray.software.justreminder.utils.SuperUtil;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboEditText;
+import com.cray.software.justreminder.roboto_views.RoboRadioButton;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.DateTimeView;
-import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.views.RepeatView;
 
 public class ApplicationFragment extends BaseFragment implements
@@ -49,9 +48,9 @@ public class ApplicationFragment extends BaseFragment implements
 
     private DateTimeView.OnSelectListener mCallbacks;
     private RepeatView.OnRepeatListener mRepeatCallbacks;
-    private FloatingEditText phoneNumber;
+    private RoboEditText phoneNumber;
     private RelativeLayout applicationLayout;
-    private TextView applicationName;
+    private RoboTextView applicationName;
 
     private String type;
 
@@ -105,7 +104,7 @@ public class ApplicationFragment extends BaseFragment implements
 
         applicationLayout = (RelativeLayout) view.findViewById(R.id.applicationLayout);
         applicationLayout.setVisibility(View.VISIBLE);
-        applicationName = (TextView) view.findViewById(R.id.applicationName);
+        applicationName = (RoboTextView) view.findViewById(R.id.applicationName);
 
         type = Constants.TYPE_APPLICATION;
 
@@ -115,9 +114,9 @@ public class ApplicationFragment extends BaseFragment implements
         if (isDark) pickApplication.setImageResource(R.drawable.ic_launch_white_24dp);
         else pickApplication.setImageResource(R.drawable.ic_launch_black_24dp);
 
-        RadioButton application = (RadioButton) view.findViewById(R.id.application);
+        RoboRadioButton application = (RoboRadioButton) view.findViewById(R.id.application);
         application.setChecked(true);
-        RadioButton browser = (RadioButton) view.findViewById(R.id.browser);
+        RoboRadioButton browser = (RoboRadioButton) view.findViewById(R.id.browser);
         application.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -133,7 +132,7 @@ public class ApplicationFragment extends BaseFragment implements
             }
         });
 
-        phoneNumber = (FloatingEditText) view.findViewById(R.id.phoneNumber);
+        phoneNumber = (RoboEditText) view.findViewById(R.id.phoneNumber);
         phoneNumber.setVisibility(View.GONE);
         phoneNumber.addTextChangedListener(new TextWatcher() {
             @Override
@@ -157,10 +156,10 @@ public class ApplicationFragment extends BaseFragment implements
         eventTime = System.currentTimeMillis();
         dateView.setDateTime(updateCalendar(eventTime, false));
 
-        CheckBox dateExport = (CheckBox) view.findViewById(R.id.dateExport);
+        RoboCheckBox dateExport = (RoboCheckBox) view.findViewById(R.id.dateExport);
         if (hasCalendar || hasStock) dateExport.setVisibility(View.VISIBLE);
 
-        CheckBox dateTaskExport = (CheckBox) view.findViewById(R.id.dateTaskExport);
+        RoboCheckBox dateTaskExport = (RoboCheckBox) view.findViewById(R.id.dateTaskExport);
         if (hasTasks) dateTaskExport.setVisibility(View.VISIBLE);
         dateExport.setOnCheckedChangeListener(this);
         dateTaskExport.setOnCheckedChangeListener(this);

@@ -24,7 +24,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
@@ -36,13 +35,14 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.google.android.gms.maps.model.LatLng;
 
 public class AddPlace extends AppCompatActivity implements MapListener {
 
     private ColorSetter cs = new ColorSetter(AddPlace.this);
-    private EditText placeName;
+    private RoboEditText placeName;
     private MapFragment googleMap;
 
     private SharedPrefs sPrefs = new SharedPrefs(AddPlace.this);
@@ -70,7 +70,7 @@ public class AddPlace extends AppCompatActivity implements MapListener {
 
         id = getIntent().getLongExtra(Constants.ITEM_ID_INTENT, 0);
 
-        placeName = (EditText) findViewById(R.id.placeName);
+        placeName = (RoboEditText) findViewById(R.id.placeName);
         googleMap = MapFragment.newInstance(false, false, false, false,
                 sPrefs.loadInt(Prefs.MARKER_STYLE), cs.isDark());
         googleMap.setListener(this);

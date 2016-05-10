@@ -132,8 +132,7 @@ public class MonthFragment extends BaseFragment implements
         monthDayField.setOnClickListener(dateClick);
 
         RoboCheckBox dateExport = (RoboCheckBox) view.findViewById(R.id.dateExport);
-        if (hasCalendar || hasStock)
-            dateExport.setVisibility(View.VISIBLE);
+        if (hasCalendar || hasStock) dateExport.setVisibility(View.VISIBLE);
 
         RoboCheckBox dateTaskExport = (RoboCheckBox) view.findViewById(R.id.dateTaskExport);
         if (hasTasks) dateTaskExport.setVisibility(View.VISIBLE);

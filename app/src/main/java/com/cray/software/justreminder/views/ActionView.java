@@ -5,15 +5,16 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboEditText;
+import com.cray.software.justreminder.roboto_views.RoboRadioButton;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
@@ -38,11 +39,11 @@ public class ActionView extends LinearLayout {
     public static final int TYPE_MESSAGE = 2;
 
     private Activity activity;
-    private CheckBox actionCheck;
+    private RoboCheckBox actionCheck;
     private LinearLayout actionBlock;
-    private RadioButton callAction, messageAction;
+    private RoboRadioButton callAction, messageAction;
     private ImageButton selectNumber;
-    private FloatingEditText numberView;
+    private RoboEditText numberView;
     private InputMethodManager imm;
 
     private OnActionListener listener;
@@ -70,7 +71,7 @@ public class ActionView extends LinearLayout {
         actionBlock = (LinearLayout) findViewById(R.id.actionBlock);
         actionBlock.setVisibility(View.GONE);
 
-        actionCheck = (CheckBox) findViewById(R.id.actionCheck);
+        actionCheck = (RoboCheckBox) findViewById(R.id.actionCheck);
         actionCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -80,7 +81,7 @@ public class ActionView extends LinearLayout {
                     selectNumber.setOnClickListener(contactClick);
                     ViewUtils.setImage(selectNumber, new ColorSetter(context).isDark());
 
-                    numberView = (FloatingEditText) findViewById(R.id.numberView);
+                    numberView = (RoboEditText) findViewById(R.id.numberView);
                     numberView.setFocusableInTouchMode(true);
                     numberView.setOnFocusChangeListener(new OnFocusChangeListener() {
                         @Override
@@ -105,9 +106,9 @@ public class ActionView extends LinearLayout {
                         }
                     });
 
-                    callAction = (RadioButton) findViewById(R.id.callAction);
+                    callAction = (RoboRadioButton) findViewById(R.id.callAction);
                     callAction.setChecked(true);
-                    messageAction = (RadioButton) findViewById(R.id.messageAction);
+                    messageAction = (RoboRadioButton) findViewById(R.id.messageAction);
                     messageAction.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {

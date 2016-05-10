@@ -87,9 +87,7 @@ public class PlacesFragment extends BaseFragment  {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reminder_places_layout, container, false);
-
         SharedPrefs prefs = new SharedPrefs(getActivity());
-
         placesMap = new PlacesMap();
         placesMap.setListener(mCallbacks);
         placesMap.setRadius(prefs.loadInt(Prefs.LOCATION_RADIUS));

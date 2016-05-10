@@ -24,9 +24,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.cray.software.justreminder.R;
@@ -34,9 +32,11 @@ import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.json.JExport;
 import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboEditText;
+import com.cray.software.justreminder.roboto_views.RoboRadioButton;
 import com.cray.software.justreminder.views.ActionView;
 import com.cray.software.justreminder.views.DateTimeView;
-import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.views.RepeatView;
 
 public class SkypeFragment extends BaseFragment implements
@@ -45,7 +45,7 @@ public class SkypeFragment extends BaseFragment implements
     private DateTimeView.OnSelectListener mCallbacks;
     private RepeatView.OnRepeatListener mRepeatCallbaks;
     private ActionView.OnActionListener mActionCallback;
-    private FloatingEditText phoneNumber;
+    private RoboEditText phoneNumber;
 
     private String type;
 
@@ -98,10 +98,10 @@ public class SkypeFragment extends BaseFragment implements
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reminder_skype_layout, container, false);
 
-        RadioButton skypeCall = (RadioButton) view.findViewById(R.id.skypeCall);
-        RadioButton skypeVideo = (RadioButton) view.findViewById(R.id.skypeVideo);
+        RoboRadioButton skypeCall = (RoboRadioButton) view.findViewById(R.id.skypeCall);
+        RoboRadioButton skypeVideo = (RoboRadioButton) view.findViewById(R.id.skypeVideo);
         skypeCall.setChecked(true);
-        RadioButton skypeChat = (RadioButton) view.findViewById(R.id.skypeChat);
+        RoboRadioButton skypeChat = (RoboRadioButton) view.findViewById(R.id.skypeChat);
         skypeChat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -129,7 +129,7 @@ public class SkypeFragment extends BaseFragment implements
             }
         });
 
-        phoneNumber = (FloatingEditText) view.findViewById(R.id.phoneNumber);
+        phoneNumber = (RoboEditText) view.findViewById(R.id.phoneNumber);
         phoneNumber.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -152,10 +152,10 @@ public class SkypeFragment extends BaseFragment implements
         eventTime = System.currentTimeMillis();
         dateView.setDateTime(updateCalendar(eventTime, false));
 
-        CheckBox dateExport = (CheckBox) view.findViewById(R.id.dateExport);
+        RoboCheckBox dateExport = (RoboCheckBox) view.findViewById(R.id.dateExport);
         if (hasCalendar || hasStock) dateExport.setVisibility(View.VISIBLE);
 
-        CheckBox dateTaskExport = (CheckBox) view.findViewById(R.id.dateTaskExport);
+        RoboCheckBox dateTaskExport = (RoboCheckBox) view.findViewById(R.id.dateTaskExport);
         if (hasTasks) dateTaskExport.setVisibility(View.VISIBLE);
         dateExport.setOnCheckedChangeListener(this);
         dateTaskExport.setOnCheckedChangeListener(this);

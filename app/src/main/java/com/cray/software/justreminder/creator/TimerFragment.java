@@ -22,11 +22,8 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
@@ -34,6 +31,9 @@ import com.cray.software.justreminder.json.JExclusion;
 import com.cray.software.justreminder.json.JExport;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JRecurrence;
+import com.cray.software.justreminder.roboto_views.RoboButton;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.views.RepeatView;
 
@@ -42,7 +42,7 @@ public class TimerFragment extends BaseFragment implements
 
     private RepeatView.OnRepeatListener mRepeatCallbacks;
 
-    private TextView hoursView, minutesView, secondsView, selectExclusion;
+    private RoboTextView hoursView, minutesView, secondsView, selectExclusion;
     private ImageButton deleteButton, exclusionClear;
     private String timeString = "000000";
     private String exclusion;
@@ -116,10 +116,10 @@ public class TimerFragment extends BaseFragment implements
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reminder_time_layout, container, false);
 
-        hoursView = (TextView) view.findViewById(R.id.hoursView);
-        minutesView = (TextView) view.findViewById(R.id.minutesView);
-        secondsView = (TextView) view.findViewById(R.id.secondsView);
-        selectExclusion = (TextView) view.findViewById(R.id.selectExclusion);
+        hoursView = (RoboTextView) view.findViewById(R.id.hoursView);
+        minutesView = (RoboTextView) view.findViewById(R.id.minutesView);
+        secondsView = (RoboTextView) view.findViewById(R.id.secondsView);
+        selectExclusion = (RoboTextView) view.findViewById(R.id.selectExclusion);
         selectExclusion.setOnClickListener(exclusionClick);
 
         deleteButton = (ImageButton) view.findViewById(R.id.deleteButton);
@@ -161,16 +161,16 @@ public class TimerFragment extends BaseFragment implements
 
         updateTimeView();
 
-        Button b1 = (Button) view.findViewById(R.id.b1);
-        Button b2 = (Button) view.findViewById(R.id.b2);
-        Button b3 = (Button) view.findViewById(R.id.b3);
-        Button b4 = (Button) view.findViewById(R.id.b4);
-        Button b5 = (Button) view.findViewById(R.id.b5);
-        Button b6 = (Button) view.findViewById(R.id.b6);
-        Button b7 = (Button) view.findViewById(R.id.b7);
-        Button b8 = (Button) view.findViewById(R.id.b8);
-        Button b9 = (Button) view.findViewById(R.id.b9);
-        Button b0 = (Button) view.findViewById(R.id.b0);
+        RoboButton b1 = (RoboButton) view.findViewById(R.id.b1);
+        RoboButton b2 = (RoboButton) view.findViewById(R.id.b2);
+        RoboButton b3 = (RoboButton) view.findViewById(R.id.b3);
+        RoboButton b4 = (RoboButton) view.findViewById(R.id.b4);
+        RoboButton b5 = (RoboButton) view.findViewById(R.id.b5);
+        RoboButton b6 = (RoboButton) view.findViewById(R.id.b6);
+        RoboButton b7 = (RoboButton) view.findViewById(R.id.b7);
+        RoboButton b8 = (RoboButton) view.findViewById(R.id.b8);
+        RoboButton b9 = (RoboButton) view.findViewById(R.id.b9);
+        RoboButton b0 = (RoboButton) view.findViewById(R.id.b0);
         if (b1 != null) {
             b1.setId(Integer.valueOf(101));
             b2.setId(Integer.valueOf(102));
@@ -194,11 +194,10 @@ public class TimerFragment extends BaseFragment implements
             b0.setOnClickListener(this);
         }
 
-        CheckBox dateExport = (CheckBox) view.findViewById(R.id.dateExport);
-        if (hasCalendar || hasStock)
-            dateExport.setVisibility(View.VISIBLE);
+        RoboCheckBox dateExport = (RoboCheckBox) view.findViewById(R.id.dateExport);
+        if (hasCalendar || hasStock) dateExport.setVisibility(View.VISIBLE);
 
-        CheckBox dateTaskExport = (CheckBox) view.findViewById(R.id.dateTaskExport);
+        RoboCheckBox dateTaskExport = (RoboCheckBox) view.findViewById(R.id.dateTaskExport);
         if (hasTasks) dateTaskExport.setVisibility(View.VISIBLE);
         dateExport.setOnCheckedChangeListener(this);
         dateTaskExport.setOnCheckedChangeListener(this);

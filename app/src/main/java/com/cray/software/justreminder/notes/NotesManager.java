@@ -49,12 +49,12 @@ import com.cray.software.justreminder.helpers.Telephony;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
+import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.views.FloatingEditText;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -97,7 +97,7 @@ public class NotesManager extends AppCompatActivity {
 
     private long id;
     private Toolbar toolbar;
-    private FloatingEditText taskField;
+    private RoboEditText taskField;
     private FloatingActionButton mFab;
 
     private Tracker mTracker;
@@ -156,7 +156,7 @@ public class NotesManager extends AppCompatActivity {
 
         toolbar.inflateMenu(R.menu.create_note);
 
-        taskField = (FloatingEditText) findViewById(R.id.task_message);
+        taskField = (RoboEditText) findViewById(R.id.task_message);
         taskField.setTextSize(sPrefs.loadInt(Prefs.TEXT_SIZE) + 12);
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);

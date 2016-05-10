@@ -37,12 +37,12 @@ import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.roboto_views.RoboRadioButton;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.views.FloatingEditText;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -50,7 +50,7 @@ import java.util.List;
 
 public class FollowReminder extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
-    private FloatingEditText mMessageField;
+    private RoboEditText mMessageField;
     private RoboTextView mCustomDateView;
     private RoboTextView mCustomTimeView;
     private RoboRadioButton mMessageRadio, mCallRadio, mTomorrowRadio, mNextWorkingRadio, mAfterRadio, mCustomRadio;
@@ -106,7 +106,7 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         } else c.setTimeInMillis(System.currentTimeMillis());
         mCurrentTime = c.getTimeInMillis();
 
-        mMessageField = (FloatingEditText) findViewById(R.id.textField);
+        mMessageField = (RoboEditText) findViewById(R.id.textField);
         mMessageField.setHint(getString(R.string.message));
 
         RoboTextView contactInfo = (RoboTextView) findViewById(R.id.contactInfo);

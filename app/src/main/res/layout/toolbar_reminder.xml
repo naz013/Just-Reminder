@@ -27,7 +27,7 @@
             android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
-            <com.cray.software.justreminder.views.FloatingEditText
+            <com.cray.software.justreminder.roboto_views.RoboEditText
                 android:id="@+id/task_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -41,11 +41,10 @@
                 android:textColor="@color/whitePrimary"
                 android:textColorHint="@color/whitePrimary"
                 android:textSize="23sp"
-                app:floating_edit_text_color="@color/whitePrimary"
-                app:floating_edit_text_highlighted_color="?attr/colorAccent">
+                app:edit_font_style="roboto_light">
 
                 <requestFocus />
-            </com.cray.software.justreminder.views.FloatingEditText>
+            </com.cray.software.justreminder.roboto_views.RoboEditText>
 
             <ImageButton
                 android:id="@+id/insertVoice"

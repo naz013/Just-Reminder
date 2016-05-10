@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/locationOutLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -23,14 +24,15 @@
                 android:layout_marginBottom="88dp"
                 android:orientation="vertical">
 
-                <CheckBox
+                <com.cray.software.justreminder.roboto_views.RoboCheckBox
                     android:id="@+id/attachDelayOut"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:text="@string/delay_tracking"
-                    android:textSize="@dimen/checkbox_text_size" />
+                    android:textSize="@dimen/checkbox_text_size"
+                    app:check_font_style="roboto_light" />
 
                 <LinearLayout
                     android:id="@+id/delayLayoutOut"
@@ -56,21 +58,23 @@
                     android:layout_marginRight="@dimen/create_margin"
                     android:layout_marginTop="@dimen/create_margin">
 
-                    <RadioButton
+                    <com.cray.software.justreminder.roboto_views.RoboRadioButton
                         android:id="@+id/currentCheck"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
-                        android:text="@string/current_location" />
+                        android:text="@string/current_location"
+                        app:radio_font_style="roboto_light" />
 
-                    <TextView
+                    <com.cray.software.justreminder.roboto_views.RoboTextView
                         android:id="@+id/currentLocation"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="5dp"
-                        android:layout_toRightOf="@+id/currentCheck" />
+                        android:layout_toRightOf="@+id/currentCheck"
+                        app:font_style="roboto_medium" />
 
                 </RelativeLayout>
 
@@ -80,22 +84,24 @@
                     android:layout_marginLeft="@dimen/create_margin"
                     android:layout_marginRight="@dimen/create_margin">
 
-                    <RadioButton
+                    <com.cray.software.justreminder.roboto_views.RoboRadioButton
                         android:id="@+id/mapCheck"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
-                        android:text="@string/choose_location" />
+                        android:text="@string/choose_location"
+                        app:radio_font_style="roboto_light" />
 
-                    <TextView
+                    <com.cray.software.justreminder.roboto_views.RoboTextView
                         android:id="@+id/mapLocation"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="5dp"
                         android:layout_toLeftOf="@+id/mapButtonOut"
-                        android:layout_toRightOf="@+id/mapCheck" />
+                        android:layout_toRightOf="@+id/mapCheck"
+                        app:font_style="roboto_medium" />
 
                     <ImageButton
                         android:id="@+id/mapButtonOut"
@@ -108,12 +114,13 @@
 
                 </RelativeLayout>
 
-                <TextView
+                <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/radiusMark"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    app:font_style="roboto_light" />
 
                 <SeekBar
                     android:id="@+id/pointRadius"

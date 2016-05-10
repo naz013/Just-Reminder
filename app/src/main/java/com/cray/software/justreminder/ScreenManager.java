@@ -74,13 +74,13 @@ import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.reminder.ReminderManager;
 import com.cray.software.justreminder.reminder.TrashFragment;
+import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.settings.SettingsActivity;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.views.ReturnScrollListener;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -105,7 +105,7 @@ import java.util.Random;
 public class ScreenManager extends AppCompatActivity implements NavigationCallbacks {
 
     private Toolbar toolbar;
-    private FloatingEditText quickNote;
+    private RoboEditText quickNote;
     private CardView noteCard, noteStatusCard, noteReminderCard;
     private RoboTextView buttonYes;
     private RoboTextView buttonNo;
@@ -170,7 +170,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
 
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
 
-        quickNote = (FloatingEditText) findViewById(R.id.quickNote);
+        quickNote = (RoboEditText) findViewById(R.id.quickNote);
 
         noteCard = (CardView) findViewById(R.id.noteCard);
         noteCard.setCardBackgroundColor(cSetter.getCardStyle());

@@ -81,6 +81,7 @@ import com.cray.software.justreminder.json.JPlace;
 import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.json.JShopping;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.PositionDelayReceiver;
@@ -93,7 +94,6 @@ import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.ActionView;
 import com.cray.software.justreminder.views.DateTimeView;
-import com.cray.software.justreminder.views.FloatingEditText;
 import com.cray.software.justreminder.views.RepeatView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -129,7 +129,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private Toolbar toolbar;
     private Spinner spinner;
-    private FloatingEditText taskField;
+    private RoboEditText taskField;
     private RoboTextView category;
     private FloatingActionButton mFab;
     private LinearLayout navContainer;
@@ -352,7 +352,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
 
         navContainer = (LinearLayout) findViewById(R.id.navContainer);
         spinner = (Spinner) findViewById(R.id.navSpinner);
-        taskField = (FloatingEditText) findViewById(R.id.task_message);
+        taskField = (RoboEditText) findViewById(R.id.task_message);
         taskField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

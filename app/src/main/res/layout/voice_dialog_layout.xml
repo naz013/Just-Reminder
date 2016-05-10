@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
@@ -9,7 +10,7 @@
     android:paddingRight="24dp"
     android:paddingTop="24dp">
 
-    <TextView
+    <com.cray.software.justreminder.roboto_views.RoboTextView
         android:id="@+id/resultText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,7 +18,8 @@
         android:layout_marginBottom="10dp"
         android:gravity="center"
         android:text="@string/saved"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        app:font_style="roboto_medium" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -39,7 +41,7 @@
         android:gravity="right"
         android:orientation="horizontal">
 
-        <Button
+        <com.cray.software.justreminder.roboto_views.RoboButton
             android:id="@+id/buttonEdit"
             style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
             android:layout_width="wrap_content"
@@ -47,9 +49,10 @@
             android:clickable="true"
             android:gravity="center"
             android:text="@string/edit"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            app:button_font_style="roboto_light" />
 
-        <Button
+        <com.cray.software.justreminder.roboto_views.RoboButton
             android:id="@+id/buttonClose"
             style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
             android:layout_width="wrap_content"
@@ -58,7 +61,8 @@
             android:clickable="true"
             android:gravity="center"
             android:text="@string/ok"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            app:button_font_style="roboto_light" />
 
     </LinearLayout>
 

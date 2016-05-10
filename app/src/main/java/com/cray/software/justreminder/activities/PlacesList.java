@@ -14,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.PlaceRecyclerAdapter;
@@ -29,6 +28,7 @@ import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ViewUtils;
@@ -64,7 +64,7 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
         emptyItem = (LinearLayout) findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
 
-        TextView emptyText = (TextView) findViewById(R.id.emptyText);
+        RoboTextView emptyText = (RoboTextView) findViewById(R.id.emptyText);
         emptyText.setText(getString(R.string.no_places));
 
         ImageView emptyImage = (ImageView) findViewById(R.id.emptyImage);

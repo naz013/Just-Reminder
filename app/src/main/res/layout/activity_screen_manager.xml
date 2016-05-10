@@ -62,14 +62,14 @@
                         android:orientation="vertical"
                         android:padding="5dp">
 
-                        <com.cray.software.justreminder.views.FloatingEditText
+                        <com.cray.software.justreminder.roboto_views.RoboEditText
                             android:id="@+id/quickNote"
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
                             android:layout_gravity="center"
                             android:hint="@string/note"
                             android:inputType="textMultiLine"
-                            fab:floating_edit_text_highlighted_color="?attr/colorAccent" />
+                            fab:edit_font_style="roboto_light" />
 
                         <com.cray.software.justreminder.roboto_views.RoboTextView
                             android:id="@+id/buttonSave"

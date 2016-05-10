@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
@@ -16,7 +17,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <RadioButton
+        <com.cray.software.justreminder.roboto_views.RoboRadioButton
             android:id="@+id/redCheck"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -24,21 +25,21 @@
             android:drawableLeft="@drawable/marker_red"
             android:drawablePadding="0dp" />
 
-        <RadioButton
+        <com.cray.software.justreminder.roboto_views.RoboRadioButton
             android:id="@+id/purpleCheck"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:drawableLeft="@drawable/marker_violet" />
 
-        <RadioButton
+        <com.cray.software.justreminder.roboto_views.RoboRadioButton
             android:id="@+id/greenLightCheck"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:drawableLeft="@drawable/marker_green_light" />
 
-        <RadioButton
+        <com.cray.software.justreminder.roboto_views.RoboRadioButton
             android:id="@+id/greenCheck"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -54,14 +55,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <RadioButton
+        <com.cray.software.justreminder.roboto_views.RoboRadioButton
             android:id="@+id/blueLightCheck"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:drawableLeft="@drawable/marker_blue_light" />
 
-        <RadioButton
+        <com.cray.software.justreminder.roboto_views.RoboRadioButton
             android:id="@+id/blueCheck"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -69,14 +70,14 @@
             android:drawableLeft="@drawable/marker_blue"
             android:drawablePadding="0dp" />
 
-        <RadioButton
+        <com.cray.software.justreminder.roboto_views.RoboRadioButton
             android:id="@+id/yellowCheck"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:drawableLeft="@drawable/marker_yellow" />
 
-        <RadioButton
+        <com.cray.software.justreminder.roboto_views.RoboRadioButton
             android:id="@+id/orangeCheck"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -91,28 +92,28 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <RadioButton
+        <com.cray.software.justreminder.roboto_views.RoboRadioButton
             android:id="@+id/cyanCheck"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:drawableLeft="@drawable/marker_cyan" />
 
-        <RadioButton
+        <com.cray.software.justreminder.roboto_views.RoboRadioButton
             android:id="@+id/pinkCheck"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:drawableLeft="@drawable/marker_pink" />
 
-        <RadioButton
+        <com.cray.software.justreminder.roboto_views.RoboRadioButton
             android:id="@+id/tealCheck"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:drawableLeft="@drawable/marker_teal" />
 
-        <RadioButton
+        <com.cray.software.justreminder.roboto_views.RoboRadioButton
             android:id="@+id/amberCheck"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -131,28 +132,28 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <RadioButton
+            <com.cray.software.justreminder.roboto_views.RoboRadioButton
                 android:id="@+id/deepPurpleCheck"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:drawableLeft="@drawable/marker_deep_purple" />
 
-            <RadioButton
+            <com.cray.software.justreminder.roboto_views.RoboRadioButton
                 android:id="@+id/deepOrangeCheck"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:drawableLeft="@drawable/marker_deep_orange" />
 
-            <RadioButton
+            <com.cray.software.justreminder.roboto_views.RoboRadioButton
                 android:id="@+id/indigoCheck"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:drawableLeft="@drawable/marker_indigo" />
 
-            <RadioButton
+            <com.cray.software.justreminder.roboto_views.RoboRadioButton
                 android:id="@+id/limeCheck"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -163,7 +164,7 @@
 
     </HorizontalScrollView>
 
-    <TextView
+    <com.cray.software.justreminder.roboto_views.RoboButton
         android:id="@+id/themeClose"
         style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
         android:layout_width="wrap_content"
@@ -172,5 +173,6 @@
         android:layout_marginTop="24dp"
         android:gravity="center"
         android:text="@string/ok"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        app:button_font_style="roboto_light" />
 </LinearLayout>

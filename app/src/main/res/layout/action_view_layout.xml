@@ -65,7 +65,7 @@
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_person_add_black_24dp" />
 
-                <com.cray.software.justreminder.views.FloatingEditText
+                <com.cray.software.justreminder.roboto_views.RoboEditText
                     android:id="@+id/numberView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -77,7 +77,7 @@
                     android:inputType="text|phone"
                     android:singleLine="true"
                     android:textSize="@dimen/create_text_size_normal"
-                    app:floating_edit_text_highlighted_color="?attr/colorAccent" />
+                    app:edit_font_style="roboto_light" />
             </LinearLayout>
         </LinearLayout>
 

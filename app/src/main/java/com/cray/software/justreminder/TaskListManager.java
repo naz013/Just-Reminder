@@ -11,8 +11,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
@@ -25,6 +23,8 @@ import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.utils.ViewUtils;
 
 
@@ -35,11 +35,11 @@ public class TaskListManager extends AppCompatActivity {
             blue_checkbox, light_blue_checkbox, yellow_checkbox, orange_checkbox, grey_checkbox,
             pink_checkbox, sand_checkbox, brown_checkbox, deepPurple, indigoCheckbox, limeCheckbox,
             deepOrange;
-    private CheckBox defaultCheck;
+    private RoboCheckBox defaultCheck;
 
     private long id;
     private Toolbar toolbar;
-    private EditText editField;
+    private RoboEditText editField;
     private int color, sysDef;
     private int prevId;
 
@@ -84,8 +84,8 @@ public class TaskListManager extends AppCompatActivity {
 
         toolbar.inflateMenu(R.menu.save_menu);
 
-        editField = (EditText) findViewById(R.id.editField);
-        defaultCheck = (CheckBox) findViewById(R.id.defaultCheck);
+        editField = (RoboEditText) findViewById(R.id.editField);
+        defaultCheck = (RoboCheckBox) findViewById(R.id.defaultCheck);
 
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
 

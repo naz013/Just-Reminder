@@ -19,7 +19,7 @@
             android:layout_marginRight="@dimen/create_margin"
             android:orientation="vertical">
 
-            <CheckBox
+            <com.cray.software.justreminder.roboto_views.RoboCheckBox
                 android:id="@+id/dateExport"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -27,9 +27,10 @@
                 android:layout_marginTop="@dimen/create_margin"
                 android:text="@string/add_to_calendar"
                 android:textSize="@dimen/checkbox_text_size"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:check_font_style="roboto_light" />
 
-            <CheckBox
+            <com.cray.software.justreminder.roboto_views.RoboCheckBox
                 android:id="@+id/dateTaskExport"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -37,9 +38,10 @@
                 android:layout_marginTop="@dimen/create_margin"
                 android:text="@string/google_tasks"
                 android:textSize="@dimen/checkbox_text_size"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:check_font_style="roboto_light" />
 
-            <com.cray.software.justreminder.views.FloatingEditText
+            <com.cray.software.justreminder.roboto_views.RoboEditText
                 android:id="@+id/phoneNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -50,7 +52,7 @@
                 android:inputType="textAutoComplete"
                 android:singleLine="true"
                 android:textSize="@dimen/create_text_size_normal"
-                app:floating_edit_text_highlighted_color="?attr/colorAccent" />
+                app:edit_font_style="roboto_light" />
 
             <HorizontalScrollView
                 android:id="@+id/horizontalScrollView"
@@ -73,28 +75,31 @@
                         android:gravity="center"
                         android:orientation="horizontal">
 
-                        <RadioButton
+                        <com.cray.software.justreminder.roboto_views.RoboRadioButton
                             android:id="@+id/skypeCall"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/skype_call"
-                            android:textSize="@dimen/create_text_size_normal" />
+                            android:textSize="@dimen/create_text_size_normal"
+                            app:radio_font_style="roboto_light" />
 
-                        <RadioButton
+                        <com.cray.software.justreminder.roboto_views.RoboRadioButton
                             android:id="@+id/skypeVideo"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="15dp"
                             android:text="@string/video_call"
-                            android:textSize="@dimen/create_text_size_normal" />
+                            android:textSize="@dimen/create_text_size_normal"
+                            app:radio_font_style="roboto_light" />
 
-                        <RadioButton
+                        <com.cray.software.justreminder.roboto_views.RoboRadioButton
                             android:id="@+id/skypeChat"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="15dp"
                             android:text="@string/skype_chat"
-                            android:textSize="@dimen/create_text_size_normal" />
+                            android:textSize="@dimen/create_text_size_normal"
+                            app:radio_font_style="roboto_light" />
                     </RadioGroup>
                 </LinearLayout>
             </HorizontalScrollView>

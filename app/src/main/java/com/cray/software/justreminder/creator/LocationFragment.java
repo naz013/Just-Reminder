@@ -30,7 +30,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -46,6 +45,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JPlace;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.ActionView;
 import com.cray.software.justreminder.views.DateTimeView;
@@ -154,7 +154,7 @@ public class LocationFragment extends BaseFragment implements GeocoderTask.Geoco
         delayLayout.setVisibility(View.GONE);
         mapContainer.setVisibility(View.GONE);
 
-        CheckBox attackDelay = (CheckBox) view.findViewById(R.id.attackDelay);
+        RoboCheckBox attackDelay = (RoboCheckBox) view.findViewById(R.id.attackDelay);
         attackDelay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

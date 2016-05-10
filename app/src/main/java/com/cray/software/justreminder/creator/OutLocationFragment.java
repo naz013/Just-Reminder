@@ -28,15 +28,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
@@ -47,6 +44,9 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JPlace;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboRadioButton;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.ActionView;
@@ -65,12 +65,12 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
      */
     private RelativeLayout mapContainerOut;
     private ScrollView specsContainerOut;
-    private TextView currentLocation;
-    private TextView radiusMark;
-    private CheckBox attachDelayOut;
-    private RadioButton currentCheck, mapCheck;
+    private RoboTextView currentLocation;
+    private RoboTextView radiusMark;
+    private RoboCheckBox attachDelayOut;
+    private RoboRadioButton currentCheck, mapCheck;
     private ActionView actionViewLocationOut;
-    private TextView mapLocation;
+    private RoboTextView mapLocation;
     private SeekBar pointRadius;
 
     private int radius;
@@ -144,9 +144,7 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reminder_location_out_layout, container, false);
-
         SharedPrefs prefs = new SharedPrefs(getActivity());
-
         mapFragment = new MapFragment();
         mapFragment.setListener(this);
         mapFragment.setMarkerStyle(prefs.loadInt(Prefs.MARKER_STYLE));
@@ -162,7 +160,7 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
         delayLayoutOut.setVisibility(View.GONE);
         mapContainerOut.setVisibility(View.GONE);
 
-        attachDelayOut = (CheckBox) view.findViewById(R.id.attachDelayOut);
+        attachDelayOut = (RoboCheckBox) view.findViewById(R.id.attachDelayOut);
         attachDelayOut.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -174,10 +172,8 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
         if (attachDelayOut.isChecked()) ViewUtils.expand(delayLayoutOut);
 
         ImageButton mapButtonOut = (ImageButton) view.findViewById(R.id.mapButtonOut);
-        if (isDark)
-            mapButtonOut.setImageResource(R.drawable.ic_map_white_24dp);
-        else
-            mapButtonOut.setImageResource(R.drawable.ic_map_black_24dp);
+        if (isDark) mapButtonOut.setImageResource(R.drawable.ic_map_white_24dp);
+        else mapButtonOut.setImageResource(R.drawable.ic_map_black_24dp);
 
         mapButtonOut.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,12 +184,12 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
                 mapCheck.setChecked(true);
             }
         });
-        currentLocation = (TextView) view.findViewById(R.id.currentLocation);
-        mapLocation = (TextView) view.findViewById(R.id.mapLocation);
-        radiusMark = (TextView) view.findViewById(R.id.radiusMark);
+        currentLocation = (RoboTextView) view.findViewById(R.id.currentLocation);
+        mapLocation = (RoboTextView) view.findViewById(R.id.mapLocation);
+        radiusMark = (RoboTextView) view.findViewById(R.id.radiusMark);
 
-        currentCheck = (RadioButton) view.findViewById(R.id.currentCheck);
-        mapCheck = (RadioButton) view.findViewById(R.id.mapCheck);
+        currentCheck = (RoboRadioButton) view.findViewById(R.id.currentCheck);
+        mapCheck = (RoboRadioButton) view.findViewById(R.id.mapCheck);
         currentCheck.setOnCheckedChangeListener(this);
         mapCheck.setOnCheckedChangeListener(this);
         currentCheck.setChecked(true);
@@ -215,8 +211,9 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
 
             }
         });
-        if (pointRadius.getProgress() == 0)
+        if (pointRadius.getProgress() == 0) {
             pointRadius.setProgress(prefs.loadInt(Prefs.LOCATION_RADIUS));
+        }
 
         actionViewLocationOut = (ActionView) view.findViewById(R.id.actionViewLocationOut);
         actionViewLocationOut.setListener(mAction);

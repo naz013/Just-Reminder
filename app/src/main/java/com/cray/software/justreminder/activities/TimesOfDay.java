@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.cray.software.justreminder.R;
@@ -15,6 +14,7 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
@@ -26,7 +26,7 @@ import java.util.Locale;
 
 public class TimesOfDay extends AppCompatActivity implements View.OnClickListener {
 
-    private TextView nightTime, eveningTime, dayTime, morningTime;
+    private RoboTextView nightTime, eveningTime, dayTime, morningTime;
     private int morningHour, morningMinute;
     private int dayHour, dayMinute;
     private int eveningHour, eveningMinute;
@@ -54,13 +54,13 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
-        nightTime = (TextView) findViewById(R.id.nightTime);
+        nightTime = (RoboTextView) findViewById(R.id.nightTime);
         nightTime.setOnClickListener(this);
-        eveningTime = (TextView) findViewById(R.id.eveningTime);
+        eveningTime = (RoboTextView) findViewById(R.id.eveningTime);
         eveningTime.setOnClickListener(this);
-        dayTime = (TextView) findViewById(R.id.dayTime);
+        dayTime = (RoboTextView) findViewById(R.id.dayTime);
         dayTime.setOnClickListener(this);
-        morningTime = (TextView) findViewById(R.id.morningTime);
+        morningTime = (RoboTextView) findViewById(R.id.morningTime);
         morningTime.setOnClickListener(this);
 
         String morning = prefs.loadPrefs(Prefs.TIME_MORNING);

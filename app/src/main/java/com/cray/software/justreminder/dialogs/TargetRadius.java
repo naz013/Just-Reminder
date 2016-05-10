@@ -7,22 +7,22 @@ import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.roboto_views.RoboButton;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 public class TargetRadius extends Activity implements View.OnTouchListener {
 
     private SeekBar radiusBar;
-    private TextView radiusValue;
+    private RoboTextView radiusValue;
     private SharedPrefs sPrefs;
     private int progressInt, i;
     private long touchTime;
@@ -40,7 +40,7 @@ public class TargetRadius extends Activity implements View.OnTouchListener {
         sPrefs = new SharedPrefs(TargetRadius.this);
         Intent intent = getIntent();
         i = intent.getIntExtra("item", 0);
-        radiusValue = (TextView) findViewById(R.id.radiusValue);
+        radiusValue = (RoboTextView) findViewById(R.id.radiusValue);
         progressInt = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
         radiusValue.setText(String.format(getString(R.string.radius_x_meters), progressInt));
 
@@ -64,12 +64,12 @@ public class TargetRadius extends Activity implements View.OnTouchListener {
             }
         });
 
-        Button plusButton = (Button) findViewById(R.id.plusButton);
-        Button minusButton = (Button) findViewById(R.id.minusButton);
+        RoboButton plusButton = (RoboButton) findViewById(R.id.plusButton);
+        RoboButton minusButton = (RoboButton) findViewById(R.id.minusButton);
         plusButton.setOnTouchListener(this);
         minusButton.setOnTouchListener(this);
 
-        CheckBox transportCheck = (CheckBox) findViewById(R.id.transportCheck);
+        RoboCheckBox transportCheck = (RoboCheckBox) findViewById(R.id.transportCheck);
         transportCheck.setVisibility(View.VISIBLE);
         if (progressInt > 2000){
             transportCheck.setChecked(true);
@@ -83,7 +83,7 @@ public class TargetRadius extends Activity implements View.OnTouchListener {
             }
         });
 
-        TextView aboutClose = (TextView) findViewById(R.id.aboutClose);
+        RoboButton aboutClose = (RoboButton) findViewById(R.id.aboutClose);
         aboutClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

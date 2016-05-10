@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
@@ -10,16 +11,17 @@
     android:paddingRight="24dp"
     android:paddingTop="24dp">
 
-    <TextView
+    <com.cray.software.justreminder.roboto_views.RoboTextView
         android:id="@+id/titleDialog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
         android:text="@string/tracking_settings"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        app:font_style="roboto_medium" />
 
-    <TextView
+    <com.cray.software.justreminder.roboto_views.RoboTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -27,16 +29,19 @@
         android:layout_marginTop="15dp"
         android:gravity="center"
         android:text="@string/for_lower_battery_usage_set_bigger_values"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        app:font_style="roboto_light" />
 
-    <TextView
+    <com.cray.software.justreminder.roboto_views.RoboTextView
         android:id="@+id/radiusValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="15dp"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:text="100"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        app:font_style="roboto_bold" />
 
     <SeekBar
         android:id="@+id/radiusBar"
@@ -45,14 +50,16 @@
         android:max="100"
         android:progress="1" />
 
-    <TextView
+    <com.cray.software.justreminder.roboto_views.RoboTextView
         android:id="@+id/timeValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="15dp"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:text="100"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        app:font_style="roboto_bold" />
 
     <SeekBar
         android:id="@+id/timeBar"
@@ -61,7 +68,7 @@
         android:max="30"
         android:progress="1" />
 
-    <TextView
+    <com.cray.software.justreminder.roboto_views.RoboButton
         android:id="@+id/aboutClose"
         style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
         android:layout_width="wrap_content"
@@ -72,5 +79,6 @@
         android:clickable="false"
         android:gravity="center"
         android:text="@string/ok"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        app:button_font_style="roboto_light" />
 </LinearLayout>

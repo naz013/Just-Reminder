@@ -17,7 +17,6 @@
     <dimen name="circular_progress_large_size">60dp</dimen>
     <integer name="circular_progress_max">100</integer>
 
-    <!-- FloatingEditText Default -->
     <color name="floating_edit_text_color">#ffc8c8c8</color>
     <color name="floating_edit_text_highlighted_color">#ff3f51b5</color>
     <color name="floating_edit_text_error_color">#DB4437</color>

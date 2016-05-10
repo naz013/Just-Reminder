@@ -117,13 +117,13 @@
                 app:cardElevation="2dp"
                 app:cardUseCompatPadding="true">
 
-                <com.cray.software.justreminder.views.FloatingEditText
+                <com.cray.software.justreminder.roboto_views.RoboEditText
                     android:id="@+id/textField"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
                     android:hint="@string/message"
-                    app:floating_edit_text_highlighted_color="?attr/colorAccent" />
+                    app:edit_font_style="roboto_light" />
 
             </android.support.v7.widget.CardView>
 

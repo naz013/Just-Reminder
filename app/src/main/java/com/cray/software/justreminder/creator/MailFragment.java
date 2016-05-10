@@ -24,11 +24,8 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
@@ -36,6 +33,9 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.json.JAction;
 import com.cray.software.justreminder.json.JExport;
 import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.roboto_views.RoboCheckBox;
+import com.cray.software.justreminder.roboto_views.RoboEditText;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.views.DateTimeView;
 import com.cray.software.justreminder.views.RepeatView;
 
@@ -46,8 +46,8 @@ public class MailFragment extends BaseFragment implements
 
     private DateTimeView.OnSelectListener mCallbacks;
     private RepeatView.OnRepeatListener mRepeatCallbacks;
-    private EditText mail, subject;
-    private TextView fileName;
+    private RoboEditText mail, subject;
+    private RoboTextView fileName;
 
     public static MailFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
                                                   boolean hasStock, boolean hasTasks) {
@@ -104,7 +104,7 @@ public class MailFragment extends BaseFragment implements
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reminder_mail_layout, container, false);
 
-        mail = (EditText) view.findViewById(R.id.mail);
+        mail = (RoboEditText) view.findViewById(R.id.mail);
         mail.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -121,7 +121,7 @@ public class MailFragment extends BaseFragment implements
 
             }
         });
-        subject = (EditText) view.findViewById(R.id.subject);
+        subject = (RoboEditText) view.findViewById(R.id.subject);
         subject.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -144,7 +144,7 @@ public class MailFragment extends BaseFragment implements
         if (isDark) chooseFile.setImageResource(R.drawable.ic_attach_file_white_24dp);
         else chooseFile.setImageResource(R.drawable.ic_attach_file_black_24dp);
 
-        fileName = (TextView) view.findViewById(R.id.fileName);
+        fileName = (RoboTextView) view.findViewById(R.id.fileName);
         fileName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,11 +158,10 @@ public class MailFragment extends BaseFragment implements
         eventTime = System.currentTimeMillis();
         dateView.setDateTime(updateCalendar(eventTime, false));
 
-        CheckBox dateExport = (CheckBox) view.findViewById(R.id.dateExport);
-        if (hasCalendar || hasStock)
-            dateExport.setVisibility(View.VISIBLE);
+        RoboCheckBox dateExport = (RoboCheckBox) view.findViewById(R.id.dateExport);
+        if (hasCalendar || hasStock) dateExport.setVisibility(View.VISIBLE);
 
-        CheckBox dateTaskExport = (CheckBox) view.findViewById(R.id.dateTaskExport);
+        RoboCheckBox dateTaskExport = (RoboCheckBox) view.findViewById(R.id.dateTaskExport);
         if (hasTasks) dateTaskExport.setVisibility(View.VISIBLE);
         dateExport.setOnCheckedChangeListener(this);
         dateTaskExport.setOnCheckedChangeListener(this);

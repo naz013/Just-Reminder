@@ -3,17 +3,17 @@ package com.cray.software.justreminder.dialogs;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.roboto_views.RoboButton;
+import com.cray.software.justreminder.roboto_views.RoboRadioButton;
 
 public class MarkerStyle extends Activity implements View.OnClickListener{
-    private RadioButton red, green, blue, yellow, greenLight, blueLight, cyan, purple,
+    private RoboRadioButton red, green, blue, yellow, greenLight, blueLight, cyan, purple,
             amber, orange, pink, teal, deepPurple, deepOrange, indigo, lime;
     private RadioGroup themeGroup, themeGroup2, themeGroup3, themeGroup4;
     private SharedPrefs sPrefs;
@@ -25,25 +25,25 @@ public class MarkerStyle extends Activity implements View.OnClickListener{
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.marker_style_layout);
 
-        TextView themeClose = (TextView) findViewById(R.id.themeClose);
+        RoboButton themeClose = (RoboButton) findViewById(R.id.themeClose);
         themeClose.setOnClickListener(this);
 
-        red = (RadioButton) findViewById(R.id.redCheck);
-        green = (RadioButton) findViewById(R.id.greenCheck);
-        blue = (RadioButton) findViewById(R.id.blueCheck);
-        yellow = (RadioButton) findViewById(R.id.yellowCheck);
-        greenLight = (RadioButton) findViewById(R.id.greenLightCheck);
-        blueLight = (RadioButton) findViewById(R.id.blueLightCheck);
-        cyan = (RadioButton) findViewById(R.id.cyanCheck);
-        purple = (RadioButton) findViewById(R.id.purpleCheck);
-        amber = (RadioButton) findViewById(R.id.amberCheck);
-        orange = (RadioButton) findViewById(R.id.orangeCheck);
-        pink = (RadioButton) findViewById(R.id.pinkCheck);
-        teal = (RadioButton) findViewById(R.id.tealCheck);
-        deepPurple = (RadioButton) findViewById(R.id.deepPurpleCheck);
-        deepOrange = (RadioButton) findViewById(R.id.deepOrangeCheck);
-        indigo = (RadioButton) findViewById(R.id.indigoCheck);
-        lime = (RadioButton) findViewById(R.id.limeCheck);
+        red = (RoboRadioButton) findViewById(R.id.redCheck);
+        green = (RoboRadioButton) findViewById(R.id.greenCheck);
+        blue = (RoboRadioButton) findViewById(R.id.blueCheck);
+        yellow = (RoboRadioButton) findViewById(R.id.yellowCheck);
+        greenLight = (RoboRadioButton) findViewById(R.id.greenLightCheck);
+        blueLight = (RoboRadioButton) findViewById(R.id.blueLightCheck);
+        cyan = (RoboRadioButton) findViewById(R.id.cyanCheck);
+        purple = (RoboRadioButton) findViewById(R.id.purpleCheck);
+        amber = (RoboRadioButton) findViewById(R.id.amberCheck);
+        orange = (RoboRadioButton) findViewById(R.id.orangeCheck);
+        pink = (RoboRadioButton) findViewById(R.id.pinkCheck);
+        teal = (RoboRadioButton) findViewById(R.id.tealCheck);
+        deepPurple = (RoboRadioButton) findViewById(R.id.deepPurpleCheck);
+        deepOrange = (RoboRadioButton) findViewById(R.id.deepOrangeCheck);
+        indigo = (RoboRadioButton) findViewById(R.id.indigoCheck);
+        lime = (RoboRadioButton) findViewById(R.id.limeCheck);
 
         themeGroup = (RadioGroup) findViewById(R.id.themeGroup);
         themeGroup2 = (RadioGroup) findViewById(R.id.themeGroup2);

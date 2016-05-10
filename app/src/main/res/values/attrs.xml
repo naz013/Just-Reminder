@@ -67,16 +67,6 @@
         <attr name="paper_shadow_color" format="color"/>
     </declare-styleable>
 
-    <!-- FloatingEditText Attribute -->
-    <declare-styleable name="FloatingEditText">
-        <attr name="floating_edit_text_hint_scale" format="float"/>
-        <attr name="floating_edit_text_color" format="color"/>
-        <attr name="floating_edit_text_highlighted_color" format="color"/>
-        <attr name="floating_edit_text_error_color" format="color"/>
-        <attr name="floating_edit_text_underline_height" format="dimension"/>
-        <attr name="floating_edit_text_underline_highlighted_height" format="dimension"/>
-    </declare-styleable>
-
     <declare-styleable name="RoboTextView">
         <attr name="font_style" format="enum">
             <enum name="roboto_black" value="0"/>

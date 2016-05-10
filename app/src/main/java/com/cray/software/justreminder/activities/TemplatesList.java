@@ -26,6 +26,7 @@ import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.ReturnScrollListener;
@@ -59,7 +60,7 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
         emptyItem = (LinearLayout) findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
 
-        TextView emptyText = (TextView) findViewById(R.id.emptyText);
+        RoboTextView emptyText = (RoboTextView) findViewById(R.id.emptyText);
         emptyText.setText(R.string.no_messages);
 
         ImageView emptyImage = (ImageView) findViewById(R.id.emptyImage);
