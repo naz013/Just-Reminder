@@ -28,14 +28,14 @@ import java.util.ArrayList;
 
 public class EventsListFragment extends Fragment implements SimpleListener {
 
-    private ArrayList<EventsItem> datas;
+    private ArrayList<EventsItem> mDataList;
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
-    private RecyclerView listView;
-    private LinearLayout emptyItem;
+    private RecyclerView mEventsList;
+    private LinearLayout mEmptyItem;
     private boolean isCreate = false;
 
     public void setData(ArrayList<EventsItem> datas){
-        this.datas = datas;
+        this.mDataList = new ArrayList<>(datas);
     }
 
     public static EventsListFragment newInstance(int page) {
@@ -56,8 +56,8 @@ public class EventsListFragment extends Fragment implements SimpleListener {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.birthdays_list_fragment, container, false);
 
-        emptyItem = (LinearLayout) view.findViewById(R.id.emptyItem);
-        emptyItem.setVisibility(View.VISIBLE);
+        mEmptyItem = (LinearLayout) view.findViewById(R.id.emptyItem);
+        mEmptyItem.setVisibility(View.VISIBLE);
 
         TextView emptyText = (TextView) view.findViewById(R.id.emptyText);
         emptyText.setText(getString(R.string.no_events));
@@ -68,7 +68,7 @@ public class EventsListFragment extends Fragment implements SimpleListener {
         else
             emptyImage.setImageResource(R.drawable.today);
 
-        listView = (RecyclerView) view.findViewById(R.id.currentList);
+        mEventsList = (RecyclerView) view.findViewById(R.id.currentList);
 
         loaderAdapter();
         isCreate = true;
@@ -84,44 +84,44 @@ public class EventsListFragment extends Fragment implements SimpleListener {
     }
 
     public void loaderAdapter(){
-        CalendarEventsAdapter customAdapter = new CalendarEventsAdapter(getActivity(), datas);
+        CalendarEventsAdapter customAdapter = new CalendarEventsAdapter(getActivity(), mDataList);
         customAdapter.setmEventListener(this);
-        listView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        listView.setItemAnimator(new DefaultItemAnimator());
-        listView.setAdapter(customAdapter);
+        mEventsList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mEventsList.setItemAnimator(new DefaultItemAnimator());
+        mEventsList.setAdapter(customAdapter);
         reloadView();
     }
 
     private void reloadView() {
-        int size = datas.size();
+        int size = mDataList != null ? mDataList.size() : 0;
         if (size > 0){
-            listView.setVisibility(View.VISIBLE);
-            emptyItem.setVisibility(View.GONE);
+            mEventsList.setVisibility(View.VISIBLE);
+            mEmptyItem.setVisibility(View.GONE);
         } else {
-            listView.setVisibility(View.GONE);
-            emptyItem.setVisibility(View.VISIBLE);
+            mEventsList.setVisibility(View.GONE);
+            mEmptyItem.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public void onItemClicked(int position, View view) {
-        if (datas.get(position).getType().matches("birthday")) {
+        if (mDataList.get(position).getType().matches("birthday")) {
             startActivity(new Intent(getActivity(), AddBirthday.class)
-                    .putExtra("BDid", datas.get(position).getId())
+                    .putExtra("BDid", mDataList.get(position).getId())
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         } else {
-            Reminder.edit(datas.get(position).getId(), getActivity());
+            Reminder.edit(mDataList.get(position).getId(), getActivity());
         }
     }
 
     @Override
     public void onItemLongClicked(int position, View view) {
-        if (datas.get(position).getType().matches("birthday")) {
+        if (mDataList.get(position).getType().matches("birthday")) {
             DataBase db = new DataBase(getActivity());
             db.open();
-            db.deleteBirthday(datas.get(position).getId());
+            db.deleteBirthday(mDataList.get(position).getId());
             db.close();
-            datas.remove(position);
+            mDataList.remove(position);
             loaderAdapter();
             Messages.toast(getActivity(), getString(R.string.deleted));
         }

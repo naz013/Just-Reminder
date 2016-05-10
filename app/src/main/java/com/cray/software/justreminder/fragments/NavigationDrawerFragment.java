@@ -343,7 +343,6 @@ public class NavigationDrawerFragment extends Fragment implements
                             mCallbacks.onItemSelected(tag);
                         } catch (NullPointerException e){
                             e.printStackTrace();
-                            mCallbacks.onItemSelected(ScreenManager.FRAGMENT_ACTIVE);
                         }
                     } else {
                         mCallbacks.onItemSelected(ScreenManager.FRAGMENT_ACTIVE);
