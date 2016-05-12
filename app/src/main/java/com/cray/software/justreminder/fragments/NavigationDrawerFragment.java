@@ -202,7 +202,7 @@ public class NavigationDrawerFragment extends Fragment implements
         Picasso.with(getActivity())
                 .load(R.drawable.photo_main)
                 .resize((int) width, height)
-                .transform(new BlurTransformation(getActivity(), 20, 2))
+                //.transform(new BlurTransformation(getActivity(), 15, 2))
                 .into(image);
         image.setVisibility(View.VISIBLE);
 
@@ -413,7 +413,6 @@ public class NavigationDrawerFragment extends Fragment implements
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        // Forward the new configuration the drawer toggle component.
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
@@ -467,7 +466,6 @@ public class NavigationDrawerFragment extends Fragment implements
     public void onResume() {
         super.onResume();
         reloadItems();
-
         if (mCallbacks != null) {
             mCallbacks.onItemSelected(mCurrentSelectedPosition);
         }
