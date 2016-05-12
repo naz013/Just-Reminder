@@ -37,7 +37,7 @@
                     android:text="@string/app_name"
                     android:textColor="@color/whitePrimary"
                     android:textSize="25sp"
-                    app:font_style="roboto_light" />
+                    app:font_style="roboto_thin" />
 
             </RelativeLayout>
 
@@ -55,7 +55,8 @@
                 android:paddingTop="16dp"
                 android:text="@string/tasks"
                 android:textSize="@dimen/main_drawer_fragment_settings_t_size"
-                android:visibility="visible" />
+                android:visibility="visible"
+                app:font_style="roboto_light" />
 
             <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/notes"
@@ -71,7 +72,8 @@
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:text="@string/notes"
                 android:textSize="@dimen/main_drawer_fragment_settings_t_size"
-                android:visibility="visible" />
+                android:visibility="visible"
+                app:font_style="roboto_light" />
 
             <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/googleTasks"
@@ -87,7 +89,8 @@
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:text="@string/google_tasks"
                 android:textSize="@dimen/main_drawer_fragment_settings_t_size"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:font_style="roboto_light" />
 
             <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/calendar"
@@ -103,7 +106,8 @@
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:text="@string/calendar"
                 android:textSize="@dimen/main_drawer_fragment_settings_t_size"
-                android:visibility="visible" />
+                android:visibility="visible"
+                app:font_style="roboto_light" />
 
             <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/geoScreen"
@@ -119,7 +123,8 @@
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:text="@string/directions"
                 android:textSize="@dimen/main_drawer_fragment_settings_t_size"
-                android:visibility="visible" />
+                android:visibility="visible"
+                app:font_style="roboto_light" />
 
             <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/categories"
@@ -135,7 +140,8 @@
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:text="@string/groups"
                 android:textSize="@dimen/main_drawer_fragment_settings_t_size"
-                android:visibility="visible" />
+                android:visibility="visible"
+                app:font_style="roboto_light" />
 
             <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/places"
@@ -151,7 +157,8 @@
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:text="@string/places"
                 android:textSize="@dimen/main_drawer_fragment_settings_t_size"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:font_style="roboto_light" />
 
             <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/templates"
@@ -167,7 +174,8 @@
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:text="@string/messages"
                 android:textSize="@dimen/main_drawer_fragment_settings_t_size"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:font_style="roboto_light" />
 
             <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/manageBackup"
@@ -183,7 +191,8 @@
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:text="@string/backup_files"
                 android:textSize="@dimen/main_drawer_fragment_settings_t_size"
-                android:visibility="visible" />
+                android:visibility="visible"
+                app:font_style="roboto_light" />
 
             <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/archiveScreen"
@@ -199,7 +208,8 @@
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:text="@string/trash"
                 android:textSize="@dimen/main_drawer_fragment_settings_t_size"
-                android:visibility="visible" />
+                android:visibility="visible"
+                app:font_style="roboto_light" />
 
             <com.cray.software.justreminder.roboto_views.RoboTextView
                 android:id="@+id/settings"
@@ -215,7 +225,8 @@
                 android:paddingTop="@dimen/main_drawer_fragment_main_p_top"
                 android:text="@string/action_settings"
                 android:textSize="@dimen/main_drawer_fragment_settings_t_size"
-                android:visibility="visible" />
+                android:visibility="visible"
+                app:font_style="roboto_light" />
 
             <View
                 android:layout_width="fill_parent"
