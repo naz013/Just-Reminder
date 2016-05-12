@@ -481,7 +481,9 @@ public class GDriveHelper {
      */
     public void deleteReminder(String title){
         String[] strs = title.split(".");
-        title = strs[0];
+        if (strs.length != 0) {
+            title = strs[0];
+        }
         if (isLinked()) {
             authorize();
             Drive.Files.List request = null;
@@ -522,7 +524,9 @@ public class GDriveHelper {
      */
     public void deleteNote (String title){
         String[] strs = title.split(".");
-        title = strs[0];
+        if (strs.length != 0) {
+            title = strs[0];
+        }
         if (isLinked()) {
             authorize();
             Drive.Files.List request = null;
@@ -563,7 +567,9 @@ public class GDriveHelper {
      */
     public void deleteGroup (String title){
         String[] strs = title.split(".");
-        title = strs[0];
+        if (strs.length != 0) {
+            title = strs[0];
+        }
         if (isLinked()) {
             authorize();
             Drive.Files.List request = null;
@@ -604,7 +610,9 @@ public class GDriveHelper {
      */
     public void deleteBirthday(String title){
         String[] strs = title.split(".");
-        title = strs[0];
+        if (strs.length != 0) {
+            title = strs[0];
+        }
         if (isLinked()) {
             authorize();
             Drive.Files.List request = null;
@@ -656,7 +664,6 @@ public class GDriveHelper {
     public void clean(){
         if (isLinked()) {
             authorize();
-
             Drive.Files.List requestF = null;
             try {
                 requestF = driveService.files().list().setQ("mimeType = 'application/vnd.google-apps.folder'");
