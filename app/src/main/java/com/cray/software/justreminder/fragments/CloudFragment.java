@@ -67,6 +67,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
+
 public class CloudFragment extends Fragment implements SimpleListener, SyncListener, DataListener {
 
     private static final String TYPE = "window_type";
@@ -280,7 +282,7 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
         File dir = MemoryUtil.getImagesDir();
         File image = new File(dir, FILE_NAME);
         if (image.exists()) {
-            Picasso.with(getActivity()).load(image).into(userPhoto);
+            Picasso.with(getActivity()).load(image).transform(new CropCircleTransformation()).into(userPhoto);
             userPhoto.setVisibility(View.VISIBLE);
         } else {
             new Thread(new Runnable() {
