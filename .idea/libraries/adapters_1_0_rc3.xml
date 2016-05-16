@@ -7,7 +7,6 @@
     <JAVADOC />
     <SOURCES>
       <root url="jar://$USER_HOME$/AppData/Local/Android/sdk/extras/android/m2repository/com/android/databinding/adapters/1.0-rc3/adapters-1.0-rc3-sources.jar!/" />
-      <root url="jar://D:/android-sdk-windows/extras/android/m2repository/com/android/databinding/adapters/1.0-rc3/adapters-1.0-rc3-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

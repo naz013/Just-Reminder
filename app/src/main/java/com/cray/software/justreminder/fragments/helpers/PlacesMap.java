@@ -62,6 +62,7 @@ import com.cray.software.justreminder.utils.ViewUtils;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -80,7 +81,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     /**
      * UI elements;
      */
-    private GoogleMap map;
+    private GoogleMap mMap;
     private CardView layersContainer;
     private CardView styleCard;
     private CardView placesListCard;
@@ -105,28 +106,48 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     private boolean isDark = false;
     private int mRadius = -1;
     private int markerStyle = -1;
+    private int mMapType = GoogleMap.MAP_TYPE_NORMAL;
     private double mLat, mLng;
 
     /**
      * UI helper class;
      */
-    private ColorSetter cSetter;
+    private ColorSetter mColor;
 
     /**
      * Arrays of place search results;
      */
-    private PlacesTask placesTask;
+    private PlacesTask mPlacesAsync;
     private LocationManager mLocationManager;
     private LocationListener mLocList;
 
     /**
      * MapListener link;
      */
-    private MapListener listener;
+    private MapListener mMapListener;
 
     public static final String ENABLE_ZOOM = "enable_zoom";
     public static final String MARKER_STYLE = "marker_style";
     public static final String THEME_MODE = "theme_mode";
+
+    private OnMapReadyCallback mMapCallback = new OnMapReadyCallback() {
+        @Override
+        public void onMapReady(GoogleMap googleMap) {
+            mMap = googleMap;
+            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            mMap.getUiSettings().setCompassEnabled(true);
+            mMap.setMapType(mMapType);
+            setMyLocation();
+            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng latLng) {
+                    hideLayers();
+                    hidePlaces();
+                    hideStyles();
+                }
+            });
+        }
+    };
 
     public static PlacesMap newInstance(boolean isZoom, boolean isDark) {
         PlacesMap fragment = new PlacesMap();
@@ -156,7 +177,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
      * @param listener listener for map fragment
      */
     public void setListener(MapListener listener) {
-        this.listener = listener;
+        this.mMapListener = listener;
     }
 
     /**
@@ -184,26 +205,26 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
      * @param radius radius for circle around marker
      */
     public void addMarker(LatLng pos, String title, boolean clear, boolean animate, int radius) {
-        if (map != null && pos != null) {
+        if (mMap != null && pos != null) {
             if (pos.latitude == 0.0 && pos.longitude == 0.0) return;
             mRadius = radius;
             if (mRadius == -1) {
                 mRadius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
             }
             if (clear) {
-                map.clear();
+                mMap.clear();
             }
             if (title == null || title.matches("")) {
                 title = pos.toString();
             }
-            map.addMarker(new MarkerOptions()
+            mMap.addMarker(new MarkerOptions()
                     .position(pos)
                     .title(title)
-                    .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle(markerStyle)))
+                    .icon(BitmapDescriptorFactory.fromResource(mColor.getMarkerStyle(markerStyle)))
                     .draggable(clear));
-            int[] circleColors = cSetter.getMarkerRadiusStyle(markerStyle);
+            int[] circleColors = mColor.getMarkerRadiusStyle(markerStyle);
             float strokeWidth = 3f;
-            map.addCircle(new CircleOptions()
+            mMap.addCircle(new CircleOptions()
                     .center(pos)
                     .radius(mRadius)
                     .strokeWidth(strokeWidth)
@@ -224,7 +245,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         if (mRadius == -1) {
             mRadius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
         }
-        if (map != null) {
+        if (mMap != null) {
             addMarkers();
         }
     }
@@ -235,7 +256,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
      */
     public void recreateStyle(int style) {
         markerStyle = style;
-        if (map != null) {
+        if (mMap != null) {
             addMarkers();
         }
     }
@@ -245,7 +266,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
      * @param list list of objects.
      */
     public void addMarkers(ArrayList<JPlace> list) {
-        map.clear();
+        mMap.clear();
         toModels(list);
         refreshAdapter(false);
     }
@@ -255,8 +276,8 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
      */
     public void animate(LatLng latLng) {
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latLng, 13);
-        if (map != null) {
-            map.animateCamera(update);
+        if (mMap != null) {
+            mMap.animateCamera(update);
         }
     }
 
@@ -321,35 +342,17 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         initArgs();
-
         View view = inflater.inflate(R.layout.fragment_places_map, container, false);
-
         final SharedPrefs prefs = new SharedPrefs(getActivity());
-        cSetter = new ColorSetter(getActivity());
-
         mRadius = prefs.loadInt(Prefs.LOCATION_RADIUS);
-        isDark = new ColorSetter(getActivity()).isDark();
+        mMapType = prefs.loadInt(Prefs.MAP_TYPE);
 
-        map = ((SupportMapFragment) getChildFragmentManager()
-                .findFragmentById(R.id.map)).getMap();
-        map.getUiSettings().setMyLocationButtonEnabled(false);
-        map.getUiSettings().setCompassEnabled(true);
-        int type = prefs.loadInt(Prefs.MAP_TYPE);
-        map.setMapType(type);
+        mColor = new ColorSetter(getActivity());
+        isDark = mColor.isDark();
 
-        setMyLocation();
-
-        map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                hideLayers();
-                hidePlaces();
-                hideStyles();
-            }
-        });
+        ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMapAsync(mMapCallback);
 
         initViews(view);
-
         cardSearch = (RoboEditText) view.findViewById(R.id.cardSearch);
         cardSearch.setHint(R.string.search_place);
         cardSearch.addTextChangedListener(new TextWatcher() {
@@ -409,18 +412,18 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         placesListCard.setVisibility(View.GONE);
         styleCard.setVisibility(View.GONE);
 
-        zoomCard.setCardBackgroundColor(cSetter.getCardStyle());
-        searchCard.setCardBackgroundColor(cSetter.getCardStyle());
-        layersCard.setCardBackgroundColor(cSetter.getCardStyle());
-        placesCard.setCardBackgroundColor(cSetter.getCardStyle());
-        styleCard.setCardBackgroundColor(cSetter.getCardStyle());
-        placesListCard.setCardBackgroundColor(cSetter.getCardStyle());
-        markersCard.setCardBackgroundColor(cSetter.getCardStyle());
-        backCard.setCardBackgroundColor(cSetter.getCardStyle());
+        zoomCard.setCardBackgroundColor(mColor.getCardStyle());
+        searchCard.setCardBackgroundColor(mColor.getCardStyle());
+        layersCard.setCardBackgroundColor(mColor.getCardStyle());
+        placesCard.setCardBackgroundColor(mColor.getCardStyle());
+        styleCard.setCardBackgroundColor(mColor.getCardStyle());
+        placesListCard.setCardBackgroundColor(mColor.getCardStyle());
+        markersCard.setCardBackgroundColor(mColor.getCardStyle());
+        backCard.setCardBackgroundColor(mColor.getCardStyle());
 
         layersContainer = (CardView) view.findViewById(R.id.layersContainer);
         layersContainer.setVisibility(View.GONE);
-        layersContainer.setCardBackgroundColor(cSetter.getCardStyle());
+        layersContainer.setCardBackgroundColor(mColor.getCardStyle());
 
         if (Module.isLollipop()) {
             zoomCard.setCardElevation(Configs.CARD_ELEVATION);
@@ -434,7 +437,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
             backCard.setCardElevation(Configs.CARD_ELEVATION);
         }
 
-        int style = cSetter.getCardStyle();
+        int style = mColor.getCardStyle();
         zoomCard.setCardBackgroundColor(style);
         searchCard.setCardBackgroundColor(style);
         layersContainer.setCardBackgroundColor(style);
@@ -529,8 +532,8 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     }
 
     private void setMapType(int type) {
-        if (map != null) {
-            map.setMapType(type);
+        if (mMap != null) {
+            mMap.setMapType(type);
             new SharedPrefs(getActivity()).saveInt(Prefs.MAP_TYPE, type);
             ViewUtils.hideOver(layersContainer);
         }
@@ -547,7 +550,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
                     Permissions.ACCESS_FINE_LOCATION,
                     Permissions.ACCESS_COARSE_LOCATION);
         } else {
-            map.setMyLocationEnabled(true);
+            mMap.setMyLocationEnabled(true);
         }
     }
 
@@ -555,13 +558,13 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         String req = cardSearch.getText().toString().trim().toLowerCase();
         if (req.matches("")) return;
         cancelSearchTask();
-        placesTask = new PlacesTask(this, req, mLat, mLng);
-        placesTask.execute();
+        mPlacesAsync = new PlacesTask(this, req, mLat, mLng);
+        mPlacesAsync.execute();
     }
 
     private void cancelSearchTask() {
-        if (placesTask != null && !placesTask.isCancelled()) {
-            placesTask.cancel(true);
+        if (mPlacesAsync != null && !mPlacesAsync.isCancelled()) {
+            mPlacesAsync.cancel(true);
         }
     }
 
@@ -622,7 +625,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     }
 
     private void addMarkers() {
-        map.clear();
+        mMap.clear();
         if (spinnerArray != null && spinnerArray.size() > 0) {
             for (PlaceModel model : spinnerArray) {
                 addMarker(model.getPosition(), model.getName(), false, false, mRadius);
@@ -700,8 +703,8 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
 
     private void zoomClick() {
         isFullscreen = !isFullscreen;
-        if (listener != null) {
-            listener.onZoomClick(isFullscreen);
+        if (mMapListener != null) {
+            mMapListener.onZoomClick(isFullscreen);
         }
         if (isFullscreen) {
             if (isDark) zoomOut.setImageResource(R.drawable.ic_arrow_downward_white_24dp);

@@ -44,8 +44,8 @@ import com.cray.software.justreminder.views.DateTimeView;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class WeekFragment extends BaseFragment implements
-        CompoundButton.OnCheckedChangeListener, TimePickerDialog.OnTimeSetListener {
+public class WeekFragment extends BaseFragment implements CompoundButton.OnCheckedChangeListener,
+        TimePickerDialog.OnTimeSetListener {
 
     private ActionView.OnActionListener mCallbacks;
     private DateTimeView.OnSelectListener mListener;
@@ -175,8 +175,9 @@ public class WeekFragment extends BaseFragment implements
 
             timeField.setText(TimeUtil.getTime(updateTime(eventTime, true),
                     new SharedPrefs(getActivity()).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-
-            setCheckForDays(weekdays);
+            if (weekdays.size() > 0) {
+                setCheckForDays(weekdays);
+            }
 
             if (type.matches(Constants.TYPE_WEEKDAY)) {
                 actionView.setAction(false);

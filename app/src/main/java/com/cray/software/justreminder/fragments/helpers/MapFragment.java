@@ -17,9 +17,13 @@
 package com.cray.software.justreminder.fragments.helpers;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.Address;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -63,6 +67,7 @@ import com.cray.software.justreminder.utils.ViewUtils;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -82,7 +87,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     /**
      * UI elements;
      */
-    private GoogleMap map;
+    private GoogleMap mMap;
     private CardView layersContainer;
     private CardView styleCard;
     private CardView placesListCard;
@@ -99,7 +104,6 @@ public class MapFragment extends Fragment implements View.OnClickListener {
      * Array of user frequently used places;
      */
     private ArrayList<String> spinnerArray = new ArrayList<>();
-
     private PlaceRecyclerAdapter placeRecyclerAdapter;
 
     /**
@@ -116,21 +120,22 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     private String markerTitle;
     private int markerRadius = -1;
     private int markerStyle = -1;
+    private int mMapType = GoogleMap.MAP_TYPE_NORMAL;
     private LatLng lastPos;
     private float strokeWidth = 3f;
 
     /**
      * UI helper class;
      */
-    private ColorSetter cSetter;
+    private ColorSetter mColor;
 
     /**
      * Arrays of place search results;
      */
-    private List<Address> foundPlaces;
-    private ArrayAdapter<String> adapter;
-    private GeocoderTask task;
-    private ArrayList<String> namesList;
+    private List<Address> mFoundPlaces;
+    private ArrayAdapter<String> mAdapter;
+    private GeocoderTask mAddressTask;
+    private ArrayList<String> mAddressNames;
 
     /**
      * MapListener link;
@@ -145,6 +150,32 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     public static final String ENABLE_ZOOM = "enable_zoom";
     public static final String MARKER_STYLE = "marker_style";
     public static final String THEME_MODE = "theme_mode";
+
+    private OnMapReadyCallback mMapCallback = new OnMapReadyCallback() {
+        @Override
+        public void onMapReady(GoogleMap googleMap) {
+            mMap = googleMap;
+            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            mMap.getUiSettings().setCompassEnabled(true);
+            mMap.setMapType(mMapType);
+            setMyLocation();
+            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng latLng) {
+                    hideLayers();
+                    hidePlaces();
+                    hideStyles();
+                    if (isTouch) {
+                        addMarker(latLng, markerTitle, true, true, markerRadius);
+                    }
+                }
+            });
+
+            if (lastPos != null) {
+                addMarker(lastPos, lastPos.toString(), true, false, markerRadius);
+            }
+        }
+    };
 
     public static MapFragment newInstance(boolean isTouch, boolean isPlaces,
                                           boolean isSearch, boolean isStyles,
@@ -233,22 +264,22 @@ public class MapFragment extends Fragment implements View.OnClickListener {
      * @param radius radius for circle around marker
      */
     public void addMarker(LatLng pos, String title, boolean clear, boolean animate, int radius) {
-        if (map != null) {
+        if (mMap != null) {
             markerRadius = radius;
             if (markerRadius == -1)
                 markerRadius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
-            if (clear) map.clear();
+            if (clear) mMap.clear();
             if (title == null || title.matches("")) title = pos.toString();
             if (!Module.isPro()) markerStyle = 5;
             lastPos = pos;
             if (listener != null) listener.placeChanged(pos);
-            map.addMarker(new MarkerOptions()
+            mMap.addMarker(new MarkerOptions()
                     .position(pos)
                     .title(title)
-                    .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle(markerStyle)))
+                    .icon(BitmapDescriptorFactory.fromResource(mColor.getMarkerStyle(markerStyle)))
                     .draggable(clear));
-            int[] circleColors = cSetter.getMarkerRadiusStyle(markerStyle);
-            map.addCircle(new CircleOptions()
+            int[] circleColors = mColor.getMarkerRadiusStyle(markerStyle);
+            mMap.addCircle(new CircleOptions()
                     .center(pos)
                     .radius(markerRadius)
                     .strokeWidth(strokeWidth)
@@ -268,25 +299,25 @@ public class MapFragment extends Fragment implements View.OnClickListener {
      * @param radius radius for circle around marker
      */
     public void addMarker(LatLng pos, String title, boolean clear, int markerStyle, boolean animate, int radius) {
-        if (map != null) {
+        if (mMap != null) {
             markerRadius = radius;
             if (markerRadius == -1) {
                 markerRadius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
             }
             if (!Module.isPro()) markerStyle = 5;
             this.markerStyle = markerStyle;
-            if (clear) map.clear();
+            if (clear) mMap.clear();
             if (title == null || title.matches(""))
                 title = pos.toString();
             lastPos = pos;
             if (listener != null) listener.placeChanged(pos);
-            map.addMarker(new MarkerOptions()
+            mMap.addMarker(new MarkerOptions()
                     .position(pos)
                     .title(title)
-                    .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle(markerStyle)))
+                    .icon(BitmapDescriptorFactory.fromResource(mColor.getMarkerStyle(markerStyle)))
                     .draggable(clear));
-            int[] circleColors = cSetter.getMarkerRadiusStyle(markerStyle);
-            map.addCircle(new CircleOptions()
+            int[] circleColors = mColor.getMarkerRadiusStyle(markerStyle);
+            mMap.addCircle(new CircleOptions()
                     .center(pos)
                     .radius(markerRadius)
                     .strokeWidth(strokeWidth)
@@ -306,19 +337,19 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         markerRadius = radius;
         if (markerRadius == -1)
             markerRadius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
-        if (map != null && lastPos != null) {
-            map.clear();
+        if (mMap != null && lastPos != null) {
+            mMap.clear();
             if (markerTitle == null || markerTitle.matches(""))
                 markerTitle = lastPos.toString();
             if (listener != null) listener.placeChanged(lastPos);
             if (!Module.isPro()) markerStyle = 5;
-            map.addMarker(new MarkerOptions()
+            mMap.addMarker(new MarkerOptions()
                     .position(lastPos)
                     .title(markerTitle)
-                    .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle(markerStyle)))
+                    .icon(BitmapDescriptorFactory.fromResource(mColor.getMarkerStyle(markerStyle)))
                     .draggable(true));
-            int[] circleColors = cSetter.getMarkerRadiusStyle(markerStyle);
-            map.addCircle(new CircleOptions()
+            int[] circleColors = mColor.getMarkerRadiusStyle(markerStyle);
+            mMap.addCircle(new CircleOptions()
                     .center(lastPos)
                     .radius(markerRadius)
                     .strokeWidth(strokeWidth)
@@ -334,23 +365,23 @@ public class MapFragment extends Fragment implements View.OnClickListener {
      */
     public void recreateStyle(int style) {
         markerStyle = style;
-        if (map != null && lastPos != null) {
-            map.clear();
+        if (mMap != null && lastPos != null) {
+            mMap.clear();
             if (markerTitle == null || markerTitle.matches(""))
                 markerTitle = lastPos.toString();
             if (listener != null) listener.placeChanged(lastPos);
             if (!Module.isPro()) markerStyle = 5;
-            map.addMarker(new MarkerOptions()
+            mMap.addMarker(new MarkerOptions()
                     .position(lastPos)
                     .title(markerTitle)
-                    .icon(BitmapDescriptorFactory.fromResource(cSetter.getMarkerStyle(markerStyle)))
+                    .icon(BitmapDescriptorFactory.fromResource(mColor.getMarkerStyle(markerStyle)))
                     .draggable(true));
             if (markerStyle >= 0) {
-                int[] circleColors = cSetter.getMarkerRadiusStyle(markerStyle);
+                int[] circleColors = mColor.getMarkerRadiusStyle(markerStyle);
                 if (markerRadius == -1) {
                     markerRadius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
                 }
-                map.addCircle(new CircleOptions()
+                mMap.addCircle(new CircleOptions()
                         .center(lastPos)
                         .radius(markerRadius)
                         .strokeWidth(strokeWidth)
@@ -366,7 +397,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
      * @param pos coordinates
      */
     public void moveCamera(LatLng pos) {
-        if (map != null) animate(pos);
+        if (mMap != null) animate(pos);
     }
 
     /**
@@ -375,18 +406,21 @@ public class MapFragment extends Fragment implements View.OnClickListener {
      */
     public void animate(LatLng latLng) {
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latLng, 13);
-        if (map != null) map.animateCamera(update);
+        if (mMap != null) mMap.animateCamera(update);
     }
 
     /**
      * Move camera to user current coordinates with animation;
      */
     public void moveToMyLocation() {
-        if (map != null && map.getMyLocation() != null) {
-            double lat = map.getMyLocation().getLatitude();
-            double lon = map.getMyLocation().getLongitude();
-            LatLng pos = new LatLng(lat, lon);
-            animate(pos);
+        if (mMap != null) {
+            LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+            Criteria criteria = new Criteria();
+            Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+            if (location != null) {
+                LatLng pos = new LatLng(location.getLatitude(), location.getLongitude());
+                animate(pos);
+            }
         }
     }
 
@@ -418,6 +452,9 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     }
 
     public void showShowcase() {
+        if (getActivity() == null) {
+            return;
+        }
         if (!new SharedPrefs(getActivity()).loadBoolean(HAS_SHOWCASE) && isBack) {
             ColorSetter coloring = new ColorSetter(getActivity());
             ShowcaseConfig config = new ShowcaseConfig();
@@ -470,48 +507,24 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         initArgs();
-
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-
         final SharedPrefs prefs = new SharedPrefs(getActivity());
-        cSetter = new ColorSetter(getActivity());
-
         markerRadius = prefs.loadInt(Prefs.LOCATION_RADIUS);
-        isDark = new ColorSetter(getActivity()).isDark();
-        if (!Module.isPro()) markerStyle = prefs.loadInt(Prefs.MARKER_STYLE);
-
-        map = ((SupportMapFragment) getChildFragmentManager()
-                .findFragmentById(R.id.map)).getMap();
-        map.getUiSettings().setMyLocationButtonEnabled(false);
-        map.getUiSettings().setCompassEnabled(true);
-        int type = prefs.loadInt(Prefs.MAP_TYPE);
-        map.setMapType(type);
-
-        setMyLocation();
-
-        map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                hideLayers();
-                hidePlaces();
-                hideStyles();
-                if (isTouch) {
-                    addMarker(latLng, markerTitle, true, true, markerRadius);
-                }
-            }
-        });
-
-        if (lastPos != null) {
-            addMarker(lastPos, lastPos.toString(), true, false, markerRadius);
+        mMapType = prefs.loadInt(Prefs.MAP_TYPE);
+        if (!Module.isPro()) {
+            markerStyle = prefs.loadInt(Prefs.MARKER_STYLE);
         }
 
-        initViews(view);
+        mColor = new ColorSetter(getActivity());
+        isDark = mColor.isDark();
 
+        ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMapAsync(mMapCallback);
+        initViews(view);
         cardSearch = (AutoCompleteTextView) view.findViewById(R.id.cardSearch);
         cardSearch.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_search_white_24dp, 0, 0, 0);
         cardSearch.setThreshold(3);
-        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, namesList);
-        adapter.setNotifyOnChange(true);
+        mAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, mAddressNames);
+        mAdapter.setNotifyOnChange(true);
         cardSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -520,30 +533,30 @@ public class MapFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (task != null && !task.isCancelled()) {
-                    task.cancel(true);
+                if (mAddressTask != null && !mAddressTask.isCancelled()) {
+                    mAddressTask.cancel(true);
                 }
                 if (s.length() != 0) {
-                    task = new GeocoderTask(getActivity(), new GeocoderTask.GeocoderListener() {
+                    mAddressTask = new GeocoderTask(getActivity(), new GeocoderTask.GeocoderListener() {
                         @Override
                         public void onAddressReceived(List<Address> addresses) {
-                            foundPlaces = addresses;
+                            mFoundPlaces = addresses;
 
-                            namesList = new ArrayList<>();
-                            namesList.clear();
+                            mAddressNames = new ArrayList<>();
+                            mAddressNames.clear();
                             for (Address selected : addresses) {
                                 String addressText = String.format("%s, %s%s",
                                         selected.getMaxAddressLineIndex() > 0 ? selected.getAddressLine(0) : "",
                                         selected.getMaxAddressLineIndex() > 1 ? selected.getAddressLine(1) + ", " : "",
                                         selected.getCountryName());
-                                namesList.add(addressText);
+                                mAddressNames.add(addressText);
                             }
-                            adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, namesList);
-                            cardSearch.setAdapter(adapter);
-                            adapter.notifyDataSetChanged();
+                            mAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, mAddressNames);
+                            cardSearch.setAdapter(mAdapter);
+                            mAdapter.notifyDataSetChanged();
                         }
                     });
-                    task.execute(s.toString());
+                    mAddressTask.execute(s.toString());
                 }
             }
 
@@ -555,7 +568,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         cardSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Address sel = foundPlaces.get(position);
+                Address sel = mFoundPlaces.get(position);
                 double lat = sel.getLatitude();
                 double lon = sel.getLongitude();
                 LatLng pos = new LatLng(lat, lon);
@@ -596,19 +609,19 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         placesListCard.setVisibility(View.GONE);
         styleCard.setVisibility(View.GONE);
 
-        zoomCard.setCardBackgroundColor(cSetter.getCardStyle());
-        searchCard.setCardBackgroundColor(cSetter.getCardStyle());
-        myCard.setCardBackgroundColor(cSetter.getCardStyle());
-        layersCard.setCardBackgroundColor(cSetter.getCardStyle());
-        placesCard.setCardBackgroundColor(cSetter.getCardStyle());
-        styleCard.setCardBackgroundColor(cSetter.getCardStyle());
-        placesListCard.setCardBackgroundColor(cSetter.getCardStyle());
-        markersCard.setCardBackgroundColor(cSetter.getCardStyle());
-        backCard.setCardBackgroundColor(cSetter.getCardStyle());
+        zoomCard.setCardBackgroundColor(mColor.getCardStyle());
+        searchCard.setCardBackgroundColor(mColor.getCardStyle());
+        myCard.setCardBackgroundColor(mColor.getCardStyle());
+        layersCard.setCardBackgroundColor(mColor.getCardStyle());
+        placesCard.setCardBackgroundColor(mColor.getCardStyle());
+        styleCard.setCardBackgroundColor(mColor.getCardStyle());
+        placesListCard.setCardBackgroundColor(mColor.getCardStyle());
+        markersCard.setCardBackgroundColor(mColor.getCardStyle());
+        backCard.setCardBackgroundColor(mColor.getCardStyle());
 
         layersContainer = (CardView) view.findViewById(R.id.layersContainer);
         layersContainer.setVisibility(View.GONE);
-        layersContainer.setCardBackgroundColor(cSetter.getCardStyle());
+        layersContainer.setCardBackgroundColor(mColor.getCardStyle());
 
         if (Module.isLollipop()) {
             zoomCard.setCardElevation(Configs.CARD_ELEVATION);
@@ -623,7 +636,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             backCard.setCardElevation(Configs.CARD_ELEVATION);
         }
 
-        int style = cSetter.getCardStyle();
+        int style = mColor.getCardStyle();
         zoomCard.setCardBackgroundColor(style);
         searchCard.setCardBackgroundColor(style);
         myCard.setCardBackgroundColor(style);
@@ -730,8 +743,8 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     }
 
     private void setMapType(int type) {
-        if (map != null) {
-            map.setMapType(type);
+        if (mMap != null) {
+            mMap.setMapType(type);
             new SharedPrefs(getActivity()).saveInt(Prefs.MAP_TYPE, type);
             ViewUtils.hideOver(layersContainer);
         }
@@ -748,7 +761,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                     Permissions.ACCESS_FINE_LOCATION,
                     Permissions.ACCESS_COARSE_LOCATION);
         } else {
-            map.setMyLocationEnabled(true);
+            mMap.setMyLocationEnabled(true);
         }
     }
 
