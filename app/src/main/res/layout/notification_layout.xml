@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/notificationBg"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -49,7 +48,7 @@
         android:layout_toRightOf="@+id/bellIcon"
         android:orientation="vertical">
 
-        <com.cray.software.justreminder.roboto_views.RoboTextView
+        <TextView
             android:id="@+id/featured"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -58,10 +57,9 @@
             android:text="@string/next_event"
             android:textColor="@color/whitePrimary"
             android:textSize="14sp"
-            android:visibility="gone"
-            app:font_style="roboto_light" />
+            android:visibility="gone" />
 
-        <com.cray.software.justreminder.roboto_views.RoboTextView
+        <TextView
             android:id="@+id/text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -70,8 +68,7 @@
             android:singleLine="true"
             android:text="@string/tasks"
             android:textColor="@color/whitePrimary"
-            android:textSize="14sp"
-            app:font_style="roboto_light" />
+            android:textSize="14sp" />
     </LinearLayout>
 
 </RelativeLayout>
