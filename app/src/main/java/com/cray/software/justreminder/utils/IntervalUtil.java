@@ -45,14 +45,14 @@ public class IntervalUtil {
      */
     public static ArrayList<Integer> getWeekRepeat(boolean mon, boolean tue, boolean wed, boolean thu, boolean fri,
                                    boolean sat, boolean sun){
-        ArrayList<Integer> sb = new ArrayList<>();
-        sb.add(sun ? 1 : 0);
-        sb.add(mon ? 1 : 0);
-        sb.add(tue ? 1 : 0);
-        sb.add(wed ? 1 : 0);
-        sb.add(thu ? 1 : 0);
-        sb.add(fri ? 1 : 0);
-        sb.add(sat ? 1 : 0);
+        ArrayList<Integer> sb = new ArrayList<>(7);
+        sb.add(0, sun ? 1 : 0);
+        sb.add(1, mon ? 1 : 0);
+        sb.add(2, tue ? 1 : 0);
+        sb.add(3, wed ? 1 : 0);
+        sb.add(4, thu ? 1 : 0);
+        sb.add(5, fri ? 1 : 0);
+        sb.add(6, sat ? 1 : 0);
         return sb;
     }
 

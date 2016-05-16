@@ -317,7 +317,7 @@
     <string name="radius_x_meters">"Радіус %s метрів"</string>
     <string name="same_reminder_also_present">"Те ж нагадування вже присутнє в додатку!"</string>
     <string name="shopping_list_is_empty">"Список покупок порожній!"</string>
-    <string name="you_dont_select_any_day">"Ви не вибрати день!"</string>
+    <string name="you_dont_select_any_day">"Ви не вибрали день!"</string>
     <string name="you_dont_select_application">"Ви не обрали додаток!"</string>
     <string name="you_dont_insert_link">"Ви не вставили посилання!"</string>
     <string name="you_dont_select_place">"Ви не обрали місце!"</string>
