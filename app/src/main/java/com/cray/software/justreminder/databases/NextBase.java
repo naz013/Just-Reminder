@@ -1,15 +1,3 @@
-package com.cray.software.justreminder.databases;
-
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
-
-import com.cray.software.justreminder.constants.Constants;
-
 /**
  * Copyright 2016 Nazar Suhovich
  * <p/>
@@ -25,6 +13,19 @@ import com.cray.software.justreminder.constants.Constants;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.cray.software.justreminder.databases;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
+import android.database.sqlite.SQLiteOpenHelper;
+
+import com.cray.software.justreminder.constants.Constants;
+
 public class NextBase {
     private static final String DB_NAME = "reminder_base";
     private static final int DB_VERSION = 1;

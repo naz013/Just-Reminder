@@ -1,18 +1,5 @@
-package com.cray.software.justreminder.datas.models;
-
-import android.content.Context;
-import android.database.Cursor;
-
-import com.cray.software.justreminder.databases.NextBase;
-import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.json.JModel;
-import com.cray.software.justreminder.json.JParser;
-import com.cray.software.justreminder.json.JShopping;
-
-import java.util.ArrayList;
-
 /**
- * Copyright 2015 Nazar Suhovich
+ * Copyright 2016 Nazar Suhovich
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +13,20 @@ import java.util.ArrayList;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.cray.software.justreminder.datas.models;
+
+import android.content.Context;
+import android.database.Cursor;
+
+import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.json.JParser;
+import com.cray.software.justreminder.json.JShopping;
+
+import java.util.ArrayList;
+
 public class ShoppingList {
 
     private String title;

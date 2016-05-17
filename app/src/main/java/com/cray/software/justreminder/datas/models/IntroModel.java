@@ -1,7 +1,5 @@
-package com.cray.software.justreminder.datas.models;
-
 /**
- * Copyright 2015 Nazar Suhovich
+ * Copyright 2016 Nazar Suhovich
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +13,9 @@ package com.cray.software.justreminder.datas.models;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.cray.software.justreminder.datas.models;
+
 public class IntroModel {
 
     private String title;

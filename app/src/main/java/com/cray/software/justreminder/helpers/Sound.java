@@ -1,18 +1,5 @@
-package com.cray.software.justreminder.helpers;
-
-import android.content.Context;
-import android.content.res.AssetFileDescriptor;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.net.Uri;
-
-import com.cray.software.justreminder.constants.Prefs;
-
-import java.io.File;
-import java.io.IOException;
-
 /**
- * Copyright 2015 Nazar Suhovich
+ * Copyright 2016 Nazar Suhovich
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +13,20 @@ import java.io.IOException;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.cray.software.justreminder.helpers;
+
+import android.content.Context;
+import android.content.res.AssetFileDescriptor;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
+
+import com.cray.software.justreminder.constants.Prefs;
+
+import java.io.File;
+import java.io.IOException;
+
 public class Sound {
     
     private Context mContext;

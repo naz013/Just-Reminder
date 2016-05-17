@@ -1,25 +1,30 @@
-package com.cray.software.justreminder.app_widgets;
-
-import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.modules.Module;
-
 /**
  * Copyright 2015 Nazar Suhovich
- * <p>
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p>
+ * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.cray.software.justreminder.app_widgets;
+
+import android.support.annotation.ColorRes;
+import android.support.annotation.DrawableRes;
+
+import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.modules.Module;
+
 public class WidgetUtils {
 
+    @ColorRes
     public static int getColor(int code){
         int color = 0;
         switch (code) {
@@ -87,67 +92,68 @@ public class WidgetUtils {
         return color;
     }
 
+    @DrawableRes
     public static int getDrawable(int code){
-        int color = 0;
+        int drawable = 0;
         switch (code) {
             case 0:
-                color = R.drawable.rectangle_stroke_red;
+                drawable = R.drawable.rectangle_stroke_red;
                 break;
             case 1:
-                color = R.drawable.rectangle_stroke_purple;
+                drawable = R.drawable.rectangle_stroke_purple;
                 break;
             case 2:
-                color = R.drawable.rectangle_stroke_light_green;
+                drawable = R.drawable.rectangle_stroke_light_green;
                 break;
             case 3:
-                color = R.drawable.rectangle_stroke_green;
+                drawable = R.drawable.rectangle_stroke_green;
                 break;
             case 4:
-                color = R.drawable.rectangle_stroke_light_blue;
+                drawable = R.drawable.rectangle_stroke_light_blue;
                 break;
             case 5:
-                color = R.drawable.rectangle_stroke_blue;
+                drawable = R.drawable.rectangle_stroke_blue;
                 break;
             case 6:
-                color = R.drawable.rectangle_stroke_yellow;
+                drawable = R.drawable.rectangle_stroke_yellow;
                 break;
             case 7:
-                color = R.drawable.rectangle_stroke_orange;
+                drawable = R.drawable.rectangle_stroke_orange;
                 break;
             case 8:
-                color = R.drawable.rectangle_stroke_cyan;
+                drawable = R.drawable.rectangle_stroke_cyan;
                 break;
             case 9:
-                color = R.drawable.rectangle_stroke;
+                drawable = R.drawable.rectangle_stroke;
                 break;
             case 10:
-                color = R.drawable.rectangle_stroke_teal;
+                drawable = R.drawable.rectangle_stroke_teal;
                 break;
             case 11:
-                color = R.drawable.rectangle_stroke_amber;
+                drawable = R.drawable.rectangle_stroke_amber;
                 break;
             case 12:
-                color = R.drawable.rectangle_stroke_transparent;
+                drawable = R.drawable.rectangle_stroke_transparent;
                 break;
             default:
                 if (Module.isPro()){
                     switch (code){
                         case 13:
-                            color = R.drawable.rectangle_stroke_deep_purple;
+                            drawable = R.drawable.rectangle_stroke_deep_purple;
                             break;
                         case 14:
-                            color = R.drawable.rectangle_stroke_deep_orange;
+                            drawable = R.drawable.rectangle_stroke_deep_orange;
                             break;
                         case 15:
-                            color = R.drawable.rectangle_stroke_lime;
+                            drawable = R.drawable.rectangle_stroke_lime;
                             break;
                         case 16:
-                            color = R.drawable.rectangle_stroke_indigo;
+                            drawable = R.drawable.rectangle_stroke_indigo;
                             break;
                     }
-                } else color = R.drawable.rectangle_stroke_blue;
+                } else drawable = R.drawable.rectangle_stroke_blue;
                 break;
         }
-        return color;
+        return drawable;
     }
 }

@@ -1,17 +1,3 @@
-package com.cray.software.justreminder.async;
-
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.database.Cursor;
-import android.os.AsyncTask;
-
-import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.databases.NextBase;
-import com.cray.software.justreminder.helpers.IOHelper;
-import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.interfaces.LoginListener;
-
 /**
  * Copyright 2016 Nazar Suhovich
  * <p/>
@@ -27,6 +13,21 @@ import com.cray.software.justreminder.interfaces.LoginListener;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.cray.software.justreminder.async;
+
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.database.Cursor;
+import android.os.AsyncTask;
+
+import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.helpers.IOHelper;
+import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.interfaces.LoginListener;
+
 public class LocalLogin extends AsyncTask<Void, String, Void> {
 
     private Context mContext;

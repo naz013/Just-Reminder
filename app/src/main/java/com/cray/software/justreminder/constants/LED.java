@@ -1,11 +1,5 @@
-package com.cray.software.justreminder.constants;
-
-import android.content.Context;
-
-import com.cray.software.justreminder.R;
-
 /**
- * Copyright 2015 Nazar Suhovich
+ * Copyright 2016 Nazar Suhovich
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +13,13 @@ import com.cray.software.justreminder.R;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.cray.software.justreminder.constants;
+
+import android.content.Context;
+
+import com.cray.software.justreminder.R;
+
 public class LED {
     public static final int NUM_OF_LEDS = 17;
 

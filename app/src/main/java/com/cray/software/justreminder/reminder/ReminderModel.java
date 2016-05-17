@@ -1,15 +1,3 @@
-package com.cray.software.justreminder.reminder;
-
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.json.JAction;
-import com.cray.software.justreminder.json.JMelody;
-import com.cray.software.justreminder.json.JModel;
-import com.cray.software.justreminder.json.JPlace;
-import com.cray.software.justreminder.json.JRecurrence;
-import com.cray.software.justreminder.json.JShopping;
-
-import java.util.ArrayList;
-
 /**
  * Copyright 2015 Nazar Suhovich
  * <p/>
@@ -25,6 +13,18 @@ import java.util.ArrayList;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.cray.software.justreminder.reminder;
+
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.json.JAction;
+import com.cray.software.justreminder.json.JMelody;
+import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.json.JPlace;
+import com.cray.software.justreminder.json.JRecurrence;
+import com.cray.software.justreminder.json.JShopping;
+
+import java.util.ArrayList;
+
 public class ReminderModel {
     private String title, type, uuId, number, groupId, exclusion, melody;
     private int completed, archived, catColor, viewType, radius, marker, totalPlaces;

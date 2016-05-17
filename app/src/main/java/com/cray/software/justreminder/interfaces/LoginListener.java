@@ -1,5 +1,3 @@
-package com.cray.software.justreminder.interfaces;
-
 /**
  * Copyright 2016 Nazar Suhovich
  * <p/>
@@ -15,6 +13,9 @@ package com.cray.software.justreminder.interfaces;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.cray.software.justreminder.interfaces;
+
 public interface LoginListener {
     void onLocal();
     void onCloud();

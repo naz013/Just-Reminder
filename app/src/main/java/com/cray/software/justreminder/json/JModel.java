@@ -1,7 +1,3 @@
-package com.cray.software.justreminder.json;
-
-import java.util.ArrayList;
-
 /**
  * Copyright 2016 Nazar Suhovich
  * <p/>
@@ -17,6 +13,11 @@ import java.util.ArrayList;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.cray.software.justreminder.json;
+
+import java.util.ArrayList;
+
 public class JModel {
 
     private ArrayList<JPlace> places;
