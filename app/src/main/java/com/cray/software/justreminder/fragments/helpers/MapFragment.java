@@ -140,7 +140,8 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     /**
      * MapListener link;
      */
-    private MapListener listener;
+    private MapListener mListener;
+    private MapCallback mCallback;
 
     public static final String ENABLE_TOUCH = "enable_touch";
     public static final String ENABLE_PLACES = "enable_places";
@@ -173,6 +174,9 @@ public class MapFragment extends Fragment implements View.OnClickListener {
 
             if (lastPos != null) {
                 addMarker(lastPos, lastPos.toString(), true, false, markerRadius);
+            }
+            if (mCallback != null) {
+                mCallback.onMapReady();
             }
         }
     };
@@ -220,7 +224,15 @@ public class MapFragment extends Fragment implements View.OnClickListener {
      * @param listener listener for map fragment
      */
     public void setListener(MapListener listener) {
-        this.listener = listener;
+        this.mListener = listener;
+    }
+
+    /**
+     * Set listener for map fragment;
+     * @param callback listener for map fragment
+     */
+    public void setCallback(MapCallback callback) {
+        this.mCallback = callback;
     }
 
     /**
@@ -272,7 +284,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             if (title == null || title.matches("")) title = pos.toString();
             if (!Module.isPro()) markerStyle = 5;
             lastPos = pos;
-            if (listener != null) listener.placeChanged(pos);
+            if (mListener != null) mListener.placeChanged(pos);
             mMap.addMarker(new MarkerOptions()
                     .position(pos)
                     .title(title)
@@ -310,7 +322,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             if (title == null || title.matches(""))
                 title = pos.toString();
             lastPos = pos;
-            if (listener != null) listener.placeChanged(pos);
+            if (mListener != null) mListener.placeChanged(pos);
             mMap.addMarker(new MarkerOptions()
                     .position(pos)
                     .title(title)
@@ -341,7 +353,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             mMap.clear();
             if (markerTitle == null || markerTitle.matches(""))
                 markerTitle = lastPos.toString();
-            if (listener != null) listener.placeChanged(lastPos);
+            if (mListener != null) mListener.placeChanged(lastPos);
             if (!Module.isPro()) markerStyle = 5;
             mMap.addMarker(new MarkerOptions()
                     .position(lastPos)
@@ -369,7 +381,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             mMap.clear();
             if (markerTitle == null || markerTitle.matches(""))
                 markerTitle = lastPos.toString();
-            if (listener != null) listener.placeChanged(lastPos);
+            if (mListener != null) mListener.placeChanged(lastPos);
             if (!Module.isPro()) markerStyle = 5;
             mMap.addMarker(new MarkerOptions()
                     .position(lastPos)
@@ -916,8 +928,8 @@ public class MapFragment extends Fragment implements View.OnClickListener {
 
     private void zoomClick() {
         isFullscreen = !isFullscreen;
-        if (listener != null) {
-            listener.onZoomClick(isFullscreen);
+        if (mListener != null) {
+            mListener.onZoomClick(isFullscreen);
         }
         if (isFullscreen) {
             if (isDark) zoomOut.setImageResource(R.drawable.ic_arrow_downward_white_24dp);
@@ -992,8 +1004,8 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.backButton:
                 restoreScaleButton();
-                if (listener != null) {
-                    listener.onBackClick();
+                if (mListener != null) {
+                    mListener.onBackClick();
                 }
                 break;
         }

@@ -125,6 +125,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
      * MapListener link;
      */
     private MapListener mMapListener;
+    private MapCallback mCallback;
 
     public static final String ENABLE_ZOOM = "enable_zoom";
     public static final String MARKER_STYLE = "marker_style";
@@ -146,6 +147,9 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
                     hideStyles();
                 }
             });
+            if (mCallback != null) {
+                mCallback.onMapReady();
+            }
         }
     };
 
@@ -178,6 +182,14 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
      */
     public void setListener(MapListener listener) {
         this.mMapListener = listener;
+    }
+
+    /**
+     * Set listener for map fragment;
+     * @param callback listener for map fragment
+     */
+    public void setCallback(MapCallback callback) {
+        this.mCallback = callback;
     }
 
     /**

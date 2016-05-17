@@ -17,6 +17,7 @@
 package com.cray.software.justreminder.creator;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -27,6 +28,7 @@ import android.view.ViewGroup;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.fragments.helpers.MapCallback;
 import com.cray.software.justreminder.fragments.helpers.PlacesMap;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.MapListener;
@@ -35,9 +37,9 @@ import com.cray.software.justreminder.json.JPlace;
 
 import java.util.ArrayList;
 
-public class PlacesFragment extends BaseFragment  {
+public class PlacesFragment extends BaseFragment implements MapCallback {
 
-    private MapListener mCallbacks;
+    private MapListener mListener;
 
     public void recreateMarkers(int radius) {
         if (placesMap != null) placesMap.recreateMarker(radius);
@@ -89,18 +91,14 @@ public class PlacesFragment extends BaseFragment  {
         View view = inflater.inflate(R.layout.reminder_places_layout, container, false);
         SharedPrefs prefs = new SharedPrefs(getActivity());
         placesMap = new PlacesMap();
-        placesMap.setListener(mCallbacks);
+        placesMap.setListener(mListener);
+        placesMap.setCallback(this);
         placesMap.setRadius(prefs.loadInt(Prefs.LOCATION_RADIUS));
         placesMap.setMarkerStyle(prefs.loadInt(Prefs.MARKER_STYLE));
         FragmentManager fragMan = getChildFragmentManager();
         FragmentTransaction fragTransaction = fragMan.beginTransaction();
         fragTransaction.replace(R.id.mapPlace, placesMap);
         fragTransaction.commitAllowingStateLoss();
-
-        if (item != null) {
-            ArrayList<JPlace> list = item.getPlaces();
-            placesMap.addMarkers(list);
-        }
         return view;
     }
 
@@ -113,16 +111,38 @@ public class PlacesFragment extends BaseFragment  {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mCallbacks = (MapListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement listeners.");
+        if (mListener == null) {
+            try {
+                mListener = (MapListener) activity;
+            } catch (ClassCastException e) {
+                throw new ClassCastException("Activity must implement listeners.");
+            }
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (mListener == null) {
+            try {
+                mListener = (MapListener) context;
+            } catch (ClassCastException e) {
+                throw new ClassCastException("Activity must implement listeners.");
+            }
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mCallbacks = null;
+        mListener = null;
+    }
+
+    @Override
+    public void onMapReady() {
+        if (item != null) {
+            ArrayList<JPlace> list = item.getPlaces();
+            placesMap.addMarkers(list);
+        }
     }
 }

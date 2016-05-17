@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,7 @@ import android.widget.SeekBar;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.fragments.helpers.MapCallback;
 import com.cray.software.justreminder.fragments.helpers.MapFragment;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -54,7 +56,7 @@ import com.cray.software.justreminder.views.DateTimeView;
 import com.google.android.gms.maps.model.LatLng;
 
 public class OutLocationFragment extends BaseFragment implements MapListener,
-        CompoundButton.OnCheckedChangeListener {
+        CompoundButton.OnCheckedChangeListener, MapCallback {
 
     private MapListener mCallbacks;
     private DateTimeView.OnSelectListener mSelect;
@@ -72,6 +74,7 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
     private ActionView actionViewLocationOut;
     private RoboTextView mapLocation;
     private SeekBar pointRadius;
+    private DateTimeView dateViewLocationOut;
 
     private int radius;
     private LatLng curPlace;
@@ -149,6 +152,7 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
         mapFragment.setListener(this);
         mapFragment.setMarkerStyle(prefs.loadInt(Prefs.MARKER_STYLE));
         mapFragment.setMarkerTitle(eventTask);
+        mapFragment.setCallback(this);
         FragmentManager fragMan = getChildFragmentManager();
         FragmentTransaction fragTransaction = fragMan.beginTransaction();
         fragTransaction.replace(R.id.mapOut, mapFragment);
@@ -219,59 +223,10 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
         actionViewLocationOut.setListener(mAction);
         actionViewLocationOut.setActivity(getActivity());
 
-        DateTimeView dateViewLocationOut = (DateTimeView) view.findViewById(R.id.dateViewLocationOut);
+        dateViewLocationOut = (DateTimeView) view.findViewById(R.id.dateViewLocationOut);
         dateViewLocationOut.setListener(mSelect);
         eventTime = System.currentTimeMillis();
         dateViewLocationOut.setDateTime(updateCalendar(eventTime, false));
-
-        if (curPlace != null) {
-            if (mapFragment != null)
-                mapFragment.addMarker(curPlace, null, true, true, radius);
-            mapLocation.setText(LocationUtil.getAddress(curPlace.latitude, curPlace.longitude));
-        }
-
-        if (curPlace != null) {
-            if (mapFragment != null) {
-                mapFragment.addMarker(curPlace, null, true, true, radius);
-                toggleMap();
-            }
-        }
-
-        if (item != null) {
-            String text = item.getSummary();
-            number = item.getAction().getTarget();
-            JPlace jPlace = item.getPlace();
-            double latitude = jPlace.getLatitude();
-            double longitude = jPlace.getLongitude();
-            radius = jPlace.getRadius();
-            String type = item.getType();
-
-            long eventTime = item.getEventTime();
-
-            if (item != null && eventTime > 0) {
-                dateViewLocationOut.setDateTime(updateCalendar(eventTime, true));
-                attachDelayOut.setChecked(true);
-                isDelayed = true;
-            } else attachDelayOut.setChecked(false);
-
-            if (type.matches(Constants.TYPE_LOCATION_OUT_CALL) || type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)){
-                actionViewLocationOut.setAction(true);
-                actionViewLocationOut.setNumber(number);
-                if (type.matches(Constants.TYPE_LOCATION_OUT_CALL))
-                    actionViewLocationOut.setType(ActionView.TYPE_CALL);
-                else
-                    actionViewLocationOut.setType(ActionView.TYPE_MESSAGE);
-            } else actionViewLocationOut.setAction(false);
-
-            LatLng pos = new LatLng(latitude, longitude);
-            if (mapFragment != null) {
-                mapFragment.setMarkerRadius(radius);
-                mapFragment.addMarker(pos, text, true, true, radius);
-            }
-
-            mapLocation.setText(LocationUtil.getAddress(pos.latitude, pos.longitude));
-            mapCheck.setChecked(true);
-        }
         return view;
     }
 
@@ -349,6 +304,54 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
                     removeUpdates();
                 }
                 break;
+        }
+    }
+
+    @Override
+    public void onMapReady() {
+        if (curPlace != null) {
+            if (mapFragment != null) {
+                mapFragment.addMarker(curPlace, null, true, true, radius);
+                toggleMap();
+            }
+            mapLocation.setText(LocationUtil.getAddress(curPlace.latitude, curPlace.longitude));
+        }
+
+        if (item != null) {
+            String text = item.getSummary();
+            number = item.getAction().getTarget();
+            JPlace jPlace = item.getPlace();
+            double latitude = jPlace.getLatitude();
+            double longitude = jPlace.getLongitude();
+            radius = jPlace.getRadius();
+            String type = item.getType();
+
+            long eventTime = item.getEventTime();
+
+            if (item != null && eventTime > 0) {
+                dateViewLocationOut.setDateTime(updateCalendar(eventTime, true));
+                attachDelayOut.setChecked(true);
+                isDelayed = true;
+            } else attachDelayOut.setChecked(false);
+
+            if (type.matches(Constants.TYPE_LOCATION_OUT_CALL) || type.matches(Constants.TYPE_LOCATION_OUT_MESSAGE)){
+                actionViewLocationOut.setAction(true);
+                actionViewLocationOut.setNumber(number);
+                if (type.matches(Constants.TYPE_LOCATION_OUT_CALL)) {
+                    actionViewLocationOut.setType(ActionView.TYPE_CALL);
+                } else actionViewLocationOut.setType(ActionView.TYPE_MESSAGE);
+            } else actionViewLocationOut.setAction(false);
+
+            Log.d(Constants.LOG_TAG, "lon " + longitude + ", lat " + latitude);
+            LatLng pos = new LatLng(latitude, longitude);
+            if (mapFragment != null) {
+                Log.d(Constants.LOG_TAG, "Map not null");
+                mapFragment.setMarkerRadius(radius);
+                mapFragment.addMarker(pos, text, true, true, radius);
+            }
+
+            mapLocation.setText(LocationUtil.getAddress(pos.latitude, pos.longitude));
+            mapCheck.setChecked(true);
         }
     }
 
