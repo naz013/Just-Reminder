@@ -9,6 +9,7 @@ public class ProfileForm {
      */
     private String displayName;
     private String password;
+    private String email;
 
     private ProfileForm () {}
 
@@ -16,9 +17,14 @@ public class ProfileForm {
      * Constructor for ProfileForm, solely for unit test.
      * @param displayName A String for displaying the user on this system.
      */
-    public ProfileForm(String displayName, String password) {
+    public ProfileForm(String displayName, String password, String email) {
         this.displayName = displayName;
         this.password = password;
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public String getPassword() {

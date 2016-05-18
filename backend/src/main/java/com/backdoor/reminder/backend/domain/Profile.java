@@ -10,30 +10,30 @@ import java.util.List;
 @Entity
 @Cache
 public class Profile {
-	String displayName;
+	private String displayName;
 
-	String mainEmail;
+	private String mainEmail;
 
-	String password;
+	private String password;
 
-	List<Long> connectedUsers = new ArrayList<>(0);
+	private List<Long> connectedUsers = new ArrayList<>(0);
 
 	@Id
-	String userId;
+	private long userId;
 
 	/**
 	 * Just making the default constructor private.
 	 */
 	private Profile() {}
 
-    public Profile (String userId, String displayName, String mainEmail, String password) {
+    public Profile (long userId, String displayName, String mainEmail, String password) {
     	this.userId = userId;
     	this.displayName = displayName;
     	this.mainEmail = mainEmail;
     	this.password = password;
     }
 
-    public Profile (String userId, String displayName, String mainEmail) {
+    public Profile (long userId, String displayName, String mainEmail) {
         this.userId = userId;
         this.displayName = displayName;
         this.mainEmail = mainEmail;
@@ -47,7 +47,7 @@ public class Profile {
 		return mainEmail;
 	}
 
-	public String getUserId() {
+	public long getUserId() {
 		return userId;
 	}
 

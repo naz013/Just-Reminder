@@ -18,6 +18,7 @@ import com.google.api.server.spi.Constant;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
+import com.google.api.server.spi.response.BadRequestException;
 import com.google.api.server.spi.response.NotFoundException;
 import com.google.api.server.spi.response.UnauthorizedException;
 import com.google.appengine.api.users.User;
@@ -55,28 +56,33 @@ public class MyEndpoint {
             name = "register",
             path = "profile",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public Profile register(final User user, ProfileForm profileForm) throws UnauthorizedException {
+    public Profile register(@Named("token") String token, ProfileForm profileForm) throws BadRequestException {
 
         String displayName = profileForm.getDisplayName();
 
-        if (user == null) {
-            throw new UnauthorizedException("Authorization required");
+        if (token == null) {
+            throw new BadRequestException("Incorrect token");
         }
 
-        String userId = user.getUserId();
-        String mainEmail = user.getEmail();
-
-        Profile profile = ofy().load().key(Key.create(Profile.class, userId)).now();
-        if (profile == null) {
+        List<Profile> list = ofy().load().type(Profile.class).list();
+        Profile profile = null;
+        if (list == null || list.size() == 0) {
             if (displayName == null) {
-                displayName = extractDefaultDisplayNameFromEmail(user.getEmail());
+                displayName = extractDefaultDisplayNameFromEmail(profileForm.getEmail());
             }
 
+            Key<Profile> profileKey = factory().allocateId(Profile.class);
+            long userId = profileKey.getId();
+            String mainEmail = profileForm.getEmail();
             profile = new Profile(userId, displayName, mainEmail);
         } else {
-            profile.update(displayName, profileForm.getPassword());
+            for (Profile item : list) {
+                if (item.getMainEmail().equals(profileForm.getEmail())) {
+                    profile = item;
+                    break;
+                }
+            }
         }
-
         ofy().save().entity(profile).now();
         return profile;
     }
@@ -102,7 +108,8 @@ public class MyEndpoint {
             // Create a new Profile if it doesn't exist.
             // Use default displayName and teeShirtSize
             String email = user.getEmail();
-            profile = new Profile(user.getUserId(),
+            Key<Profile> profileKey = factory().allocateId(Profile.class);
+            profile = new Profile(profileKey.getId(),
                     extractDefaultDisplayNameFromEmail(email), email);
         }
         return profile;
