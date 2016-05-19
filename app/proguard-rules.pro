@@ -2,6 +2,7 @@
 
 -renamesourcefileattribute SourceFile
 -keepattributes SourceFile,LineNumberTable
+-keepattributes InnerClasses,EnclosingMethod
 
 -printmapping /proguard/mapping.txt
 
@@ -29,6 +30,13 @@
 -dontwarn com.squareup.okhttp.**
 -dontwarn android.support.v8.**
 -dontwarn android.support.design.**
+
+-dontnote android.net.http.**
+-dontnote org.apache.http.**
+-dontnote com.dropbox.**
+-dontnote org.json.**
+-dontnote org.dmfs.rfc5545.**
+-dontnote com.backdoor.simpleai.**
 
 -keep class * extends java.util.ListResourceBundle {
     protected Object[][] getContents();
