@@ -32,11 +32,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.activities.ImagePreview;
@@ -53,6 +56,7 @@ import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.roboto_views.RoboButton;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
+import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
@@ -70,8 +74,10 @@ public class NotePreview extends AppCompatActivity {
     private long mParam1;
     private Bitmap img;
     private byte[] imageByte;
+    private float prevPercent;
 
     private Toolbar toolbar;
+    private ScrollView scrollContent;
     private LinearLayout reminderContainer, buttonContainer;
     private ImageView imageView;
     private RoboTextView noteText, reminderTime;
@@ -93,6 +99,9 @@ public class NotePreview extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
 
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setTitle("");
@@ -119,6 +128,43 @@ public class NotePreview extends AppCompatActivity {
         toolbar.inflateMenu(R.menu.preview_note_menu);
         mParam1 = getIntent().getLongExtra(Constants.EDIT_ID, 0);
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
+
+        scrollContent = (ScrollView) findViewById(R.id.scrollContent);
+        scrollContent.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                int scrollY = scrollContent.getScrollY();
+                if (imageByte != null) {
+                    toolbar.getBackground().setAlpha(getAlphaforActionBar(scrollY));
+                } else {
+                    toolbar.getBackground().setAlpha(255);
+                }
+                float percent = getCurrentPercent(scrollY);
+                if (percent >= 60.0 && prevPercent < 60.0){
+                    ViewUtils.hide(NotePreview.this, mFab);
+                }
+                if (percent <= 75.0 && prevPercent > 75.0){
+                    ViewUtils.show(NotePreview.this, mFab);
+                }
+                prevPercent = percent;
+            }
+
+            private float getCurrentPercent(int scrollY){
+                int maxDist = QuickReturnUtils.dp2px(NotePreview.this, 200);
+                return (((float)scrollY / (float)maxDist) * 100.0f);
+            }
+
+            private int getAlphaforActionBar(int scrollY) {
+                int minDist = 0, maxDist = QuickReturnUtils.dp2px(NotePreview.this, 200);
+                if (scrollY > maxDist) {
+                    return 255;
+                } else if (scrollY<minDist) {
+                    return 0;
+                } else {
+                    return (int)  ((255.0 / maxDist) * scrollY);
+                }
+            }
+        });
 
         reminderContainer = (LinearLayout) findViewById(R.id.reminderContainer);
         reminderContainer.setVisibility(View.GONE);
@@ -282,7 +328,6 @@ public class NotePreview extends AppCompatActivity {
                 note = SyncHelper.decrypt(note);
             }
             noteText.setText(note);
-            toolbar.setTitle(note);
             int color = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
             int style = c.getInt(c.getColumnIndex(Constants.COLUMN_FONT_STYLE));
             remId = c.getLong(c.getColumnIndex(Constants.COLUMN_LINK_ID));
@@ -293,16 +338,31 @@ public class NotePreview extends AppCompatActivity {
             }
 
             mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorAccent(color), cSetter.colorAccent(color)));
+            RelativeLayout.LayoutParams paramsR = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
+            paramsR.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            paramsR.setMargins(0, -(QuickReturnUtils.dp2px(NotePreview.this, 28)), QuickReturnUtils.dp2px(NotePreview.this, 16), 0);
 
-            int noteColor = cSetter.getNoteColor(color);
             if (imageByte != null){
                 Bitmap imgB = BitmapFactory.decodeByteArray(imageByte, 0,
                         imageByte.length);
                 img = imgB;
                 imageView.setImageBitmap(imgB);
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) imageView.getLayoutParams();
+                params.height = QuickReturnUtils.dp2px(this, 256);
+                imageView.setLayoutParams(params);
+                paramsR.addRule(RelativeLayout.BELOW, R.id.imageView);
+                toolbar.setBackgroundColor(cSetter.getNoteColor(color));
+                toolbar.getBackground().setAlpha(0);
+            } else {
+                imageView.setBackgroundColor(cSetter.getNoteColor(color));
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) imageView.getLayoutParams();
+                params.height = QuickReturnUtils.dp2px(this, 256);
+                imageView.setLayoutParams(params);
+                imageView.setVisibility(View.INVISIBLE);
+                paramsR.addRule(RelativeLayout.BELOW, R.id.imageView);
+                toolbar.setBackgroundColor(cSetter.getNoteColor(color));
+                toolbar.getBackground().setAlpha(255);
             }
-            imageView.setBackgroundColor(noteColor);
-            toolbar.setBackgroundColor(noteColor);
 
             if (remId != 0){
                 NextBase dataBase = new NextBase(NotePreview.this);

@@ -31,6 +31,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -90,6 +91,9 @@ import java.util.Random;
 public class NotesManager extends AppCompatActivity {
 
     public static final int MENU_ITEM_DELETE = 12;
+    private static final String KEY_COLOR = "key_color";
+    private static final String KEY_STYLE = "key_style";
+    private static final String KEY_IMAGE = "key_image";
 
     private int myHour = 0;
     private int myMinute = 0;
@@ -356,8 +360,7 @@ public class NotesManager extends AppCompatActivity {
                         byte[] imageByte = model.getImage();
                         image = imageByte;
                         if (imageByte != null) {
-                            img = BitmapFactory.decodeByteArray(imageByte, 0,
-                                    imageByte.length);
+                            img = BitmapFactory.decodeByteArray(imageByte, 0, imageByte.length);
                             noteImage.setImageBitmap(img);
                             ViewUtils.expand(imageContainer);
                         }
@@ -376,8 +379,7 @@ public class NotesManager extends AppCompatActivity {
                         byte[] imageByte = model.getImage();
                         image = imageByte;
                         if (imageByte != null) {
-                            img = BitmapFactory.decodeByteArray(imageByte, 0,
-                                    imageByte.length);
+                            img = BitmapFactory.decodeByteArray(imageByte, 0, imageByte.length);
                             noteImage.setImageBitmap(img);
                             ViewUtils.expand(imageContainer);
                         }
@@ -397,8 +399,7 @@ public class NotesManager extends AppCompatActivity {
                     byte[] imageByte = model.getImage();
                     image = imageByte;
                     if (imageByte != null) {
-                        img = BitmapFactory.decodeByteArray(imageByte, 0,
-                                imageByte.length);
+                        img = BitmapFactory.decodeByteArray(imageByte, 0, imageByte.length);
                         noteImage.setImageBitmap(img);
                         ViewUtils.expand(imageContainer);
                     }
@@ -408,19 +409,34 @@ public class NotesManager extends AppCompatActivity {
             }
         }
 
-        taskField.setTypeface(cSetter.getTypeface(style));
-        toolbar.setBackgroundColor(cSetter.getNoteLightColor(color));
-        layoutContainer.setBackgroundColor(cSetter.getNoteLightColor(color));
-        if (Module.isLollipop()) {
-            getWindow().setStatusBarColor(cSetter.getNoteDarkColor(color));
+        if (savedInstanceState != null) {
+            color = savedInstanceState.getInt(KEY_COLOR);
+            style = savedInstanceState.getInt(KEY_STYLE);
+            image = savedInstanceState.getByteArray(KEY_IMAGE);
+            if (image != null) {
+                img = BitmapFactory.decodeByteArray(image, 0, image.length);
+                noteImage.setImageBitmap(img);
+                if (!isImageAttached()) {
+                    ViewUtils.expand(imageContainer);
+                }
+            }
         }
-        mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorPrimary(color),
-                cSetter.colorPrimaryDark(color)));
+
+        updateBackground();
+        updateTextStyle();
 
         if (LocationUtil.isGooglePlayServicesAvailable(this)) {
             ReminderApp application = (ReminderApp) getApplication();
             mTracker = application.getDefaultTracker();
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        outState.putInt(KEY_COLOR, color);
+        outState.putInt(KEY_STYLE, style);
+        outState.putByteArray(KEY_IMAGE, image);
+        super.onSaveInstanceState(outState, outPersistentState);
     }
 
     private void shareNote() {
@@ -673,21 +689,29 @@ public class NotesManager extends AppCompatActivity {
                     break;
                 case Constants.REQUEST_CODE_THEME:
                     color = data.getIntExtra(Constants.SELECTED_COLOR, 12);
-                    layoutContainer.setBackgroundColor(cSetter.getNoteLightColor(color));
-                    toolbar.setBackgroundColor(cSetter.getNoteLightColor(color));
-                    if (Module.isLollipop()) {
-                        getWindow().setStatusBarColor(cSetter.getNoteDarkColor(color));
-                    }
-                    mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorPrimary(color),
-                            cSetter.colorPrimaryDark(color)));
+                    updateBackground();
                     break;
                 case Constants.REQUEST_CODE_FONT_STYLE:
                     style = data.getIntExtra(Constants.SELECTED_FONT_STYLE, 5);
-                    Typeface typeface = cSetter.getTypeface(style);
-                    taskField.setTypeface(typeface);
+                    updateTextStyle();
                     break;
             }
         }
+    }
+
+    private void updateTextStyle() {
+        Typeface typeface = cSetter.getTypeface(style);
+        taskField.setTypeface(typeface);
+    }
+
+    private void updateBackground() {
+        layoutContainer.setBackgroundColor(cSetter.getNoteLightColor(color));
+        toolbar.setBackgroundColor(cSetter.getNoteLightColor(color));
+        if (Module.isLollipop()) {
+            getWindow().setStatusBarColor(cSetter.getNoteDarkColor(color));
+        }
+        mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorPrimary(color),
+                cSetter.colorPrimaryDark(color)));
     }
 
     private Bitmap decodeUri(Uri selectedImage) throws FileNotFoundException {
