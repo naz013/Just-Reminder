@@ -590,7 +590,7 @@ public class TaskManager extends AppCompatActivity {
 
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            return inflater.inflate(android.R.layout.simple_list_item_1, null);
+            return inflater.inflate(R.layout.list_item_simple_text1, null);
         }
 
         @Override
