@@ -30,11 +30,11 @@ public class Telephony {
     public Telephony(){}
 
     /**
-     * Open email client for sending new mail.
+     * Open email client for sending note.
      * @param file file to attach to mail.
      * @param context application context.
      */
-    public static void sendMail(File file, Context context){
+    public static void sendNote(File file, Context context){
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_SUBJECT, "Note");

@@ -224,7 +224,7 @@ public class LocationFragment extends BaseFragment implements GeocoderTask.Geoco
                 LatLng pos = new LatLng(lat, lon);
                 curPlace = pos;
                 String title = eventTask;
-                if (title.matches(""))
+                if (title != null && title.matches(""))
                     title = pos.toString();
                 if (mapFragment != null)
                     mapFragment.addMarker(pos, title, true, true, radius);

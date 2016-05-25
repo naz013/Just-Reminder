@@ -35,6 +35,7 @@ import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
+import com.squareup.picasso.Picasso;
 
 public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapter.ViewHolder> {
 
@@ -42,9 +43,11 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
     private NoteDataProvider provider;
     private SharedPrefs prefs;
     private SimpleListener mEventListener;
+    private Context mContext;
 
     public NoteRecyclerAdapter(Context context, NoteDataProvider provider) {
         this.provider = provider;
+        this.mContext = context;
         prefs = new SharedPrefs(context);
         cs = new ColorSetter(context);
         setHasStableIds(true);

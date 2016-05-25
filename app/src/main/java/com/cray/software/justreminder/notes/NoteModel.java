@@ -142,7 +142,7 @@ public class NoteModel {
                     return false;
                 } else {
                     res = true;
-                    Telephony.sendMail(file, context);
+                    Telephony.sendNote(file, context);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

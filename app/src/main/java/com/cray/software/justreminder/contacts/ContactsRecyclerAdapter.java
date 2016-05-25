@@ -146,8 +146,8 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
         Picasso.with(imageView.getContext())
                 .load(Uri.parse(v))
                 .resize(100, 100)
-                .placeholder(isDark ? R.drawable.ic_person_outline_white_24dp : R.drawable.ic_person_outline_black_24dp)
-                .error(isDark ? R.drawable.ic_person_outline_white_24dp : R.drawable.ic_person_outline_black_24dp)
+                .placeholder(isDark ? R.drawable.ic_perm_identity_white_24dp : R.drawable.ic_perm_identity_black_24dp)
+                .error(isDark ? R.drawable.ic_perm_identity_white_24dp : R.drawable.ic_perm_identity_black_24dp)
                 .transform(new CropCircleTransformation())
                 .into(imageView);
     }

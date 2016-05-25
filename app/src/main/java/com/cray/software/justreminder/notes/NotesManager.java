@@ -471,7 +471,7 @@ public class NotesManager extends AppCompatActivity {
             finish();
             return;
         }
-        Telephony.sendMail(file, this);
+        Telephony.sendNote(file, this);
     }
 
     private void setDateTime() {
