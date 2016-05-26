@@ -59,7 +59,9 @@ public class SuperUtil {
     public static String appendString(String... strings){
         StringBuilder stringBuilder = new StringBuilder();
         for (String string : strings){
-            stringBuilder.append(string);
+            if (string != null) {
+                stringBuilder.append(string);
+            }
         }
         return stringBuilder.toString();
     }
