@@ -56,14 +56,15 @@ import com.backdoor.shared.SharedConst;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderApp;
 import com.cray.software.justreminder.adapters.TaskListRecyclerAdapter;
+import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Language;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -85,7 +86,6 @@ import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.TextDrawable;
-import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -227,6 +227,11 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             unlock = item.getUnlock();
 
             count = item.getCount();
+
+            if (reminder.getDelay(id) != 0 && item.getEventTime() > System.currentTimeMillis()) {
+                notifier.discardNotification(id);
+                finish();
+            }
         } else {
             notifier.discardNotification(id);
             finish();
@@ -945,8 +950,6 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Wearable.DataApi.addListener(mGoogleApiClient, this);
-        Log.d(Constants.LOG_TAG, "Connected");
-
         boolean silentSMS = new SharedPrefs(this).loadBoolean(Prefs.SILENT_SMS);
         String type = getType();
         if (type != null && type.contains(Constants.TYPE_MESSAGE) && silentSMS)

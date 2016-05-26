@@ -20,17 +20,15 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.notes.DeleteNoteFilesAsync;
+import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.notes.NotesBase;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.Telephony;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
-import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 
 import org.json.JSONException;
 
@@ -142,7 +140,7 @@ public class NoteModel {
                     return false;
                 } else {
                     res = true;
-                    Telephony.sendNote(file, context);
+                    Telephony.sendNote(file, context, note);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

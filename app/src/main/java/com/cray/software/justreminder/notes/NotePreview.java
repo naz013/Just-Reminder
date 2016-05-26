@@ -19,12 +19,14 @@ package com.cray.software.justreminder.notes;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -40,6 +42,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.activities.ImagePreview;
@@ -50,6 +53,7 @@ import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
+import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.modules.Module;
@@ -69,6 +73,7 @@ import java.util.Calendar;
 
 public class NotePreview extends AppCompatActivity {
 
+    private static final int REQUEST_SD_CARD = 1122;
     private long remId;
     private ColorSetter cSetter;
     private long mParam1;
@@ -177,7 +182,11 @@ public class NotePreview extends AppCompatActivity {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openImage();
+                if (Permissions.checkPermission(NotePreview.this, Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL)) {
+                    openImage();
+                } else {
+                    Permissions.requestPermission(NotePreview.this, REQUEST_SD_CARD, Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);
+                }
             }
         });
         noteText = (RoboTextView) findViewById(R.id.noteText);
@@ -219,6 +228,7 @@ public class NotePreview extends AppCompatActivity {
             public void onClick(View v) {
                 if (remId != 0) {
                     Reminder.delete(remId, NotePreview.this);
+                    reminderContainer.setVisibility(View.GONE);
                 }
             }
         });
@@ -234,11 +244,10 @@ public class NotePreview extends AppCompatActivity {
     private void openImage() {
         if (imageByte != null) {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            Bitmap _bitmapScaled = img;
-            _bitmapScaled.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-
+            img.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
             byte[] image = bytes.toByteArray();
             if (image == null) {
+                Toast.makeText(this, "Unsigned error!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -276,7 +285,6 @@ public class NotePreview extends AppCompatActivity {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-
                         startActivity(new Intent(NotePreview.this, ImagePreview.class)
                                 .putExtra("image", f.toString()));
                     }
@@ -458,5 +466,16 @@ public class NotePreview extends AppCompatActivity {
     private void deleteNote() {
         NoteModel.deleteNote(mParam1, this, null);
         new SharedPrefs(this).saveBoolean("isNew", true);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_SD_CARD:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openImage();
+                }
+                break;
+        }
     }
 }

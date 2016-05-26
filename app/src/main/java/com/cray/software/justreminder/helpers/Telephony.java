@@ -34,10 +34,23 @@ public class Telephony {
      * @param file file to attach to mail.
      * @param context application context.
      */
-    public static void sendNote(File file, Context context){
+    public static void sendNote(File file, Context context, String message){
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Note");
+        String title = "Note";
+        String note = "";
+        if (message != null) {
+            if (message.length() > 100) {
+                title = message.substring(0, 48);
+                title = title + "...";
+            }
+            if (message.length() > 150) {
+                note = message.substring(0, 135);
+                note = note + "...";
+            }
+        }
+        intent.putExtra(Intent.EXTRA_SUBJECT, title);
+        intent.putExtra(Intent.EXTRA_TEXT, note);
         Uri uri = Uri.fromFile(file);
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         context.startActivity(Intent.createChooser(intent, "Send email..."));

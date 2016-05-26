@@ -68,7 +68,7 @@
                         android:layout_height="wrap_content"
                         android:paddingLeft="15dp"
                         android:paddingTop="30dp"
-                        android:text="@string/type"
+                        android:text="@string/reminder"
                         android:textAllCaps="true"
                         android:textSize="18sp"
                         app:font_style="roboto_bold" />

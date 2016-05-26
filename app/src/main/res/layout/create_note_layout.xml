@@ -44,6 +44,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="80dp"
                 android:orientation="vertical">
 
                 <com.cray.software.justreminder.roboto_views.RoboEditText
@@ -69,6 +70,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="20dp"
+                        android:adjustViewBounds="true"
+                        android:maxHeight="500dp"
                         android:minHeight="350dp"
                         android:scaleType="centerCrop"
                         android:src="@drawable/current_widget_preview"

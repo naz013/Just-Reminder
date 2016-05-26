@@ -496,9 +496,11 @@ public class GDriveHelper {
      * @param title file name.
      */
     public void deleteReminder(String title){
-        String[] strs = title.split(".");
-        if (strs.length != 0) {
-            title = strs[0];
+        if (title != null) {
+            String[] strs = title.split(".");
+            if (strs.length != 0) {
+                title = strs[0];
+            }
         }
         if (isLinked()) {
             authorize();
@@ -539,9 +541,11 @@ public class GDriveHelper {
      * @param title file name.
      */
     public void deleteNote (String title){
-        String[] strs = title.split(".");
-        if (strs.length != 0) {
-            title = strs[0];
+        if (title != null) {
+            String[] strs = title.split(".");
+            if (strs.length != 0) {
+                title = strs[0];
+            }
         }
         if (isLinked()) {
             authorize();
@@ -582,9 +586,11 @@ public class GDriveHelper {
      * @param title file name.
      */
     public void deleteGroup (String title){
-        String[] strs = title.split(".");
-        if (strs.length != 0) {
-            title = strs[0];
+        if (title != null) {
+            String[] strs = title.split(".");
+            if (strs.length != 0) {
+                title = strs[0];
+            }
         }
         if (isLinked()) {
             authorize();
@@ -625,9 +631,11 @@ public class GDriveHelper {
      * @param title file name.
      */
     public void deleteBirthday(String title){
-        String[] strs = title.split(".");
-        if (strs.length != 0) {
-            title = strs[0];
+        if (title != null) {
+            String[] strs = title.split(".");
+            if (strs.length != 0) {
+                title = strs[0];
+            }
         }
         if (isLinked()) {
             authorize();

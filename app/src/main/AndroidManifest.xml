@@ -213,6 +213,7 @@
         <activity
             android:name=".activities.ReminderDialog"
             android:configChanges="keyboardHidden|orientation"
+            android:noHistory="true"
             android:theme="@style/HomeWhiteTranslucent">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -229,6 +230,7 @@
         <activity
             android:name=".activities.ShowBirthday"
             android:configChanges="keyboardHidden|orientation"
+            android:noHistory="true"
             android:theme="@style/HomeWhiteFullscreen">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -625,6 +627,7 @@
         <activity
             android:name=".calls.MissedCallDialog"
             android:configChanges="keyboardHidden|orientation"
+            android:noHistory="true"
             android:theme="@style/HomeWhiteFullscreen">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />

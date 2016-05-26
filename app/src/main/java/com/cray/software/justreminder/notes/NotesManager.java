@@ -21,9 +21,11 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -33,6 +35,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -60,6 +63,7 @@ import com.cray.software.justreminder.dialogs.ColorPicker;
 import com.cray.software.justreminder.dialogs.FontStyleDialog;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
+import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.Telephony;
@@ -94,6 +98,7 @@ public class NotesManager extends AppCompatActivity {
     private static final String KEY_COLOR = "key_color";
     private static final String KEY_STYLE = "key_style";
     private static final String KEY_IMAGE = "key_image";
+    private static final int REQUEST_SD_CARD = 1112;
 
     private int myHour = 0;
     private int myMinute = 0;
@@ -105,6 +110,7 @@ public class NotesManager extends AppCompatActivity {
     private String uuID = "";
     private byte[] image = null;
     private Bitmap img;
+    private Uri mImageUri;
     private RelativeLayout layoutContainer, imageContainer;
     private LinearLayout remindContainer;
     private RoboTextView remindDate, remindTime;
@@ -147,7 +153,11 @@ public class NotesManager extends AppCompatActivity {
                                         ColorPicker.class), Constants.REQUEST_CODE_THEME);
                                 return true;
                             case R.id.action_image:
-                                getImage();
+                                if (Permissions.checkPermission(NotesManager.this, Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL)) {
+                                    getImage();
+                                } else {
+                                    Permissions.requestPermission(NotesManager.this, REQUEST_SD_CARD, Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);
+                                }
                                 return true;
                             case R.id.action_reminder:
                                 if (!isReminderAttached()) {
@@ -459,19 +469,19 @@ public class NotesManager extends AppCompatActivity {
 
         try {
             File file = sHelp.createNote(note, date, uuID, color, image, style);
-            sendMail(file);
+            sendMail(file, note);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private void sendMail(File file){
+    private void sendMail(File file, String text){
         if (!file.exists() || !file.canRead()) {
             Messages.toast(this, getString(R.string.error_sending));
             finish();
             return;
         }
-        Telephony.sendNote(file, this);
+        Telephony.sendNote(file, this, text);
     }
 
     private void setDateTime() {
@@ -630,17 +640,23 @@ public class NotesManager extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
-                            case 0:
+                            case 0: {
                                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                                 intent.setType("image/*");
                                 Intent chooser = Intent.createChooser(intent, getString(R.string.image));
                                 startActivityForResult(chooser, Constants.ACTION_REQUEST_GALLERY);
+                            }
                                 break;
-                            case 1:
-                                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-                                    startActivityForResult(cameraIntent, Constants.ACTION_REQUEST_CAMERA);
-                                }
+                            case 1: {
+                                ContentValues values = new ContentValues();
+                                values.put(MediaStore.Images.Media.TITLE, "Picture");
+                                values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
+                                mImageUri = getContentResolver().insert(
+                                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
+                                startActivityForResult(intent, Constants.ACTION_REQUEST_CAMERA);
+                            }
                                 break;
                             default:
                                 break;
@@ -651,41 +667,24 @@ public class NotesManager extends AppCompatActivity {
         builder.show();
     }
 
+    public String getRealPathFromURI(Uri contentUri) {
+        String[] proj = { MediaStore.Images.Media.DATA };
+        Cursor cursor = managedQuery(contentUri, proj, null, null, null);
+        int column_index = cursor
+                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
+    }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case Constants.ACTION_REQUEST_GALLERY:
                     Uri selectedImage = data.getData();
-                    Bitmap bitmapImage = null;
-                    try {
-                        bitmapImage = decodeUri(selectedImage);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                    img = bitmapImage;
-                    if (bitmapImage != null){
-                        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                        bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-                        image = outputStream.toByteArray();
-                        noteImage.setImageBitmap(bitmapImage);
-                        if (!isImageAttached()) {
-                            ViewUtils.expand(imageContainer);
-                        }
-                    }
+                    getImageFromGallery(selectedImage);
                     break;
                 case Constants.ACTION_REQUEST_CAMERA:
-                    Bundle extras = data.getExtras();
-                    Bitmap imageBitmap = (Bitmap) extras.get("data");
-                    img = imageBitmap;
-                    if (imageBitmap != null){
-                        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-                        image = outputStream.toByteArray();
-                        noteImage.setImageBitmap(imageBitmap);
-                        if (!isImageAttached()) {
-                            ViewUtils.expand(imageContainer);
-                        }
-                    }
+                    getImageFromCamera();
                     break;
                 case Constants.REQUEST_CODE_THEME:
                     color = data.getIntExtra(Constants.SELECTED_COLOR, 12);
@@ -698,6 +697,50 @@ public class NotesManager extends AppCompatActivity {
             }
         }
     }
+
+    private void getImageFromGallery(Uri selectedImage) {
+        Bitmap bitmapImage = null;
+        try {
+            bitmapImage = decodeUri(selectedImage);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        img = bitmapImage;
+        if (bitmapImage != null) {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+            image = outputStream.toByteArray();
+            noteImage.setImageBitmap(bitmapImage);
+            if (!isImageAttached()) {
+                ViewUtils.expand(imageContainer);
+            }
+        }
+    }
+
+    private void getImageFromCamera() {
+        Bitmap bitmapImage = null;
+        try {
+            bitmapImage = decodeUri(mImageUri);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        img = bitmapImage;
+        if (bitmapImage != null) {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+            image = outputStream.toByteArray();
+            noteImage.setImageBitmap(bitmapImage);
+            if (!isImageAttached()) {
+                ViewUtils.expand(imageContainer);
+            }
+            String imageurl = getRealPathFromURI(mImageUri);
+            File file = new File(imageurl);
+            if (file.exists()) {
+                file.delete();
+            }
+        }
+    }
+
 
     private void updateTextStyle() {
         Typeface typeface = cSetter.getTypeface(style);
@@ -715,7 +758,6 @@ public class NotesManager extends AppCompatActivity {
     }
 
     private Bitmap decodeUri(Uri selectedImage) throws FileNotFoundException {
-        // Decode image size
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inJustDecodeBounds = true;
         BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage), null, o);
@@ -723,8 +765,7 @@ public class NotesManager extends AppCompatActivity {
         int width_tmp = o.outWidth, height_tmp = o.outHeight;
         int scale = 1;
         while (true) {
-            if (width_tmp / 2 < REQUIRED_SIZE
-                    || height_tmp / 2 < REQUIRED_SIZE) {
+            if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE) {
                 break;
             }
             width_tmp /= 2;
@@ -801,6 +842,17 @@ public class NotesManager extends AppCompatActivity {
         if (LocationUtil.isGooglePlayServicesAvailable(this)) {
             mTracker.setScreenName("Create note screen");
             mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_SD_CARD:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getImage();
+                }
+                break;
         }
     }
 

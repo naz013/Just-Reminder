@@ -57,7 +57,6 @@ public class RepeatView extends LinearLayout implements SeekBar.OnSeekBarChangeL
 
     private void init(Context context, AttributeSet attrs) {
         View.inflate(context, R.layout.repeat_view_layout, this);
-        //setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         setOrientation(VERTICAL);
         repeatTitle = (EditText) findViewById(R.id.repeatTitle);
         TextView repeatType = (TextView) findViewById(R.id.repeatType);
@@ -122,13 +121,19 @@ public class RepeatView extends LinearLayout implements SeekBar.OnSeekBarChangeL
     public void setProgress(int progress){
         if (progress < repeatViewSeek.getMax()) {
             repeatViewSeek.setProgress(progress);
+            updateEditField();
         }
+    }
+
+    private void updateEditField() {
+        repeatTitle.setSelection(repeatTitle.getText().length());
     }
 
     public void setProgress(long mills){
         long progress = mills / AlarmManager.INTERVAL_DAY;
         if (progress < repeatViewSeek.getMax()) {
             repeatViewSeek.setProgress((int) progress);
+            updateEditField();
         }
     }
 
@@ -162,7 +167,9 @@ public class RepeatView extends LinearLayout implements SeekBar.OnSeekBarChangeL
                 int res = Integer.parseInt(s.toString());
                 listener.onProgress(res);
                 if (res < repeatViewSeek.getMax()) {
-                    repeatViewSeek.setProgress(res);
+                    setProgress(res);
+                } else {
+                    setProgress(repeatViewSeek.getMax());
                 }
             } catch (NumberFormatException e){
                 e.printStackTrace();

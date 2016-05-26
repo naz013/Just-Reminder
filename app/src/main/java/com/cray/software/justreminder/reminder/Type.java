@@ -70,6 +70,27 @@ public class Type {
 
     /**
      * Get reminder object.
+     * @param id reminder identifier.
+     * @return reminder object
+     */
+    public int getDelay(long id){
+        NextBase db = new NextBase(mContext);
+        db.open();
+        Cursor c = db.getReminder(id);
+        if (c != null && c.moveToFirst()){
+            int delay = c.getInt(c.getColumnIndex(NextBase.DELAY));
+            c.close();
+            db.close();
+            return delay;
+        }
+
+        if (c != null) c.close();
+        db.close();
+        return 0;
+    }
+
+    /**
+     * Get reminder object.
      * @param uuId reminder unique identifier.
      * @return reminder object
      */

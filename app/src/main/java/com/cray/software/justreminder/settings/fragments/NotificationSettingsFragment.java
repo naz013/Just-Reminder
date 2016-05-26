@@ -72,10 +72,10 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         selectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Permissions.checkPermission(getActivity(), Permissions.MANAGE_DOCUMENTS)) {
+                if (Permissions.checkPermission(getActivity(), Permissions.READ_EXTERNAL)) {
                     Dialogues.imageDialog(getActivity(), null);
                 } else {
-                    Permissions.requestPermission(getActivity(), 117, Permissions.MANAGE_DOCUMENTS);
+                    Permissions.requestPermission(getActivity(), 117, Permissions.READ_EXTERNAL);
                 }
             }
         });
