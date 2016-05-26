@@ -60,7 +60,7 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
 
         public ViewHolder(View v) {
             super(v);
-            textView = (RoboTextView) v.findViewById(R.id.note);
+            textView = (TextView) v.findViewById(R.id.note);
             noteImage = (ImageView) v.findViewById(R.id.noteImage);
             itemCard = (CardView) v.findViewById(R.id.itemCard);
             itemCard.setCardBackgroundColor(cs.getCardStyle());

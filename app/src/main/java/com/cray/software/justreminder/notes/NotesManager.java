@@ -45,6 +45,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -122,7 +123,7 @@ public class NotesManager extends AppCompatActivity {
 
     private long id;
     private Toolbar toolbar;
-    private RoboEditText taskField;
+    private EditText taskField;
     private FloatingActionButton mFab;
 
     private Tracker mTracker;
@@ -185,7 +186,7 @@ public class NotesManager extends AppCompatActivity {
 
         toolbar.inflateMenu(R.menu.create_note);
 
-        taskField = (RoboEditText) findViewById(R.id.task_message);
+        taskField = (EditText) findViewById(R.id.task_message);
         taskField.setTextSize(sPrefs.loadInt(Prefs.TEXT_SIZE) + 12);
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);

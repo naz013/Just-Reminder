@@ -44,7 +44,7 @@
                     android:scaleType="centerCrop"
                     android:transitionName="image" />
 
-                <com.cray.software.justreminder.roboto_views.RoboTextView
+                <TextView
                     android:id="@+id/noteText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -53,8 +53,7 @@
                     android:paddingLeft="15dp"
                     android:paddingRight="15dp"
                     android:paddingTop="25dp"
-                    android:textSize="18sp"
-                    app:font_style="roboto_light" />
+                    android:textSize="18sp" />
 
                 <LinearLayout
                     android:id="@+id/reminderContainer"

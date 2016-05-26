@@ -42,6 +42,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
@@ -85,7 +86,8 @@ public class NotePreview extends AppCompatActivity {
     private ScrollView scrollContent;
     private LinearLayout reminderContainer, buttonContainer;
     private ImageView imageView;
-    private RoboTextView noteText, reminderTime;
+    private RoboTextView reminderTime;
+    private TextView noteText;
     private FloatingActionButton mFab;
 
     @Override
@@ -189,7 +191,7 @@ public class NotePreview extends AppCompatActivity {
                 }
             }
         });
-        noteText = (RoboTextView) findViewById(R.id.noteText);
+        noteText = (TextView) findViewById(R.id.noteText);
         reminderTime = (RoboTextView) findViewById(R.id.reminderTime);
         reminderTime.setOnClickListener(new View.OnClickListener() {
             @Override
