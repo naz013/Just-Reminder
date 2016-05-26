@@ -58,6 +58,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.ActionCallbacks;
+import com.cray.software.justreminder.json.JPlace;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.notes.NotePreview;
 import com.cray.software.justreminder.notes.NotesBase;
@@ -237,11 +238,12 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
             double[] place = item.getPlace();
             double lat = place[0];
             double lon = place[1];
+            ColorSetter cs = new ColorSetter(this);
             if (lat != 0.0 && lon != 0.0) {
-                if (item.getType().matches(Constants.TYPE_PLACES))
+                if (item.getType().matches(Constants.TYPE_PLACES)) {
                     location.setText(String.format(Locale.getDefault(),
                             "%.5f %.5f (%d)", lat, lon, item.getTotalPlaces()));
-                else {
+                } else {
                     location.setText(lat + " " + lon);
                 }
                 mapContainer.setVisibility(View.VISIBLE);
@@ -250,33 +252,59 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                         .findFragmentById(R.id.map)).getMap();
                 map.getUiSettings().setMyLocationButtonEnabled(false);
 
-                LatLng pos = new LatLng(lat, lon);
-                ColorSetter cs = new ColorSetter(this);
-                int marker = item.getMarker();
-                map.addMarker(new MarkerOptions()
-                        .position(pos)
-                        .title(item.getTitle())
-                        .icon(BitmapDescriptorFactory.fromResource(cs.getMarkerStyle(marker)))
-                        .draggable(false));
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
-                int radius = item.getRadius();
-                if (radius == -1) {
-                    radius = new SharedPrefs(this).loadInt(Prefs.LOCATION_RADIUS);
-                }
-                if (radius != -1) {
-                    int[] circleColors = cs.getMarkerRadiusStyle(marker);
-                    map.addCircle(new CircleOptions()
-                            .center(pos)
-                            .radius(radius)
-                            .strokeWidth(3f)
-                            .fillColor(ViewUtils.getColor(this, circleColors[0]))
-                            .strokeColor(ViewUtils.getColor(this, circleColors[1])));
-                }
-                String mLocation = LocationUtil.getAddress(this, lat, lon);
-                if (mLocation != null && !mLocation.matches("")) {
-                    location.setText(mLocation + "\n" + "("
-                            + String.format("%.5f", lat) + ", " +
-                            String.format("%.5f", lon) + ")");
+                ArrayList<JPlace> places = item.getPlaces();
+                if (places != null) {
+                    for (JPlace jPlace : places) {
+                        LatLng pos = new LatLng(jPlace.getLatitude(), jPlace.getLongitude());
+                        int marker = jPlace.getMarker();
+                        map.addMarker(new MarkerOptions()
+                                .position(pos)
+                                .title(jPlace.getName())
+                                .icon(BitmapDescriptorFactory.fromResource(cs.getMarkerStyle(marker)))
+                                .draggable(false));
+                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
+                        int radius = jPlace.getRadius();
+                        if (radius == -1) {
+                            radius = new SharedPrefs(this).loadInt(Prefs.LOCATION_RADIUS);
+                        }
+                        if (radius != -1) {
+                            int[] circleColors = cs.getMarkerRadiusStyle(marker);
+                            map.addCircle(new CircleOptions()
+                                    .center(pos)
+                                    .radius(radius)
+                                    .strokeWidth(3f)
+                                    .fillColor(ViewUtils.getColor(this, circleColors[0]))
+                                    .strokeColor(ViewUtils.getColor(this, circleColors[1])));
+                        }
+                    }
+                } else {
+                    LatLng pos = new LatLng(lat, lon);
+                    int marker = item.getMarker();
+                    map.addMarker(new MarkerOptions()
+                            .position(pos)
+                            .title(item.getTitle())
+                            .icon(BitmapDescriptorFactory.fromResource(cs.getMarkerStyle(marker)))
+                            .draggable(false));
+                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
+                    int radius = item.getRadius();
+                    if (radius == -1) {
+                        radius = new SharedPrefs(this).loadInt(Prefs.LOCATION_RADIUS);
+                    }
+                    if (radius != -1) {
+                        int[] circleColors = cs.getMarkerRadiusStyle(marker);
+                        map.addCircle(new CircleOptions()
+                                .center(pos)
+                                .radius(radius)
+                                .strokeWidth(3f)
+                                .fillColor(ViewUtils.getColor(this, circleColors[0]))
+                                .strokeColor(ViewUtils.getColor(this, circleColors[1])));
+                    }
+                    String mLocation = LocationUtil.getAddress(this, lat, lon);
+                    if (mLocation != null && !mLocation.matches("")) {
+                        location.setText(mLocation + "\n" + "("
+                                + String.format("%.5f", lat) + ", " +
+                                String.format("%.5f", lon) + ")");
+                    }
                 }
             } else {
                 location.setVisibility(View.GONE);

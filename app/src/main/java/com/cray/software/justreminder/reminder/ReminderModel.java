@@ -32,6 +32,7 @@ public class ReminderModel {
     private double[] place;
     private ArrayList<JShopping> shoppings;
     private ArrayList<Integer> weekdays;
+    private ArrayList<JPlace> places;
 
     public ReminderModel(long id, JModel jModel, int catColor, int archived, int completed,
                          int viewType) {
@@ -60,10 +61,10 @@ public class ReminderModel {
         this.marker = jPlace.getMarker();
 
         if (type.matches(Constants.TYPE_PLACES)) {
-            ArrayList<JPlace> list = jModel.getPlaces();
-            if (list != null && list.size() > 0) {
-                totalPlaces = list.size();
-                JPlace place = list.get(0);
+            places = jModel.getPlaces();
+            if (places != null && places.size() > 0) {
+                totalPlaces = places.size();
+                JPlace place = places.get(0);
                 this.radius = place.getRadius();
                 this.place = new double[]{place.getLatitude(), place.getLongitude()};
                 this.marker = place.getMarker();
@@ -75,6 +76,10 @@ public class ReminderModel {
         weekdays = jRecurrence.getWeekdays();
 
         this.shoppings = jModel.getShoppings();
+    }
+
+    public ArrayList<JPlace> getPlaces() {
+        return places;
     }
 
     public int getTotalPlaces() {

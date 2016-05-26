@@ -27,7 +27,7 @@ public class RequestBuilder {
         if (Module.isPro()) key = "AIzaSyD80IRgaabOQoZ_mRP_RL36CJKeDO96yKw";
         key = "&key=" + key;
         String req = name.replaceAll("\\s+", "+");
-        String params = "location=" + lat + "," + lng + req + "&language=" + getLocale() + "&radius=50000&name=" + name;
+        String params = "location=" + lat + "," + lng + req + "&radius=50000&name=" + name;
         return "https://maps.googleapis.com/maps/api/place/nearbysearch/json?" + params + key;
     }
 
@@ -36,11 +36,7 @@ public class RequestBuilder {
         if (Module.isPro()) key = "AIzaSyD80IRgaabOQoZ_mRP_RL36CJKeDO96yKw";
         key = "&key=" + key;
         String req = name.replaceAll("\\s+", "+");
-        String params = "query=" + req + "&language=" + getLocale();
+        String params = "query=" + req;
         return "https://maps.googleapis.com/maps/api/place/textsearch/json?" + params + key;
-    }
-
-    private static String getLocale() {
-        return Locale.getDefault().getLanguage();
     }
 }
