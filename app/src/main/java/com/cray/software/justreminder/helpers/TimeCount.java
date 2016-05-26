@@ -115,7 +115,7 @@ public class TimeCount {
      * @return Next event time
      */
     public long generateDateTime(String type, int dayOfMonth, long startTime, long repeat,
-                                      ArrayList<Integer> weekdays, long count, int delay){
+                                      ArrayList<Integer> weekdays, long count, long delay){
         long dateTime;
         if (startTime == 0) {
             dateTime = 0;
@@ -233,7 +233,7 @@ public class TimeCount {
      * @param delay delay for reminder.
      * @return Due time in milliseconds.
      */
-    public static long getNextWeekdayTime(long startTime, ArrayList<Integer> weekdays, int delay){
+    public static long getNextWeekdayTime(long startTime, ArrayList<Integer> weekdays, long delay){
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(startTime);
         cc.set(Calendar.SECOND, 0);
@@ -250,7 +250,6 @@ public class TimeCount {
                 }
                 cc.setTimeInMillis(cc.getTimeInMillis() + DAY);
             }
-
             return cc.getTimeInMillis();
         }
     }

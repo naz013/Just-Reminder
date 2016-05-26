@@ -88,7 +88,7 @@ public class Reminder {
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
             String summary = c.getString(c.getColumnIndex(NextBase.SUMMARY));
             String type = c.getString(c.getColumnIndex(NextBase.TYPE));
-            int delay = c.getInt(c.getColumnIndex(NextBase.DELAY));
+            long delay = c.getInt(c.getColumnIndex(NextBase.DELAY));
             JParser parser = new JParser(json);
             JRecurrence jRecurrence = parser.getRecurrence();
             long repeat = jRecurrence.getRepeat();
@@ -118,7 +118,7 @@ public class Reminder {
 
                 parser.setEventTime(eventTime);
                 parser.setCount(count);
-                db.updateReminderTime(id, eventTime);
+                db.updateReminderEventTime(id, eventTime);
                 db.setJson(id, parser.toJsonString());
                 int exp = parser.getExport().getCalendar();
 

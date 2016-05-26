@@ -23,6 +23,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.cray.software.justreminder.constants.Constants;
 
@@ -153,6 +154,17 @@ public class NextBase {
         ContentValues cv = new ContentValues();
         cv.put(EVENT_TIME, eventTime);
         cv.put(DELAY, 0);
+        return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
+    }
+
+    public boolean updateReminderEventTime(long rowId, long eventTime) {
+        openGuard();
+        ContentValues cv = new ContentValues();
+        cv.put(EVENT_TIME, eventTime);
+        cv.put(DB_LIST, 0);
+        cv.put(DB_STATUS, 0);
+        cv.put(REMINDER_STATUS, 0);
+        cv.put(NOTIFICATION_STATUS, 0);
         return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
     }
 
