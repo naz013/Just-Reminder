@@ -38,15 +38,14 @@
             android:adjustViewBounds="true"
             android:scaleType="centerCrop" />
 
-        <com.cray.software.justreminder.roboto_views.RoboTextView
+        <TextView
             android:id="@+id/note"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:text="Note"
-            android:textColor="@color/blackPrimary"
-            card_view:font_style="roboto_light" />
+            android:textColor="@color/blackPrimary" />
 
     </LinearLayout>
 </android.support.v7.widget.CardView>

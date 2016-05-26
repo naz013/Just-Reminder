@@ -84,4 +84,9 @@ public class RoboTextView extends TextView {
         if (mTypeface != null)
             setTypeface(mTypeface);
     }
+
+    @Override
+    public void setTypeface(Typeface tf) {
+        super.setTypeface(tf);
+    }
 }

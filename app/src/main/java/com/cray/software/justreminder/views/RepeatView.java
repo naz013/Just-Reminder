@@ -169,7 +169,7 @@ public class RepeatView extends LinearLayout implements SeekBar.OnSeekBarChangeL
                 if (res < repeatViewSeek.getMax()) {
                     setProgress(res);
                 } else {
-                    setProgress(repeatViewSeek.getMax());
+                    setProgress(repeatViewSeek.getMax() - 1);
                 }
             } catch (NumberFormatException e){
                 e.printStackTrace();
