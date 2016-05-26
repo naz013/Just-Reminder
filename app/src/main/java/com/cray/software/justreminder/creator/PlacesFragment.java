@@ -142,7 +142,7 @@ public class PlacesFragment extends BaseFragment implements MapCallback {
     public void onMapReady() {
         if (item != null) {
             ArrayList<JPlace> list = item.getPlaces();
-            placesMap.addMarkers(list);
+            placesMap.selectMarkers(list);
         }
     }
 }

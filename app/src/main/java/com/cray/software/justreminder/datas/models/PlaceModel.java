@@ -31,14 +31,14 @@ public class PlaceModel {
     }
 
     public PlaceModel(String name, String id, String icon, String address,
-                      LatLng position, ArrayList<String> types){
+                      LatLng position, ArrayList<String> types, int selected){
         this.name = name;
         this.id = id;
         this.icon = icon;
         this.address = address;
         this.position = position;
         this.types = types;
-        selected = 0;
+        this.selected = selected;
     }
 
     public ArrayList<String> getTypes() {

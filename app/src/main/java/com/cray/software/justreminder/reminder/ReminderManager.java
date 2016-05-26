@@ -1210,7 +1210,6 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
 
             places = ((PlacesFragment) baseFragment).getPlaces();
             if (places == null || places.size() == 0) {
-                Log.d(Constants.LOG_TAG, "No places");
                 showSnackbar(getString(R.string.you_dont_select_place));
                 return null;
             }

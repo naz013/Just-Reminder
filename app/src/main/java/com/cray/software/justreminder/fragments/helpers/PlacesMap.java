@@ -279,9 +279,20 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
      */
     public void addMarkers(ArrayList<JPlace> list) {
         mMap.clear();
-        toModels(list);
+        toModels(list, false);
         refreshAdapter(false);
     }
+
+    /**
+     * Add markers to map from JSON objects.
+     * @param list list of objects.
+     */
+    public void selectMarkers(ArrayList<JPlace> list) {
+        mMap.clear();
+        toModels(list, true);
+        refreshAdapter(false);
+    }
+
     /**
      * Move camera to coordinates with animation;
      * @param latLng coordinates
@@ -625,13 +636,13 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         return places;
     }
 
-    private void toModels(ArrayList<JPlace> list) {
+    private void toModels(ArrayList<JPlace> list, boolean select) {
         spinnerArray = new ArrayList<>();
         if (list != null && list.size() > 0) {
             for (JPlace model : list) {
                 spinnerArray.add(new PlaceModel(model.getName(), model.getId(),
                         null, model.getAddress(), new LatLng(model.getLatitude(),
-                        model.getLongitude()), model.getTypes()));
+                        model.getLongitude()), model.getTypes(), select ? 1 : 0));
             }
         }
     }
@@ -848,7 +859,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
             Messages.toast(getActivity(), getActivity().getString(R.string.no_places_found));
 
         if (spinnerArray != null && spinnerArray.size() > 1) {
-            spinnerArray.add(new PlaceModel(getActivity().getString(R.string.add_all), null, null, null, null, null));
+            spinnerArray.add(new PlaceModel(getActivity().getString(R.string.add_all), null, null, null, null, null, 0));
         }
         refreshAdapter(true);
     }
