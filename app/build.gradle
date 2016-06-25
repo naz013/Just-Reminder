@@ -125,11 +125,6 @@ ext {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    // https://mvnrepository.com/artifact/com.google.apis/google-api-services-calendar
-    // https://mvnrepository.com/artifact/com.google.api-client/google-api-client-android
-    // https://mvnrepository.com/artifact/com.google.apis/google-api-services-drive
-    // https://mvnrepository.com/artifact/com.google.apis/google-api-services-tasks
-    // https://mvnrepository.com/artifact/com.google.http-client/google-http-client-gson
     compile project(':photoPreview')
     compile project(':flextcal')
     compile project(':shared')
@@ -146,8 +141,6 @@ dependencies {
     compile "com.google.android.gms:play-services-analytics:${playServicesVersion}"
     compile "com.google.android.gms:play-services-wearable:${playServicesVersion}"
     compile "com.android.support:design:${supportLibraryVersion}"
-    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-    //compile project(path: ':backend', configuration: 'android-endpoints')
     compile('com.crashlytics.sdk.android:crashlytics:2.5.7@aar') {
         transitive = true;
     }

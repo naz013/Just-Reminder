@@ -3,3 +3,4 @@
 #- add option to select number from call list;
 - fix date type reminder;
 #- add empty views to contacts and calls list;
+- update translations;
