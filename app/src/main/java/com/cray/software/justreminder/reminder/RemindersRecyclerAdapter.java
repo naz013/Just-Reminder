@@ -134,12 +134,9 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
-            check.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mEventListener != null) {
-                        mEventListener.onItemSwitched(getAdapterPosition(), check);
-                    }
+            check.setOnClickListener(v1 -> {
+                if (mEventListener != null) {
+                    mEventListener.onItemSwitched(getAdapterPosition(), check);
                 }
             });
 
@@ -342,12 +339,9 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
                 View view = LayoutInflater.from(mContext).inflate(R.layout.list_item_task_item_widget, null, false);
                 ImageView checkView = (ImageView) view.findViewById(R.id.checkView);
                 RoboTextView textView = (RoboTextView) view.findViewById(R.id.shopText);
-                checkView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (mEventListener != null) {
-                            mEventListener.onItemClicked(holder.getAdapterPosition(), holder.subBackground);
-                        }
+                checkView.setOnClickListener(v -> {
+                    if (mEventListener != null) {
+                        mEventListener.onItemClicked(holder.getAdapterPosition(), holder.subBackground);
                     }
                 });
                 if (list.isChecked() == 1) {

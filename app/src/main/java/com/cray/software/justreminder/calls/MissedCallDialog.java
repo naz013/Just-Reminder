@@ -137,13 +137,9 @@ public class MissedCallDialog extends Activity implements GoogleApiClient.Connec
 
         boolean isFull = prefs.loadBoolean(Prefs.UNLOCK_DEVICE);
         if (isFull) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                            | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-                            | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-                }
-            });
+            runOnUiThread(() -> getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                    | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                    | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD));
         }
 
         setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -224,26 +220,11 @@ public class MissedCallDialog extends Activity implements GoogleApiClient.Connec
         contactPhoto.setVisibility(View.VISIBLE);
         wakeScreen();
 
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendSMS();
-            }
-        });
+        buttonCancel.setOnClickListener(v -> sendSMS());
 
-        buttonOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ok();
-            }
-        });
+        buttonOk.setOnClickListener(v -> ok());
 
-        buttonCall.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                call();
-            }
-        });
+        buttonCall.setOnClickListener(v -> call());
 
         notifier.showMissedReminder(name == null || name.matches("") ? number : name, id);
 

@@ -21,7 +21,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
@@ -47,13 +46,10 @@ public class ExtraPickerDialog extends Activity {
         String type = intent.getStringExtra("type");
 
         extraSwitch = (RoboSwitchCompat) findViewById(R.id.extraSwitch);
-        extraSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                switchIt(isChecked);
-                if (isChecked) extraSwitch.setText(R.string.custom);
-                else extraSwitch.setText(R.string.default_string);
-            }
+        extraSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            switchIt(isChecked);
+            if (isChecked) extraSwitch.setText(R.string.custom);
+            else extraSwitch.setText(R.string.default_string);
         });
 
         autoCheck = (RoboCheckBox) findViewById(R.id.autoCheck);
@@ -86,12 +82,7 @@ public class ExtraPickerDialog extends Activity {
         setChecked(array);
 
         Button buttonOk = (Button) findViewById(R.id.buttonOk);
-        buttonOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveResult();
-            }
-        });
+        buttonOk.setOnClickListener(v -> saveResult());
     }
 
     private void setChecked(int[] array) {

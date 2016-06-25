@@ -18,7 +18,6 @@ package com.cray.software.justreminder.dialogs;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
 
@@ -91,15 +90,12 @@ public class TrackerOption extends Activity {
             }
         });
 
-        findViewById(R.id.aboutClose).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sPrefs = new SharedPrefs(TrackerOption.this);
-                sPrefs.saveInt(Prefs.TRACK_DISTANCE, radiusBar.getProgress() + 1);
-                sPrefs.saveInt(Prefs.TRACK_TIME, timeBar.getProgress() + 1);
-                new DisableAsync(TrackerOption.this).execute();
-                finish();
-            }
+        findViewById(R.id.aboutClose).setOnClickListener(v -> {
+            sPrefs = new SharedPrefs(TrackerOption.this);
+            sPrefs.saveInt(Prefs.TRACK_DISTANCE, radiusBar.getProgress() + 1);
+            sPrefs.saveInt(Prefs.TRACK_TIME, timeBar.getProgress() + 1);
+            new DisableAsync(TrackerOption.this).execute();
+            finish();
         });
     }
 }

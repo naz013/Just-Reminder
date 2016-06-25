@@ -49,8 +49,6 @@ import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.squareup.picasso.Picasso;
 
-import jp.wasabeef.picasso.transformations.BlurTransformation;
-
 public class NavigationDrawerFragment extends Fragment implements 
         View.OnClickListener {
 
@@ -124,12 +122,7 @@ public class NavigationDrawerFragment extends Fragment implements
         prefsButton.setOnClickListener(this);
 
         RoboTextView helpButton = (RoboTextView) rootView.findViewById(R.id.help);
-        helpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectItem(ScreenManager.HELP, false);
-            }
-        });
+        helpButton.setOnClickListener(v -> selectItem(ScreenManager.HELP, false));
 
         RoboTextView feedButton = (RoboTextView) rootView.findViewById(R.id.feed);
         feedButton.setOnClickListener(this);
@@ -158,30 +151,21 @@ public class NavigationDrawerFragment extends Fragment implements
         archiveScreen.setOnClickListener(this);
 
         categories = (RoboTextView) rootView.findViewById(R.id.categories);
-        categories.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectItem(ScreenManager.FRAGMENT_GROUPS, true);
-                disableItem(ScreenManager.FRAGMENT_GROUPS);
-            }
+        categories.setOnClickListener(v -> {
+            selectItem(ScreenManager.FRAGMENT_GROUPS, true);
+            disableItem(ScreenManager.FRAGMENT_GROUPS);
         });
 
         places = (RoboTextView) rootView.findViewById(R.id.places);
-        places.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectItem(ScreenManager.FRAGMENT_PLACES, true);
-                disableItem(ScreenManager.FRAGMENT_PLACES);
-            }
+        places.setOnClickListener(v -> {
+            selectItem(ScreenManager.FRAGMENT_PLACES, true);
+            disableItem(ScreenManager.FRAGMENT_PLACES);
         });
 
         templates = (RoboTextView) rootView.findViewById(R.id.templates);
-        templates.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectItem(ScreenManager.FRAGMENT_TEMPLATES, true);
-                disableItem(ScreenManager.FRAGMENT_TEMPLATES);
-            }
+        templates.setOnClickListener(v -> {
+            selectItem(ScreenManager.FRAGMENT_TEMPLATES, true);
+            disableItem(ScreenManager.FRAGMENT_TEMPLATES);
         });
         reloadItems();
 
@@ -196,12 +180,7 @@ public class NavigationDrawerFragment extends Fragment implements
 
             if (!isAppInstalled("com.cray.software.justreminderpro")){
                 ads_container.setVisibility(View.VISIBLE);
-                ads_container.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        selectItem(ScreenManager.MARKET, false);
-                    }
-                });
+                ads_container.setOnClickListener(v -> selectItem(ScreenManager.MARKET, false));
             }
         }
 
@@ -218,7 +197,6 @@ public class NavigationDrawerFragment extends Fragment implements
         Picasso.with(getActivity())
                 .load(R.drawable.photo_main)
                 .resize((int) width, height)
-                //.transform(new BlurTransformation(getActivity(), 15, 2))
                 .into(image);
         image.setVisibility(View.VISIBLE);
 
@@ -333,12 +311,7 @@ public class NavigationDrawerFragment extends Fragment implements
             mDrawerLayout.openDrawer(mFragmentContainerView);
         }
 
-        mDrawerLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mDrawerToggle.syncState();
-            }
-        });
+        mDrawerLayout.post(() -> mDrawerToggle.syncState());
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
@@ -351,18 +324,15 @@ public class NavigationDrawerFragment extends Fragment implements
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
         if (mCallbacks != null) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (tag != null) {
-                        try {
-                            mCallbacks.onItemSelected(tag);
-                        } catch (NullPointerException e){
-                            e.printStackTrace();
-                        }
-                    } else {
-                        mCallbacks.onItemSelected(ScreenManager.FRAGMENT_ACTIVE);
+            new Handler().postDelayed(() -> {
+                if (tag != null) {
+                    try {
+                        mCallbacks.onItemSelected(tag);
+                    } catch (NullPointerException e){
+                        e.printStackTrace();
                     }
+                } else {
+                    mCallbacks.onItemSelected(ScreenManager.FRAGMENT_ACTIVE);
                 }
             }, 250);
         }

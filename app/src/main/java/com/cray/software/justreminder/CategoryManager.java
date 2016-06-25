@@ -26,7 +26,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
@@ -144,12 +143,7 @@ public class CategoryManager extends AppCompatActivity {
         }
     }
 
-    private View.OnClickListener listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            colorSwitch(v.getId());
-        }
-    };
+    private View.OnClickListener listener = v -> colorSwitch(v.getId());
 
     private void saveCategory(){
         String text = editField.getText().toString().trim();

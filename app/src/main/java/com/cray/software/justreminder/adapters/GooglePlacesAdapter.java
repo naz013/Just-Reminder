@@ -84,14 +84,11 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
             text2 = (RoboTextView) v.findViewById(R.id.text2);
 
             v.setOnClickListener(this);
-            placeCheck.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PlaceModel item = array.get(getAdapterPosition());
-                    if (item.getSelected() == 0) item.setSelected(1);
-                    else item.setSelected(0);
-                    notifyDataSetChanged();
-                }
+            placeCheck.setOnClickListener(v1 -> {
+                PlaceModel item = array.get(getAdapterPosition());
+                if (item.getSelected() == 0) item.setSelected(1);
+                else item.setSelected(0);
+                notifyDataSetChanged();
             });
         }
 

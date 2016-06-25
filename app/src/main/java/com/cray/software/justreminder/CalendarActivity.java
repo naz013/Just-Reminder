@@ -86,27 +86,19 @@ public class CalendarActivity extends AppCompatActivity {
         title.setText(getString(R.string.calendar));
 
         ImageButton voiceButton = (ImageButton) findViewById(R.id.voiceButton);
-        voiceButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SuperUtil.startVoiceRecognitionActivity(CalendarActivity.this,
-                        VOICE_RECOGNITION_REQUEST_CODE, false);
-            }
-        });
+        voiceButton.setOnClickListener(view -> SuperUtil.startVoiceRecognitionActivity(CalendarActivity.this,
+                VOICE_RECOGNITION_REQUEST_CODE, false));
 
         currentEvent = (RoboButton) findViewById(R.id.currentEvent);
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
         int day = cal.get(Calendar.DAY_OF_MONTH);
         currentEvent.setText(String.valueOf(day));
-        currentEvent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Calendar cal = Calendar.getInstance();
-                cal.setTimeInMillis(System.currentTimeMillis());
-                showEvents(cal.getTime());
-                sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
-            }
+        currentEvent.setOnClickListener(v -> {
+            Calendar cal1 = Calendar.getInstance();
+            cal1.setTimeInMillis(System.currentTimeMillis());
+            showEvents(cal1.getTime());
+            sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
         });
 
         pager = (ViewPager) findViewById(R.id.pager);
@@ -124,13 +116,8 @@ public class CalendarActivity extends AppCompatActivity {
 
         FloatingActionButton mFab = (FloatingActionButton) findViewById(R.id.fab);
         if (dateMills == 0) dateMills = System.currentTimeMillis();
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(CalendarActivity.this, ActionPickerDialog.class)
-                        .putExtra("date", dateMills));
-            }
-        });
+        mFab.setOnClickListener(v -> startActivity(new Intent(CalendarActivity.this, ActionPickerDialog.class)
+                .putExtra("date", dateMills)));
 
         if (dateMills != 0){
             cal.setTimeInMillis(dateMills);

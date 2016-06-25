@@ -22,7 +22,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
@@ -148,30 +147,21 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
 
             holder.itemCheck.setVisibility(View.VISIBLE);
             holder.clearButton.setVisibility(View.VISIBLE);
-            holder.clearButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (listener != null) {
-                        listener.onItemDelete(holder.getAdapterPosition());
-                    }
+            holder.clearButton.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onItemDelete(holder.getAdapterPosition());
                 }
             });
 
-            holder.textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (listener != null && item.getStatus() == ShoppingList.DELETED) {
-                        listener.onItemChange(holder.getAdapterPosition());
-                    }
+            holder.textView.setOnClickListener(v -> {
+                if (listener != null && item.getStatus() == ShoppingList.DELETED) {
+                    listener.onItemChange(holder.getAdapterPosition());
                 }
             });
 
-            holder.itemCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (listener != null) {
-                        listener.onItemCheck(holder.getAdapterPosition(), isChecked);
-                    }
+            holder.itemCheck.setOnCheckedChangeListener((buttonView, isChecked1) -> {
+                if (listener != null) {
+                    listener.onItemCheck(holder.getAdapterPosition(), isChecked1);
                 }
             });
         }

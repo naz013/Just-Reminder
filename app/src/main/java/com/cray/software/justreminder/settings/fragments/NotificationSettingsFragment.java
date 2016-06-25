@@ -69,14 +69,11 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         sPrefs = new SharedPrefs(getActivity().getApplicationContext());
 
         TextView selectImage = (TextView) rootView.findViewById(R.id.selectImage);
-        selectImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Permissions.checkPermission(getActivity(), Permissions.READ_EXTERNAL)) {
-                    Dialogues.imageDialog(getActivity(), null);
-                } else {
-                    Permissions.requestPermission(getActivity(), 117, Permissions.READ_EXTERNAL);
-                }
+        selectImage.setOnClickListener(v -> {
+            if (Permissions.checkPermission(getActivity(), Permissions.READ_EXTERNAL)) {
+                Dialogues.imageDialog(getActivity(), null);
+            } else {
+                Permissions.requestPermission(getActivity(), 117, Permissions.READ_EXTERNAL);
             }
         });
 
@@ -167,12 +164,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         volume.setOnClickListener(this);
 
         locale = (TextView) rootView.findViewById(R.id.locale);
-        locale.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dialogues.ttsLocale(getActivity(), Prefs.TTS_LOCALE);
-            }
-        });
+        locale.setOnClickListener(v -> Dialogues.ttsLocale(getActivity(), Prefs.TTS_LOCALE));
 
         ledPrefs = (PrefsView) rootView.findViewById(R.id.ledPrefs);
         chooseLedColorPrefs = (PrefsView) rootView.findViewById(R.id.chooseLedColorPrefs);
@@ -195,12 +187,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
             ledPrefs.setChecked(sPrefs.loadBoolean(Prefs.LED_STATUS));
             
             chooseLedColorPrefs.setVisibility(View.VISIBLE);
-            chooseLedColorPrefs.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Dialogues.ledColor(getActivity(), Prefs.LED_COLOR);
-                }
-            });
+            chooseLedColorPrefs.setOnClickListener(view -> Dialogues.ledColor(getActivity(), Prefs.LED_COLOR));
 
             checkEnabling();
         } else {

@@ -69,18 +69,8 @@ public class DateTimeView extends RelativeLayout implements
         date = (TextView) findViewById(R.id.dateField);
         time = (TextView) findViewById(R.id.timeField);
 
-        date.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dateDialog();
-            }
-        });
-        time.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timeDialog();
-            }
-        });
+        date.setOnClickListener(v -> dateDialog());
+        time.setOnClickListener(v -> timeDialog());
 
         this.mContext = context;
         updateDateTime(0);

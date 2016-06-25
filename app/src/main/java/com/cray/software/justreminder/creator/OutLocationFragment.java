@@ -165,12 +165,9 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
         mapContainerOut.setVisibility(View.GONE);
 
         attachDelayOut = (RoboCheckBox) view.findViewById(R.id.attachDelayOut);
-        attachDelayOut.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) attachDelayOut.setVisibility(View.VISIBLE);
-                else attachDelayOut.setVisibility(View.GONE);
-            }
+        attachDelayOut.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) attachDelayOut.setVisibility(View.VISIBLE);
+            else attachDelayOut.setVisibility(View.GONE);
         });
 
         if (attachDelayOut.isChecked()) ViewUtils.expand(delayLayoutOut);
@@ -179,14 +176,11 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
         if (isDark) mapButtonOut.setImageResource(R.drawable.ic_map_white_24dp);
         else mapButtonOut.setImageResource(R.drawable.ic_map_black_24dp);
 
-        mapButtonOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mapCheck.isChecked()) {
-                    toggleMap();
-                }
-                mapCheck.setChecked(true);
+        mapButtonOut.setOnClickListener(v -> {
+            if (mapCheck.isChecked()) {
+                toggleMap();
             }
+            mapCheck.setChecked(true);
         });
         currentLocation = (RoboTextView) view.findViewById(R.id.currentLocation);
         mapLocation = (RoboTextView) view.findViewById(R.id.mapLocation);

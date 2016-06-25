@@ -17,7 +17,6 @@
 package com.cray.software.justreminder.notes;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -112,23 +111,19 @@ public class NotePreview extends AppCompatActivity {
 
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setTitle("");
-        toolbar.setOnMenuItemClickListener(
-                new Toolbar.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.action_share:
-                                shareNote();
-                                return true;
-                            case R.id.action_delete:
-                                deleteDialog();
-                                return true;
-                            case R.id.action_status:
-                                moveToStatus();
-                                return true;
-                            default:
-                                return false;
-                        }
+        toolbar.setOnMenuItemClickListener(item -> {
+                    switch (item.getItemId()) {
+                        case R.id.action_share:
+                            shareNote();
+                            return true;
+                        case R.id.action_delete:
+                            deleteDialog();
+                            return true;
+                        case R.id.action_status:
+                            moveToStatus();
+                            return true;
+                        default:
+                            return false;
                     }
                 });
 
@@ -181,66 +176,44 @@ public class NotePreview extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.imageView);
         if (Module.isLollipop()) imageView.setTransitionName("image");
 
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Permissions.checkPermission(NotePreview.this, Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL)) {
-                    openImage();
-                } else {
-                    Permissions.requestPermission(NotePreview.this, REQUEST_SD_CARD, Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);
-                }
+        imageView.setOnClickListener(v -> {
+            if (Permissions.checkPermission(NotePreview.this, Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL)) {
+                openImage();
+            } else {
+                Permissions.requestPermission(NotePreview.this, REQUEST_SD_CARD, Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);
             }
         });
         noteText = (TextView) findViewById(R.id.noteText);
         reminderTime = (RoboTextView) findViewById(R.id.reminderTime);
-        reminderTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (buttonContainer.getVisibility() == View.VISIBLE) {
-                    ViewUtils.collapse(buttonContainer);
-                } else {
-                    ViewUtils.expand(buttonContainer);
-                }
+        reminderTime.setOnClickListener(v -> {
+            if (buttonContainer.getVisibility() == View.VISIBLE) {
+                ViewUtils.collapse(buttonContainer);
+            } else {
+                ViewUtils.expand(buttonContainer);
             }
         });
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setVisibility(View.GONE);
 
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(NotePreview.this, NotesManager.class)
-                        .putExtra(Constants.EDIT_ID, mParam1));
-            }
-        });
+        mFab.setOnClickListener(v -> startActivity(new Intent(NotePreview.this, NotesManager.class)
+                .putExtra(Constants.EDIT_ID, mParam1)));
 
         RoboButton editReminder = (RoboButton) findViewById(R.id.editReminder);
-        editReminder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (remId != 0) {
-                    Reminder.edit(remId, NotePreview.this);
-                }
+        editReminder.setOnClickListener(v -> {
+            if (remId != 0) {
+                Reminder.edit(remId, NotePreview.this);
             }
         });
         RoboButton deleteReminder = (RoboButton) findViewById(R.id.deleteReminder);
-        deleteReminder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (remId != 0) {
-                    Reminder.delete(remId, NotePreview.this);
-                    reminderContainer.setVisibility(View.GONE);
-                }
+        deleteReminder.setOnClickListener(v -> {
+            if (remId != 0) {
+                Reminder.delete(remId, NotePreview.this);
+                reminderContainer.setVisibility(View.GONE);
             }
         });
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ViewUtils.show(NotePreview.this, mFab);
-            }
-        }, 500);
+        new Handler().postDelayed(() -> ViewUtils.show(NotePreview.this, mFab), 500);
     }
 
     private void openImage() {
@@ -424,22 +397,16 @@ public class NotePreview extends AppCompatActivity {
     }
 
     private void closeWindow() {
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.scale_zoom_out);
-                mFab.startAnimation(slide);
-                mFab.setVisibility(View.GONE);
-            }
+        new Handler().post(() -> {
+            Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.scale_zoom_out);
+            mFab.startAnimation(slide);
+            mFab.setVisibility(View.GONE);
         });
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (Module.isLollipop()) {
-                    finishAfterTransition();
-                } else {
-                    finish();
-                }
+        new Handler().postDelayed(() -> {
+            if (Module.isLollipop()) {
+                finishAfterTransition();
+            } else {
+                finish();
             }
         }, 300);
     }
@@ -447,19 +414,13 @@ public class NotePreview extends AppCompatActivity {
     private void deleteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.delete_this_note));
-        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                deleteNote();
-                closeWindow();
-            }
+        builder.setPositiveButton(getString(R.string.yes), (dialog, which) -> {
+            dialog.dismiss();
+            deleteNote();
+            closeWindow();
         });
-        builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
+        builder.setNegativeButton(getString(R.string.no), (dialog, which) -> {
+            dialog.dismiss();
         });
         AlertDialog dialog = builder.create();
         dialog.show();

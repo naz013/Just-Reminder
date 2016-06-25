@@ -102,30 +102,24 @@ public class SkypeFragment extends BaseFragment implements
         RoboRadioButton skypeVideo = (RoboRadioButton) view.findViewById(R.id.skypeVideo);
         skypeCall.setChecked(true);
         RoboRadioButton skypeChat = (RoboRadioButton) view.findViewById(R.id.skypeChat);
-        skypeChat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (mActionCallback != null) {
-                    mActionCallback.onTypeChange(b);
-                }
+        skypeChat.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (mActionCallback != null) {
+                mActionCallback.onTypeChange(b);
             }
         });
 
         RadioGroup skypeGroup = (RadioGroup) view.findViewById(R.id.skypeGroup);
-        skypeGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.skypeCall:
-                        type = Constants.TYPE_SKYPE;
-                        break;
-                    case R.id.skypeChat:
-                        type = Constants.TYPE_SKYPE_CHAT;
-                        break;
-                    case R.id.skypeVideo:
-                        type = Constants.TYPE_SKYPE_VIDEO;
-                        break;
-                }
+        skypeGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            switch (checkedId) {
+                case R.id.skypeCall:
+                    type = Constants.TYPE_SKYPE;
+                    break;
+                case R.id.skypeChat:
+                    type = Constants.TYPE_SKYPE_CHAT;
+                    break;
+                case R.id.skypeVideo:
+                    type = Constants.TYPE_SKYPE_VIDEO;
+                    break;
             }
         });
 

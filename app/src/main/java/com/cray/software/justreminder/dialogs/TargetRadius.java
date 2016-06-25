@@ -23,7 +23,6 @@ import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.SeekBar;
 
 import com.cray.software.justreminder.R;
@@ -92,27 +91,19 @@ public class TargetRadius extends Activity implements View.OnTouchListener {
         }
         changeMax(transportCheck.isChecked());
 
-        transportCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                changeMax(isChecked);
-            }
-        });
+        transportCheck.setOnCheckedChangeListener((buttonView, isChecked) -> changeMax(isChecked));
 
         RoboButton aboutClose = (RoboButton) findViewById(R.id.aboutClose);
-        aboutClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (i == 0) {
-                    sPrefs = new SharedPrefs(TargetRadius.this);
-                    sPrefs.saveInt(Prefs.LOCATION_RADIUS, radiusBar.getProgress());
-                    finish();
-                } else {
-                    Intent intent = new Intent();
-                    intent.putExtra(Constants.SELECTED_RADIUS, radiusBar.getProgress());
-                    setResult(RESULT_OK, intent);
-                    finish();
-                }
+        aboutClose.setOnClickListener(v -> {
+            if (i == 0) {
+                sPrefs = new SharedPrefs(TargetRadius.this);
+                sPrefs.saveInt(Prefs.LOCATION_RADIUS, radiusBar.getProgress());
+                finish();
+            } else {
+                Intent intent1 = new Intent();
+                intent1.putExtra(Constants.SELECTED_RADIUS, radiusBar.getProgress());
+                setResult(RESULT_OK, intent1);
+                finish();
             }
         });
     }

@@ -40,7 +40,6 @@ import com.cray.software.justreminder.datas.TemplateDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
@@ -163,15 +162,12 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
     @Override
     public void onItemLongClicked(final int position, View view) {
         final String[] items = {getString(R.string.edit), getString(R.string.delete)};
-        Dialogues.showLCAM(getActivity(), new LCAMListener() {
-            @Override
-            public void onAction(int item) {
-                if (item == 0) {
-                    editTemplate(position);
-                }
-                if (item == 1) {
-                    removeTemplate(position);
-                }
+        Dialogues.showLCAM(getActivity(), item -> {
+            if (item == 0) {
+                editTemplate(position);
+            }
+            if (item == 1) {
+                removeTemplate(position);
             }
         }, items);
     }

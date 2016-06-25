@@ -65,26 +65,20 @@ public class RepeatView extends LinearLayout implements SeekBar.OnSeekBarChangeL
         repeatViewSeek.setOnSeekBarChangeListener(this);
         repeatTitle.addTextChangedListener(this);
 
-        repeatTitle.setOnFocusChangeListener(new OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                imm = (InputMethodManager) mContext.getSystemService(
-                        Context.INPUT_METHOD_SERVICE);
-                if (!hasFocus) {
-                    imm.hideSoftInputFromWindow(repeatTitle.getWindowToken(), 0);
-                } else {
-                    imm.showSoftInput(repeatTitle, 0);
-                }
+        repeatTitle.setOnFocusChangeListener((v, hasFocus) -> {
+            imm = (InputMethodManager) mContext.getSystemService(
+                    Context.INPUT_METHOD_SERVICE);
+            if (!hasFocus) {
+                imm.hideSoftInputFromWindow(repeatTitle.getWindowToken(), 0);
+            } else {
+                imm.showSoftInput(repeatTitle, 0);
             }
         });
-        repeatTitle.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                imm = (InputMethodManager) mContext.getSystemService(
-                        Context.INPUT_METHOD_SERVICE);
-                if (!imm.isActive(repeatTitle)){
-                    imm.showSoftInput(repeatTitle, 0);
-                }
+        repeatTitle.setOnClickListener(v -> {
+            imm = (InputMethodManager) mContext.getSystemService(
+                    Context.INPUT_METHOD_SERVICE);
+            if (!imm.isActive(repeatTitle)){
+                imm.showSoftInput(repeatTitle, 0);
             }
         });
 

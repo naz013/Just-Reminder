@@ -18,7 +18,6 @@ package com.cray.software.justreminder.dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -35,7 +34,6 @@ public class ChangeDialog extends Activity {
         super.onCreate(savedInstanceState);
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle(getString(R.string.changes));
-
         WebView wv = new WebView(this);
         String url = "file:///android_asset/files/change_log.html";
         if (Module.isPro()) url = "file:///android_asset/files/change_log_pro.html";
@@ -47,15 +45,11 @@ public class ChangeDialog extends Activity {
                 return true;
             }
         });
-
         alert.setView(wv);
-        alert.setCancelable(false);
-        alert.setNegativeButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.dismiss();
-                finish();
-            }
+        alert.setCancelable(true);
+        alert.setNegativeButton(getString(R.string.ok), (dialog, id) -> {
+            dialog.dismiss();
+            finish();
         });
         alertDialog = alert.create();
         alertDialog.show();

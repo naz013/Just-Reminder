@@ -18,7 +18,6 @@ package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -110,13 +109,10 @@ public class GeolocationFragment extends Fragment implements SimpleListener {
     public void onItemLongClicked(final int position, View view) {
         final CharSequence[] items = {getString(R.string.edit)};
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                if (which == 0) {
-                    editPlace(position);
-                }
+        builder.setItems(items, (dialog, which) -> {
+            dialog.dismiss();
+            if (which == 0) {
+                editPlace(position);
             }
         });
         AlertDialog alert = builder.create();

@@ -89,12 +89,7 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
         listView = (RecyclerView) findViewById(R.id.currentList);
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(TemplatesList.this, NewTemplate.class));
-            }
-        });
+        mFab.setOnClickListener(v -> startActivity(new Intent(TemplatesList.this, NewTemplate.class)));
     }
 
     private void loadTemplates(){
@@ -164,15 +159,12 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
     @Override
     public void onItemLongClicked(final int position, View view) {
         final String[] items = {getString(R.string.edit), getString(R.string.delete)};
-        Dialogues.showLCAM(this, new LCAMListener() {
-            @Override
-            public void onAction(int item) {
-                if (item == 0) {
-                    editTemplate(position);
-                }
-                if (item == 1) {
-                    removeTemplate(position);
-                }
+        Dialogues.showLCAM(this, item -> {
+            if (item == 0) {
+                editTemplate(position);
+            }
+            if (item == 1) {
+                removeTemplate(position);
             }
         }, items);
     }

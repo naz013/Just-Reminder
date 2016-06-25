@@ -23,7 +23,6 @@ import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.telephony.SmsManager;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
@@ -50,14 +49,9 @@ public class QuickSMS extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(cs.getFullscreenStyle());
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                        | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-                        | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-            }
-        });
+        runOnUiThread(() -> getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD));
 
         setContentView(R.layout.quick_message_layout);
 
@@ -71,18 +65,15 @@ public class QuickSMS extends Activity {
         messagesList = (ListView) findViewById(R.id.messagesList);
 
         RoboButton buttonSend = (RoboButton) findViewById(R.id.buttonSend);
-        buttonSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = messagesList.getCheckedItemPosition();
-                Cursor c = (Cursor) messagesList.getAdapter().getItem(position);
-                if (c != null) {
-                    String message = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                    sendSMS(number, message);
-                }
-                if (c != null) c.close();
-                removeFlags();
+        buttonSend.setOnClickListener(v -> {
+            int position = messagesList.getCheckedItemPosition();
+            Cursor c = (Cursor) messagesList.getAdapter().getItem(position);
+            if (c != null) {
+                String message = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+                sendSMS(number, message);
             }
+            if (c != null) c.close();
+            removeFlags();
         });
 
         String name = Contacts.getNameFromNumber(number, QuickSMS.this);

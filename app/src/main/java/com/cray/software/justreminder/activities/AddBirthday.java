@@ -28,14 +28,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
@@ -141,12 +137,9 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         container.setVisibility(View.GONE);
 
         contactCheck = (RoboCheckBox) findViewById(R.id.contactCheck);
-        contactCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) container.setVisibility(View.VISIBLE);
-                else container.setVisibility(View.GONE);
-            }
+        contactCheck.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) container.setVisibility(View.VISIBLE);
+            else container.setVisibility(View.GONE);
         });
 
         final Calendar calendar = Calendar.getInstance();

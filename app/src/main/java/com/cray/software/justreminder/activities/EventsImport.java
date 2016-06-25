@@ -100,12 +100,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
         button.setOnClickListener(this);
 
         syncInterval = (RoboButton) findViewById(R.id.syncInterval);
-        syncInterval.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dialogues.selectInterval(EventsImport.this, Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL, R.string.interval);
-            }
-        });
+        syncInterval.setOnClickListener(v -> Dialogues.selectInterval(EventsImport.this, Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL, R.string.interval));
 
         eventsCheck = (RoboCheckBox) findViewById(R.id.eventsCheck);
         RoboCheckBox autoCheck = (RoboCheckBox) findViewById(R.id.autoCheck);

@@ -92,20 +92,10 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
 
         chooseLedColorPrefs = (PrefsView) rootView.findViewById(R.id.chooseLedColorPrefs);
         chooseLedColorPrefs.setOnClickListener(this);
-        chooseLedColorPrefs.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Dialogues.ledColor(getActivity(), Prefs.BIRTHDAY_LED_COLOR);
-             }
-        });
+        chooseLedColorPrefs.setOnClickListener(view -> Dialogues.ledColor(getActivity(), Prefs.BIRTHDAY_LED_COLOR));
 
         locale = (TextView) rootView.findViewById(R.id.locale);
-        locale.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dialogues.ttsLocale(getActivity(), Prefs.BIRTHDAY_TTS_LOCALE);
-            }
-        });
+        locale.setOnClickListener(v -> Dialogues.ttsLocale(getActivity(), Prefs.BIRTHDAY_TTS_LOCALE));
 
         checkVibrate();
         showMelody();

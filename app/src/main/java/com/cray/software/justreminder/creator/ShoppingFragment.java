@@ -128,71 +128,59 @@ public class ShoppingFragment extends BaseFragment {
         dateViewShopping.setDateTime(updateCalendar(eventTime, false));
 
         ImageView shopTimeIcon = (ImageView) view.findViewById(R.id.shopTimeIcon);
-        shopTimeIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (shoppingTimeContainer.getVisibility() == View.VISIBLE) {
-                    ViewUtils.hide(shoppingTimeContainer);
-                }
-                ViewUtils.show(shoppingNoTime);
-                myYear = 0;
-                myMonth = 0;
-                myDay = 0;
-                myHour = 0;
-                myMinute = 0;
-                isShoppingReminder = false;
+        shopTimeIcon.setOnClickListener(v -> {
+            if (shoppingTimeContainer.getVisibility() == View.VISIBLE) {
+                ViewUtils.hide(shoppingTimeContainer);
             }
+            ViewUtils.show(shoppingNoTime);
+            myYear = 0;
+            myMonth = 0;
+            myDay = 0;
+            myHour = 0;
+            myMinute = 0;
+            isShoppingReminder = false;
         });
         if (isDark) shopTimeIcon.setImageResource(R.drawable.ic_alarm_white_24dp);
         else shopTimeIcon.setImageResource(R.drawable.ic_alarm_black_24dp);
 
         shoppingNoTime  = (RoboTextView) view.findViewById(R.id.shoppingNoTime);
-        shoppingNoTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (shoppingNoTime.getVisibility() == View.VISIBLE) {
-                    ViewUtils.hide(shoppingNoTime);
-                }
-                ViewUtils.show(shoppingTimeContainer);
-                dateViewShopping.setDateTime(updateCalendar(System.currentTimeMillis(), false));
-                isShoppingReminder = true;
+        shoppingNoTime.setOnClickListener(v -> {
+            if (shoppingNoTime.getVisibility() == View.VISIBLE) {
+                ViewUtils.hide(shoppingNoTime);
             }
+            ViewUtils.show(shoppingTimeContainer);
+            dateViewShopping.setDateTime(updateCalendar(System.currentTimeMillis(), false));
+            isShoppingReminder = true;
         });
 
         shopEdit = (RoboEditText) view.findViewById(R.id.shopEdit);
-        shopEdit.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
-                    String task = shopEdit.getText().toString().trim();
-                    if (task.matches("")) {
-                        shopEdit.setError(getString(R.string.must_be_not_empty));
-                        return false;
-                    } else {
-                        shoppingLists.addItem(new ShoppingList(task));
-                        shoppingAdapter.notifyDataSetChanged();
-                        shopEdit.setText("");
-                        return true;
-                    }
-                } else return false;
-            }
+        shopEdit.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+                String task = shopEdit.getText().toString().trim();
+                if (task.matches("")) {
+                    shopEdit.setError(getString(R.string.must_be_not_empty));
+                    return false;
+                } else {
+                    shoppingLists.addItem(new ShoppingList(task));
+                    shoppingAdapter.notifyDataSetChanged();
+                    shopEdit.setText("");
+                    return true;
+                }
+            } else return false;
         });
         ImageButton addButton = (ImageButton) view.findViewById(R.id.addButton);
         if (isDark) addButton.setImageResource(R.drawable.ic_add_white_24dp);
         else addButton.setImageResource(R.drawable.ic_add_black_24dp);
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String task = shopEdit.getText().toString().trim();
-                if (task.matches("")) {
-                    shopEdit.setError(getString(R.string.must_be_not_empty));
-                    return;
-                }
-
-                shoppingLists.addItem(new ShoppingList(task));
-                shoppingAdapter.notifyDataSetChanged();
-                shopEdit.setText("");
+        addButton.setOnClickListener(v -> {
+            String task = shopEdit.getText().toString().trim();
+            if (task.matches("")) {
+                shopEdit.setError(getString(R.string.must_be_not_empty));
+                return;
             }
+
+            shoppingLists.addItem(new ShoppingList(task));
+            shoppingAdapter.notifyDataSetChanged();
+            shopEdit.setText("");
         });
 
         shoppingLists = new ShoppingListDataProvider();

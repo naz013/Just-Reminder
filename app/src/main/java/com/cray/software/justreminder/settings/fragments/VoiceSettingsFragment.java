@@ -46,35 +46,20 @@ public class VoiceSettingsFragment extends Fragment {
         }
 
         TextView voiceLanguage = (TextView) rootView.findViewById(R.id.voiceLanguage);
-        voiceLanguage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dialogues.language(getActivity());
-            }
-        });
+        voiceLanguage.setOnClickListener(v -> Dialogues.language(getActivity()));
         voiceLanguage.setEnabled(true);
 
         TextView voiceTime = (TextView) rootView.findViewById(R.id.voiceTime);
-        voiceTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getActivity().getApplicationContext()
-                        .startActivity(new Intent(getActivity().getApplicationContext(),
-                                TimesOfDay.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-            }
-        });
+        voiceTime.setOnClickListener(v -> getActivity().getApplicationContext()
+                .startActivity(new Intent(getActivity().getApplicationContext(),
+                        TimesOfDay.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
 
         TextView voiceCommands = (TextView) rootView.findViewById(R.id.voiceCommands);
-        voiceCommands.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getActivity().getApplicationContext()
-                        .startActivity(new Intent(getActivity().getApplicationContext(),
-                                VoiceHelp.class)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-            }
-        });
+        voiceCommands.setOnClickListener(v -> getActivity().getApplicationContext()
+                .startActivity(new Intent(getActivity().getApplicationContext(),
+                        VoiceHelp.class)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
         return rootView;
     }
 

@@ -61,9 +61,7 @@ public class VoiceWidgetDialog extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == RESULT_OK) {
-
             ArrayList matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-
             new Recognize(VoiceWidgetDialog.this).parseResults(matches, true);
             super.onActivityResult(requestCode, resultCode, data);
         }

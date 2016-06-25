@@ -117,18 +117,15 @@ public class ApplicationFragment extends BaseFragment implements
         RoboRadioButton application = (RoboRadioButton) view.findViewById(R.id.application);
         application.setChecked(true);
         RoboRadioButton browser = (RoboRadioButton) view.findViewById(R.id.browser);
-        application.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (!b) {
-                    ViewUtils.collapse(applicationLayout);
-                    ViewUtils.expand(phoneNumber);
-                    type = Constants.TYPE_APPLICATION_BROWSER;
-                } else {
-                    ViewUtils.collapse(phoneNumber);
-                    ViewUtils.expand(applicationLayout);
-                    type = Constants.TYPE_APPLICATION;
-                }
+        application.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (!b) {
+                ViewUtils.collapse(applicationLayout);
+                ViewUtils.expand(phoneNumber);
+                type = Constants.TYPE_APPLICATION_BROWSER;
+            } else {
+                ViewUtils.collapse(phoneNumber);
+                ViewUtils.expand(applicationLayout);
+                type = Constants.TYPE_APPLICATION;
             }
         });
 

@@ -109,21 +109,11 @@ public class QuickAddReminder extends AppCompatActivity {
         myDay = c.get(Calendar.DAY_OF_MONTH);
 
         dateField = (RoboTextView) findViewById(R.id.dateField);
-        dateField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dateDialog();
-            }
-        });
+        dateField.setOnClickListener(v -> dateDialog());
         dateField.setText(TimeUtil.getDate(c.getTime()));
 
         timeField = (RoboTextView) findViewById(R.id.timeField);
-        timeField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timeDialog().show();
-            }
-        });
+        timeField.setOnClickListener(v -> timeDialog().show());
         timeField.setText(TimeUtil.getTime(c.getTime(),
                 sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
 

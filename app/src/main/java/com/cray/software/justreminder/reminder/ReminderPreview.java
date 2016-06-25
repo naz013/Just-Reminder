@@ -19,7 +19,6 @@ package com.cray.software.justreminder.reminder;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -38,7 +37,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -126,12 +124,9 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorAccent(), cSetter.colorAccent()));
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (id != 0) {
-                    Reminder.edit(id, ReminderPreview.this);
-                }
+        mFab.setOnClickListener(v -> {
+            if (id != 0) {
+                Reminder.edit(id, ReminderPreview.this);
             }
         });
 
@@ -140,12 +135,9 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
 
     private void initViews() {
         RelativeLayout switchWrapper = (RelativeLayout) findViewById(R.id.switchWrapper);
-        switchWrapper.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Reminder.toggle(id, ReminderPreview.this, ReminderPreview.this);
-                loadInfo();
-            }
+        switchWrapper.setOnClickListener(v -> {
+            Reminder.toggle(id, ReminderPreview.this, ReminderPreview.this);
+            loadInfo();
         });
 
         statusText = (RoboTextView) findViewById(R.id.statusText);
@@ -430,12 +422,9 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.choose_time);
-        builder.setItems(time.toArray(new String[time.size()]), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Reminder.copy(id, list.get(which), ReminderPreview.this, null);
-                dialog.dismiss();
-            }
+        builder.setItems(time.toArray(new String[time.size()]), (dialog, which) -> {
+            Reminder.copy(id, list.get(which), ReminderPreview.this, null);
+            dialog.dismiss();
         });
         AlertDialog alert = builder.create();
         alert.show();
@@ -555,30 +544,22 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                     } else {
                         checkDone.setChecked(false);
                     }
-                    checkDone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            final TasksData data = new TasksData(mContext);
-                            data.open();
-                            if (isChecked) {
-                                data.setTaskDone(reminderNote.getTaskId());
-                            } else {
-                                data.setTaskUnDone(reminderNote.getTaskId());
-                            }
+                    checkDone.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                        final TasksData data = new TasksData(mContext);
+                        data.open();
+                        if (isChecked) {
+                            data.setTaskDone(reminderNote.getTaskId());
+                        } else {
+                            data.setTaskUnDone(reminderNote.getTaskId());
+                        }
 
-                            new SwitchTaskAsync(mContext, reminderNote.getTaskListId(),
-                                    reminderNote.getTaskIdentifier(), isChecked, null).execute();
-                            loadInfo();
-                        }
+                        new SwitchTaskAsync(mContext, reminderNote.getTaskListId(),
+                                reminderNote.getTaskIdentifier(), isChecked, null).execute();
+                        loadInfo();
                     });
-                    background.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mContext.startActivity(new Intent(mContext, TaskManager.class)
-                                    .putExtra(Constants.ITEM_ID_INTENT, reminderNote.getTaskId())
-                                    .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.EDIT));
-                        }
-                    });
+                    background.setOnClickListener(v -> mContext.startActivity(new Intent(mContext, TaskManager.class)
+                            .putExtra(Constants.ITEM_ID_INTENT, reminderNote.getTaskId())
+                            .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.EDIT)));
                 }
 
                 if (reminderNote.getNoteId() > 0) {
@@ -588,23 +569,13 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                         note = SyncHelper.decrypt(note);
                     }
                     noteText.setText(note);
-                    noteText.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            openNote(reminderNote.getNoteId());
-                        }
-                    });
+                    noteText.setOnClickListener(v -> openNote(reminderNote.getNoteId()));
                     byte[] image = reminderNote.getImage();
                     if (image != null) {
                         final Bitmap imgB = BitmapFactory.decodeByteArray(image, 0,
                                 image.length);
                         imageView.setImageBitmap(imgB);
-                        imageView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                openNote(reminderNote.getNoteId());
-                            }
-                        });
+                        imageView.setOnClickListener(v -> openNote(reminderNote.getNoteId()));
                     } else imageView.setVisibility(View.GONE);
                 }
             }

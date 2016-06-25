@@ -148,13 +148,9 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
         
         boolean isFull = prefs.loadBoolean(Prefs.UNLOCK_DEVICE);
         if (isFull) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                            | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-                            | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-                }
-            });
+            runOnUiThread(() -> getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                    | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                    | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD));
         }
 
         boolean isWake;

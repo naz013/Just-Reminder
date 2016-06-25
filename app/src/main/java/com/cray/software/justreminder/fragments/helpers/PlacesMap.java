@@ -139,13 +139,10 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
             mMap.getUiSettings().setCompassEnabled(true);
             mMap.setMapType(mMapType);
             setMyLocation();
-            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                @Override
-                public void onMapClick(LatLng latLng) {
-                    hideLayers();
-                    hidePlaces();
-                    hideStyles();
-                }
+            mMap.setOnMapClickListener(latLng -> {
+                hideLayers();
+                hidePlaces();
+                hideStyles();
             });
             if (mCallback != null) {
                 mCallback.onMapReady();
@@ -394,15 +391,12 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
 
             }
         });
-        cardSearch.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
-                    hideKeyboard();
-                    loadPlaces();
-                    return true;
-                } else return false;
-            }
+        cardSearch.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+                hideKeyboard();
+                loadPlaces();
+                return true;
+            } else return false;
         });
 
         placesList = (RecyclerView) view.findViewById(R.id.placesList);

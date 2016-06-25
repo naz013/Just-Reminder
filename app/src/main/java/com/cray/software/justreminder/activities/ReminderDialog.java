@@ -242,13 +242,9 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             isFull = unlock == 1;
         }
         if (isFull) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                            | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-                            | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-                }
-            });
+            runOnUiThread(() -> getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                    | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                    | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD));
         }
 
         boolean isWake = prefs.loadBoolean(Prefs.WAKE_STATUS);
@@ -437,55 +433,24 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             buttonCancel.setVisibility(View.VISIBLE);
         }
 
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cancel();
-            }
+        buttonCancel.setOnClickListener(v -> cancel());
+
+        buttonNotification.setOnClickListener(v -> favourite());
+
+        buttonOk.setOnClickListener(v -> ok());
+
+        buttonEdit.setOnClickListener(v -> {
+            Reminder.edit(id, ReminderDialog.this);
+            update(1);
+            finish();
         });
 
-        buttonNotification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                favourite();
-            }
+        buttonDelay.setOnClickListener(v -> delay());
+        buttonDelayFor.setOnClickListener(v -> {
+            showDialog();
+            update(0);
         });
-
-        buttonOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ok();
-            }
-        });
-
-        buttonEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Reminder.edit(id, ReminderDialog.this);
-                update(1);
-                finish();
-            }
-        });
-
-        buttonDelay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                delay();
-            }
-        });
-        buttonDelayFor.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDialog();
-                update(0);
-            }
-        });
-        buttonCall.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                call();
-            }
-        });
+        buttonCall.setOnClickListener(v -> call());
 
         if (type.contains(Constants.TYPE_MESSAGE)) {
             if (silentSMS) {
@@ -770,41 +735,38 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 String.format(getString(R.string.x_days), 7)};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.choose_time));
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                int x = 0;
-                if (item == 0) {
-                    x = 5;
-                } else if (item == 1) {
-                    x = 10;
-                } else if (item == 2) {
-                    x = 15;
-                } else if (item == 3) {
-                    x = 30;
-                } else if (item == 4) {
-                    x = 45;
-                } else if (item == 5) {
-                    x = 60;
-                } else if (item == 6) {
-                    x = 90;
-                } else if (item == 7) {
-                    x = 120;
-                } else if (item == 8) {
-                    x = 60 * 6;
-                } else if (item == 9) {
-                    x = 60 * 24;
-                } else if (item == 10) {
-                    x = 60 * 24 * 2;
-                } else if (item == 11) {
-                    x = 60 * 24 * 7;
-                }
-
-                Reminder.setDelay(ReminderDialog.this, id, x, true);
-                Messages.toast(ReminderDialog.this, getString(R.string.reminder_snoozed));
-                dialog.dismiss();
-                removeFlags();
-                finish();
+        builder.setItems(items, (dialog, item1) -> {
+            int x = 0;
+            if (item1 == 0) {
+                x = 5;
+            } else if (item1 == 1) {
+                x = 10;
+            } else if (item1 == 2) {
+                x = 15;
+            } else if (item1 == 3) {
+                x = 30;
+            } else if (item1 == 4) {
+                x = 45;
+            } else if (item1 == 5) {
+                x = 60;
+            } else if (item1 == 6) {
+                x = 90;
+            } else if (item1 == 7) {
+                x = 120;
+            } else if (item1 == 8) {
+                x = 60 * 6;
+            } else if (item1 == 9) {
+                x = 60 * 24;
+            } else if (item1 == 10) {
+                x = 60 * 24 * 2;
+            } else if (item1 == 11) {
+                x = 60 * 24 * 7;
             }
+            Reminder.setDelay(ReminderDialog.this, id, x, true);
+            Messages.toast(ReminderDialog.this, getString(R.string.reminder_snoozed));
+            dialog.dismiss();
+            removeFlags();
+            finish();
         });
         AlertDialog alert = builder.create();
         alert.show();

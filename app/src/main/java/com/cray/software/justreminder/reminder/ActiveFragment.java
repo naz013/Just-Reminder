@@ -18,7 +18,6 @@ package com.cray.software.justreminder.reminder;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
@@ -51,7 +50,6 @@ import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
@@ -297,15 +295,12 @@ public class ActiveFragment extends Fragment implements
         db.close();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.choose_group));
-        builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which == 0) {
-                    loaderAdapter(null, 0);
-                } else {
-                    String catId = mGroupsIds.get(which - 1);
-                    loaderAdapter(catId, 0);
-                }
+        builder.setAdapter(arrayAdapter, (dialog, which) -> {
+            if (which == 0) {
+                loaderAdapter(null, 0);
+            } else {
+                String catId = mGroupsIds.get(which - 1);
+                loaderAdapter(catId, 0);
             }
         });
         AlertDialog alert = builder.create();
@@ -338,18 +333,15 @@ public class ActiveFragment extends Fragment implements
         db.close();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.choose_group));
-        builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                String catId = mGroupsIds.get(which);
-                if (oldUuId.matches(catId)) {
-                    Messages.toast(getActivity(), getString(R.string.same_group));
-                    return;
-                }
-                Reminder.setNewGroup(getActivity(), id, catId);
-                loaderAdapter(mLastGroupId, 0);
+        builder.setAdapter(arrayAdapter, (dialog, which) -> {
+            dialog.dismiss();
+            String catId = mGroupsIds.get(which);
+            if (oldUuId.matches(catId)) {
+                Messages.toast(getActivity(), getString(R.string.same_group));
+                return;
             }
+            Reminder.setNewGroup(getActivity(), id, catId);
+            loaderAdapter(mLastGroupId, 0);
         });
         AlertDialog alert = builder.create();
         alert.show();
@@ -415,26 +407,23 @@ public class ActiveFragment extends Fragment implements
     public void onItemLongClicked(final int position, final View view) {
         final String[] items = {getString(R.string.open), getString(R.string.edit),
                 getString(R.string.change_group), getString(R.string.move_to_trash)};
-        Dialogues.showLCAM(getActivity(), new LCAMListener() {
-            @Override
-            public void onAction(int item) {
-                ReminderModel item1 = mAdapter.getItem(position);
-                switch (item){
-                    case 0:
-                        previewReminder(view, item1.getId(), item1.getType());
-                        break;
-                    case 1:
-                        Reminder.edit(item1.getId(), getActivity());
-                        break;
-                    case 2:
-                        changeGroup(item1.getGroupId(), item1.getId());
-                        break;
-                    case 3:
-                        mAdapter.removeItem(position);
-                        Reminder.moveToTrash(item1.getId(), getActivity(), mCallbacks);
-                        //loaderAdapter(null, 0);
-                        break;
-                }
+        Dialogues.showLCAM(getActivity(), item -> {
+            ReminderModel item1 = mAdapter.getItem(position);
+            switch (item){
+                case 0:
+                    previewReminder(view, item1.getId(), item1.getType());
+                    break;
+                case 1:
+                    Reminder.edit(item1.getId(), getActivity());
+                    break;
+                case 2:
+                    changeGroup(item1.getGroupId(), item1.getId());
+                    break;
+                case 3:
+                    mAdapter.removeItem(position);
+                    Reminder.moveToTrash(item1.getId(), getActivity(), mCallbacks);
+                    //loaderAdapter(null, 0);
+                    break;
             }
         }, items);
     }

@@ -296,13 +296,10 @@ public class FileExploreActivity extends AppCompatActivity {
     }
 
     private void createFilteredFileList() {
-        FilenameFilter filter = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String filename) {
-                File sel = new File(dir, filename);
-                return (sel.isFile() || sel.isDirectory())
-                        && !sel.isHidden();
-            }
+        FilenameFilter filter = (dir, filename) -> {
+            File sel = new File(dir, filename);
+            return (sel.isFile() || sel.isDirectory())
+                    && !sel.isHidden();
         };
 
         List<String> list = Arrays.asList(path.list(filter));

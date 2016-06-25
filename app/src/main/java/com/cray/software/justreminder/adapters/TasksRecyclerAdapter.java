@@ -23,7 +23,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.TaskManager;
@@ -104,14 +103,9 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
         final String name = mDataset.get(position).getTitle();
 
         holder.txtTitle.setText(name);
-        holder.txtTitle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mContext.startActivity(new Intent(mContext, TaskManager.class)
-                        .putExtra(Constants.ITEM_ID_INTENT, mDataset.get(position).getId())
-                        .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.EDIT));
-            }
-        });
+        holder.txtTitle.setOnClickListener(v -> mContext.startActivity(new Intent(mContext, TaskManager.class)
+                .putExtra(Constants.ITEM_ID_INTENT, mDataset.get(position).getId())
+                .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.EDIT)));
 
         String notes = mDataset.get(position).getNote();
         if (notes != null && !notes.matches("")) {
@@ -136,12 +130,7 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
             holder.checkBox.setChecked(false);
         }
 
-        holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                switchTask(position, isChecked);
-            }
-        });
+        holder.checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> switchTask(position, isChecked));
     }
 
     @Override

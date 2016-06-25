@@ -145,12 +145,9 @@ public class MailFragment extends BaseFragment implements
         else chooseFile.setImageResource(R.drawable.ic_attach_file_black_24dp);
 
         fileName = (RoboTextView) view.findViewById(R.id.fileName);
-        fileName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                filePath = null;
-                showAttachment();
-            }
+        fileName.setOnClickListener(v -> {
+            filePath = null;
+            showAttachment();
         });
 
         DateTimeView dateView = (DateTimeView) view.findViewById(R.id.dateView);

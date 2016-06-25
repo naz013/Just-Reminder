@@ -30,6 +30,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.activities.ThemerDialog;
+import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
@@ -37,7 +38,6 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.WearService;
 import com.cray.software.justreminder.views.PrefsView;
-import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 
 public class GeneralSettingsFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener {
     
@@ -254,14 +254,11 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    getActivity().recreate();
-                } catch (NullPointerException e){
-                    e.printStackTrace();
-                }
+        new Handler().post(() -> {
+            try {
+                getActivity().recreate();
+            } catch (NullPointerException e){
+                e.printStackTrace();
             }
         });
     }

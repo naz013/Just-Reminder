@@ -27,10 +27,8 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -158,12 +156,9 @@ public class LocationFragment extends BaseFragment implements GeocoderTask.Geoco
         mapContainer.setVisibility(View.GONE);
 
         attackDelay = (RoboCheckBox) view.findViewById(R.id.attackDelay);
-        attackDelay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) delayLayout.setVisibility(View.VISIBLE);
-                else delayLayout.setVisibility(View.GONE);
-            }
+        attackDelay.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) delayLayout.setVisibility(View.VISIBLE);
+            else delayLayout.setVisibility(View.GONE);
         });
 
         if (attackDelay.isChecked()) ViewUtils.expand(delayLayout);
@@ -179,18 +174,8 @@ public class LocationFragment extends BaseFragment implements GeocoderTask.Geoco
             mapButton.setImageResource(R.drawable.ic_map_black_24dp);
         }
 
-        clearField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchField.setText("");
-            }
-        });
-        mapButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleMap();
-            }
-        });
+        clearField.setOnClickListener(v -> searchField.setText(""));
+        mapButton.setOnClickListener(v -> toggleMap());
 
         searchField = (AutoCompleteTextView) view.findViewById(R.id.searchField);
         searchField.setThreshold(3);
@@ -215,20 +200,17 @@ public class LocationFragment extends BaseFragment implements GeocoderTask.Geoco
 
             }
         });
-        searchField.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Address sel = foundPlaces.get(position);
-                double lat = sel.getLatitude();
-                double lon = sel.getLongitude();
-                LatLng pos = new LatLng(lat, lon);
-                curPlace = pos;
-                String title = eventTask;
-                if (title != null && title.matches(""))
-                    title = pos.toString();
-                if (mapFragment != null)
-                    mapFragment.addMarker(pos, title, true, true, radius);
-            }
+        searchField.setOnItemClickListener((parent, view1, position, id) -> {
+            Address sel = foundPlaces.get(position);
+            double lat = sel.getLatitude();
+            double lon = sel.getLongitude();
+            LatLng pos = new LatLng(lat, lon);
+            curPlace = pos;
+            String title = eventTask;
+            if (title != null && title.matches(""))
+                title = pos.toString();
+            if (mapFragment != null)
+                mapFragment.addMarker(pos, title, true, true, radius);
         });
 
         actionViewLocation = (ActionView) view.findViewById(R.id.actionViewLocation);

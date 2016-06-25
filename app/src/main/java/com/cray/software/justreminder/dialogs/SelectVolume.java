@@ -19,7 +19,6 @@ package com.cray.software.justreminder.dialogs;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -85,16 +84,13 @@ public class SelectVolume extends Activity {
             }
         });
 
-        findViewById(R.id.aboutClose).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (code == 1) {
-                    Intent intent = new Intent();
-                    intent.putExtra(Constants.SELECTED_VOLUME, volume);
-                    setResult(RESULT_OK, intent);
-                }
-                finish();
+        findViewById(R.id.aboutClose).setOnClickListener(v -> {
+            if (code == 1) {
+                Intent intent = new Intent();
+                intent.putExtra(Constants.SELECTED_VOLUME, volume);
+                setResult(RESULT_OK, intent);
             }
+            finish();
         });
     }
 

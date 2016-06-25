@@ -225,22 +225,19 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
     }
 
     private void cleanBirthdays(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Looper.prepare();
-                DataBase db = new DataBase(getActivity());
-                db.open();
-                Cursor c = db.getBirthdays();
-                if (c != null && c.moveToFirst()){
-                    do {
-                        long id = c.getLong(c.getColumnIndex(Constants.ContactConstants.COLUMN_ID));
-                        db.deleteBirthday(id);
-                    } while (c.moveToNext());
-                    c.close();
-                }
-                db.close();
+        new Thread(() -> {
+            Looper.prepare();
+            DataBase db = new DataBase(getActivity());
+            db.open();
+            Cursor c = db.getBirthdays();
+            if (c != null && c.moveToFirst()){
+                do {
+                    long id = c.getLong(c.getColumnIndex(Constants.ContactConstants.COLUMN_ID));
+                    db.deleteBirthday(id);
+                } while (c.moveToNext());
+                c.close();
             }
+            db.close();
         }).start();
     }
 

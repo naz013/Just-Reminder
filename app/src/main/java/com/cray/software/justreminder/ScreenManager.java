@@ -23,7 +23,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -197,12 +196,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
 
         buttonYes = (RoboTextView) findViewById(R.id.buttonYes);
         RoboTextView buttonSave = (RoboTextView) findViewById(R.id.buttonSave);
-        buttonSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveNote();
-            }
-        });
+        buttonSave.setOnClickListener(v -> saveNote());
         buttonNo = (RoboTextView) findViewById(R.id.buttonNo);
         buttonReminderYes = (RoboTextView) findViewById(R.id.buttonReminderYes);
         buttonReminderNo = (RoboTextView) findViewById(R.id.buttonReminderNo);
@@ -229,34 +223,23 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
 
     private void initButton() {
         mFab = (FloatingActionButton) findViewById(R.id.fab);
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isNoteVisible()) {
-                    ViewUtils.hideReveal(noteCard);
-                }
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startActivity(new Intent(ScreenManager.this, ReminderManager.class));
-                    }
-                }, 150);
+        mFab.setOnClickListener(v -> {
+            if (isNoteVisible()) {
+                ViewUtils.hideReveal(noteCard);
             }
+
+            new Handler().postDelayed(() -> startActivity(new Intent(ScreenManager.this, ReminderManager.class)), 150);
         });
-        mFab.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (!isNoteVisible()) {
-                    ViewUtils.showReveal(noteCard);
-                } else {
-                    quickNote.setText("");
-                    quickNote.setError(null);
+        mFab.setOnLongClickListener(v -> {
+            if (!isNoteVisible()) {
+                ViewUtils.showReveal(noteCard);
+            } else {
+                quickNote.setText("");
+                quickNote.setError(null);
 
-                    ViewUtils.hideReveal(noteCard);
-                }
-                return true;
+                ViewUtils.hideReveal(noteCard);
             }
+            return true;
         });
     }
 
@@ -264,13 +247,10 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         mPrefs = new SharedPrefs(this);
         if (mTag.matches(FRAGMENT_EVENTS) || mTag.matches(ACTION_CALENDAR)){
             mFab.setVisibility(View.VISIBLE);
-            mFab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (dateMills == 0) dateMills = System.currentTimeMillis();
-                    startActivity(new Intent(ScreenManager.this, ActionPickerDialog.class)
-                            .putExtra("date", dateMills));
-                }
+            mFab.setOnClickListener(v -> {
+                if (dateMills == 0) dateMills = System.currentTimeMillis();
+                startActivity(new Intent(ScreenManager.this, ActionPickerDialog.class)
+                        .putExtra("date", dateMills));
             });
         } else if (mTag.matches(FRAGMENT_BACKUPS)){
             mFab.setVisibility(View.GONE);
@@ -278,95 +258,49 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
             mFab.setVisibility(View.GONE);
             if (mTag.matches(FRAGMENT_ARCHIVE) || mTag.matches(FRAGMENT_ACTIVE) ||
                     mTag.matches(FRAGMENT_LOCATIONS)){
-                mFab.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        collapseViews();
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                startActivity(new Intent(ScreenManager.this, ReminderManager.class));
-                            }
-                        }, 150);
-                    }
+                mFab.setOnClickListener(v -> {
+                    collapseViews();
+                    new Handler().postDelayed(() -> startActivity(new Intent(ScreenManager.this, ReminderManager.class)), 150);
                 });
                 mFab.setVisibility(View.VISIBLE);
             } else if (mTag.matches(FRAGMENT_TASKS)){
-                mFab.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (new GTasksHelper(ScreenManager.this).isLinked()) {
-                            collapseViews();
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    startActivity(new Intent(ScreenManager.this, TaskManager.class)
-                                            .putExtra(Constants.ITEM_ID_INTENT, listId)
-                                            .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.CREATE));
-                                }
-                            }, 150);
-                        } else {
-                            showSnackbar(getString(R.string.can_not_connect));
-                        }
+                mFab.setOnClickListener(v -> {
+                    if (new GTasksHelper(ScreenManager.this).isLinked()) {
+                        collapseViews();
+                        new Handler().postDelayed(() -> startActivity(new Intent(ScreenManager.this, TaskManager.class)
+                                .putExtra(Constants.ITEM_ID_INTENT, listId)
+                                .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.CREATE)), 150);
+                    } else {
+                        showSnackbar(getString(R.string.can_not_connect));
                     }
                 });
                 mFab.setVisibility(View.VISIBLE);
             } else if (mTag.matches(FRAGMENT_NOTE)){
-                mFab.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        collapseViews();
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                startActivity(new Intent(ScreenManager.this, NotesManager.class));
-                            }
-                        }, 150);
-                    }
+                mFab.setOnClickListener(v -> {
+                    collapseViews();
+                    new Handler().postDelayed(() -> startActivity(new Intent(ScreenManager.this, NotesManager.class)), 150);
                 });
                 mFab.setVisibility(View.VISIBLE);
             } else if (mTag.matches(FRAGMENT_GROUPS)){
-                mFab.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        collapseViews();
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                startActivity(new Intent(ScreenManager.this, CategoryManager.class));
-                            }
-                        }, 150);
-                    }
+                mFab.setOnClickListener(v -> {
+                    collapseViews();
+                    new Handler().postDelayed(() -> startActivity(new Intent(ScreenManager.this, CategoryManager.class)), 150);
                 });
                 mFab.setVisibility(View.VISIBLE);
             } else if (mTag.matches(FRAGMENT_PLACES)){
-                mFab.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        collapseViews();
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (LocationUtil.checkGooglePlayServicesAvailability(ScreenManager.this)) {
-                                    startActivity(new Intent(ScreenManager.this, AddPlace.class));
-                                }
-                            }
-                        }, 150);
-                    }
+                mFab.setOnClickListener(v -> {
+                    collapseViews();
+                    new Handler().postDelayed(() -> {
+                        if (LocationUtil.checkGooglePlayServicesAvailability(ScreenManager.this)) {
+                            startActivity(new Intent(ScreenManager.this, AddPlace.class));
+                        }
+                    }, 150);
                 });
                 mFab.setVisibility(View.VISIBLE);
             } else if (mTag.matches(FRAGMENT_TEMPLATES)){
-                mFab.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        collapseViews();
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                startActivity(new Intent(ScreenManager.this, NewTemplate.class));
-                            }
-                        }, 150);
-                    }
+                mFab.setOnClickListener(v -> {
+                    collapseViews();
+                    new Handler().postDelayed(() -> startActivity(new Intent(ScreenManager.this, NewTemplate.class)), 150);
                 });
                 mFab.setVisibility(View.VISIBLE);
             }
@@ -675,20 +609,14 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
                         getString(R.string.styles_for_marker) + "\n" +
                         getString(R.string.option_for_image_blurring) + "\n" +
                         getString(R.string.additional_app_themes))
-                .setPositiveButton(R.string.buy, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse("market://details?id=" + "com.cray.software.justreminderpro"));
-                        startActivity(intent);
-                    }
+                .setPositiveButton(R.string.buy, (dialog, which) -> {
+                    dialog.dismiss();
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse("market://details?id=" + "com.cray.software.justreminderpro"));
+                    startActivity(intent);
                 })
-                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
+                .setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
+                    dialog.dismiss();
                 })
                 .setCancelable(true)
                 .create();
@@ -822,12 +750,9 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
     protected Dialog thanksDialog() {
         return new AlertDialog.Builder(this)
                 .setMessage(R.string.thank_you_for_buying_pro)
-                .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        new SharedPrefs(ScreenManager.this).saveBoolean(Prefs.THANKS_SHOWN, true);
-                    }
+                .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
+                    dialog.dismiss();
+                    new SharedPrefs(ScreenManager.this).saveBoolean(Prefs.THANKS_SHOWN, true);
                 })
                 .setCancelable(false)
                 .create();
@@ -867,12 +792,9 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
                 Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(quickNote.getWindowToken(), 0);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (!isNoteVisible()) {
-                    askNotification(note, id);
-                }
+        new Handler().postDelayed(() -> {
+            if (!isNoteVisible()) {
+                askNotification(note, id);
             }
         }, 300);
 
@@ -885,34 +807,18 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         mPrefs = new SharedPrefs(ScreenManager.this);
         ViewUtils.showReveal(noteStatusCard);
 
-        buttonYes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Notifier(ScreenManager.this).showNoteNotification(note, id);
-                ViewUtils.hideReveal(noteStatusCard);
-                if (mPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER)){
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            askReminder(note, id);
-                        }
-                    }, 300);
-                }
+        buttonYes.setOnClickListener(v -> {
+            new Notifier(ScreenManager.this).showNoteNotification(note, id);
+            ViewUtils.hideReveal(noteStatusCard);
+            if (mPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER)){
+                new Handler().postDelayed(() -> askReminder(note, id), 300);
             }
         });
 
-        buttonNo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ViewUtils.hideReveal(noteStatusCard);
-                if (mPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER)){
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            askReminder(note, id);
-                        }
-                    }, 300);
-                }
+        buttonNo.setOnClickListener(v -> {
+            ViewUtils.hideReveal(noteStatusCard);
+            if (mPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER)){
+                new Handler().postDelayed(() -> askReminder(note, id), 300);
             }
         });
     }
@@ -921,46 +827,38 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         mPrefs = new SharedPrefs(ScreenManager.this);
         ViewUtils.showReveal(noteReminderCard);
 
-        buttonReminderYes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ViewUtils.hideReveal(noteReminderCard);
-                DataBase db = new DataBase(ScreenManager.this);
-                if (!db.isOpen()) {
-                    db.open();
-                }
-                Calendar calendar1 = Calendar.getInstance();
-                calendar1.setTimeInMillis(System.currentTimeMillis());
-                Cursor cf = new DataBase(ScreenManager.this).open().queryCategories();
-                String categoryId = null;
-                if (cf != null && cf.moveToFirst()) {
-                    categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                }
-                if (cf != null) {
-                    cf.close();
-                }
-                db.close();
-                long after = new SharedPrefs(ScreenManager.this).loadInt(Prefs.QUICK_NOTE_REMINDER_TIME) * 1000 * 60;
-                long due = calendar1.getTimeInMillis() + after;
-                JModel jModel = new JModel(note, Constants.TYPE_REMINDER, categoryId,
-                        SyncHelper.generateID(), due, due, null, null, null);
-                long remId = new DateType(ScreenManager.this, Constants.TYPE_REMINDER).save(jModel);
-                NotesBase base = new NotesBase(ScreenManager.this);
-                base.open();
-                base.linkToReminder(noteId, remId);
-                base.close();
-                if (mTag.matches(FRAGMENT_NOTE) || mTag.matches(FRAGMENT_ACTIVE)) {
-                    onItemSelected(mTag);
-                }
+        buttonReminderYes.setOnClickListener(v -> {
+            ViewUtils.hideReveal(noteReminderCard);
+            DataBase db = new DataBase(ScreenManager.this);
+            if (!db.isOpen()) {
+                db.open();
+            }
+            Calendar calendar1 = Calendar.getInstance();
+            calendar1.setTimeInMillis(System.currentTimeMillis());
+            Cursor cf = new DataBase(ScreenManager.this).open().queryCategories();
+            String categoryId = null;
+            if (cf != null && cf.moveToFirst()) {
+                categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
+            }
+            if (cf != null) {
+                cf.close();
+            }
+            db.close();
+            long after = new SharedPrefs(ScreenManager.this).loadInt(Prefs.QUICK_NOTE_REMINDER_TIME) * 1000 * 60;
+            long due = calendar1.getTimeInMillis() + after;
+            JModel jModel = new JModel(note, Constants.TYPE_REMINDER, categoryId,
+                    SyncHelper.generateID(), due, due, null, null, null);
+            long remId = new DateType(ScreenManager.this, Constants.TYPE_REMINDER).save(jModel);
+            NotesBase base = new NotesBase(ScreenManager.this);
+            base.open();
+            base.linkToReminder(noteId, remId);
+            base.close();
+            if (mTag.matches(FRAGMENT_NOTE) || mTag.matches(FRAGMENT_ACTIVE)) {
+                onItemSelected(mTag);
             }
         });
 
-        buttonReminderNo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ViewUtils.hideReveal(noteReminderCard);
-            }
-        });
+        buttonReminderNo.setOnClickListener(v -> ViewUtils.hideReveal(noteReminderCard));
     }
 
     private boolean isNoteVisible(){
@@ -985,12 +883,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         }
         this.doubleBackToExitPressedOnce = true;
         Messages.toast(ScreenManager.this, getString(R.string.press_again_to_exit));
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce = false;
-            }
-        }, 2000);
+        new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
     }
 
     void getAndUseAuthTokenInAsyncTask(Account account) {
@@ -1005,12 +898,9 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
                 progressDlg.setMessage(getString(R.string.trying_to_log_in));
                 progressDlg.setCancelable(false);
                 progressDlg.setIndeterminate(false);
-                progressDlg.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        progressDlg.dismiss();
-                        me.cancel(true);
-                    }
+                progressDlg.setOnCancelListener(dialog -> {
+                    progressDlg.dismiss();
+                    me.cancel(true);
                 });
                 progressDlg.show();
             }

@@ -61,20 +61,14 @@ public class VoiceResult extends Activity {
         Intent intent = getIntent();
         id = intent.getLongExtra("ids", 0);
 
-        findViewById(R.id.buttonEdit).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Reminder.edit(id, VoiceResult.this);
-                finish();
-            }
+        findViewById(R.id.buttonEdit).setOnClickListener(v -> {
+            Reminder.edit(id, VoiceResult.this);
+            finish();
         });
 
-        findViewById(R.id.buttonClose).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Notifier(VoiceResult.this).recreatePermanent();
-                finish();
-            }
+        findViewById(R.id.buttonClose).setOnClickListener(v -> {
+            new Notifier(VoiceResult.this).recreatePermanent();
+            finish();
         });
 
         RelativeLayout reminderContainer = (RelativeLayout) findViewById(R.id.reminderContainer);

@@ -105,12 +105,7 @@ public class CalendarStyle extends AppCompatActivity {
         }
     }
 
-    private View.OnClickListener listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            themeColorSwitch(v.getId());
-        }
-    };
+    private View.OnClickListener listener = v -> themeColorSwitch(v.getId());
 
     private void setUpRadio(){
         sPrefs = new SharedPrefs(CalendarStyle.this);

@@ -25,7 +25,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -57,12 +56,7 @@ public class PermissionsList extends Activity{
         musicList = (ListView) findViewById(R.id.musicList);
         musicList.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 
-        musicList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Permissions.requestPermission(PermissionsList.this, position, list.get(position).getPermission());
-            }
-        });
+        musicList.setOnItemClickListener((parent, view, position, id) -> Permissions.requestPermission(PermissionsList.this, position, list.get(position).getPermission()));
 
         RoboButton musicDialogOk = (RoboButton) findViewById(R.id.musicDialogOk);
         musicDialogOk.setVisibility(View.INVISIBLE);

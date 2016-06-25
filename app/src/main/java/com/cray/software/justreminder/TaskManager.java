@@ -5,7 +5,6 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -101,12 +100,7 @@ public class TaskManager extends AppCompatActivity {
         editField = (RoboEditText) findViewById(R.id.editField);
         noteField = (RoboEditText) findViewById(R.id.noteField);
         listText = (RoboTextView) findViewById(R.id.listText);
-        listText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectList(false);
-            }
-        });
+        listText.setOnClickListener(v -> selectList(false));
 
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
 
@@ -119,20 +113,10 @@ public class TaskManager extends AppCompatActivity {
         myDay = calendar.get(Calendar.DAY_OF_MONTH);
 
         dateField = (RoboTextView) findViewById(R.id.dateField);
-        dateField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectDateAction(1);
-            }
-        });
+        dateField.setOnClickListener(v -> selectDateAction(1));
 
         timeField = (RoboTextView) findViewById(R.id.timeField);
-        timeField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectDateAction(2);
-            }
-        });
+        timeField.setOnClickListener(v -> selectDateAction(2));
 
         ImageView noteIcon = (ImageView) findViewById(R.id.noteIcon);
         ImageView dateIcon = (ImageView) findViewById(R.id.dateIcon);
@@ -266,35 +250,32 @@ public class TaskManager extends AppCompatActivity {
             else selection = 0;
         }
 
-        builder.setSingleChoiceItems(adapter, selection, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which != -1) {
-                    dialog.dismiss();
-                    if (type == 1){
-                        switch (which){
-                            case 0:
-                                isDate = false;
-                                switchDate();
-                                break;
-                            case 1:
-                                isDate = true;
-                                dateDialog().show();
-                                break;
-                        }
+        builder.setSingleChoiceItems(adapter, selection, (dialog, which) -> {
+            if (which != -1) {
+                dialog.dismiss();
+                if (type == 1){
+                    switch (which){
+                        case 0:
+                            isDate = false;
+                            switchDate();
+                            break;
+                        case 1:
+                            isDate = true;
+                            dateDialog().show();
+                            break;
                     }
+                }
 
-                    if (type == 2){
-                        switch (which){
-                            case 0:
-                                isReminder = false;
-                                switchDate();
-                                break;
-                            case 1:
-                                isReminder = true;
-                                timeDialog().show();
-                                break;
-                        }
+                if (type == 2){
+                    switch (which){
+                        case 0:
+                            isReminder = false;
+                            switchDate();
+                            break;
+                        case 1:
+                            isReminder = true;
+                            timeDialog().show();
+                            break;
                     }
                 }
             }
@@ -338,18 +319,15 @@ public class TaskManager extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.choose_list);
         builder.setAdapter(new SimpleAdapter(TaskManager.this,
-                data.getTasksLists()), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                if (move) moveTask(categories.get(which).getUuID());
-                else {
-                    listText.setText(categories.get(which).getTitle());
-                    listId = categories.get(which).getUuID();
-                    reloadColor(listId);
-                }
-            }
-        });
+                data.getTasksLists()), (dialog, which) -> {
+                    dialog.dismiss();
+                    if (move) moveTask(categories.get(which).getUuID());
+                    else {
+                        listText.setText(categories.get(which).getTitle());
+                        listId = categories.get(which).getUuID();
+                        reloadColor(listId);
+                    }
+                });
         AlertDialog alert = builder.create();
         alert.show();
     }
@@ -438,19 +416,13 @@ public class TaskManager extends AppCompatActivity {
     private void deleteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.delete_this_task));
-        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                deleteTask();
-                finish();
-            }
+        builder.setPositiveButton(getString(R.string.yes), (dialog, which) -> {
+            dialog.dismiss();
+            deleteTask();
+            finish();
         });
-        builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
+        builder.setNegativeButton(getString(R.string.no), (dialog, which) -> {
+            dialog.dismiss();
         });
         AlertDialog dialog = builder.create();
         dialog.show();

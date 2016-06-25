@@ -18,7 +18,6 @@ package com.cray.software.justreminder.dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -66,14 +65,10 @@ public class VoiceHelp extends Activity {
 
         alert.setView(wv);
         alert.setCancelable(false);
-        alert.setNegativeButton(getString(R.string.ok),
-                new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(final DialogInterface dialog, final int id) {
-                dialog.dismiss();
-                finish();
-            }
-        });
+        alert.setNegativeButton(getString(R.string.ok), (dialog, id) -> {
+                    dialog.dismiss();
+                    finish();
+                });
         alertDialog = alert.create();
         alertDialog.show();
     }

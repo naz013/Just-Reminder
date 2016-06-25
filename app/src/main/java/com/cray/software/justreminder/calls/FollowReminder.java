@@ -94,14 +94,9 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ColorSetter cs = new ColorSetter(FollowReminder.this);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                        | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-                        | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-            }
-        });
+        runOnUiThread(() -> getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD));
         setTheme(cs.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
@@ -183,19 +178,13 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         mCustomYear = c.get(Calendar.YEAR);
         mCustomMonth = c.get(Calendar.MONTH);
         mCustomDay = c.get(Calendar.DAY_OF_MONTH);
-        mCustomDateView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCustomRadio.setChecked(true);
-                dateDialog();
-            }
+        mCustomDateView.setOnClickListener(v -> {
+            mCustomRadio.setChecked(true);
+            dateDialog();
         });
-        mCustomTimeView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCustomRadio.setChecked(true);
-                timeDialog().show();
-            }
+        mCustomTimeView.setOnClickListener(v -> {
+            mCustomRadio.setChecked(true);
+            timeDialog().show();
         });
 
         //Calculate tomorrow time
@@ -286,7 +275,6 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
      * Date selection callback.
      */
     DatePickerDialog.OnDateSetListener myDateCallBack = new DatePickerDialog.OnDateSetListener() {
-
         public void onDateSet(DatePicker view, int year, int monthOfYear,
                               int dayOfMonth) {
             mCustomYear = year;

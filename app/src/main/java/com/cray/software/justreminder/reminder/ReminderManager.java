@@ -242,12 +242,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             mTracker = application.getDefaultTracker();
         }
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ViewUtils.slideInDown(ReminderManager.this, toolbar);
-            }
-        }, 500);
+        new Handler().postDelayed(() -> ViewUtils.slideInDown(ReminderManager.this, toolbar), 500);
     }
 
     private void loadData() {
@@ -265,18 +260,10 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
 
     private void initFab() {
         mFab = (FloatingActionButton) findViewById(R.id.fab);
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                save();
-            }
-        });
-        mFab.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                mFab.hide();
-                return false;
-            }
+        mFab.setOnClickListener(v -> save());
+        mFab.setOnLongClickListener(v -> {
+            mFab.hide();
+            return false;
         });
     }
 
@@ -307,12 +294,9 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        ViewUtils.fadeOutAnimation(repeatLabel);
-                        ViewUtils.fadeOutAnimation(repeatFrame);
-                    }
+                new Handler().postDelayed(() -> {
+                    ViewUtils.fadeOutAnimation(repeatLabel);
+                    ViewUtils.fadeOutAnimation(repeatFrame);
                 }, 500);
             }
         });
@@ -327,42 +311,38 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setVisibility(View.GONE);
-        toolbar.setOnMenuItemClickListener(
-                new Toolbar.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.action_add:
-                                save();
-                                return true;
-                            case R.id.action_custom_melody:
-                                if(Permissions.checkPermission(ReminderManager.this,
-                                        Permissions.READ_EXTERNAL)) {
-                                    startActivityForResult(new Intent(ReminderManager.this, FileExploreActivity.class),
-                                            Constants.REQUEST_CODE_SELECTED_MELODY);
-                                } else {
-                                    Permissions.requestPermission(ReminderManager.this, 330,
-                                            Permissions.READ_EXTERNAL);
-                                }
-                                return true;
-                            case R.id.action_custom_radius:
-                                selectRadius();
-                                return true;
-                            case R.id.action_custom_color:
-                                chooseLEDColor();
-                                return true;
-                            case R.id.action_volume:
-                                selectVolume();
-                                return true;
-                            case R.id.action_limit:
-                                showLimit();
-                                return true;
-                            case MENU_ITEM_DELETE:
-                                deleteReminder();
-                                return true;
-                        }
-                        return true;
+        toolbar.setOnMenuItemClickListener(item1 -> {
+                    switch (item1.getItemId()) {
+                        case R.id.action_add:
+                            save();
+                            return true;
+                        case R.id.action_custom_melody:
+                            if(Permissions.checkPermission(ReminderManager.this,
+                                    Permissions.READ_EXTERNAL)) {
+                                startActivityForResult(new Intent(ReminderManager.this, FileExploreActivity.class),
+                                        Constants.REQUEST_CODE_SELECTED_MELODY);
+                            } else {
+                                Permissions.requestPermission(ReminderManager.this, 330,
+                                        Permissions.READ_EXTERNAL);
+                            }
+                            return true;
+                        case R.id.action_custom_radius:
+                            selectRadius();
+                            return true;
+                        case R.id.action_custom_color:
+                            chooseLEDColor();
+                            return true;
+                        case R.id.action_volume:
+                            selectVolume();
+                            return true;
+                        case R.id.action_limit:
+                            showLimit();
+                            return true;
+                        case MENU_ITEM_DELETE:
+                            deleteReminder();
+                            return true;
                     }
+                    return true;
                 });
 
         navContainer = (LinearLayout) findViewById(R.id.navContainer);
@@ -387,30 +367,15 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         });
         insertVoice = (ImageButton) findViewById(R.id.insertVoice);
         changeExtra = (ImageButton) findViewById(R.id.changeExtra);
-        insertVoice.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SuperUtil.startVoiceRecognitionActivity(ReminderManager.this,
-                        VOICE_RECOGNITION_REQUEST_CODE, true);
-            }
-        });
-        changeExtra.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityForResult(new Intent(ReminderManager.this, ExtraPickerDialog.class)
-                                .putExtra("type", getType())
-                                .putExtra("prefs", new int[]{voice, vibration, wake, unlock,
-                                        notificationRepeat, auto}), REQUEST_EXTRA);
-            }
-        });
+        insertVoice.setOnClickListener(v -> SuperUtil.startVoiceRecognitionActivity(ReminderManager.this,
+                VOICE_RECOGNITION_REQUEST_CODE, true));
+        changeExtra.setOnClickListener(v -> startActivityForResult(new Intent(ReminderManager.this, ExtraPickerDialog.class)
+                        .putExtra("type", getType())
+                        .putExtra("prefs", new int[]{voice, vibration, wake, unlock,
+                                notificationRepeat, auto}), REQUEST_EXTRA));
 
         category = (RoboTextView) findViewById(R.id.category);
-        category.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dialogues.selectCategory(ReminderManager.this, categoryId, ReminderManager.this);
-            }
-        });
+        category.setOnClickListener(v -> Dialogues.selectCategory(ReminderManager.this, categoryId, ReminderManager.this));
     }
 
     private void initFlags() {

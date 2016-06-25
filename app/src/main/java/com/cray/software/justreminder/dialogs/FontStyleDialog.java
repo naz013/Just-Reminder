@@ -74,18 +74,15 @@ public class FontStyleDialog extends Activity{
         dialogTitle.setText(getString(R.string.font_style));
 
         RoboButton musicDialogOk = (RoboButton) findViewById(R.id.musicDialogOk);
-        musicDialogOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                int selected = musicList.getCheckedItemPosition();
-                if (selected != -1) {
-                    intent.putExtra(Constants.SELECTED_FONT_STYLE, selected);
-                    setResult(RESULT_OK, intent);
-                    finish();
-                } else {
-                    Messages.toast(FontStyleDialog.this, getString(R.string.select_one_of_item));
-                }
+        musicDialogOk.setOnClickListener(v -> {
+            Intent intent = new Intent();
+            int selected = musicList.getCheckedItemPosition();
+            if (selected != -1) {
+                intent.putExtra(Constants.SELECTED_FONT_STYLE, selected);
+                setResult(RESULT_OK, intent);
+                finish();
+            } else {
+                Messages.toast(FontStyleDialog.this, getString(R.string.select_one_of_item));
             }
         });
     }

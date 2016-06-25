@@ -37,7 +37,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
@@ -549,24 +548,21 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                     mAddressTask.cancel(true);
                 }
                 if (s.length() != 0) {
-                    mAddressTask = new GeocoderTask(getActivity(), new GeocoderTask.GeocoderListener() {
-                        @Override
-                        public void onAddressReceived(List<Address> addresses) {
-                            mFoundPlaces = addresses;
+                    mAddressTask = new GeocoderTask(getActivity(), addresses -> {
+                        mFoundPlaces = addresses;
 
-                            mAddressNames = new ArrayList<>();
-                            mAddressNames.clear();
-                            for (Address selected : addresses) {
-                                String addressText = String.format("%s, %s%s",
-                                        selected.getMaxAddressLineIndex() > 0 ? selected.getAddressLine(0) : "",
-                                        selected.getMaxAddressLineIndex() > 1 ? selected.getAddressLine(1) + ", " : "",
-                                        selected.getCountryName());
-                                mAddressNames.add(addressText);
-                            }
-                            mAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, mAddressNames);
-                            cardSearch.setAdapter(mAdapter);
-                            mAdapter.notifyDataSetChanged();
+                        mAddressNames = new ArrayList<>();
+                        mAddressNames.clear();
+                        for (Address selected : addresses) {
+                            String addressText = String.format("%s, %s%s",
+                                    selected.getMaxAddressLineIndex() > 0 ? selected.getAddressLine(0) : "",
+                                    selected.getMaxAddressLineIndex() > 1 ? selected.getAddressLine(1) + ", " : "",
+                                    selected.getCountryName());
+                            mAddressNames.add(addressText);
                         }
+                        mAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, mAddressNames);
+                        cardSearch.setAdapter(mAdapter);
+                        mAdapter.notifyDataSetChanged();
                     });
                     mAddressTask.execute(s.toString());
                 }
@@ -577,15 +573,12 @@ public class MapFragment extends Fragment implements View.OnClickListener {
 
             }
         });
-        cardSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Address sel = mFoundPlaces.get(position);
-                double lat = sel.getLatitude();
-                double lon = sel.getLongitude();
-                LatLng pos = new LatLng(lat, lon);
-                addMarker(pos, markerTitle, true, true, markerRadius);
-            }
+        cardSearch.setOnItemClickListener((parent, view1, position, id) -> {
+            Address sel = mFoundPlaces.get(position);
+            double lat = sel.getLatitude();
+            double lon = sel.getLongitude();
+            LatLng pos = new LatLng(lat, lon);
+            addMarker(pos, markerTitle, true, true, markerRadius);
         });
 
         placesList = (RecyclerView) view.findViewById(R.id.placesList);

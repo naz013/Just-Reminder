@@ -22,9 +22,7 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
 import com.cray.software.justreminder.R;
@@ -74,26 +72,11 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
         toMinute = calendar.get(Calendar.MINUTE);
 
         to.setText(getString(R.string.to) + " "  + TimeUtil.getTime(calendar.getTime(), true));
-        from.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fromTime().show();
-            }
-        });
-        to.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toTime().show();
-            }
-        });
+        from.setOnClickListener(v -> fromTime().show());
+        to.setOnClickListener(v -> toTime().show());
 
         RoboButton buttonOk = (RoboButton) findViewById(R.id.buttonOk);
-        buttonOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveResult();
-            }
-        });
+        buttonOk.setOnClickListener(v -> saveResult());
         initButtons();
         initCheckBoxes();
     }
@@ -195,32 +178,26 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
     }
 
     protected Dialog fromTime() {
-        return new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                fromHour = hourOfDay;
-                fromMinute = minute;
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(System.currentTimeMillis());
-                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                calendar.set(Calendar.MINUTE, minute);
-                from.setText(getString(R.string.from) + " " + TimeUtil.getTime(calendar.getTime(), true));
-            }
+        return new TimePickerDialog(this, (view, hourOfDay, minute) -> {
+            fromHour = hourOfDay;
+            fromMinute = minute;
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            calendar.set(Calendar.MINUTE, minute);
+            from.setText(getString(R.string.from) + " " + TimeUtil.getTime(calendar.getTime(), true));
         }, fromHour, fromMinute, true);
     }
 
     protected Dialog toTime() {
-        return new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                toHour = hourOfDay;
-                toMinute = minute;
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(System.currentTimeMillis());
-                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                calendar.set(Calendar.MINUTE, minute);
-                to.setText(getString(R.string.to) + " "  + TimeUtil.getTime(calendar.getTime(), true));
-            }
+        return new TimePickerDialog(this, (view, hourOfDay, minute) -> {
+            toHour = hourOfDay;
+            toMinute = minute;
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            calendar.set(Calendar.MINUTE, minute);
+            to.setText(getString(R.string.to) + " "  + TimeUtil.getTime(calendar.getTime(), true));
         }, toHour, toMinute, true);
     }
 
