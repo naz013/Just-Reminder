@@ -1,0 +1,2 @@
+- integrate Crashlytics;
+- fix delay for reminders;
