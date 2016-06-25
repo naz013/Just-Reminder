@@ -1,4 +1,14 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 apply plugin: 'com.android.databinding'
 
 android {
@@ -104,6 +114,7 @@ repositories {
     }
     jcenter()
     mavenCentral()
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 ext {
@@ -147,6 +158,9 @@ dependencies {
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
     //compile project(path: ':backend', configuration: 'android-endpoints')
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.7@aar') {
+        transitive = true;
+    }
 }
 
 apply plugin: 'com.google.gms.google-services'

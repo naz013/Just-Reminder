@@ -25,6 +25,7 @@ import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.crashlytics.android.Crashlytics;
 import com.cray.software.justreminder.BuildConfig;
 import com.cray.software.justreminder.LogInActivity;
 import com.cray.software.justreminder.ScreenManager;
@@ -56,6 +57,7 @@ import com.cray.software.justreminder.services.CheckPosition;
 import com.cray.software.justreminder.services.GeolocationService;
 import com.cray.software.justreminder.tests.TestActivity;
 
+import io.fabric.sdk.android.Fabric;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -65,20 +67,21 @@ import java.util.Locale;
  */
 public class SplashScreen extends AppCompatActivity {
 
-    public static final String APP_UI_PREFERENCES = "ui_settings";
+    public static final String PREFERENCES_NAME = "ui_settings";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
     }
 
     /**
      * Save initial argument on first application run.
      */
     private void initPrefs() {
-        File settingsUI = new File("/data/data/" + getPackageName() + "/shared_prefs/" + APP_UI_PREFERENCES + ".xml");
+        File settingsUI = new File("/data/data/" + getPackageName() + "/shared_prefs/" + PREFERENCES_NAME + ".xml");
         if(!settingsUI.exists()){
-            SharedPreferences appUISettings = getSharedPreferences(APP_UI_PREFERENCES, Context.MODE_PRIVATE);
+            SharedPreferences appUISettings = getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor uiEd = appUISettings.edit();
             uiEd.putInt(Prefs.APP_THEME, Configs.DEFAULT_THEME);
             uiEd.putInt(Prefs.TODAY_COLOR, 0);
