@@ -31,8 +31,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.roboto_views.RoboEditText;
 
 import java.util.ArrayList;
@@ -47,6 +50,7 @@ public class ContactsFragment extends Fragment implements LoadListener {
     private List<ContactData> mData;
     private String name = "";
 
+    private LinearLayout mEmptyItem;
     private RoboEditText searchField;
     private RecyclerView mRecyclerView;
     private RecyclerClickListener mClickListener = new RecyclerClickListener() {
@@ -108,8 +112,19 @@ public class ContactsFragment extends Fragment implements LoadListener {
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
         initSearchView(view);
         initRecyclerView(view);
+        initEmptyLayout(view);
         new ContactsAsync(mContext, this).execute();
         return view;
+    }
+
+    private void initEmptyLayout(View view) {
+        ImageView mEmptyIcon = (ImageView) view.findViewById(R.id.emptyImage);
+        if (new ColorSetter(mContext).isDark()) {
+            mEmptyIcon.setImageResource(R.drawable.account_off_white);
+        } else {
+            mEmptyIcon.setImageResource(R.drawable.account_off);
+        }
+        mEmptyItem = (LinearLayout) view.findViewById(R.id.emptyItem);
     }
 
     private void initRecyclerView(View view) {
@@ -142,6 +157,7 @@ public class ContactsFragment extends Fragment implements LoadListener {
         List<ContactData> res = filter(mData, q);
         mAdapter.animateTo(res);
         mRecyclerView.scrollToPosition(0);
+        refreshView(res.size());
     }
 
     private List<ContactData> filter(List<ContactData> mData, String q) {
@@ -214,6 +230,16 @@ public class ContactsFragment extends Fragment implements LoadListener {
         }
     }
 
+    private void refreshView(int count) {
+        if (count > 0) {
+            mEmptyItem.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
+        } else {
+            mEmptyItem.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.GONE);
+        }
+    }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -227,5 +253,6 @@ public class ContactsFragment extends Fragment implements LoadListener {
         this.mData = list;
         mAdapter = new ContactsRecyclerAdapter(mContext, mData, mClickListener);
         mRecyclerView.setAdapter(mAdapter);
+        refreshView(mAdapter.getItemCount());
     }
 }

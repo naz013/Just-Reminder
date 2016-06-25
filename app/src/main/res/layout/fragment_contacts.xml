@@ -37,6 +37,30 @@
         android:id="@+id/contactsList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
         android:layout_marginTop="5dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/emptyItem"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:src="@drawable/account_off"
+            android:id="@+id/emptyImage"/>
+
+        <com.cray.software.justreminder.roboto_views.RoboTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/emptyText"
+            android:textSize="18sp"
+            android:layout_marginTop="32dp"
+            android:text="@string/no_contacts_found"/>
+
+    </LinearLayout>
 
 </LinearLayout>

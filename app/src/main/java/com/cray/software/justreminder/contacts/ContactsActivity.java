@@ -64,7 +64,7 @@ public class ContactsActivity extends AppCompatActivity implements NumberCallbac
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
         if (toolbar != null) {
-            toolbar.setTitle(getString(R.string.contacts));
+            toolbar.setTitle("");
             toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         }
     }

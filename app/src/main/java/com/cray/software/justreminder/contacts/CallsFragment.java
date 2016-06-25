@@ -28,8 +28,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.roboto_views.RoboEditText;
 
 import java.util.ArrayList;
@@ -43,6 +46,7 @@ public class CallsFragment extends Fragment implements CallsLogListener {
     private CallsRecyclerAdapter mAdapter;
     private List<CallsData> mData;
 
+    private LinearLayout mEmptyItem;
     private RoboEditText searchField;
     private RecyclerView mRecyclerView;
     private RecyclerClickListener mClickListener = new RecyclerClickListener() {
@@ -107,8 +111,19 @@ public class CallsFragment extends Fragment implements CallsLogListener {
         View view = inflater.inflate(R.layout.fragment_calls, container, false);
         initSearchView(view);
         initRecyclerView(view);
+        initEmptyLayout(view);
         new CallsAsync(mContext, this).execute();
         return view;
+    }
+
+    private void initEmptyLayout(View view) {
+        ImageView mEmptyIcon = (ImageView) view.findViewById(R.id.emptyImage);
+        if (new ColorSetter(mContext).isDark()) {
+            mEmptyIcon.setImageResource(R.drawable.account_off_white);
+        } else {
+            mEmptyIcon.setImageResource(R.drawable.account_off);
+        }
+        mEmptyItem = (LinearLayout) view.findViewById(R.id.emptyItem);
     }
 
     private void initRecyclerView(View view) {
@@ -141,6 +156,7 @@ public class CallsFragment extends Fragment implements CallsLogListener {
         List<CallsData> res = filter(mData, q);
         mAdapter.animateTo(res);
         mRecyclerView.scrollToPosition(0);
+        refreshView(res.size());
     }
 
     private List<CallsData> filter(List<CallsData> mData, String q) {
@@ -165,6 +181,16 @@ public class CallsFragment extends Fragment implements CallsLogListener {
         return list;
     }
 
+    private void refreshView(int count) {
+        if (count > 0) {
+            mEmptyItem.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
+        } else {
+            mEmptyItem.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.GONE);
+        }
+    }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -178,5 +204,6 @@ public class CallsFragment extends Fragment implements CallsLogListener {
         this.mData = list;
         mAdapter = new CallsRecyclerAdapter(mContext, mData, mClickListener);
         mRecyclerView.setAdapter(mAdapter);
+        refreshView(mAdapter.getItemCount());
     }
 }

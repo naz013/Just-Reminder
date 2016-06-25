@@ -1,5 +1,5 @@
 #- integrate Crashlytics;
 - fix delay for reminders;
-- add option to select number from call list;
+#- add option to select number from call list;
 - fix date type reminder;
-- add empty views to contacts and calls list;
+#- add empty views to contacts and calls list;
