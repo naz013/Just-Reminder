@@ -16,35 +16,24 @@
 
 package com.cray.software.justreminder.contacts;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
 
-import com.cray.software.justreminder.R;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class ContactsAsync extends AsyncTask<Void, Void, Void> {
 
-    private ProgressDialog mDialog;
     private List<ContactData> mList;
-
     private Context mContext;
     private LoadListener mListener;
 
     public ContactsAsync(Context context, LoadListener listener) {
         this.mContext = context;
         this.mListener = listener;
-    }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        mDialog = ProgressDialog.show(mContext, null, mContext.getString(R.string.please_wait), true);
     }
 
     @Override
@@ -72,7 +61,7 @@ public class ContactsAsync extends AsyncTask<Void, Void, Void> {
                         ContactData data = new ContactData(name, photo, id);
                         int pos = getPosition(name);
                         if (pos == -1) mList.add(data);
-                        else mList.add(getPosition(name), data);
+                        else mList.add(pos, data);
                     }
                 }
             }
@@ -97,8 +86,6 @@ public class ContactsAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        if (mDialog != null && mDialog.isShowing()) mDialog.dismiss();
-
         if (mListener != null) {
             mListener.onLoaded(mList);
         }

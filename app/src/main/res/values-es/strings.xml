@@ -510,4 +510,5 @@
     <string name="app_title">"Recordatorio"</string>
     <string name="you_dont_select_any_hours">No selecciona ninguna hora!</string>
     <string name="could_not_launch_market">No se pudo iniciar mercado</string>
+    <string name="call_history">Call history</string>
 </resources>

@@ -239,10 +239,10 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
                 dateDialog();
                 break;
             case R.id.pickContact:
-                if (Permissions.checkPermission(AddBirthday.this, Permissions.READ_CONTACTS)) {
+                if (Permissions.checkPermission(AddBirthday.this, Permissions.READ_CONTACTS, Permissions.READ_CALLS)) {
                     SuperUtil.selectContact(AddBirthday.this, Constants.REQUEST_CODE_CONTACTS);
                 } else {
-                    Permissions.requestPermission(AddBirthday.this, 101, Permissions.READ_CONTACTS);
+                    Permissions.requestPermission(AddBirthday.this, 101, Permissions.READ_CONTACTS, Permissions.READ_CALLS);
                 }
                 break;
             default:

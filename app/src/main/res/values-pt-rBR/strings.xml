@@ -510,4 +510,5 @@
     <string name="app_title">"Lembrete"</string>
     <string name="you_dont_select_any_hours">Você não selecionar nenhuma hora!</string>
     <string name="could_not_launch_market">Não foi possível iniciar mercado</string>
+    <string name="call_history">Call history</string>
 </resources>

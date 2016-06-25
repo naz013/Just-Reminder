@@ -510,4 +510,5 @@
     <string name="save_widget">Salvați widget</string>
     <string name="you_dont_select_any_hours">Nu selectați nici o oră!</string>
     <string name="could_not_launch_market">Nu a putut fi lansat pe piață</string>
+    <string name="call_history">Call history</string>
 </resources>

@@ -96,6 +96,9 @@ public class PermissionsList extends Activity{
         if (!Permissions.checkPermission(PermissionsList.this, Permissions.READ_CONTACTS))
             list.add(new Item(getString(R.string.read_contacts), Permissions.READ_CONTACTS));
 
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.READ_CALLS))
+            list.add(new Item(getString(R.string.call_history), Permissions.READ_CALLS));
+
         if (!Permissions.checkPermission(PermissionsList.this, Permissions.READ_EXTERNAL))
             list.add(new Item(getString(R.string.read_external_storage), Permissions.READ_EXTERNAL));
 

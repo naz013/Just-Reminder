@@ -1383,40 +1383,40 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 break;
             case 2:
                 if (Permissions.checkPermission(ReminderManager.this, Permissions.CALL_PHONE,
-                        Permissions.SEND_SMS, Permissions.READ_CONTACTS)) {
+                        Permissions.SEND_SMS, Permissions.READ_CONTACTS, Permissions.READ_CALLS)) {
                     attachWeekDayReminder();
                 } else {
                     Permissions.requestPermission(ReminderManager.this, 113, Permissions.CALL_PHONE,
-                            Permissions.READ_CONTACTS, Permissions.SEND_SMS);
+                            Permissions.READ_CONTACTS, Permissions.SEND_SMS, Permissions.READ_CALLS);
                 }
                 break;
             case 1:
                 attachTimeReminder();
                 break;
             case 3:
-                if (Permissions.checkPermission(ReminderManager.this, Permissions.CALL_PHONE)) {
+                if (Permissions.checkPermission(ReminderManager.this, Permissions.CALL_PHONE, Permissions.READ_CALLS)) {
                     attachCall();
                 } else {
-                    Permissions.requestPermission(ReminderManager.this, 109, Permissions.CALL_PHONE);
+                    Permissions.requestPermission(ReminderManager.this, 109, Permissions.CALL_PHONE, Permissions.READ_CALLS);
                 }
                 break;
             case 4:
-                if (Permissions.checkPermission(ReminderManager.this, Permissions.SEND_SMS)) {
+                if (Permissions.checkPermission(ReminderManager.this, Permissions.SEND_SMS, Permissions.READ_CALLS)) {
                     attachMessage();
                 } else {
-                    Permissions.requestPermission(ReminderManager.this, 108, Permissions.SEND_SMS);
+                    Permissions.requestPermission(ReminderManager.this, 108, Permissions.SEND_SMS, Permissions.READ_CALLS);
                 }
                 break;
             case 5:
                 if (LocationUtil.checkGooglePlayServicesAvailability(ReminderManager.this)) {
                     if (Permissions.checkPermission(ReminderManager.this, Permissions.ACCESS_FINE_LOCATION,
                             Permissions.CALL_PHONE, Permissions.SEND_SMS, Permissions.ACCESS_COARSE_LOCATION,
-                            Permissions.READ_CONTACTS)) {
+                            Permissions.READ_CONTACTS, Permissions.READ_CALLS)) {
                         attachLocation();
                     } else {
                         Permissions.requestPermission(ReminderManager.this, 105, Permissions.ACCESS_COARSE_LOCATION,
                                 Permissions.ACCESS_FINE_LOCATION, Permissions.CALL_PHONE, Permissions.SEND_SMS,
-                                Permissions.READ_CONTACTS);
+                                Permissions.READ_CONTACTS, Permissions.READ_CALLS);
                     }
                 } else spinner.setSelection(0);
                 break;
@@ -1433,23 +1433,23 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 break;
             case 8:
                 if (Permissions.checkPermission(ReminderManager.this, Permissions.CALL_PHONE,
-                        Permissions.SEND_SMS, Permissions.READ_CONTACTS)) {
+                        Permissions.SEND_SMS, Permissions.READ_CONTACTS, Permissions.READ_CALLS)) {
                     attachMonthDay();
                 } else {
                     Permissions.requestPermission(ReminderManager.this, 114, Permissions.CALL_PHONE,
-                            Permissions.READ_CONTACTS, Permissions.SEND_SMS);
+                            Permissions.READ_CONTACTS, Permissions.SEND_SMS, Permissions.READ_CALLS);
                 }
                 break;
             case 9:
                 if (LocationUtil.checkGooglePlayServicesAvailability(ReminderManager.this)) {
                     if (Permissions.checkPermission(ReminderManager.this, Permissions.ACCESS_FINE_LOCATION,
                             Permissions.CALL_PHONE, Permissions.SEND_SMS, Permissions.ACCESS_COARSE_LOCATION,
-                            Permissions.READ_CONTACTS)) {
+                            Permissions.READ_CONTACTS, Permissions.READ_CALLS)) {
                         attachLocationOut();
                     } else {
                         Permissions.requestPermission(ReminderManager.this, 106,
                                 Permissions.ACCESS_COARSE_LOCATION, Permissions.ACCESS_FINE_LOCATION,
-                                Permissions.CALL_PHONE, Permissions.SEND_SMS, Permissions.READ_CONTACTS);
+                                Permissions.CALL_PHONE, Permissions.SEND_SMS, Permissions.READ_CONTACTS, Permissions.READ_CALLS);
                     }
                 } else spinner.setSelection(0);
                 break;

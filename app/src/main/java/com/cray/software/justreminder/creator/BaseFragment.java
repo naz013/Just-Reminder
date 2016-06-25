@@ -21,14 +21,14 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
-import com.cray.software.justreminder.reminder.ReminderManager;
-import com.cray.software.justreminder.file_explorer.FileExploreActivity;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.dialogs.ExclusionPickerDialog;
+import com.cray.software.justreminder.file_explorer.FileExploreActivity;
 import com.cray.software.justreminder.fragments.helpers.MapFragment;
 import com.cray.software.justreminder.fragments.helpers.PlacesMap;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.reminder.ReminderManager;
 import com.cray.software.justreminder.utils.SuperUtil;
 
 import java.util.Calendar;
@@ -71,52 +71,36 @@ public class BaseFragment extends Fragment {
     /**
      * Select contact button click listener.
      */
-    public View.OnClickListener contactClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (Permissions.checkPermission(getActivity(), Permissions.READ_CONTACTS)) {
-                SuperUtil.selectContact(getActivity(), Constants.REQUEST_CODE_CONTACTS);
-            } else {
-                Permissions.requestPermission(getActivity(), 107, Permissions.READ_CONTACTS);
-            }
+    public View.OnClickListener contactClick = v -> {
+        if (Permissions.checkPermission(getActivity(), Permissions.READ_CONTACTS, Permissions.READ_CALLS)) {
+            SuperUtil.selectContact(getActivity(), Constants.REQUEST_CODE_CONTACTS);
+        } else {
+            Permissions.requestPermission(getActivity(), 107, Permissions.READ_CONTACTS, Permissions.READ_CALLS);
         }
     };
 
     /**
      * Select file button click listener.
      */
-    public View.OnClickListener fileClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (Permissions.checkPermission(getActivity(), Permissions.READ_EXTERNAL)) {
-                getActivity().startActivityForResult(new Intent(getActivity(), FileExploreActivity.class)
-                        .putExtra(Constants.FILE_TYPE, "any"), ReminderManager.FILE_REQUEST);
-            } else {
-                Permissions.requestPermission(getActivity(), 331,
-                        Permissions.READ_EXTERNAL);
-            }
+    public View.OnClickListener fileClick = v -> {
+        if (Permissions.checkPermission(getActivity(), Permissions.READ_EXTERNAL)) {
+            getActivity().startActivityForResult(new Intent(getActivity(), FileExploreActivity.class)
+                    .putExtra(Constants.FILE_TYPE, "any"), ReminderManager.FILE_REQUEST);
+        } else {
+            Permissions.requestPermission(getActivity(), 331,
+                    Permissions.READ_EXTERNAL);
         }
     };
 
     /**
      * Select exclusion button click listener.
      */
-    public View.OnClickListener exclusionClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            getActivity().startActivityForResult(new Intent(getActivity(), ExclusionPickerDialog.class), 1111);
-        }
-    };
+    public View.OnClickListener exclusionClick = v -> getActivity().startActivityForResult(new Intent(getActivity(), ExclusionPickerDialog.class), 1111);
 
     /**
      * Select application button click listener.
      */
-    public View.OnClickListener appClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            SuperUtil.selectApplication(getActivity(), Constants.REQUEST_CODE_APPLICATION);
-        }
-    };
+    public View.OnClickListener appClick = v -> SuperUtil.selectApplication(getActivity(), Constants.REQUEST_CODE_APPLICATION);
 
     public void setEventTask(String eventTask) {
         this.eventTask = eventTask;

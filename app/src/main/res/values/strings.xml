@@ -509,4 +509,8 @@
     <string name="up">Up</string>
     <string name="you_dont_select_any_hours">You don\'t select any hours!</string>
     <string name="could_not_launch_market">Couldn\'t launch market</string>
+    <string name="call_history">Call history</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

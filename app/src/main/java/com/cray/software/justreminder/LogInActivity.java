@@ -24,7 +24,6 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -34,8 +33,6 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.view.View;
-import android.widget.CompoundButton;
 
 import com.cray.software.justreminder.async.CloudLogin;
 import com.cray.software.justreminder.async.LocalLogin;
@@ -111,68 +108,56 @@ public class LogInActivity extends Activity implements LoginListener {
         connectGDrive = (PaperButton) findViewById(R.id.connectGDrive);
         connectDropbox = (PaperButton) findViewById(R.id.connectDropbox);
         checkBox = (RoboCheckBox) findViewById(R.id.checkBox);
-        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (!Permissions.checkPermission(LogInActivity.this, Permissions.READ_CONTACTS)) {
-                    Permissions.requestPermission(LogInActivity.this, 115, Permissions.READ_CONTACTS);
-                } else {
-                    checkBox.setChecked(isChecked);
-                }
+        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (!Permissions.checkPermission(LogInActivity.this, Permissions.READ_CONTACTS, Permissions.READ_CALLS)) {
+                Permissions.requestPermission(LogInActivity.this, 115, Permissions.READ_CONTACTS, Permissions.READ_CALLS);
+            } else {
+                checkBox.setChecked(isChecked);
             }
         });
         skipButton = (RoboTextView) findViewById(R.id.skipButton);
         String text = skipButton.getText().toString();
         skipButton.setText(SuperUtil.appendString(text, " (", getString(R.string.local_sync), ")"));
 
-        connectDropbox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (enabled) {
-                    boolean isIn = SuperUtil.isAppInstalled(LogInActivity.this, Module.isPro() ?
-                            MARKET_APP_JUSTREMINDER : MARKET_APP_JUSTREMINDER_PRO);
-                    if (isIn) {
-                        checkDialog().show();
-                    } else {
-                        dbx.startLink();
-                        enabled = false;
-                    }
+        connectDropbox.setOnClickListener(v -> {
+            if (enabled) {
+                boolean isIn = SuperUtil.isAppInstalled(LogInActivity.this, Module.isPro() ?
+                        MARKET_APP_JUSTREMINDER : MARKET_APP_JUSTREMINDER_PRO);
+                if (isIn) {
+                    checkDialog().show();
+                } else {
+                    dbx.startLink();
+                    enabled = false;
                 }
             }
         });
 
-        connectGDrive.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (enabled) {
-                    if (Permissions.checkPermission(LogInActivity.this, Permissions.GET_ACCOUNTS,
-                            Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL, Permissions.ACCESS_FINE_LOCATION)) {
-                        Intent intent = AccountPicker.newChooseAccountIntent(null, null,
-                                new String[]{"com.google"}, false, null, null, null, null);
-                        startActivityForResult(intent, REQUEST_AUTHORIZATION);
-                        enabled = false;
-                    } else {
-                        Permissions.requestPermission(LogInActivity.this, 103,
-                                Permissions.GET_ACCOUNTS, Permissions.READ_EXTERNAL,
-                                Permissions.WRITE_EXTERNAL, Permissions.ACCESS_FINE_LOCATION);
-                    }
+        connectGDrive.setOnClickListener(v -> {
+            if (enabled) {
+                if (Permissions.checkPermission(LogInActivity.this, Permissions.GET_ACCOUNTS,
+                        Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL, Permissions.ACCESS_FINE_LOCATION)) {
+                    Intent intent = AccountPicker.newChooseAccountIntent(null, null,
+                            new String[]{"com.google"}, false, null, null, null, null);
+                    startActivityForResult(intent, REQUEST_AUTHORIZATION);
+                    enabled = false;
+                } else {
+                    Permissions.requestPermission(LogInActivity.this, 103,
+                            Permissions.GET_ACCOUNTS, Permissions.READ_EXTERNAL,
+                            Permissions.WRITE_EXTERNAL, Permissions.ACCESS_FINE_LOCATION);
                 }
             }
         });
 
-        skipButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (enabled) {
-                    if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL,
-                            Permissions.ACCESS_FINE_LOCATION)) {
-                        new LocalLogin(LogInActivity.this, checkBox.isChecked(), LogInActivity.this).execute();
-                        enabled = false;
-                    } else {
-                        Permissions.requestPermission(LogInActivity.this, 101,
-                                Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL,
-                                Permissions.ACCESS_FINE_LOCATION);
-                    }
+        skipButton.setOnClickListener(v -> {
+            if (enabled) {
+                if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL,
+                        Permissions.ACCESS_FINE_LOCATION)) {
+                    new LocalLogin(LogInActivity.this, checkBox.isChecked(), LogInActivity.this).execute();
+                    enabled = false;
+                } else {
+                    Permissions.requestPermission(LogInActivity.this, 101,
+                            Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL,
+                            Permissions.ACCESS_FINE_LOCATION);
                 }
             }
         });
@@ -264,34 +249,28 @@ public class LogInActivity extends Activity implements LoginListener {
     protected Dialog checkDialog() {
         return new AlertDialog.Builder(this)
                 .setTitle(R.string.other_version_detected)
-                .setPositiveButton(R.string.open, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent i;
-                        PackageManager manager = getPackageManager();
-                        if (Module.isPro()) {
-                            i = manager.getLaunchIntentForPackage(MARKET_APP_JUSTREMINDER);
-                        } else {
-                            i = manager.getLaunchIntentForPackage(MARKET_APP_JUSTREMINDER_PRO);
-                        }
-                        i.addCategory(Intent.CATEGORY_LAUNCHER);
-                        startActivity(i);
+                .setPositiveButton(R.string.open, (dialog1, which) -> {
+                    Intent i;
+                    PackageManager manager = getPackageManager();
+                    if (Module.isPro()) {
+                        i = manager.getLaunchIntentForPackage(MARKET_APP_JUSTREMINDER);
+                    } else {
+                        i = manager.getLaunchIntentForPackage(MARKET_APP_JUSTREMINDER_PRO);
                     }
+                    i.addCategory(Intent.CATEGORY_LAUNCHER);
+                    startActivity(i);
                 })
-                .setNegativeButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        if (Module.isPro()) {
-                            intent.setData(Uri.parse("package:" + MARKET_APP_JUSTREMINDER));
-                        } else {
-                            intent.setData(Uri.parse("package:" + MARKET_APP_JUSTREMINDER_PRO));
-                        }
-                        startActivity(intent);
+                .setNegativeButton(getString(R.string.delete), (dialog1, which) -> {
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    if (Module.isPro()) {
+                        intent.setData(Uri.parse("package:" + MARKET_APP_JUSTREMINDER));
+                    } else {
+                        intent.setData(Uri.parse("package:" + MARKET_APP_JUSTREMINDER_PRO));
                     }
+                    startActivity(intent);
                 })
-                .setNeutralButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
+                .setNeutralButton(getString(R.string.cancel), (dialog1, which) -> {
+                    dialog1.dismiss();
                 })
                 .setCancelable(true)
                 .create();
@@ -299,7 +278,6 @@ public class LogInActivity extends Activity implements LoginListener {
 
     void getAndUseAuthTokenInAsyncTask(Account account) {
         AsyncTask<Account, String, String> task = new AsyncTask<Account, String, String>() {
-
             @Override
             protected void onPreExecute() {
                 dialog = ProgressDialog.show(LogInActivity.this, getString(R.string.please_wait),

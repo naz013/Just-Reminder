@@ -51,6 +51,7 @@ public class Permissions {
     public static final String SEND_SMS = Manifest.permission.SEND_SMS;
     
     public static final String MANAGE_DOCUMENTS = Manifest.permission.MANAGE_DOCUMENTS;
+    public static final String READ_CALLS = Manifest.permission.READ_CALL_LOG;
 
     /**
      * Multi permissions checking.

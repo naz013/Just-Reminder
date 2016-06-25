@@ -526,4 +526,5 @@
     <string name="you_dont_select_any_hours">Ви не обрали жодної години!</string>
     <string name="could_not_launch_market">Не вдалося запустити Play Market</string>
     <string name="move_backward">Назад</string>
+    <string name="call_history">Call history</string>
 </resources>

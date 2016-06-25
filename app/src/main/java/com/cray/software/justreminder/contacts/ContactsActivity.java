@@ -16,40 +16,21 @@
 
 package com.cray.software.justreminder.contacts;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.ContactsContract;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.MenuItem;
-import android.view.inputmethod.InputMethodManager;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.utils.ViewUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class ContactsActivity extends AppCompatActivity implements LoadListener, RecyclerClickListener {
-
-    private ContactsRecyclerAdapter mAdapter;
-    private List<ContactData> mData;
-    private String name = "";
-
-    private RoboEditText searchField;
-    private RecyclerView mRecyclerView;
+public class ContactsActivity extends AppCompatActivity implements NumberCallback {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,64 +44,16 @@ public class ContactsActivity extends AppCompatActivity implements LoadListener,
         setRequestedOrientation(cs.getRequestOrientation());
         initActionBar();
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
-        initSearchView();
-        initRecyclerView();
-        new ContactsAsync(this, this).execute();
+        initTabNavigation();
     }
 
-    private void initRecyclerView() {
-        mRecyclerView = (RecyclerView) findViewById(R.id.contactsList);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setHasFixedSize(true);
-    }
+    private void initTabNavigation() {
+        ViewPagerAdapter mSectionsPagerAdapter = new ViewPagerAdapter(this, getFragmentManager());
+        ViewPager mViewPager = (ViewPager) findViewById(R.id.viewPager);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
 
-    private void initSearchView() {
-        searchField = (RoboEditText) findViewById(R.id.searchField);
-        searchField.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterContacts(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-    }
-
-    private void filterContacts(String q) {
-        List<ContactData> res = filter(mData, q);
-        mAdapter.animateTo(res);
-        mRecyclerView.scrollToPosition(0);
-    }
-
-    private List<ContactData> filter(List<ContactData> mData, String q) {
-        q = q.toLowerCase();
-
-        List<ContactData> filteredModelList = new ArrayList<>();
-        if (q.matches("")) {
-            filteredModelList = new ArrayList<>(mData);
-        } else {
-            filteredModelList.addAll(getFiltered(mData, q));
-        }
-        return filteredModelList;
-    }
-
-    private List<ContactData> getFiltered(List<ContactData> models, String query) {
-        List<ContactData> list = new ArrayList<>();
-        for (ContactData model : models) {
-            final String text = model.getName().toLowerCase();
-            if (text.contains(query)) {
-                list.add(model);
-            }
-        }
-        return list;
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        tabLayout.setupWithViewPager(mViewPager);
     }
 
     private void initActionBar() {
@@ -147,82 +80,11 @@ public class ContactsActivity extends AppCompatActivity implements LoadListener,
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        InputMethodManager imm = (InputMethodManager)getSystemService(
-                Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(searchField.getWindowToken(), 0);
-    }
-
-    private void selectNumber() {
-        Cursor c = getContentResolver().query(
-                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + "=?",
-                new String[]{name}, null);
-
-        int phoneIdx = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-        int phoneType = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE);
-
-        if (c.getCount() > 1) {
-            final CharSequence[] numbers = new CharSequence[c.getCount()];
-            int i = 0;
-            if (c.moveToFirst()) {
-                while (!c.isAfterLast()) {
-                    String type = (String) ContactsContract.CommonDataKinds.Phone.getTypeLabel(
-                            getResources(), c.getInt(phoneType), "");
-                    String number = type + ": " + c.getString(phoneIdx);
-                    numbers[i++] = number;
-                    c.moveToNext();
-                }
-                AlertDialog.Builder builder = new AlertDialog.Builder(ContactsActivity.this);
-                builder.setItems(numbers, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        String number = (String) numbers[which];
-                        int index = number.indexOf(":");
-                        number = number.substring(index + 2);
-                        Intent intent = new Intent();
-                        intent.putExtra(Constants.SELECTED_CONTACT_NUMBER, number);
-                        intent.putExtra(Constants.SELECTED_CONTACT_NAME, name);
-                        setResult(RESULT_OK, intent);
-                        finish();
-                    }
-                });
-                AlertDialog alert = builder.create();
-                alert.setOwnerActivity(ContactsActivity.this);
-                alert.show();
-
-            }
-        } else if (c.getCount() == 1) {
-            if (c.moveToFirst()) {
-                String number = c.getString(phoneIdx);
-                Intent intent = new Intent();
-                intent.putExtra(Constants.SELECTED_CONTACT_NUMBER, number);
-                intent.putExtra(Constants.SELECTED_CONTACT_NAME, name);
-                setResult(RESULT_OK, intent);
-                finish();
-            }
-        } else if (c.getCount() == 0) {
-            Intent intent = new Intent();
-            intent.putExtra(Constants.SELECTED_CONTACT_NAME, name);
-            setResult(RESULT_OK, intent);
-            finish();
-        }
-    }
-
-    @Override
-    public void onLoaded(List<ContactData> list) {
-        this.mData = list;
-        mAdapter = new ContactsRecyclerAdapter(this, mData, this);
-        mRecyclerView.setAdapter(mAdapter);
-    }
-
-    @Override
-    public void onItemClick(int position) {
-        if (position != -1) {
-            name = mAdapter.getItem(position).getName();
-            selectNumber();
-        }
+    public void onContactSelected(String number, String name) {
+        Intent intent = new Intent();
+        if (number != null) intent.putExtra(Constants.SELECTED_CONTACT_NUMBER, number);
+        intent.putExtra(Constants.SELECTED_CONTACT_NAME, name);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }

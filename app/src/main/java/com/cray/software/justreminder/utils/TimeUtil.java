@@ -40,6 +40,8 @@ public class TimeUtil {
     public static final SimpleDateFormat time24 = new SimpleDateFormat("HH:mm", Locale.getDefault());
     public static final SimpleDateFormat time12 = new SimpleDateFormat("K:mm a", Locale.getDefault());
     public static final SimpleDateFormat simpleDate = new SimpleDateFormat("d MMMM", Locale.getDefault());
+    public static final SimpleDateFormat simpleDateTime = new SimpleDateFormat("d MMMM, HH:mm", Locale.getDefault());
+    public static final SimpleDateFormat simpleDateTime12 = new SimpleDateFormat("d MMMM, K:mm a", Locale.getDefault());
 
     public TimeUtil(){}
 
@@ -65,6 +67,18 @@ public class TimeUtil {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(date);
         return simpleDate.format(calendar.getTime());
+    }
+
+    /**
+     * Get date and time string from date.
+     * @param date date to convert.
+     * @return Date string
+     */
+    public static String getSimpleDateTime(long date, boolean is24){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(date);
+        if (is24) return simpleDateTime.format(calendar.getTime());
+        else return simpleDateTime12.format(calendar.getTime());
     }
 
     /**

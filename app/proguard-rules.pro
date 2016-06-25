@@ -144,4 +144,6 @@
 -dontnote sun.misc.Unsafe
 -dontwarn sun.misc.Unsafe
 
+-dontwarn java.lang.invoke.*
+
 

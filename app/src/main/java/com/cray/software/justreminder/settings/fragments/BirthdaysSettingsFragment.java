@@ -33,6 +33,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.async.CheckBirthdaysAsync;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
@@ -48,7 +49,6 @@ import com.cray.software.justreminder.services.BirthdayCheckAlarm;
 import com.cray.software.justreminder.services.BirthdayPermanentAlarm;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.views.PrefsView;
-import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 
 import java.util.Calendar;
 
@@ -287,12 +287,12 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
                 setBirthdayPermanentCheck();
                 break;
             case R.id.contactsScan:
-                if (Permissions.checkPermission(getActivity(), Permissions.READ_CONTACTS)) {
+                if (Permissions.checkPermission(getActivity(), Permissions.READ_CONTACTS, Permissions.READ_CALLS)) {
                     new CheckBirthdaysAsync(getActivity(), true).execute();
                 } else {
                     Permissions
                             .requestPermission(getActivity(), 106,
-                                    Permissions.READ_CONTACTS);
+                                    Permissions.READ_CONTACTS, Permissions.READ_CALLS);
                 }
                 break;
             case R.id.daysToPrefs:

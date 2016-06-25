@@ -510,4 +510,5 @@
     <string name="save_widget">Zapisz widget</string>
     <string name="you_dont_select_any_hours">Nie wybrano żadnych godzin!</string>
     <string name="could_not_launch_market">Nie można uruchomić rynek</string>
+    <string name="call_history">Call history</string>
 </resources>

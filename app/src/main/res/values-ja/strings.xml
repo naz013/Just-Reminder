@@ -511,4 +511,5 @@
     <string name="app_title">"リマインダー"</string>
     <string name="you_dont_select_any_hours">あなたは、任意の時間を選択しないでください！</string>
     <string name="could_not_launch_market">市場を起動できませんでした</string>
+    <string name="call_history">Call history</string>
 </resources>
