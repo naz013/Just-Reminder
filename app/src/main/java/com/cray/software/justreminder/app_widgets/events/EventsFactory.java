@@ -30,12 +30,12 @@ import android.widget.RemoteViewsService;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.datas.models.CalendarModel;
 import com.cray.software.justreminder.datas.models.ShoppingList;
-import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.helpers.Recurrence;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
@@ -45,18 +45,24 @@ import com.cray.software.justreminder.json.JPlace;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
 
+    private static final String TAG = "EventsFactory";
     private ArrayList<CalendarModel> data;
     private Map<Long, ArrayList<ShoppingList>> map;
     private Context mContext;
     private TimeCount mCount;
     private int widgetID;
+    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
     EventsFactory(Context ctx, Intent intent) {
         mContext = ctx;
@@ -153,7 +159,21 @@ public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
                         String birthday = cursor.getString(cursor.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
                         String name = cursor.getString(cursor.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
                         long i = 0;
-                        data.add(new CalendarModel(mContext.getString(R.string.birthday), name, i, birthday, "", 0, 1));
+                        long eventTime = 0;
+                        try {
+                            Date date = format.parse(birthday);
+                            Calendar calendar1 = Calendar.getInstance();
+                            calendar1.setTimeInMillis(System.currentTimeMillis());
+                            int year = calendar1.get(Calendar.YEAR);
+                            if (date != null) {
+                                calendar1.setTime(date);
+                                calendar1.set(Calendar.YEAR, year);
+                                eventTime = calendar1.getTimeInMillis();
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        data.add(new CalendarModel(mContext.getString(R.string.birthday), name, i, birthday, "", eventTime, 1));
                     } while (cursor.moveToNext());
                 }
                 if (cursor != null) {
