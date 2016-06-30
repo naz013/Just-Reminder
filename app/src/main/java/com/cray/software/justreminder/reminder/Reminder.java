@@ -96,7 +96,7 @@ public class Reminder {
             long count = parser.getCount() + 1;
             if ((repeat == 0 || (limit > 0 && (limit - count - 1 == 0)))  &&
                     !type.startsWith(Constants.TYPE_WEEKDAY) &&
-                    !type.contains(Constants.TYPE_MONTHDAY)){
+                    !type.contains(Constants.TYPE_MONTHDAY) && delay == 0){
                 disableReminder(id, context);
             } else {
                 long eventTime = new TimeCount(context).generateDateTime(type,

@@ -22,7 +22,6 @@ import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
@@ -504,7 +503,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     }
 
     private void call() {
-        Reminder.update(ReminderDialog.this, id);
+        Reminder.setDelay(ReminderDialog.this, id, 0, false);
         String type = getType();
         if (type.contains(Constants.TYPE_MESSAGE)){
             sendSMS(number, task);
@@ -535,13 +534,13 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     }
 
     private void ok() {
-        Reminder.update(ReminderDialog.this, id);
+        Reminder.setDelay(ReminderDialog.this, id, 0, false);
         update(1);
         finish();
     }
 
     private void favourite() {
-        Reminder.update(ReminderDialog.this, id);
+        Reminder.setDelay(ReminderDialog.this, id, 0, false);
         if ((task == null || task.trim().matches("")) &&
                 (number != null && !number.trim().matches(""))) {
             notifier.showReminderNotification(name + " " + number, id);
