@@ -19,6 +19,7 @@ package com.cray.software.justreminder.activities;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -141,6 +142,8 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     private Tracker mTracker;
 
     private GoogleApiClient mGoogleApiClient;
+
+    private ProgressDialog mSendDialog;
 
     /**
      * Runnable for increasing volume in stream.
@@ -772,6 +775,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     }
 
     private void sendSMS(String phoneNumber, String message) {
+        mSendDialog = ProgressDialog.show(this, getString(R.string.sending_message), getString(R.string.please_wait), false, false);
         String SENT = "SMS_SENT";
         String DELIVERED = "SMS_DELIVERED";
 
@@ -896,6 +900,9 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
 
     @Override
     public void messageSendResult(boolean isSent) {
+        if (mSendDialog != null && mSendDialog.isShowing()) {
+            mSendDialog.dismiss();
+        }
         if (isSent) {
             finish();
         } else {
