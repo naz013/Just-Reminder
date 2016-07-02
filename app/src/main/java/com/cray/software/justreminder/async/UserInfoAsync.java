@@ -45,8 +45,9 @@ public class UserInfoAsync extends AsyncTask<Void, Void, UserModel> {
         this.mContext = context;
         this.type = type;
         this.listener = listener;
-        progressDialog = ProgressDialog.show(mContext, null,
-                        mContext.getString(R.string.retrieving_data), false);
+        if (context != null) {
+            progressDialog = ProgressDialog.show(context, null, context.getString(R.string.retrieving_data), false);
+        }
     }
 
     @Override
