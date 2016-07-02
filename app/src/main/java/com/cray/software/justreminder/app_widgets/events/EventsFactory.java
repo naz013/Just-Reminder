@@ -150,6 +150,8 @@ public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
             int mMonth;
             int n = 0;
             Calendar calendar = Calendar.getInstance();
+            int hour = prefs.loadInt(Prefs.BIRTHDAY_REMINDER_HOUR);
+            int minute = prefs.loadInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
             do {
                 mDay = calendar.get(Calendar.DAY_OF_MONTH);
                 mMonth = calendar.get(Calendar.MONTH);
@@ -168,6 +170,8 @@ public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
                             if (date != null) {
                                 calendar1.setTime(date);
                                 calendar1.set(Calendar.YEAR, year);
+                                calendar1.set(Calendar.HOUR_OF_DAY, hour);
+                                calendar1.set(Calendar.MINUTE, minute);
                                 eventTime = calendar1.getTimeInMillis();
                             }
                         } catch (ParseException e) {
