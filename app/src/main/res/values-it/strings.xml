@@ -513,5 +513,5 @@
     <string name="call_history">Registro chiamate</string>
     <string name="no_contacts_found">Nessun contatto trovato</string>
     <string name="no_calls_found">La storia è vuoto</string>
-    <string name="sending_message">Sending message</string>
+    <string name="sending_message">Invia messaggio</string>
 </resources>
