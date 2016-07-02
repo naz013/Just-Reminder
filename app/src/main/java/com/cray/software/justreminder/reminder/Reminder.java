@@ -88,7 +88,7 @@ public class Reminder {
             String json = c.getString(c.getColumnIndex(NextBase.JSON));
             String summary = c.getString(c.getColumnIndex(NextBase.SUMMARY));
             String type = c.getString(c.getColumnIndex(NextBase.TYPE));
-            long delay = c.getInt(c.getColumnIndex(NextBase.DELAY));
+            long delay = 0;
             JParser parser = new JParser(json);
             JRecurrence jRecurrence = parser.getRecurrence();
             long repeat = jRecurrence.getRepeat();
@@ -96,7 +96,7 @@ public class Reminder {
             long count = parser.getCount() + 1;
             if ((repeat == 0 || (limit > 0 && (limit - count - 1 == 0)))  &&
                     !type.startsWith(Constants.TYPE_WEEKDAY) &&
-                    !type.contains(Constants.TYPE_MONTHDAY) && delay == 0){
+                    !type.contains(Constants.TYPE_MONTHDAY)){
                 disableReminder(id, context);
             } else {
                 long eventTime = new TimeCount(context).generateDateTime(type,
@@ -120,6 +120,7 @@ public class Reminder {
                 parser.setCount(count);
                 db.updateReminderEventTime(id, eventTime);
                 db.setJson(id, parser.toJsonString());
+                db.setDelay(id, 0);
                 int exp = parser.getExport().getCalendar();
 
                 new AlarmReceiver().enableReminder(context, id);
@@ -432,7 +433,55 @@ public class Reminder {
         NextBase db = new NextBase(context);
         db.open();
         db.setDelay(id, delay);
-        update(context, id);
+        Cursor c = db.getReminder(id);
+        if (c != null && c.moveToFirst()){
+            String json = c.getString(c.getColumnIndex(NextBase.JSON));
+            String summary = c.getString(c.getColumnIndex(NextBase.SUMMARY));
+            String type = c.getString(c.getColumnIndex(NextBase.TYPE));
+            long mDelay = c.getInt(c.getColumnIndex(NextBase.DELAY));
+            JParser parser = new JParser(json);
+            JRecurrence jRecurrence = parser.getRecurrence();
+            long repeat = jRecurrence.getRepeat();
+            long limit = jRecurrence.getLimit();
+            long count = parser.getCount() + 1;
+            if ((repeat == 0 || (limit > 0 && (limit - count - 1 == 0)))  &&
+                    !type.startsWith(Constants.TYPE_WEEKDAY) &&
+                    !type.contains(Constants.TYPE_MONTHDAY) && mDelay == 0){
+                disableReminder(id, context);
+            } else {
+                long eventTime = new TimeCount(context).generateDateTime(type,
+                        jRecurrence.getMonthday(), parser.getStartTime(),
+                        repeat, jRecurrence.getWeekdays(), count, mDelay);
+
+                if (type.startsWith(Constants.TYPE_MONTHDAY) || type.startsWith(Constants.TYPE_WEEKDAY)) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(eventTime);
+                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                    int minute = calendar.get(Calendar.MINUTE);
+                    calendar.setTimeInMillis(System.currentTimeMillis());
+                    calendar.set(Calendar.HOUR_OF_DAY, hour);
+                    calendar.set(Calendar.MINUTE, minute);
+                    eventTime = new TimeCount(context).generateDateTime(type,
+                            jRecurrence.getMonthday(), calendar.getTimeInMillis(),
+                            repeat, jRecurrence.getWeekdays(), count, mDelay);
+                }
+
+                parser.setEventTime(eventTime);
+                parser.setCount(count);
+                db.updateReminderEventTime(id, eventTime);
+                db.setJson(id, parser.toJsonString());
+                int exp = parser.getExport().getCalendar();
+
+                new AlarmReceiver().enableReminder(context, id);
+
+                SharedPrefs sPrefs = new SharedPrefs(context);
+                boolean isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
+                boolean isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
+                if ((isCalendar || isStock) && exp == 1) {
+                    ReminderUtils.exportToCalendar(context, summary, eventTime, id, isCalendar, isStock);
+                }
+            }
+        }
         if (addAlarm) new DelayReceiver().setAlarm(context, id, delay);
         db.close();
     }

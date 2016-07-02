@@ -503,7 +503,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     }
 
     private void call() {
-        Reminder.setDelay(ReminderDialog.this, id, 0, false);
+        Reminder.update(ReminderDialog.this, id);
         String type = getType();
         if (type.contains(Constants.TYPE_MESSAGE)){
             sendSMS(number, task);
@@ -534,13 +534,13 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     }
 
     private void ok() {
-        Reminder.setDelay(ReminderDialog.this, id, 0, false);
+        Reminder.update(ReminderDialog.this, id);
         update(1);
         finish();
     }
 
     private void favourite() {
-        Reminder.setDelay(ReminderDialog.this, id, 0, false);
+        Reminder.update(ReminderDialog.this, id);
         if ((task == null || task.trim().matches("")) &&
                 (number != null && !number.trim().matches(""))) {
             notifier.showReminderNotification(name + " " + number, id);
