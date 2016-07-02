@@ -161,7 +161,7 @@ public class LocationFragment extends BaseFragment implements GeocoderTask.Geoco
             else delayLayout.setVisibility(View.GONE);
         });
 
-        if (attackDelay.isChecked()) ViewUtils.expand(delayLayout);
+        if (attackDelay.isChecked()) delayLayout.setVisibility(View.VISIBLE);
 
         ImageButton clearField = (ImageButton) view.findViewById(R.id.clearButton);
         ImageButton mapButton = (ImageButton) view.findViewById(R.id.mapButton);

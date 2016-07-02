@@ -166,11 +166,11 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
 
         attachDelayOut = (RoboCheckBox) view.findViewById(R.id.attachDelayOut);
         attachDelayOut.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) attachDelayOut.setVisibility(View.VISIBLE);
-            else attachDelayOut.setVisibility(View.GONE);
+            if (isChecked) delayLayoutOut.setVisibility(View.VISIBLE);
+            else delayLayoutOut.setVisibility(View.GONE);
         });
 
-        if (attachDelayOut.isChecked()) ViewUtils.expand(delayLayoutOut);
+        if (attachDelayOut.isChecked()) delayLayoutOut.setVisibility(View.VISIBLE);
 
         ImageButton mapButtonOut = (ImageButton) view.findViewById(R.id.mapButtonOut);
         if (isDark) mapButtonOut.setImageResource(R.drawable.ic_map_white_24dp);
