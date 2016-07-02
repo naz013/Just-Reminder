@@ -510,7 +510,7 @@
     <string name="save_widget">Zapisz widget</string>
     <string name="you_dont_select_any_hours">Nie wybrano żadnych godzin!</string>
     <string name="could_not_launch_market">Nie można uruchomić rynek</string>
-    <string name="call_history">Call history</string>
-    <string name="no_contacts_found">No contacts found</string>
-    <string name="no_calls_found">No calls found</string>
+    <string name="call_history">Historia połączeń</string>
+    <string name="no_contacts_found">Nie znaleziono kontaktów</string>
+    <string name="no_calls_found">Historia jest pusty</string>
 </resources>

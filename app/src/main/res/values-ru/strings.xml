@@ -526,7 +526,7 @@
     <string name="app_title">"Напоминания"</string>
     <string name="you_dont_select_any_hours">Вы не выбрали время!</string>
     <string name="could_not_launch_market">Не удалось запустить Play Market</string>
-    <string name="call_history">Call history</string>
-    <string name="no_contacts_found">No contacts found</string>
-    <string name="no_calls_found">No calls found</string>
+    <string name="call_history">История звонков</string>
+    <string name="no_contacts_found">Не найдено ни одного контакта</string>
+    <string name="no_calls_found">История пуста</string>
 </resources>
