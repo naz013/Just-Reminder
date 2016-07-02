@@ -36,11 +36,10 @@ public class ExtraPickerDialog extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         ColorSetter cs = new ColorSetter(ExtraPickerDialog.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.dialog_select_extra);
-
+        findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
         Intent intent = getIntent();
         int[] array = intent.getIntArrayExtra("prefs");
         String type = intent.getStringExtra("type");

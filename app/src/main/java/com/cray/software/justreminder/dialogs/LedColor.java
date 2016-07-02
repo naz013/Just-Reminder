@@ -49,7 +49,7 @@ public class LedColor extends Activity{
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.music_list_dilog);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
+        findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
         RoboTextView dialogTitle = (RoboTextView) findViewById(R.id.dialogTitle);
         dialogTitle.setText(getString(R.string.led_color));
 

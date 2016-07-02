@@ -50,10 +50,10 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         ColorSetter cs = new ColorSetter(ExclusionPickerDialog.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.dialog_select_exlusion);
+        findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
         from = (RoboTextView) findViewById(R.id.from);
         to = (RoboTextView) findViewById(R.id.to);

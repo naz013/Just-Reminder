@@ -34,9 +34,10 @@ public class AboutDialog extends Activity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(AboutDialog.this);
+        ColorSetter cs = new ColorSetter(this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.about_dialog_layout);
+        findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
         RoboTextView appName = (RoboTextView) findViewById(R.id.appName);
         String name;
         if (Module.isPro()) name = getString(R.string.app_name_pro);

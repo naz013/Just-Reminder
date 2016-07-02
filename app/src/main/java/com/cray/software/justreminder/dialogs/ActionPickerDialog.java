@@ -45,6 +45,7 @@ public class ActionPickerDialog extends Activity {
         ColorSetter cs = new ColorSetter(ActionPickerDialog.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.dialog_action_picker);
+        findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
         Intent i = getIntent();
         receivedDate = i.getLongExtra("date", 0);
         ImageButton addEvent = (ImageButton) findViewById(R.id.addEvent);

@@ -57,7 +57,7 @@ public class VoiceResult extends Activity {
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.voice_dialog_layout);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
+        findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
         Intent intent = getIntent();
         id = intent.getLongExtra("ids", 0);
 

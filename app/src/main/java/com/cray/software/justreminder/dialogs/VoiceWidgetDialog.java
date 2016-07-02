@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 
 import com.cray.software.justreminder.ReminderApp;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Recognize;
 import com.cray.software.justreminder.utils.LocationUtil;
@@ -40,6 +41,8 @@ public class VoiceWidgetDialog extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ColorSetter cs = new ColorSetter(this);
+        setTheme(cs.getDialogStyle());
         if (LocationUtil.isGooglePlayServicesAvailable(this)) {
             ReminderApp application = (ReminderApp) getApplication();
             mTracker = application.getDefaultTracker();

@@ -41,7 +41,7 @@ public class TrackerOption extends Activity {
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.tracker_settings_layout);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
+        findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
         sPrefs = new SharedPrefs(TrackerOption.this);
 
         radiusValue = (RoboTextView) findViewById(R.id.radiusValue);

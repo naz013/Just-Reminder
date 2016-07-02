@@ -18,23 +18,28 @@ package com.cray.software.justreminder.dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.modules.Module;
 
 public class ChangeDialog extends Activity {
 
-    private AlertDialog alertDialog;
+    private DialogInterface.OnCancelListener mCancelListener = dialogInterface -> finish();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ColorSetter cs = new ColorSetter(this);
+        setTheme(cs.getDialogStyle());
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle(getString(R.string.changes));
         WebView wv = new WebView(this);
+        wv.setBackgroundColor(cs.getBackgroundStyle());
         String url = "file:///android_asset/files/change_log.html";
         if (Module.isPro()) url = "file:///android_asset/files/change_log_pro.html";
         wv.loadUrl(url);
@@ -51,16 +56,8 @@ public class ChangeDialog extends Activity {
             dialog.dismiss();
             finish();
         });
-        alertDialog = alert.create();
+        AlertDialog alertDialog = alert.create();
+        alertDialog.setOnCancelListener(mCancelListener);
         alertDialog.show();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        if (alertDialog != null && alertDialog.isShowing()){
-            alertDialog.dismiss();
-        }
-        finish();
     }
 }

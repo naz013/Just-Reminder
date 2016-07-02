@@ -18,11 +18,13 @@ package com.cray.software.justreminder.dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.helpers.ColorSetter;
 
 import java.util.Locale;
 
@@ -31,19 +33,17 @@ import java.util.Locale;
  */
 public class VoiceHelp extends Activity {
 
-    /**
-     * Alert dialog field.
-     */
-    private AlertDialog alertDialog;
+    private DialogInterface.OnCancelListener mCancelListener = dialogInterface -> finish();
 
     @Override
     protected final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        ColorSetter cs = new ColorSetter(this);
+        setTheme(cs.getDialogStyle());
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle(getString(R.string.help));
-
         WebView wv = new WebView(this);
+        wv.setBackgroundColor(cs.getBackgroundStyle());
         String localeCheck = Locale.getDefault().toString().toLowerCase();
         String url;
         if (localeCheck.startsWith("uk")) {
@@ -64,21 +64,13 @@ public class VoiceHelp extends Activity {
         });
 
         alert.setView(wv);
-        alert.setCancelable(false);
+        alert.setCancelable(true);
         alert.setNegativeButton(getString(R.string.ok), (dialog, id) -> {
                     dialog.dismiss();
                     finish();
                 });
-        alertDialog = alert.create();
+        AlertDialog alertDialog = alert.create();
+        alertDialog.setOnCancelListener(mCancelListener);
         alertDialog.show();
-    }
-
-    @Override
-    public final void onBackPressed() {
-        super.onBackPressed();
-        if (alertDialog != null && alertDialog.isShowing()) {
-            alertDialog.dismiss();
-        }
-        finish();
     }
 }

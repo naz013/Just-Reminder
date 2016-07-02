@@ -40,7 +40,7 @@ public class MarkerStyle extends Activity implements View.OnClickListener{
         ColorSetter cs = new ColorSetter(MarkerStyle.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.marker_style_layout);
-
+        findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
         RoboButton themeClose = (RoboButton) findViewById(R.id.themeClose);
         themeClose.setOnClickListener(this);
 

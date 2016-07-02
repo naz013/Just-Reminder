@@ -37,7 +37,7 @@ public class ColorPicker extends Activity implements View.OnClickListener {
         ColorSetter cs = new ColorSetter(ColorPicker.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.color_picker_layout);
-
+        findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
         LinearLayout themeGroupPro = (LinearLayout) findViewById(R.id.themeGroupPro);
         boolean isPro = Module.isPro();
         if (isPro) themeGroupPro.setVisibility(View.VISIBLE);

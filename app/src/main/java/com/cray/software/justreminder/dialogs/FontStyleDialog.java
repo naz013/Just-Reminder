@@ -49,7 +49,7 @@ public class FontStyleDialog extends Activity{
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.music_list_dilog);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
+        findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
         ArrayList<String> contacts = new ArrayList<>();
         contacts.clear();
         contacts.add("Black");
