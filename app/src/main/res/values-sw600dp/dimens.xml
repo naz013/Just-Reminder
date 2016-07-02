@@ -32,9 +32,6 @@
     <dimen name="clouds_text_size">30sp</dimen>
     <dimen name="clouds_margin_top">35dp</dimen>
 
-    <dimen name="contact_margin_top">30dp</dimen>
-    <dimen name="contact_margin">50dp</dimen>
-
     <dimen name="create_note_padding">30dp</dimen>
     <dimen name="create_note_text_size">30sp</dimen>
     <dimen name="create_note_image_button_size">50dp</dimen>
@@ -58,10 +55,6 @@
     <dimen name="reminder_preview_container_padding">15dp</dimen>
     <dimen name="reminder_preview_margin_top">15dp</dimen>
     <dimen name="dimen_log_in_padding">60dp</dimen>
-    <dimen name="dimen_log_in_progress_margin_top">25dp</dimen>
-    <dimen name="log_in_progress_text_size">26sp</dimen>
-    <dimen name="log_in_circle_margin_top">30dp</dimen>
-    <dimen name="log_in_circle_size">50dp</dimen>
     <dimen name="log_in_skip_text_size">28sp</dimen>
     <dimen name="log_in_skip_margin_top">20dp</dimen>
     <dimen name="log_in_check_margin_top">20dp</dimen>
