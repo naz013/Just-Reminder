@@ -38,6 +38,8 @@ import com.cray.software.justreminder.roboto_views.RoboEditText;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.castorflex.android.circularprogressbar.CircularProgressBar;
+
 public class CallsFragment extends Fragment implements CallsLogListener {
 
     private Context mContext;
@@ -49,6 +51,8 @@ public class CallsFragment extends Fragment implements CallsLogListener {
     private LinearLayout mEmptyItem;
     private RoboEditText searchField;
     private RecyclerView mRecyclerView;
+    private CircularProgressBar mProgressView;
+
     private RecyclerClickListener mClickListener = new RecyclerClickListener() {
         @Override
         public void onItemClick(int position) {
@@ -112,6 +116,7 @@ public class CallsFragment extends Fragment implements CallsLogListener {
         initSearchView(view);
         initRecyclerView(view);
         initEmptyLayout(view);
+        mProgressView = (CircularProgressBar) view.findViewById(R.id.progressView);
         new CallsAsync(mContext, this).execute();
         return view;
     }
@@ -202,6 +207,7 @@ public class CallsFragment extends Fragment implements CallsLogListener {
     @Override
     public void onLoaded(List<CallsData> list) {
         this.mData = list;
+        mProgressView.setVisibility(View.GONE);
         mAdapter = new CallsRecyclerAdapter(mContext, mData, mClickListener);
         mRecyclerView.setAdapter(mAdapter);
         refreshView(mAdapter.getItemCount());

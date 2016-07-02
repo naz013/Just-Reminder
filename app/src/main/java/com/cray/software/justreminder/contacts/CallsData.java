@@ -32,7 +32,7 @@ public class CallsData {
         this.date = date;
         this.id = id;
         this.type = type;
-        this.numberName = number + name;
+        this.numberName = number + (name != null ? name : "");
     }
 
     public String getNumberName() {

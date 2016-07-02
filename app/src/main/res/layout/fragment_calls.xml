@@ -37,28 +37,45 @@
         android:id="@+id/contactsList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="5dp" />
+        android:layout_marginTop="5dp"
+        android:visibility="gone" />
 
     <LinearLayout
+        android:id="@+id/emptyItem"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center"
         android:orientation="vertical"
-        android:id="@+id/emptyItem"
-        android:gravity="center">
+        android:visibility="gone">
 
         <ImageView
+            android:id="@+id/emptyImage"
             android:layout_width="128dp"
-            android:layout_height="128dp"
-            android:id="@+id/emptyImage"/>
+            android:layout_height="128dp" />
 
         <com.cray.software.justreminder.roboto_views.RoboTextView
+            android:id="@+id/emptyText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/emptyText"
-            android:textSize="18sp"
             android:layout_marginTop="32dp"
-            android:text="@string/no_calls_found"/>
+            android:text="@string/no_calls_found"
+            android:textSize="18sp" />
 
     </LinearLayout>
+
+    <fr.castorflex.android.circularprogressbar.CircularProgressBar
+        android:id="@+id/progressView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
+        android:indeterminate="true"
+        app:cpb_color="@color/redPrimary"
+        app:cpb_colors="@array/progress_colors"
+        app:cpb_max_sweep_angle="300"
+        app:cpb_min_sweep_angle="10"
+        app:cpb_rotation_speed="1.0"
+        app:cpb_stroke_width="4dp"
+        app:cpb_sweep_speed="1.0" />
 
 </LinearLayout>

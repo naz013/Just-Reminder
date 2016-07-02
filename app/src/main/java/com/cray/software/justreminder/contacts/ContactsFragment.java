@@ -41,6 +41,8 @@ import com.cray.software.justreminder.roboto_views.RoboEditText;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.castorflex.android.circularprogressbar.CircularProgressBar;
+
 public class ContactsFragment extends Fragment implements LoadListener {
 
     private Context mContext;
@@ -53,6 +55,8 @@ public class ContactsFragment extends Fragment implements LoadListener {
     private LinearLayout mEmptyItem;
     private RoboEditText searchField;
     private RecyclerView mRecyclerView;
+    private CircularProgressBar mProgressView;
+
     private RecyclerClickListener mClickListener = new RecyclerClickListener() {
         @Override
         public void onItemClick(int position) {
@@ -113,6 +117,7 @@ public class ContactsFragment extends Fragment implements LoadListener {
         initSearchView(view);
         initRecyclerView(view);
         initEmptyLayout(view);
+        mProgressView = (CircularProgressBar) view.findViewById(R.id.progressView);
         new ContactsAsync(mContext, this).execute();
         return view;
     }
@@ -251,6 +256,7 @@ public class ContactsFragment extends Fragment implements LoadListener {
     @Override
     public void onLoaded(List<ContactData> list) {
         this.mData = list;
+        mProgressView.setVisibility(View.GONE);
         mAdapter = new ContactsRecyclerAdapter(mContext, mData, mClickListener);
         mRecyclerView.setAdapter(mAdapter);
         refreshView(mAdapter.getItemCount());
