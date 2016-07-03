@@ -39,6 +39,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.reminder.Reminder;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -79,10 +80,11 @@ public class EventsListFragment extends Fragment implements SimpleListener {
         emptyText.setText(getString(R.string.no_events));
 
         ImageView emptyImage = (ImageView) view.findViewById(R.id.emptyImage);
-        if (new ColorSetter(getActivity()).isDark())
-            emptyImage.setImageResource(R.drawable.today_white);
-        else
-            emptyImage.setImageResource(R.drawable.today);
+        if (new ColorSetter(getActivity()).isDark()) {
+            Picasso.with(getActivity()).load(R.drawable.today_white).into(emptyImage);
+        } else {
+            Picasso.with(getActivity()).load(R.drawable.today).into(emptyImage);
+        }
 
         mEventsList = (RecyclerView) view.findViewById(R.id.currentList);
 

@@ -35,6 +35,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -78,9 +79,9 @@ public class TaskListFragment extends Fragment implements SyncListener {
 
         ImageView emptyImage = (ImageView) view.findViewById(R.id.emptyImage);
         if (new ColorSetter(getActivity()).isDark()) {
-            emptyImage.setImageResource(R.drawable.clear_white);
+            Picasso.with(getActivity()).load(R.drawable.clear_white).into(emptyImage);
         } else {
-            emptyImage.setImageResource(R.drawable.clear);
+            Picasso.with(getActivity()).load(R.drawable.clear).into(emptyImage);
         }
 
         currentList = (RecyclerView) view.findViewById(R.id.currentList);

@@ -46,6 +46,7 @@ import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.ReturnScrollListener;
+import com.squareup.picasso.Picasso;
 
 public class TemplatesList extends AppCompatActivity implements SimpleListener {
 
@@ -81,9 +82,9 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
 
         ImageView emptyImage = (ImageView) findViewById(R.id.emptyImage);
         if (cs.isDark()) {
-            emptyImage.setImageResource(R.drawable.textsms_white);
+            Picasso.with(this).load(R.drawable.textsms_white).into(emptyImage);
         } else {
-            emptyImage.setImageResource(R.drawable.textsms);
+            Picasso.with(this).load(R.drawable.textsms).into(emptyImage);
         }
 
         listView = (RecyclerView) findViewById(R.id.currentList);

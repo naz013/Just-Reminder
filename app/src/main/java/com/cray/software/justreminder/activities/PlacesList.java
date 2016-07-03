@@ -48,6 +48,7 @@ import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.ReturnScrollListener;
+import com.squareup.picasso.Picasso;
 
 public class PlacesList extends AppCompatActivity implements SimpleListener {
 
@@ -84,9 +85,9 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
 
         ImageView emptyImage = (ImageView) findViewById(R.id.emptyImage);
         if (cs.isDark()) {
-            emptyImage.setImageResource(R.drawable.place_white);
+            Picasso.with(this).load(R.drawable.place_white).into(emptyImage);
         } else {
-            emptyImage.setImageResource(R.drawable.place);
+            Picasso.with(this).load(R.drawable.place).into(emptyImage);
         }
 
         listView = (RecyclerView) findViewById(R.id.currentList);

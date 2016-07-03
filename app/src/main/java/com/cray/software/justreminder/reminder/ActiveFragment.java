@@ -56,6 +56,7 @@ import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -184,9 +185,9 @@ public class ActiveFragment extends Fragment implements
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
         if (new ColorSetter(getActivity()).isDark()) {
-            emptyImage.setImageResource(R.drawable.ic_alarm_off_48px_white);
+            Picasso.with(getActivity()).load(R.drawable.ic_alarm_off_48px_white).into(emptyImage);
         } else {
-            emptyImage.setImageResource(R.drawable.ic_alarm_off_48px);
+            Picasso.with(getActivity()).load(R.drawable.ic_alarm_off_48px).into(emptyImage);
         }
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.currentList);

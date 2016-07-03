@@ -43,6 +43,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
+import com.squareup.picasso.Picasso;
 
 public class PlacesFragment extends Fragment implements SimpleListener {
 
@@ -78,9 +79,9 @@ public class PlacesFragment extends Fragment implements SimpleListener {
 
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
         if (new ColorSetter(getActivity()).isDark()) {
-            emptyImage.setImageResource(R.drawable.place_white);
+            Picasso.with(getActivity()).load(R.drawable.place_white).into(emptyImage);
         } else {
-            emptyImage.setImageResource(R.drawable.place);
+            Picasso.with(getActivity()).load(R.drawable.place).into(emptyImage);
         }
 
         listView = (RecyclerView) rootView.findViewById(R.id.currentList);
