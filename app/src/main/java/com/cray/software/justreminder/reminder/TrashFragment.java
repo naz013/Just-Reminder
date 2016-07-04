@@ -93,7 +93,6 @@ public class TrashFragment extends Fragment implements RecyclerListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
-
         emptyItem = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
         RoboTextView emptyText = (RoboTextView) rootView.findViewById(R.id.emptyText);
@@ -104,11 +103,9 @@ public class TrashFragment extends Fragment implements RecyclerListener {
         } else {
             emptyImage.setImageResource(R.drawable.ic_delete_black_vector);
         }
-
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         currentList.setLayoutManager(mLayoutManager);
-
         loaderAdapter();
         return rootView;
     }

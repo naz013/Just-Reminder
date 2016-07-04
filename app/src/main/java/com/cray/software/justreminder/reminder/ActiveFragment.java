@@ -169,17 +169,13 @@ public class ActiveFragment extends Fragment implements
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
-
         mFilterLayout = (LinearLayout) rootView.findViewById(R.id.filterLayout);
         RoboTextView dateStart = (RoboTextView) rootView.findViewById(R.id.dateStart);
         mDateEnd = (RoboTextView) rootView.findViewById(R.id.dateEnd);
         SeekBar dateSeek = (SeekBar) rootView.findViewById(R.id.dateSeek);
-
         dateStart.setText(TimeUtil.getSimpleDate(System.currentTimeMillis()));
         mDateEnd.setText(TimeUtil.getSimpleDate(System.currentTimeMillis()));
-
         dateSeek.setOnSeekBarChangeListener(this);
-
         mEmptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         mEmptyLayout.setVisibility(View.VISIBLE);
         RoboTextView emptyText = (RoboTextView) rootView.findViewById(R.id.emptyText);
@@ -190,11 +186,9 @@ public class ActiveFragment extends Fragment implements
         } else {
             emptyImage.setImageResource(R.drawable.ic_alarm_off_black_vector);
         }
-
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.currentList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
-
         loaderAdapter(mLastGroupId, 0);
         return rootView;
     }
