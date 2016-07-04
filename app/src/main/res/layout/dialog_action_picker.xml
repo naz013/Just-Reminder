@@ -27,16 +27,17 @@
 
     <ImageButton
         android:id="@+id/addEvent"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
         android:src="@drawable/alarm_button" />
 
     <ImageButton
         android:id="@+id/addBirth"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_marginLeft="16dp"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
         android:src="@drawable/cake_button" />

@@ -127,10 +127,10 @@ public class TimerFragment extends BaseFragment implements
         exclusionClear.setVisibility(View.INVISIBLE);
         if (isDark) {
             deleteButton.setImageResource(R.drawable.ic_backspace_white_24dp);
-            exclusionClear.setImageResource(R.drawable.ic_clear_white_24dp);
+            exclusionClear.setImageResource(R.drawable.ic_clear_white_vector);
         } else {
             deleteButton.setImageResource(R.drawable.ic_backspace_black_24dp);
-            exclusionClear.setImageResource(R.drawable.ic_clear_black_24dp);
+            exclusionClear.setImageResource(R.drawable.ic_clear_black_vector);
         }
         deleteButton.setOnClickListener(v -> {
             timeString = timeString.substring(0, timeString.length() - 1);

@@ -151,8 +151,8 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
 
     private int getIcon(ArrayList<String> tags) {
         if (tags == null) {
-            if (isDark) return R.drawable.ic_place_white_24dp;
-            else return R.drawable.ic_place_black_24dp;
+            if (isDark) return R.drawable.ic_place_white_vector;
+            else return R.drawable.ic_place_black_vector;
         }
 
         StringBuilder sb = new StringBuilder();
@@ -251,8 +251,8 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
             if (isDark) return R.drawable.ic_local_dining_white_24dp;
             else return R.drawable.ic_local_dining_black_24dp;
         } else {
-            if (isDark) return R.drawable.ic_place_white_24dp;
-            else return R.drawable.ic_place_black_24dp;
+            if (isDark) return R.drawable.ic_place_white_vector;
+            else return R.drawable.ic_place_black_vector;
         }
     }
 

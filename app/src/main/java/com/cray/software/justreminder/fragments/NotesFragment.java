@@ -57,7 +57,6 @@ import com.cray.software.justreminder.notes.NotesBase;
 import com.cray.software.justreminder.notes.NotesManager;
 import com.cray.software.justreminder.notes.SyncNotes;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
-import com.squareup.picasso.Picasso;
 
 public class NotesFragment extends Fragment implements SyncListener, SimpleListener {
 
@@ -145,16 +144,14 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
 
         emptyItem = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
-
         RoboTextView emptyText = (RoboTextView) rootView.findViewById(R.id.emptyText);
         emptyText.setText(getActivity().getString(R.string.no_notes));
         emptyItem.setVisibility(View.VISIBLE);
-
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
         if (new ColorSetter(getActivity()).isDark()) {
-            Picasso.with(getActivity()).load(R.drawable.note_white).into(emptyImage);
+            emptyImage.setImageResource(R.drawable.ic_event_note_white_vector);
         } else {
-            Picasso.with(getActivity()).load(R.drawable.note).into(emptyImage);
+            emptyImage.setImageResource(R.drawable.ic_event_note_black_vector);
         }
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);

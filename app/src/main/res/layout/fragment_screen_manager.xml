@@ -15,7 +15,6 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -26,33 +25,7 @@
         android:layout_below="@+id/filterLayout"
         android:visibility="visible" />
 
-    <LinearLayout
-        android:id="@+id/emptyItem"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/filterLayout"
-        android:layout_centerVertical="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="visible">
-
-        <ImageView
-            android:id="@+id/emptyImage"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_marginBottom="35dp"
-            android:src="@drawable/alarm" />
-
-        <com.cray.software.justreminder.roboto_views.RoboTextView
-            android:id="@+id/emptyText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center|top"
-            android:text="@string/no_events"
-            android:textSize="30sp"
-            app:font_style="roboto_light" />
-
-    </LinearLayout>
+    <include layout="@layout/empty_item_layout" />
 
     <LinearLayout
         android:id="@+id/filterLayout"

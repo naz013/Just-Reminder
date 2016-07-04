@@ -24,7 +24,6 @@ android {
         multiDexEnabled true
         renderscriptTargetApi 20
         renderscriptSupportModeEnabled true
-        vectorDrawables.useSupportLibrary = true
     }
 
     lintOptions {

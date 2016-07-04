@@ -783,7 +783,7 @@ public class Notifier {
                 }
                 builder.setStyle(new NotificationCompat.BigTextStyle().bigText(stringBuilder.toString()));
             }
-            builder.addAction(R.drawable.ic_clear_white_24dp, mContext.getString(R.string.ok), piDismiss);
+            builder.addAction(R.drawable.ic_clear_white_vector, mContext.getString(R.string.ok), piDismiss);
 
             NotificationManagerCompat notifier = NotificationManagerCompat.from(mContext);
             notifier.notify(1115, builder.build());

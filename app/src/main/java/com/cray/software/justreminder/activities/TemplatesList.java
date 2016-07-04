@@ -28,7 +28,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.TemplateRecyclerAdapter;
@@ -39,14 +38,12 @@ import com.cray.software.justreminder.enums.QuickReturnViewType;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
-import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.ReturnScrollListener;
-import com.squareup.picasso.Picasso;
 
 public class TemplatesList extends AppCompatActivity implements SimpleListener {
 
@@ -76,15 +73,13 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
 
         emptyItem = (LinearLayout) findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
-
         RoboTextView emptyText = (RoboTextView) findViewById(R.id.emptyText);
         emptyText.setText(R.string.no_messages);
-
         ImageView emptyImage = (ImageView) findViewById(R.id.emptyImage);
         if (cs.isDark()) {
-            Picasso.with(this).load(R.drawable.textsms_white).into(emptyImage);
+            emptyImage.setImageResource(R.drawable.ic_textsms_white_vector);
         } else {
-            Picasso.with(this).load(R.drawable.textsms).into(emptyImage);
+            emptyImage.setImageResource(R.drawable.ic_textsms_black_vector);
         }
 
         listView = (RecyclerView) findViewById(R.id.currentList);

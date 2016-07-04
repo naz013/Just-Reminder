@@ -15,23 +15,30 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/windowBackground"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/emptyItem"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_centerVertical="true"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:visibility="visible">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/currentList"
+    <ImageView
+        android:id="@+id/emptyImage"
+        android:layout_width="144dp"
+        android:layout_height="144dp"
+        android:layout_marginBottom="24dp" />
+
+    <com.cray.software.justreminder.roboto_views.RoboTextView
+        android:id="@+id/emptyText"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:choiceMode="singleChoice"
-        android:divider="@android:color/transparent"
-        android:fastScrollEnabled="true"
-        android:focusable="false"
-        android:overScrollMode="never"
-        android:scrollbars="none"
-        android:visibility="visible" />
-
-    <include layout="@layout/empty_item_layout" />
+        android:layout_height="wrap_content"
+        android:gravity="center|top"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:text="@string/no_events"
+        android:textSize="25sp"
+        app:font_style="roboto_regular" />
 
 </LinearLayout>

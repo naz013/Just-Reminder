@@ -140,9 +140,9 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
             holder.textView.setTextColor(ViewUtils.getColor(mContext, R.color.blackPrimary));
         } else {
             if (isDark) {
-                holder.clearButton.setImageResource(R.drawable.ic_clear_white_24dp);
+                holder.clearButton.setImageResource(R.drawable.ic_clear_white_vector);
             } else {
-                holder.clearButton.setImageResource(R.drawable.ic_clear_black_24dp);
+                holder.clearButton.setImageResource(R.drawable.ic_clear_black_vector);
             }
 
             holder.itemCheck.setVisibility(View.VISIBLE);

@@ -37,6 +37,7 @@ import android.widget.LinearLayout;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.roboto_views.RoboEditText;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,6 +124,8 @@ public class ContactsFragment extends Fragment implements LoadListener {
     }
 
     private void initEmptyLayout(View view) {
+        RoboTextView emptyText = (RoboTextView) view.findViewById(R.id.emptyText);
+        emptyText.setText(getString(R.string.no_contacts_found));
         ImageView mEmptyIcon = (ImageView) view.findViewById(R.id.emptyImage);
         if (new ColorSetter(mContext).isDark()) {
             mEmptyIcon.setImageResource(R.drawable.account_off_white);

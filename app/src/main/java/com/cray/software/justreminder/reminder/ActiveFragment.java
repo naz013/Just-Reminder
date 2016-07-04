@@ -182,12 +182,13 @@ public class ActiveFragment extends Fragment implements
 
         mEmptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         mEmptyLayout.setVisibility(View.VISIBLE);
-
+        RoboTextView emptyText = (RoboTextView) rootView.findViewById(R.id.emptyText);
+        emptyText.setText(getString(R.string.no_events));
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
         if (new ColorSetter(getActivity()).isDark()) {
-            Picasso.with(getActivity()).load(R.drawable.ic_alarm_off_48px_white).into(emptyImage);
+            emptyImage.setImageResource(R.drawable.ic_alarm_off_white_vector);
         } else {
-            Picasso.with(getActivity()).load(R.drawable.ic_alarm_off_48px).into(emptyImage);
+            emptyImage.setImageResource(R.drawable.ic_alarm_off_black_vector);
         }
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.currentList);

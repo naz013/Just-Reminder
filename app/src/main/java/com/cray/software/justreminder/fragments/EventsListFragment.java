@@ -39,7 +39,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.reminder.Reminder;
-import com.squareup.picasso.Picasso;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 import java.util.ArrayList;
 
@@ -64,33 +64,22 @@ public class EventsListFragment extends Fragment implements SimpleListener {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Bundle intent = getArguments();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.birthdays_list_fragment, container, false);
-
         mEmptyItem = (LinearLayout) view.findViewById(R.id.emptyItem);
         mEmptyItem.setVisibility(View.VISIBLE);
-
-        TextView emptyText = (TextView) view.findViewById(R.id.emptyText);
+        RoboTextView emptyText = (RoboTextView) view.findViewById(R.id.emptyText);
         emptyText.setText(getString(R.string.no_events));
-
         ImageView emptyImage = (ImageView) view.findViewById(R.id.emptyImage);
         if (new ColorSetter(getActivity()).isDark()) {
-            Picasso.with(getActivity()).load(R.drawable.today_white).into(emptyImage);
+            emptyImage.setImageResource(R.drawable.ic_today_white_vector);
         } else {
-            Picasso.with(getActivity()).load(R.drawable.today).into(emptyImage);
+            emptyImage.setImageResource(R.drawable.ic_today_black_vector);
         }
 
         mEventsList = (RecyclerView) view.findViewById(R.id.currentList);
-
         loaderAdapter();
         isCreate = true;
-
         return view;
     }
 

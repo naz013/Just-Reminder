@@ -183,7 +183,7 @@ public class MissedCallDialog extends Activity implements GoogleApiClient.Connec
 
         colorify(buttonOk, buttonCall, buttonCancel, buttonDelay, buttonDelayFor, buttonNotification);
         buttonOk.setImageResource(R.drawable.ic_done_black_24dp);
-        buttonCancel.setImageResource(R.drawable.ic_clear_black_24dp);
+        buttonCancel.setImageResource(R.drawable.ic_clear_black_vector);
         buttonCall.setImageResource(R.drawable.ic_call_black_24dp);
 
         TextView remText = (TextView) findViewById(R.id.remText);

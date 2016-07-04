@@ -662,7 +662,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         backButton = (ImageButton) view.findViewById(R.id.backButton);
 
         if (isDark) {
-            cardClear.setImageResource(R.drawable.ic_clear_white_24dp);
+            cardClear.setImageResource(R.drawable.ic_clear_white_vector);
             zoomOut.setImageResource(R.drawable.ic_arrow_upward_white_24dp);
             layers.setImageResource(R.drawable.ic_layers_white_24dp);
             myLocation.setImageResource(R.drawable.ic_my_location_white_24dp);
@@ -670,7 +670,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             places.setImageResource(R.drawable.ic_directions_white_24dp);
             backButton.setImageResource(R.drawable.ic_keyboard_arrow_left_white_24dp);
         } else {
-            cardClear.setImageResource(R.drawable.ic_clear_black_24dp);
+            cardClear.setImageResource(R.drawable.ic_clear_black_vector);
             zoomOut.setImageResource(R.drawable.ic_arrow_upward_black_24dp);
             layers.setImageResource(R.drawable.ic_layers_black_24dp);
             myLocation.setImageResource(R.drawable.ic_my_location_black_24dp);

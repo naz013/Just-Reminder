@@ -577,9 +577,9 @@ public class NotesManager extends AppCompatActivity {
 
     private void setImages(){
         if (new ColorSetter(this).isDark()){
-            discardReminder.setImageResource(R.drawable.ic_clear_white_24dp);
+            discardReminder.setImageResource(R.drawable.ic_clear_white_vector);
         } else {
-            discardReminder.setImageResource(R.drawable.ic_clear_black_24dp);
+            discardReminder.setImageResource(R.drawable.ic_clear_black_vector);
         }
     }
 

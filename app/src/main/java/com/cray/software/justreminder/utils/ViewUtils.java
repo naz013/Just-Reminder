@@ -131,9 +131,8 @@ public class ViewUtils {
         if (typePrefs.contains(Constants.TYPE_CALL)) {
             icon = R.drawable.ic_call_white_24dp;
         } else if (typePrefs.contains(Constants.TYPE_MESSAGE)) {
-            icon = R.drawable.ic_textsms_white_24dp;
-        } else if (typePrefs.matches(Constants.TYPE_LOCATION) ||
-                typePrefs.matches(Constants.TYPE_LOCATION_OUT)) {
+            icon = R.drawable.ic_textsms_white_vector;
+        } else if (typePrefs.matches(Constants.TYPE_LOCATION) || typePrefs.matches(Constants.TYPE_LOCATION_OUT)) {
             icon = R.drawable.ic_navigation_white_24dp;
         } else if (typePrefs.matches(Constants.TYPE_TIME)) {
             icon = R.drawable.ic_timer_white_24dp;

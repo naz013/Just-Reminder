@@ -236,25 +236,25 @@ public class NavigationDrawerFragment extends Fragment implements
         if (!new ColorSetter(getActivity()).isDark()){
             activeScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_notifications_black_24dp, 0, 0, 0);
             archiveScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_delete_black_24dp, 0, 0, 0);
-            calendar.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_today_black_24dp, 0, 0, 0);
+            calendar.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_today_black_vector, 0, 0, 0);
             geoScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_navigation_black_24dp, 0, 0, 0);
             manageBackup.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_history_black_24dp, 0, 0, 0);
             notes.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_event_note_black_24dp, 0, 0, 0);
             googleTasks.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_event_available_black_24dp, 0, 0, 0);
-            templates.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_textsms_black_24dp, 0, 0, 0);
-            places.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_place_black_24dp, 0, 0, 0);
+            templates.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_textsms_black_vector, 0, 0, 0);
+            places.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_place_black_vector, 0, 0, 0);
             categories.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_local_offer_black_24dp, 0, 0, 0);
             prefsButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_settings_black_24dp, 0, 0, 0);
         } else {
             activeScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_notifications_white_24dp, 0, 0, 0);
             archiveScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_delete_white_24dp, 0, 0, 0);
-            calendar.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_today_white_24dp, 0, 0, 0);
+            calendar.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_today_white_vector, 0, 0, 0);
             geoScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_navigation_white_24dp, 0, 0, 0);
             manageBackup.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_history_white_24dp, 0, 0, 0);
             notes.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_event_note_white_24dp, 0, 0, 0);
             googleTasks.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_event_available_white_24dp, 0, 0, 0);
-            templates.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_textsms_white_24dp, 0, 0, 0);
-            places.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_place_white_24dp, 0, 0, 0);
+            templates.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_textsms_white_vector, 0, 0, 0);
+            places.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_place_white_vector, 0, 0, 0);
             categories.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_local_offer_white_24dp, 0, 0, 0);
             prefsButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_settings_white_24dp, 0, 0, 0);
         }

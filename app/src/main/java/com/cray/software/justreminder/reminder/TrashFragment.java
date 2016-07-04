@@ -41,9 +41,8 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
-import com.squareup.picasso.Picasso;
 
-public class TrashFragment extends Fragment implements RecyclerListener{
+public class TrashFragment extends Fragment implements RecyclerListener {
 
     private RecyclerView currentList;
     private LinearLayout emptyItem;
@@ -97,15 +96,13 @@ public class TrashFragment extends Fragment implements RecyclerListener{
 
         emptyItem = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
-
         RoboTextView emptyText = (RoboTextView) rootView.findViewById(R.id.emptyText);
         emptyText.setText(R.string.trash_is_empty);
-
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
         if (new ColorSetter(getActivity()).isDark()) {
-            Picasso.with(getActivity()).load(R.drawable.delete_white).into(emptyImage);
+            emptyImage.setImageResource(R.drawable.ic_delete_white_vector);
         } else {
-            Picasso.with(getActivity()).load(R.drawable.delete).into(emptyImage);
+            emptyImage.setImageResource(R.drawable.ic_delete_black_vector);
         }
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);

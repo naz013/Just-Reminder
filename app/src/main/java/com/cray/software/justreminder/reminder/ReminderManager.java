@@ -508,8 +508,8 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             navSpinner.add(new SpinnerItem(getString(R.string.timer), R.drawable.ic_timer_white_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.alarm), R.drawable.ic_alarm_white_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.make_call), R.drawable.ic_call_white_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.sms), R.drawable.ic_textsms_white_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.location), R.drawable.ic_place_white_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.sms), R.drawable.ic_textsms_white_vector));
+            navSpinner.add(new SpinnerItem(getString(R.string.location), R.drawable.ic_place_white_vector));
             navSpinner.add(new SpinnerItem(getString(R.string.skype), R.drawable.skype_icon_white));
             navSpinner.add(new SpinnerItem(getString(R.string.launch_application), R.drawable.ic_launch_white_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.day_of_month), R.drawable.ic_event_white_24dp));
@@ -522,8 +522,8 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             navSpinner.add(new SpinnerItem(getString(R.string.timer), R.drawable.ic_timer_black_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.alarm), R.drawable.ic_alarm_black_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.make_call), R.drawable.ic_call_black_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.sms), R.drawable.ic_textsms_black_24dp));
-            navSpinner.add(new SpinnerItem(getString(R.string.location), R.drawable.ic_place_black_24dp));
+            navSpinner.add(new SpinnerItem(getString(R.string.sms), R.drawable.ic_textsms_black_vector));
+            navSpinner.add(new SpinnerItem(getString(R.string.location), R.drawable.ic_place_black_vector));
             navSpinner.add(new SpinnerItem(getString(R.string.skype), R.drawable.skype_icon));
             navSpinner.add(new SpinnerItem(getString(R.string.launch_application), R.drawable.ic_launch_black_24dp));
             navSpinner.add(new SpinnerItem(getString(R.string.day_of_month), R.drawable.ic_event_black_24dp));

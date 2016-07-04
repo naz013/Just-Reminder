@@ -35,7 +35,6 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -72,16 +71,14 @@ public class TaskListFragment extends Fragment implements SyncListener {
 
         emptyItem = (LinearLayout) view.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
-
         RoboTextView emptyText = (RoboTextView) view.findViewById(R.id.emptyText);
         emptyText.setText(R.string.no_google_tasks);
         emptyItem.setVisibility(View.VISIBLE);
-
         ImageView emptyImage = (ImageView) view.findViewById(R.id.emptyImage);
         if (new ColorSetter(getActivity()).isDark()) {
-            Picasso.with(getActivity()).load(R.drawable.clear_white).into(emptyImage);
+            emptyImage.setImageResource(R.drawable.ic_clear_white_vector);
         } else {
-            Picasso.with(getActivity()).load(R.drawable.clear).into(emptyImage);
+            emptyImage.setImageResource(R.drawable.ic_clear_black_vector);
         }
 
         currentList = (RecyclerView) view.findViewById(R.id.currentList);
