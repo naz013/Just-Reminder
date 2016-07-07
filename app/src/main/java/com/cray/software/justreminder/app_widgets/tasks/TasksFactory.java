@@ -123,21 +123,16 @@ public class TasksFactory implements RemoteViewsService.RemoteViewsFactory {
         int theme = sp.getInt(TasksWidgetConfig.TASKS_WIDGET_THEME + widgetID, 0);
         TasksTheme tasksTheme = TasksTheme.getThemes(mContext).get(theme);
         int itemTextColor = tasksTheme.getItemTextColor();
-
         rView.setTextColor(R.id.task, itemTextColor);
         rView.setTextColor(R.id.note, itemTextColor);
         rView.setTextColor(R.id.taskDate, itemTextColor);
-
         rView.setViewVisibility(R.id.checkDone, View.GONE);
-
-        rView.setInt(R.id.listColor, "setBackgroundColor", cs.getNoteColor(map.get(mData.get(i).getListId())));
-
+        if (map.containsKey(mData.get(i).getListId())) {
+            rView.setInt(R.id.listColor, "setBackgroundColor", cs.getNoteColor(map.get(mData.get(i).getListId())));
+        }
         final String name = mData.get(i).getTitle();
-
         rView.setTextViewText(R.id.task, name);
-
         SimpleDateFormat full24Format = new SimpleDateFormat("EEE,\ndd/MM", Locale.getDefault());
-
         String notes = mData.get(i).getNote();
         if (notes != null && !notes.matches("")) rView.setTextViewText(R.id.note, notes);
         else rView.setViewVisibility(R.id.note, View.GONE);
