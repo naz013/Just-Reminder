@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,6 +84,8 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
     private LocationManager mLocationManager;
     private LocationListener mLocList;
 
+    private Activity mContext;
+
     public void setNumber(String number){
         super.number = number;
         actionViewLocationOut.setNumber(number);
@@ -100,7 +103,7 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
 
     public void setPointRadius(int pointRadius) {
         if (pointRadius == -1) {
-            this.pointRadius.setProgress(new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS));
+            this.pointRadius.setProgress(new SharedPrefs(mContext).loadInt(Prefs.LOCATION_RADIUS));
         } else this.pointRadius.setProgress(pointRadius);
     }
 
@@ -147,7 +150,7 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reminder_location_out_layout, container, false);
-        SharedPrefs prefs = new SharedPrefs(getActivity());
+        SharedPrefs prefs = new SharedPrefs(mContext);
         mapFragment = new MapFragment();
         mapFragment.setListener(this);
         mapFragment.setMarkerStyle(prefs.loadInt(Prefs.MARKER_STYLE));
@@ -215,7 +218,7 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
 
         actionViewLocationOut = (ActionView) view.findViewById(R.id.actionViewLocationOut);
         actionViewLocationOut.setListener(mAction);
-        actionViewLocationOut.setActivity(getActivity());
+        actionViewLocationOut.setActivity(mContext);
 
         dateViewLocationOut = (DateTimeView) view.findViewById(R.id.dateViewLocationOut);
         dateViewLocationOut.setListener(mSelect);
@@ -225,8 +228,7 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
     }
 
     private void toggleMap() {
-        if (mapContainerOut != null &&
-                mapContainerOut.getVisibility() == View.VISIBLE) {
+        if (mapContainerOut != null && mapContainerOut.getVisibility() == View.VISIBLE) {
             ViewUtils.fadeOutAnimation(mapContainerOut);
             ViewUtils.fadeInAnimation(specsContainerOut);
         } else {
@@ -241,10 +243,28 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        if (mContext == null) {
+            mContext = activity;
+        }
         try {
-            mCallbacks = (MapListener) activity;
-            mAction = (ActionView.OnActionListener) activity;
-            mSelect = (DateTimeView.OnSelectListener) activity;
+            if (mCallbacks == null) mCallbacks = (MapListener) activity;
+            if (mAction == null) mAction = (ActionView.OnActionListener) activity;
+            if (mSelect == null) mSelect = (DateTimeView.OnSelectListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Activity must implement listeners.");
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (mContext == null) {
+            mContext = (Activity) context;
+        }
+        try {
+            if (mCallbacks == null) mCallbacks = (MapListener) context;
+            if (mAction == null) mAction = (ActionView.OnActionListener) context;
+            if (mSelect == null) mSelect = (DateTimeView.OnSelectListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement listeners.");
         }
@@ -358,7 +378,7 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
             curPlace = new LatLng(currentLat, currentLong);
             String _Location = LocationUtil.getAddress(currentLat, currentLong);
             String text = eventTask;
-            if (text.matches("")) text = _Location;
+            if (TextUtils.isEmpty(text)) text = _Location;
             currentLocation.setText(_Location);
             if (mapFragment != null) {
                 mapFragment.addMarker(new LatLng(currentLat, currentLong), text, true, true, radius);
@@ -383,20 +403,18 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
 
     private void removeUpdates() {
         if (mLocList != null) {
-            if (Permissions.checkPermission(getActivity(),
-                    Permissions.ACCESS_COARSE_LOCATION, Permissions.ACCESS_FINE_LOCATION)) {
+            if (Permissions.checkPermission(mContext, Permissions.ACCESS_COARSE_LOCATION, Permissions.ACCESS_FINE_LOCATION)) {
                 mLocationManager.removeUpdates(mLocList);
             } else {
-                Permissions.requestPermission(getActivity(), 201,
-                        Permissions.ACCESS_FINE_LOCATION,
-                        Permissions.ACCESS_COARSE_LOCATION);
+                Permissions.requestPermission(mContext, 201, Permissions.ACCESS_FINE_LOCATION, Permissions.ACCESS_COARSE_LOCATION);
             }
         }
     }
 
     private void updateListener() {
-        mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        SharedPrefs prefs = new SharedPrefs(getActivity());
+        if (mContext == null) return;
+        mLocationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+        SharedPrefs prefs = new SharedPrefs(mContext);
         long time = (prefs.loadInt(Prefs.TRACK_TIME) * 1000) * 2;
         int distance = prefs.loadInt(Prefs.TRACK_DISTANCE) * 2;
         if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {

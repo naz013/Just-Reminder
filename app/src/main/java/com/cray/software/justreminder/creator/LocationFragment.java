@@ -17,6 +17,7 @@
 package com.cray.software.justreminder.creator;
 
 import android.app.Activity;
+import android.content.Context;
 import android.location.Address;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -79,6 +80,8 @@ public class LocationFragment extends BaseFragment implements GeocoderTask.Geoco
 
     private GeocoderTask task;
 
+    private Activity mContext;
+
     public void setNumber(String number){
         super.number = number;
         actionViewLocation.setNumber(number);
@@ -136,9 +139,7 @@ public class LocationFragment extends BaseFragment implements GeocoderTask.Geoco
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reminder_location_layout, container, false);
-
-        SharedPrefs prefs = new SharedPrefs(getActivity());
-
+        SharedPrefs prefs = new SharedPrefs(mContext);
         mapFragment = new MapFragment();
         mapFragment.setListener(this);
         mapFragment.setCallback(this);
@@ -179,7 +180,7 @@ public class LocationFragment extends BaseFragment implements GeocoderTask.Geoco
 
         searchField = (AutoCompleteTextView) view.findViewById(R.id.searchField);
         searchField.setThreshold(3);
-        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, namesList);
+        adapter = new ArrayAdapter<>(mContext, android.R.layout.simple_dropdown_item_1line, namesList);
         adapter.setNotifyOnChange(true);
         searchField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -189,9 +190,10 @@ public class LocationFragment extends BaseFragment implements GeocoderTask.Geoco
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (task != null && !task.isCancelled())
+                if (task != null && !task.isCancelled()) {
                     task.cancel(true);
-                task = new GeocoderTask(getActivity(), LocationFragment.this);
+                }
+                task = new GeocoderTask(mContext, LocationFragment.this);
                 task.execute(s.toString());
             }
 
@@ -207,15 +209,13 @@ public class LocationFragment extends BaseFragment implements GeocoderTask.Geoco
             LatLng pos = new LatLng(lat, lon);
             curPlace = pos;
             String title = eventTask;
-            if (title != null && title.matches(""))
-                title = pos.toString();
-            if (mapFragment != null)
-                mapFragment.addMarker(pos, title, true, true, radius);
+            if (title != null && title.matches("")) title = pos.toString();
+            if (mapFragment != null) mapFragment.addMarker(pos, title, true, true, radius);
         });
 
         actionViewLocation = (ActionView) view.findViewById(R.id.actionViewLocation);
         actionViewLocation.setListener(mAction);
-        actionViewLocation.setActivity(getActivity());
+        actionViewLocation.setActivity(mContext);
 
         dateViewLocation = (DateTimeView) view.findViewById(R.id.dateViewLocation);
         dateViewLocation.setListener(mSelect);
@@ -240,10 +240,28 @@ public class LocationFragment extends BaseFragment implements GeocoderTask.Geoco
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        if (mContext == null) {
+            mContext = activity;
+        }
         try {
-            mCallbacks = (MapListener) activity;
-            mAction = (ActionView.OnActionListener) activity;
-            mSelect = (DateTimeView.OnSelectListener) activity;
+            if (mCallbacks == null) mCallbacks = (MapListener) activity;
+            if (mAction == null) mAction = (ActionView.OnActionListener) activity;
+            if (mSelect == null) mSelect = (DateTimeView.OnSelectListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Activity must implement listeners.");
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (mContext == null) {
+            mContext = (Activity) context;
+        }
+        try {
+            if (mCallbacks == null) mCallbacks = (MapListener) context;
+            if (mAction == null) mAction = (ActionView.OnActionListener) context;
+            if (mSelect == null) mSelect = (DateTimeView.OnSelectListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement listeners.");
         }
@@ -270,7 +288,7 @@ public class LocationFragment extends BaseFragment implements GeocoderTask.Geoco
                     selected.getCountryName());
             namesList.add(addressText);
         }
-        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, namesList);
+        adapter = new ArrayAdapter<>(mContext, android.R.layout.simple_dropdown_item_1line, namesList);
         searchField.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
