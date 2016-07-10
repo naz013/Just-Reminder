@@ -17,6 +17,7 @@
 package com.cray.software.justreminder.creator;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -54,6 +55,8 @@ public class ApplicationFragment extends BaseFragment implements
 
     private String type;
 
+    private Activity mContext;
+
     public static ApplicationFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
                                            boolean hasStock, boolean hasTasks) {
         ApplicationFragment fragment = new ApplicationFragment();
@@ -81,7 +84,6 @@ public class ApplicationFragment extends BaseFragment implements
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(false);
     }
 
@@ -179,7 +181,7 @@ public class ApplicationFragment extends BaseFragment implements
 
             if (type.matches(Constants.TYPE_APPLICATION)) {
                 application.setChecked(true);
-                PackageManager packageManager = getActivity().getPackageManager();
+                PackageManager packageManager = mContext.getPackageManager();
                 ApplicationInfo applicationInfo = null;
                 try {
                     applicationInfo = packageManager.getApplicationInfo(number, 0);
@@ -187,7 +189,7 @@ public class ApplicationFragment extends BaseFragment implements
                     ignored.printStackTrace();
                 }
 
-                final String name = (String)((applicationInfo != null) ?
+                final String name = (String) ((applicationInfo != null) ?
                         packageManager.getApplicationLabel(applicationInfo) : "???");
                 applicationName.setText(name);
 
@@ -201,16 +203,32 @@ public class ApplicationFragment extends BaseFragment implements
             dateView.setDateTime(updateCalendar(eventTime, true));
             repeatView.setProgress(item.getRecurrence().getRepeat());
         }
-
         return view;
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        if (mContext == null) {
+            mContext = activity;
+        }
         try {
-            mCallbacks = (DateTimeView.OnSelectListener) activity;
-            mRepeatCallbacks = (RepeatView.OnRepeatListener) activity;
+            if (mCallbacks == null) mCallbacks = (DateTimeView.OnSelectListener) activity;
+            if (mRepeatCallbacks == null) mRepeatCallbacks = (RepeatView.OnRepeatListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Activity must implement listeners.");
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (mContext == null) {
+            mContext = (Activity) context;
+        }
+        try {
+            if (mCallbacks == null) mCallbacks = (DateTimeView.OnSelectListener) context;
+            if (mRepeatCallbacks == null) mRepeatCallbacks = (RepeatView.OnRepeatListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement listeners.");
         }
