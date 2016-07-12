@@ -72,13 +72,8 @@ public class WeekFragment extends BaseFragment implements CompoundButton.OnCheck
     /**
      * Click listener for time fields.
      */
-    public View.OnClickListener timeClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            new TimePickerDialog(getActivity(), WeekFragment.this, myHour, myMinute,
-                    new SharedPrefs(getActivity()).loadBoolean(Prefs.IS_24_TIME_FORMAT)).show();
-        }
-    };
+    public View.OnClickListener timeClick = v -> new TimePickerDialog(getActivity(), WeekFragment.this, myHour, myMinute,
+            new SharedPrefs(getActivity()).loadBoolean(Prefs.IS_24_TIME_FORMAT)).show();
 
     public static WeekFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
                                                   boolean hasStock, boolean hasTasks) {
@@ -175,7 +170,7 @@ public class WeekFragment extends BaseFragment implements CompoundButton.OnCheck
 
             timeField.setText(TimeUtil.getTime(updateTime(eventTime, true),
                     new SharedPrefs(getActivity()).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-            if (weekdays.size() > 0) {
+            if (weekdays != null && weekdays.size() > 0) {
                 setCheckForDays(weekdays);
             }
 
