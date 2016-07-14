@@ -163,6 +163,11 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent res = getIntent();
+        id = res.getLongExtra(Constants.ITEM_ID_INTENT, 0);
+        isMelody = res.getIntExtra("int", 0);
+        if (id == 0) finish();
+
         Log.d("----ON_REMINDER-----", TimeUtil.getFullDateTime(System.currentTimeMillis(), true));
 
         SharedPrefs prefs = new SharedPrefs(ReminderDialog.this);
@@ -194,10 +199,6 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             }
             am.setStreamVolume(mStream, mVolume, 0);
         }
-
-        Intent res = getIntent();
-        id = res.getLongExtra(Constants.ITEM_ID_INTENT, 0);
-        isMelody = res.getIntExtra("int", 0);
 
         reminder = new Type(this);
 

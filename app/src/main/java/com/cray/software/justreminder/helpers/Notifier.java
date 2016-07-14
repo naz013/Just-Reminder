@@ -32,9 +32,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.view.View;
 import android.widget.RemoteViews;
 
-import com.cray.software.justreminder.notes.NotesManager;
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.reminder.ReminderManager;
 import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.activities.ReminderDialog;
 import com.cray.software.justreminder.constants.Constants;
@@ -43,6 +41,8 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.BirthdayModel;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.notes.NotesManager;
+import com.cray.software.justreminder.reminder.ReminderManager;
 import com.cray.software.justreminder.services.BirthdayPermanentService;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
@@ -101,11 +101,9 @@ public class Notifier {
         } else app = mContext.getString(R.string.app_name);
         builder.setContentText(app);
         builder.setSmallIcon(ViewUtils.getIcon(typePrefs));
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
         }
-
         AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
             try {
@@ -126,8 +124,6 @@ public class Notifier {
                 }
             }
         }
-
-
         if (vibrate){
             long[] pattern;
             if (sPrefs.loadBoolean(Prefs.INFINITE_VIBRATION)){
@@ -146,7 +142,6 @@ public class Notifier {
                 }
             }
         }
-
         boolean isWear = sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION);
         if (isWear) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -155,11 +150,9 @@ public class Notifier {
                 builder.setGroupSummary(true);
             }
         }
-
         mNotifyMgr = NotificationManagerCompat.from(mContext);
         Integer it = (int) (long) itemId;
         mNotifyMgr.notify(it, builder.build());
-
         if (isWear){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(mContext);
@@ -207,13 +200,12 @@ public class Notifier {
                 soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             }
         }
-
         Intent notificationIntent = new Intent(mContext, ReminderDialog.class);
+        notificationIntent.putExtra(Constants.ITEM_ID_INTENT, itemId);
         notificationIntent.putExtra("int", 1);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                 | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        PendingIntent intent = PendingIntent.getActivity(mContext, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-
+        PendingIntent intent = PendingIntent.getActivity(mContext, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(task);
         builder.setContentIntent(intent);
@@ -232,11 +224,9 @@ public class Notifier {
         }
         builder.setContentText(app);
         builder.setSmallIcon(ViewUtils.getIcon(type));
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
         }
-
         if (i == 1) {
             AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
             if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
@@ -247,7 +237,6 @@ public class Notifier {
                 }
             }
         }
-
         if (vibrate){
             long[] pattern;
             if (sPrefs.loadBoolean(Prefs.INFINITE_VIBRATION)){
@@ -266,7 +255,6 @@ public class Notifier {
                 }
             }
         }
-
         boolean isWear = sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION);
         if (isWear) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -275,11 +263,9 @@ public class Notifier {
                 builder.setGroupSummary(true);
             }
         }
-
         mNotifyMgr = NotificationManagerCompat.from(mContext);
         Integer it = (int) (long) itemId;
         mNotifyMgr.notify(it, builder.build());
-
         if (isWear){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(mContext);
@@ -317,7 +303,6 @@ public class Notifier {
         } else {
             soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         }
-
         builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(name);
         builder.setAutoCancel(false);
@@ -327,12 +312,10 @@ public class Notifier {
         } else {
             builder.setOngoing(true);
         }
-
         builder.setContentText(mContext.getString(R.string.missed_call));
 
         int icon = R.drawable.ic_call_white_24dp;
         builder.setSmallIcon(icon);
-
         AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
             sound.playAlarm(soundUri, sPrefs.loadBoolean(Prefs.INFINITE_SOUND));
@@ -341,7 +324,6 @@ public class Notifier {
                 sound.playAlarm(soundUri, sPrefs.loadBoolean(Prefs.INFINITE_SOUND));
             }
         }
-
         if (sPrefs.loadBoolean(Prefs.VIBRATION_STATUS)){
             long[] pattern;
             if (sPrefs.loadBoolean(Prefs.INFINITE_VIBRATION)){
@@ -356,11 +338,9 @@ public class Notifier {
                 builder.setLights(sPrefs.loadInt(Prefs.LED_COLOR), 500, 1000);
             }
         }
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
         }
-
         boolean isWear = sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION);
         if (isWear) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -369,11 +349,9 @@ public class Notifier {
                 builder.setGroupSummary(true);
             }
         }
-
         mNotifyMgr = NotificationManagerCompat.from(mContext);
         Integer it = (int) (long) itemId;
         mNotifyMgr.notify(it, builder.build());
-
         if (isWear){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(mContext);
@@ -426,11 +404,9 @@ public class Notifier {
         builder.setContentTitle(name);
         builder.setContentText(TimeUtil.getAgeFormatted(mContext, years));
         builder.setSmallIcon(R.drawable.ic_cake_white_24dp);
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
         }
-
         AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
             boolean isLooping;
@@ -459,7 +435,6 @@ public class Notifier {
                 sound.playAlarm(soundUri, isLooping);
             }
         }
-
         boolean vibrate;
         if (Module.isPro()){
             if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
@@ -494,7 +469,6 @@ public class Notifier {
                 }
             }
         }
-
         boolean isWear = sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION);
         if (isWear) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -503,10 +477,8 @@ public class Notifier {
                 builder.setGroupSummary(true);
             }
         }
-
         mNotifyMgr = NotificationManagerCompat.from(mContext);
         mNotifyMgr.notify(NOT_ID, builder.build());
-
         if (isWear){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(mContext);
@@ -532,7 +504,6 @@ public class Notifier {
      */
     public void showReminderNotification(String content, long id){
         sPrefs = new SharedPrefs(mContext);
-
         builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(content);
         String app;
@@ -541,11 +512,9 @@ public class Notifier {
         } else app = mContext.getString(R.string.app_name);
         builder.setContentText(app);
         builder.setSmallIcon(R.drawable.ic_notifications_white_24dp);
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
         }
-
         boolean isWear = sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION);
         if (isWear) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -554,11 +523,9 @@ public class Notifier {
                 builder.setGroupSummary(true);
             }
         }
-
         mNotifyMgr = NotificationManagerCompat.from(mContext);
         Integer it = (int) (long) id;
         mNotifyMgr.notify(it, builder.build());
-
         if (isWear){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(mContext);
@@ -584,16 +551,13 @@ public class Notifier {
      */
     public void showNoteNotification(String content, long id){
         sPrefs = new SharedPrefs(mContext);
-
         builder = new NotificationCompat.Builder(mContext);
-
         builder.setContentText(mContext.getString(R.string.note));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
         }
         builder.setSmallIcon(R.drawable.ic_event_note_white_24dp);
         builder.setContentTitle(content);
-
         boolean isWear = sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION);
         if (isWear) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -602,11 +566,9 @@ public class Notifier {
                 builder.setGroupSummary(true);
             }
         }
-
         mNotifyMgr = NotificationManagerCompat.from(mContext);
         Integer it = (int) (long) id;
         mNotifyMgr.notify(it, builder.build());
-
         if (isWear){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 final NotificationCompat.Builder wearableNotificationBuilder = new NotificationCompat.Builder(mContext);
@@ -648,7 +610,6 @@ public class Notifier {
         if (prefs.loadBoolean(Prefs.STATUS_BAR_ICON))
             notification.setPriority(NotificationCompat.PRIORITY_MAX);
         else notification.setPriority(NotificationCompat.PRIORITY_MIN);
-
         Intent resultIntent = new Intent(mContext, ReminderManager.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
@@ -657,7 +618,6 @@ public class Notifier {
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,
                 PendingIntent.FLAG_ONE_SHOT);
         remoteViews.setOnClickPendingIntent(R.id.notificationAdd, resultPendingIntent);
-
         Intent noteIntent = new Intent(mContext, NotesManager.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         TaskStackBuilder noteBuilder = TaskStackBuilder.create(mContext);
@@ -666,7 +626,6 @@ public class Notifier {
         PendingIntent notePendingIntent = noteBuilder.getPendingIntent(0,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.noteAdd, notePendingIntent);
-
         Intent resInt = new Intent(mContext, ScreenManager.class);
         resInt.putExtra("tag", ScreenManager.FRAGMENT_ACTIVE);
         TaskStackBuilder stackInt = TaskStackBuilder.create(mContext);
@@ -744,12 +703,10 @@ public class Notifier {
     public void showBirthdayPermanent(){
         Intent dismissIntent = new Intent(mContext, BirthdayPermanentService.class);
         PendingIntent piDismiss = PendingIntent.getService(mContext, 0, dismissIntent, 0);
-
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int month = calendar.get(Calendar.MONTH);
-
         DataBase db = new DataBase(mContext);
         db.open();
         ArrayList<BirthdayModel> list = new ArrayList<>();
@@ -764,7 +721,6 @@ public class Notifier {
         }
         if (c != null) c.close();
         db.close();
-
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
         builder.setSmallIcon(R.drawable.ic_cake_white_24dp);
         builder.setAutoCancel(false);
