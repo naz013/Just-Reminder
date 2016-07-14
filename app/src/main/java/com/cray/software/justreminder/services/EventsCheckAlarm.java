@@ -60,8 +60,7 @@ public class EventsCheckAlarm extends WakefulBroadcastReceiver {
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        SharedPrefs prefs = new SharedPrefs(context);
-        int interval = prefs.loadInt(Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL);
+        int interval = SharedPrefs.getInstance(context).getInt(Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL);
         if (Module.isMarshmallow()) alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                 AlarmManager.INTERVAL_HOUR * interval, alarmIntent);
         else alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
@@ -88,8 +87,7 @@ public class EventsCheckAlarm extends WakefulBroadcastReceiver {
         @Override
         protected Void doInBackground(Void... params) {
             CalendarManager cm = new CalendarManager(context);
-            SharedPrefs prefs = new SharedPrefs(context);
-            int calID = prefs.loadInt(Prefs.EVENTS_CALENDAR);
+            int calID = SharedPrefs.getInstance(context).getInt(Prefs.EVENTS_CALENDAR);
             ArrayList<CalendarManager.EventItem> eventItems = cm.getEvents(calID);
             if (eventItems != null && eventItems.size() > 0){
                 DataBase db = new DataBase(context);

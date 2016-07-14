@@ -45,8 +45,6 @@ public class AddPlace extends AppCompatActivity implements MapListener {
     private RoboEditText placeName;
     private MapFragment googleMap;
 
-    private SharedPrefs sPrefs = new SharedPrefs(AddPlace.this);
-
     private LatLng place;
     private String placeTitle;
     private long id;
@@ -72,7 +70,7 @@ public class AddPlace extends AppCompatActivity implements MapListener {
 
         placeName = (RoboEditText) findViewById(R.id.placeName);
         googleMap = MapFragment.newInstance(false, false, false, false,
-                sPrefs.loadInt(Prefs.MARKER_STYLE), cs.isDark());
+                SharedPrefs.getInstance(this).getInt(Prefs.MARKER_STYLE), cs.isDark());
         googleMap.setListener(this);
 
         getSupportFragmentManager().beginTransaction()
@@ -119,7 +117,7 @@ public class AddPlace extends AppCompatActivity implements MapListener {
                 db.insertPlace(task, latitude, longitude);
             }
             db.close();
-            new SharedPrefs(this).saveBoolean(Prefs.PLACE_CHANGED, true);
+            SharedPrefs.getInstance(this).putBoolean(Prefs.PLACE_CHANGED, true);
             finish();
         } else {
             Toast.makeText(AddPlace.this, getString(R.string.you_dont_select_place), Toast.LENGTH_SHORT).show();

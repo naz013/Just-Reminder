@@ -48,6 +48,7 @@ public class RoboRadioButton extends RadioButton {
     }
 
     private void init(AttributeSet attrs) {
+        if (isInEditMode()) return;
         if (attrs != null) {
             TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.RoboRadioButton);
             int fontCode = a.getInt(R.styleable.RoboRadioButton_radio_font_style, -1);

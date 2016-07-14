@@ -70,23 +70,13 @@ public class MonthFragment extends BaseFragment implements
     /**
      * Click listener for date fields.
      */
-    public View.OnClickListener dateClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            new DatePickerDialog(getActivity(), MonthFragment.this, myYear, myMonth, myDay).show();
-        }
-    };
+    public View.OnClickListener dateClick = v -> new DatePickerDialog(getActivity(), MonthFragment.this, myYear, myMonth, myDay).show();
 
     /**
      * Click listener for time fields.
      */
-    public View.OnClickListener timeClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            new TimePickerDialog(getActivity(), MonthFragment.this, myHour, myMinute,
-                    new SharedPrefs(getActivity()).loadBoolean(Prefs.IS_24_TIME_FORMAT)).show();
-        }
-    };
+    public View.OnClickListener timeClick = v -> new TimePickerDialog(getActivity(), MonthFragment.this, myHour, myMinute,
+            SharedPrefs.getInstance(getActivity()).getBoolean(Prefs.IS_24_TIME_FORMAT)).show();
 
     public static MonthFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
                                                   boolean hasStock, boolean hasTasks) {
@@ -142,7 +132,7 @@ public class MonthFragment extends BaseFragment implements
         timeField = (RoboTextView) view.findViewById(R.id.timeField);
         timeField.setOnClickListener(timeClick);
         timeField.setText(TimeUtil.getTime(updateTime(System.currentTimeMillis(), false),
-                new SharedPrefs(getActivity()).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+                SharedPrefs.getInstance(getActivity()).getBoolean(Prefs.IS_24_TIME_FORMAT)));
 
         String dayStr;
         if (myDay > 28) myDay = 28;
@@ -174,7 +164,7 @@ public class MonthFragment extends BaseFragment implements
                 dateTaskExport.setChecked(true);
 
             timeField.setText(TimeUtil.getTime(updateTime(eventTime, true),
-                    new SharedPrefs(getActivity()).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+                    SharedPrefs.getInstance(getActivity()).getBoolean(Prefs.IS_24_TIME_FORMAT)));
 
             if (myDay == 0) myDay = 1;
             if (myDay < 10) dayStr = "0" + myDay;
@@ -288,7 +278,7 @@ public class MonthFragment extends BaseFragment implements
         c.set(Calendar.MINUTE, minute);
 
         String formattedTime = TimeUtil.getTime(c.getTime(),
-                new SharedPrefs(getActivity()).loadBoolean(Prefs.IS_24_TIME_FORMAT));
+                SharedPrefs.getInstance(getActivity()).getBoolean(Prefs.IS_24_TIME_FORMAT));
         timeField.setText(formattedTime);
 
         if (mListener != null) {

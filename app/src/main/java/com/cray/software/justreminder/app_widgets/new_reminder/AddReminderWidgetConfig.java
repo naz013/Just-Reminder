@@ -127,11 +127,9 @@ public class AddReminderWidgetConfig extends AppCompatActivity {
                 SharedPreferences sp = getSharedPreferences(ADD_REMINDER_WIDGET_PREF, MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putInt(ADD_REMINDER_WIDGET_COLOR + widgetID, color);
-                editor.commit();
-
+                editor.apply();
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
                 AddReminderWidget.updateWidget(AddReminderWidgetConfig.this, appWidgetManager, sp, widgetID);
-
                 setResult(RESULT_OK, resultValue);
                 finish();
                 return true;

@@ -61,7 +61,6 @@ public class Notifier {
     private NotificationManagerCompat mNotifyMgr;
     private NotificationCompat.Builder builder;
     private int NOT_ID = 0;
-    private SharedPrefs sPrefs;
     private Sound sound;
 
     public Notifier(Context context){
@@ -78,19 +77,21 @@ public class Notifier {
      */
     public void showTTSNotification(final String task, String typePrefs, long itemId,
                                     int color, boolean vibrate){
-        sPrefs = new SharedPrefs(mContext);
+        SharedPrefs sPrefs = SharedPrefs.getInstance(mContext);
         builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(task);
-        if (sPrefs.loadBoolean(Prefs.SMART_FOLD)) {
+        if (sPrefs.getBoolean(Prefs.SMART_FOLD)) {
             Intent notificationIntent = new Intent(mContext, ReminderDialog.class);
+            notificationIntent.putExtra(Constants.ITEM_ID_INTENT, itemId);
+            notificationIntent.putExtra("int", 1);
             notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                     | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            PendingIntent intent = PendingIntent.getActivity(mContext, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+            PendingIntent intent = PendingIntent.getActivity(mContext, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             builder.setContentIntent(intent);
         }
         builder.setAutoCancel(false);
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
-        if (sPrefs.loadBoolean(Prefs.NOTIFICATION_REMOVE)){
+        if (sPrefs.getBoolean(Prefs.NOTIFICATION_REMOVE)){
             builder.setOngoing(false);
         } else {
             builder.setOngoing(true);
@@ -114,7 +115,7 @@ public class Notifier {
                 sound.playAlarm(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION), false);
             }
         } else {
-            if (sPrefs.loadBoolean(Prefs.SILENT_SOUND)) {
+            if (sPrefs.getBoolean(Prefs.SILENT_SOUND)) {
                 try {
                     AssetFileDescriptor afd = mContext.getAssets().openFd("sounds/beep.mp3");
                     sound.playAlarm(afd, false);
@@ -126,7 +127,7 @@ public class Notifier {
         }
         if (vibrate){
             long[] pattern;
-            if (sPrefs.loadBoolean(Prefs.INFINITE_VIBRATION)){
+            if (sPrefs.getBoolean(Prefs.INFINITE_VIBRATION)){
                 pattern = new long[]{150, 86400000};
             } else {
                 pattern = new long[]{150, 400, 100, 450, 200, 500, 300, 500};
@@ -134,15 +135,15 @@ public class Notifier {
             builder.setVibrate(pattern);
         }
         if (Module.isPro()){
-            if (sPrefs.loadBoolean(Prefs.LED_STATUS)){
+            if (sPrefs.getBoolean(Prefs.LED_STATUS)){
                 if (color != 0) {
                     builder.setLights(color, 500, 1000);
                 } else {
-                    builder.setLights(sPrefs.loadInt(Prefs.LED_COLOR), 500, 1000);
+                    builder.setLights(sPrefs.getInt(Prefs.LED_COLOR), 500, 1000);
                 }
             }
         }
-        boolean isWear = sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION);
+        boolean isWear = sPrefs.getBoolean(Prefs.WEAR_NOTIFICATION);
         if (isWear) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 builder.setOnlyAlertOnce(true);
@@ -182,14 +183,14 @@ public class Notifier {
      */
     public void showReminder(final String task, String type, int i, long itemId,
                              String melody, int color, boolean vibrate){
-        sPrefs = new SharedPrefs(mContext);
+        SharedPrefs sPrefs = SharedPrefs.getInstance(mContext);
         Uri soundUri;
         if (melody != null && !melody.matches("")){
             File sound = new File(melody);
             soundUri = Uri.fromFile(sound);
         } else {
-            if (sPrefs.loadBoolean(Prefs.CUSTOM_SOUND)) {
-                String path = sPrefs.loadPrefs(Prefs.CUSTOM_SOUND_FILE);
+            if (sPrefs.getBoolean(Prefs.CUSTOM_SOUND)) {
+                String path = sPrefs.getString(Prefs.CUSTOM_SOUND_FILE);
                 if (path != null) {
                     File sound = new File(path);
                     soundUri = Uri.fromFile(sound);
@@ -211,7 +212,7 @@ public class Notifier {
         builder.setContentIntent(intent);
         builder.setAutoCancel(false);
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
-        if (sPrefs.loadBoolean(Prefs.NOTIFICATION_REMOVE)){
+        if (sPrefs.getBoolean(Prefs.NOTIFICATION_REMOVE)){
             builder.setOngoing(false);
         } else {
             builder.setOngoing(true);
@@ -230,16 +231,16 @@ public class Notifier {
         if (i == 1) {
             AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
             if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
-                sound.playAlarm(soundUri, sPrefs.loadBoolean(Prefs.INFINITE_SOUND));
+                sound.playAlarm(soundUri, sPrefs.getBoolean(Prefs.INFINITE_SOUND));
             } else {
-                if (sPrefs.loadBoolean(Prefs.SILENT_SOUND)) {
-                    sound.playAlarm(soundUri, sPrefs.loadBoolean(Prefs.INFINITE_SOUND));
+                if (sPrefs.getBoolean(Prefs.SILENT_SOUND)) {
+                    sound.playAlarm(soundUri, sPrefs.getBoolean(Prefs.INFINITE_SOUND));
                 }
             }
         }
         if (vibrate){
             long[] pattern;
-            if (sPrefs.loadBoolean(Prefs.INFINITE_VIBRATION)){
+            if (sPrefs.getBoolean(Prefs.INFINITE_VIBRATION)){
                 pattern = new long[]{150, 86400000};
             } else {
                 pattern = new long[]{150, 400, 100, 450, 200, 500, 300, 500};
@@ -247,15 +248,15 @@ public class Notifier {
             builder.setVibrate(pattern);
         }
         if (Module.isPro()){
-            if (sPrefs.loadBoolean(Prefs.LED_STATUS)){
+            if (sPrefs.getBoolean(Prefs.LED_STATUS)){
                 if (color != 0) {
                     builder.setLights(color, 500, 1000);
                 } else {
-                    builder.setLights(sPrefs.loadInt(Prefs.LED_COLOR), 500, 1000);
+                    builder.setLights(sPrefs.getInt(Prefs.LED_COLOR), 500, 1000);
                 }
             }
         }
-        boolean isWear = sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION);
+        boolean isWear = sPrefs.getBoolean(Prefs.WEAR_NOTIFICATION);
         if (isWear) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 builder.setOnlyAlertOnce(true);
@@ -290,10 +291,10 @@ public class Notifier {
      * @param itemId reminder identifier.
      */
     public void showMissedReminder(final String name, long itemId){
-        sPrefs = new SharedPrefs(mContext);
+        SharedPrefs sPrefs = SharedPrefs.getInstance(mContext);
         Uri soundUri;
-        if (sPrefs.loadBoolean(Prefs.CUSTOM_SOUND)) {
-            String path = sPrefs.loadPrefs(Prefs.CUSTOM_SOUND_FILE);
+        if (sPrefs.getBoolean(Prefs.CUSTOM_SOUND)) {
+            String path = sPrefs.getString(Prefs.CUSTOM_SOUND_FILE);
             if (path != null) {
                 File sound = new File(path);
                 soundUri = Uri.fromFile(sound);
@@ -307,7 +308,7 @@ public class Notifier {
         builder.setContentTitle(name);
         builder.setAutoCancel(false);
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
-        if (sPrefs.loadBoolean(Prefs.NOTIFICATION_REMOVE)){
+        if (sPrefs.getBoolean(Prefs.NOTIFICATION_REMOVE)){
             builder.setOngoing(false);
         } else {
             builder.setOngoing(true);
@@ -318,15 +319,15 @@ public class Notifier {
         builder.setSmallIcon(icon);
         AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
-            sound.playAlarm(soundUri, sPrefs.loadBoolean(Prefs.INFINITE_SOUND));
+            sound.playAlarm(soundUri, sPrefs.getBoolean(Prefs.INFINITE_SOUND));
         } else {
-            if (sPrefs.loadBoolean(Prefs.SILENT_SOUND)) {
-                sound.playAlarm(soundUri, sPrefs.loadBoolean(Prefs.INFINITE_SOUND));
+            if (sPrefs.getBoolean(Prefs.SILENT_SOUND)) {
+                sound.playAlarm(soundUri, sPrefs.getBoolean(Prefs.INFINITE_SOUND));
             }
         }
-        if (sPrefs.loadBoolean(Prefs.VIBRATION_STATUS)){
+        if (sPrefs.getBoolean(Prefs.VIBRATION_STATUS)){
             long[] pattern;
-            if (sPrefs.loadBoolean(Prefs.INFINITE_VIBRATION)){
+            if (sPrefs.getBoolean(Prefs.INFINITE_VIBRATION)){
                 pattern = new long[]{150, 86400000};
             } else {
                 pattern = new long[]{150, 400, 100, 450, 200, 500, 300, 500};
@@ -334,14 +335,14 @@ public class Notifier {
             builder.setVibrate(pattern);
         }
         if (Module.isPro()){
-            if (sPrefs.loadBoolean(Prefs.LED_STATUS)){
-                builder.setLights(sPrefs.loadInt(Prefs.LED_COLOR), 500, 1000);
+            if (sPrefs.getBoolean(Prefs.LED_STATUS)){
+                builder.setLights(sPrefs.getInt(Prefs.LED_COLOR), 500, 1000);
             }
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
         }
-        boolean isWear = sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION);
+        boolean isWear = sPrefs.getBoolean(Prefs.WEAR_NOTIFICATION);
         if (isWear) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 builder.setOnlyAlertOnce(true);
@@ -376,21 +377,21 @@ public class Notifier {
      * @param name user name.
      */
     public void showNotification(int years, String name){
-        sPrefs = new SharedPrefs(mContext);
+        SharedPrefs sPrefs = SharedPrefs.getInstance(mContext);
         Uri soundUri;
         boolean soundC;
         if (Module.isPro()){
-            if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
-                soundC = sPrefs.loadBoolean(Prefs.BIRTHDAY_CUSTOM_SOUND);
-            } else soundC = sPrefs.loadBoolean(Prefs.CUSTOM_SOUND);
-        } else soundC = sPrefs.loadBoolean(Prefs.CUSTOM_SOUND);
+            if (!sPrefs.getBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
+                soundC = sPrefs.getBoolean(Prefs.BIRTHDAY_CUSTOM_SOUND);
+            } else soundC = sPrefs.getBoolean(Prefs.CUSTOM_SOUND);
+        } else soundC = sPrefs.getBoolean(Prefs.CUSTOM_SOUND);
         if (soundC){
             String path;
             if (Module.isPro()) {
-                if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
-                    path = sPrefs.loadPrefs(Prefs.BIRTHDAY_CUSTOM_SOUND_FILE);
-                } else path = sPrefs.loadPrefs(Prefs.CUSTOM_SOUND_FILE);
-            } else path = sPrefs.loadPrefs(Prefs.CUSTOM_SOUND_FILE);
+                if (!sPrefs.getBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
+                    path = sPrefs.getString(Prefs.BIRTHDAY_CUSTOM_SOUND_FILE);
+                } else path = sPrefs.getString(Prefs.CUSTOM_SOUND_FILE);
+            } else path = sPrefs.getString(Prefs.CUSTOM_SOUND_FILE);
             if (path != null){
                 File sound = new File(path);
                 soundUri = Uri.fromFile(sound);
@@ -411,46 +412,46 @@ public class Notifier {
         if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
             boolean isLooping;
             if (Module.isPro()){
-                if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
-                    isLooping = sPrefs.loadBoolean(Prefs.BIRTHDAY_INFINITE_SOUND);
-                } else isLooping = sPrefs.loadBoolean(Prefs.INFINITE_SOUND);
-            } else isLooping = sPrefs.loadBoolean(Prefs.INFINITE_SOUND);
+                if (!sPrefs.getBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
+                    isLooping = sPrefs.getBoolean(Prefs.BIRTHDAY_INFINITE_SOUND);
+                } else isLooping = sPrefs.getBoolean(Prefs.INFINITE_SOUND);
+            } else isLooping = sPrefs.getBoolean(Prefs.INFINITE_SOUND);
 
             sound.playAlarm(soundUri, isLooping);
         } else {
             boolean soundS;
             if (Module.isPro()){
-                if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
-                    soundS = sPrefs.loadBoolean(Prefs.BIRTHDAY_SOUND_STATUS);
-                } else soundS = sPrefs.loadBoolean(Prefs.SILENT_SOUND);
-            } else soundS = sPrefs.loadBoolean(Prefs.SILENT_SOUND);
+                if (!sPrefs.getBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
+                    soundS = sPrefs.getBoolean(Prefs.BIRTHDAY_SOUND_STATUS);
+                } else soundS = sPrefs.getBoolean(Prefs.SILENT_SOUND);
+            } else soundS = sPrefs.getBoolean(Prefs.SILENT_SOUND);
 
             if (soundS) {
                 boolean isLooping;
                 if (Module.isPro()){
-                    if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
-                        isLooping = sPrefs.loadBoolean(Prefs.BIRTHDAY_INFINITE_SOUND);
-                    } else isLooping = sPrefs.loadBoolean(Prefs.INFINITE_SOUND);
-                } else isLooping = sPrefs.loadBoolean(Prefs.INFINITE_SOUND);
+                    if (!sPrefs.getBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
+                        isLooping = sPrefs.getBoolean(Prefs.BIRTHDAY_INFINITE_SOUND);
+                    } else isLooping = sPrefs.getBoolean(Prefs.INFINITE_SOUND);
+                } else isLooping = sPrefs.getBoolean(Prefs.INFINITE_SOUND);
                 sound.playAlarm(soundUri, isLooping);
             }
         }
         boolean vibrate;
         if (Module.isPro()){
-            if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
-                vibrate = sPrefs.loadBoolean(Prefs.BIRTHDAY_VIBRATION_STATUS);
-            } else vibrate = sPrefs.loadBoolean(Prefs.VIBRATION_STATUS);
-        } else vibrate = sPrefs.loadBoolean(Prefs.VIBRATION_STATUS);
+            if (!sPrefs.getBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
+                vibrate = sPrefs.getBoolean(Prefs.BIRTHDAY_VIBRATION_STATUS);
+            } else vibrate = sPrefs.getBoolean(Prefs.VIBRATION_STATUS);
+        } else vibrate = sPrefs.getBoolean(Prefs.VIBRATION_STATUS);
         if (vibrate){
             long[] pattern;
-            if (sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
-                if (sPrefs.loadBoolean(Prefs.INFINITE_VIBRATION)){
+            if (sPrefs.getBoolean(Prefs.BIRTHDAY_USE_GLOBAL)){
+                if (sPrefs.getBoolean(Prefs.INFINITE_VIBRATION)){
                     pattern = new long[]{150, 86400000};
                 } else {
                     pattern = new long[]{150, 400, 100, 450, 200, 500, 300, 500};
                 }
             } else {
-                if (sPrefs.loadBoolean(Prefs.BIRTHDAY_INFINITE_VIBRATION)) {
+                if (sPrefs.getBoolean(Prefs.BIRTHDAY_INFINITE_VIBRATION)) {
                     pattern = new long[]{150, 86400000};
                 } else {
                     pattern = new long[]{150, 400, 100, 450, 200, 500, 300, 500};
@@ -459,17 +460,17 @@ public class Notifier {
             builder.setVibrate(pattern);
         }
         if (Module.isPro()){
-            if (!sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL)) {
-                if (sPrefs.loadBoolean(Prefs.BIRTHDAY_LED_STATUS)) {
-                    builder.setLights(sPrefs.loadInt(Prefs.BIRTHDAY_LED_COLOR), 500, 1000);
+            if (!sPrefs.getBoolean(Prefs.BIRTHDAY_USE_GLOBAL)) {
+                if (sPrefs.getBoolean(Prefs.BIRTHDAY_LED_STATUS)) {
+                    builder.setLights(sPrefs.getInt(Prefs.BIRTHDAY_LED_COLOR), 500, 1000);
                 }
             } else {
-                if (sPrefs.loadBoolean(Prefs.LED_STATUS)) {
-                    builder.setLights(sPrefs.loadInt(Prefs.LED_COLOR), 500, 1000);
+                if (sPrefs.getBoolean(Prefs.LED_STATUS)) {
+                    builder.setLights(sPrefs.getInt(Prefs.LED_COLOR), 500, 1000);
                 }
             }
         }
-        boolean isWear = sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION);
+        boolean isWear = sPrefs.getBoolean(Prefs.WEAR_NOTIFICATION);
         if (isWear) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 builder.setOnlyAlertOnce(true);
@@ -503,7 +504,7 @@ public class Notifier {
      * @param id reminder identifier.
      */
     public void showReminderNotification(String content, long id){
-        sPrefs = new SharedPrefs(mContext);
+        SharedPrefs sPrefs = SharedPrefs.getInstance(mContext);
         builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(content);
         String app;
@@ -515,7 +516,7 @@ public class Notifier {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
         }
-        boolean isWear = sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION);
+        boolean isWear = sPrefs.getBoolean(Prefs.WEAR_NOTIFICATION);
         if (isWear) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 builder.setOnlyAlertOnce(true);
@@ -550,7 +551,7 @@ public class Notifier {
      * @param id note identifier.
      */
     public void showNoteNotification(String content, long id){
-        sPrefs = new SharedPrefs(mContext);
+        SharedPrefs sPrefs = SharedPrefs.getInstance(mContext);
         builder = new NotificationCompat.Builder(mContext);
         builder.setContentText(mContext.getString(R.string.note));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -558,7 +559,7 @@ public class Notifier {
         }
         builder.setSmallIcon(R.drawable.ic_event_note_white_24dp);
         builder.setContentTitle(content);
-        boolean isWear = sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION);
+        boolean isWear = sPrefs.getBoolean(Prefs.WEAR_NOTIFICATION);
         if (isWear) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 builder.setOnlyAlertOnce(true);
@@ -591,8 +592,7 @@ public class Notifier {
      * Recreates current permanent status bar notification.
      */
     public void recreatePermanent(){
-        SharedPrefs prefs = new SharedPrefs(mContext);
-        if (prefs.loadBoolean(Prefs.STATUS_BAR_NOTIFICATION)) showPermanent();
+        if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.STATUS_BAR_NOTIFICATION)) showPermanent();
     }
 
     /**
@@ -603,13 +603,14 @@ public class Notifier {
                 R.layout.notification_layout);
         NotificationCompat.Builder notification = new NotificationCompat.Builder(mContext);
         notification.setAutoCancel(false);
-        SharedPrefs prefs = new SharedPrefs(mContext);
         notification.setSmallIcon(R.drawable.ic_notifications_white_24dp);
         notification.setContent(remoteViews);
         notification.setOngoing(true);
-        if (prefs.loadBoolean(Prefs.STATUS_BAR_ICON))
+        if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.STATUS_BAR_ICON)) {
             notification.setPriority(NotificationCompat.PRIORITY_MAX);
-        else notification.setPriority(NotificationCompat.PRIORITY_MIN);
+        } else {
+            notification.setPriority(NotificationCompat.PRIORITY_MIN);
+        }
         Intent resultIntent = new Intent(mContext, ReminderManager.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);

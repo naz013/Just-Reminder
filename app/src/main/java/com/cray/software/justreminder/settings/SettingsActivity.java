@@ -75,11 +75,8 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.action_settings);
-
         findViewById(R.id.fragment_container).setBackgroundColor(cSetter.getBackgroundStyle());
-
         isCreate = true;
-
         if (findViewById(R.id.fragment_container) != null) {
             if (savedInstanceState != null) {
                 return;
@@ -105,7 +102,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
     protected void onResume() {
         super.onResume();
         setRequestedOrientation(cSetter.getRequestOrientation());
-        if (new SharedPrefs(this).loadBoolean(Prefs.UI_CHANGED) && !isCreate) recreate();
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.UI_CHANGED) && !isCreate) recreate();
         isCreate = false;
     }
 
@@ -215,24 +212,24 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
         switch (requestCode){
             case 200:
                 if (resultCode == RESULT_OK) {
-                    new SharedPrefs(this).saveBoolean(Prefs.BIRTHDAY_CUSTOM_SOUND, true);
+                    SharedPrefs.getInstance(this).putBoolean(Prefs.BIRTHDAY_CUSTOM_SOUND, true);
                     String pathC = data.getStringExtra(Constants.FILE_PICKED);
                     if (pathC != null) {
                         File fileC = new File(pathC);
                         if (fileC.exists()) {
-                            new SharedPrefs(this).savePrefs(Prefs.BIRTHDAY_CUSTOM_SOUND_FILE, fileC.toString());
+                            SharedPrefs.getInstance(this).putString(Prefs.BIRTHDAY_CUSTOM_SOUND_FILE, fileC.toString());
                         }
                     }
                 }
                 break;
             case 201:
                 if (resultCode == RESULT_OK) {
-                    new SharedPrefs(this).saveBoolean(Prefs.CUSTOM_SOUND, true);
+                    SharedPrefs.getInstance(this).putBoolean(Prefs.CUSTOM_SOUND, true);
                     String pathStr = data.getStringExtra(Constants.FILE_PICKED);
                     if (pathStr != null) {
                         File fileC = new File(pathStr);
                         if (fileC.exists()) {
-                            new SharedPrefs(this).savePrefs(Prefs.CUSTOM_SOUND_FILE, fileC.toString());
+                            SharedPrefs.getInstance(this).putString(Prefs.CUSTOM_SOUND_FILE, fileC.toString());
                         }
                     }
                 }
@@ -240,7 +237,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
             case Constants.ACTION_REQUEST_GALLERY:
                 if (resultCode == RESULT_OK) {
                     Uri selectedImage = data.getData();
-                    new SharedPrefs(this).savePrefs(Prefs.REMINDER_IMAGE, selectedImage.toString());
+                    SharedPrefs.getInstance(this).putString(Prefs.REMINDER_IMAGE, selectedImage.toString());
                 }
                 break;
         }

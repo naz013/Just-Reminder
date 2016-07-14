@@ -22,6 +22,7 @@ import android.database.Cursor;
 import android.view.View;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.async.BackupTask;
 import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
@@ -46,7 +47,6 @@ import com.cray.software.justreminder.services.PositionDelayReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
-import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -122,12 +122,9 @@ public class Reminder {
                 db.setJson(id, parser.toJsonString());
                 db.setDelay(id, 0);
                 int exp = parser.getExport().getCalendar();
-
                 new AlarmReceiver().enableReminder(context, id);
-
-                SharedPrefs sPrefs = new SharedPrefs(context);
-                boolean isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
-                boolean isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
+                boolean isCalendar = SharedPrefs.getInstance(context).getBoolean(Prefs.EXPORT_TO_CALENDAR);
+                boolean isStock = SharedPrefs.getInstance(context).getBoolean(Prefs.EXPORT_TO_STOCK);
                 if ((isCalendar || isStock) && exp == 1) {
                     ReminderUtils.exportToCalendar(context, summary, eventTime, id, isCalendar, isStock);
                 }
@@ -143,7 +140,7 @@ public class Reminder {
      * @param context application context.
      */
     private static void backup(Context context){
-        if (new SharedPrefs(context).loadBoolean(Prefs.AUTO_BACKUP)){
+        if (SharedPrefs.getInstance(context).getBoolean(Prefs.AUTO_BACKUP)){
             new BackupTask(context).execute();
         }
     }
@@ -254,7 +251,6 @@ public class Reminder {
      */
     public static void copy(long id, long time, Context context, ActionCallbacks callbacks) {
         NextBase db = new NextBase(context);
-        SharedPrefs sPrefs = new SharedPrefs(context);
         if (!db.isOpen()) db.open();
         Cursor c = db.getReminder(id);
         if (c != null && c.moveToFirst()){
@@ -306,8 +302,8 @@ public class Reminder {
                 db.setJson(idN, new JParser().toJsonString(jModel));
                 new AlarmReceiver().enableReminder(context, idN);
             } else {
-                boolean isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
-                boolean isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
+                boolean isCalendar = SharedPrefs.getInstance(context).getBoolean(Prefs.EXPORT_TO_CALENDAR);
+                boolean isStock = SharedPrefs.getInstance(context).getBoolean(Prefs.EXPORT_TO_STOCK);
                 if (exp == 1 && isCalendar || isStock)
                     ReminderUtils.exportToCalendar(context, summary, time, idN, isCalendar, isStock);
                 if (new GTasksHelper(context).isLinked() && code == Constants.SYNC_GTASKS_ONLY){
@@ -471,12 +467,9 @@ public class Reminder {
                 db.updateReminderEventTime(id, eventTime);
                 db.setJson(id, parser.toJsonString());
                 int exp = parser.getExport().getCalendar();
-
                 new AlarmReceiver().enableReminder(context, id);
-
-                SharedPrefs sPrefs = new SharedPrefs(context);
-                boolean isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
-                boolean isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
+                boolean isCalendar = SharedPrefs.getInstance(context).getBoolean(Prefs.EXPORT_TO_CALENDAR);
+                boolean isStock = SharedPrefs.getInstance(context).getBoolean(Prefs.EXPORT_TO_STOCK);
                 if ((isCalendar || isStock) && exp == 1) {
                     ReminderUtils.exportToCalendar(context, summary, eventTime, id, isCalendar, isStock);
                 }

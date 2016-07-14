@@ -48,13 +48,11 @@ public class IOHelper {
      */
     public void deleteReminder(String name){
         String exportFileName = name + FileConfig.FILE_NAME_REMINDER;
-
         File dir = MemoryUtil.getRDir();
         if (dir != null) {
             File file = new File(dir, exportFileName);
             if (file.exists()) file.delete();
         }
-
         dir = MemoryUtil.getDRDir();
         if (dir != null) {
             File file = new File(dir, exportFileName);
@@ -77,12 +75,11 @@ public class IOHelper {
     public void backup(){
         backupGroup(true);
         backupReminder(true);
-
-        SharedPrefs prefs = new SharedPrefs(mContext);
-        if (prefs.loadBoolean(Prefs.SYNC_NOTES)){
+        SharedPrefs prefs = SharedPrefs.getInstance(mContext);
+        if (prefs.getBoolean(Prefs.SYNC_NOTES)){
             backupNote(true);
         }
-        if (prefs.loadBoolean(Prefs.SYNC_BIRTHDAYS)){
+        if (prefs.getBoolean(Prefs.SYNC_BIRTHDAYS)){
             backupBirthday(true);
         }
     }

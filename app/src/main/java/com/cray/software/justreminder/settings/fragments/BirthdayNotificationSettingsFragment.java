@@ -36,7 +36,7 @@ import java.io.File;
 
 public class BirthdayNotificationSettingsFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener {
 
-    private SharedPrefs sPrefs;
+    private SharedPrefs mPrefs;
     private ActionBar ab;
     private TextView locale;
     private PrefsView globalOptionPrefs, vibrationOptionPrefs, infiniteVibrateOptionPrefs, 
@@ -45,49 +45,46 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View rootView =  inflater.inflate(R.layout.settings_birthday_notification_layout, container, false);
-
-        ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (ab != null){
             ab.setTitle(R.string.birthday_notification);
         }
-
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
+        mPrefs = SharedPrefs.getInstance(getActivity());
 
         globalOptionPrefs = (PrefsView) rootView.findViewById(R.id.globalOptionPrefs);
-        globalOptionPrefs.setChecked(sPrefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL));
+        globalOptionPrefs.setChecked(mPrefs.getBoolean(Prefs.BIRTHDAY_USE_GLOBAL));
         globalOptionPrefs.setOnClickListener(this);
 
         vibrationOptionPrefs = (PrefsView) rootView.findViewById(R.id.vibrationOptionPrefs);
-        vibrationOptionPrefs.setChecked(sPrefs.loadBoolean(Prefs.BIRTHDAY_VIBRATION_STATUS));
+        vibrationOptionPrefs.setChecked(mPrefs.getBoolean(Prefs.BIRTHDAY_VIBRATION_STATUS));
         vibrationOptionPrefs.setOnClickListener(this);
 
         infiniteVibrateOptionPrefs = (PrefsView) rootView.findViewById(R.id.infiniteVibrateOptionPrefs);
-        infiniteVibrateOptionPrefs.setChecked(sPrefs.loadBoolean(Prefs.BIRTHDAY_INFINITE_VIBRATION));
+        infiniteVibrateOptionPrefs.setChecked(mPrefs.getBoolean(Prefs.BIRTHDAY_INFINITE_VIBRATION));
         infiniteVibrateOptionPrefs.setOnClickListener(this);
 
         soundOptionPrefs = (PrefsView) rootView.findViewById(R.id.soundOptionPrefs);
-        soundOptionPrefs.setChecked(sPrefs.loadBoolean(Prefs.BIRTHDAY_SOUND_STATUS));
+        soundOptionPrefs.setChecked(mPrefs.getBoolean(Prefs.BIRTHDAY_SOUND_STATUS));
         soundOptionPrefs.setOnClickListener(this);
 
         infiniteSoundOptionPrefs = (PrefsView) rootView.findViewById(R.id.infiniteSoundOptionPrefs);
-        infiniteSoundOptionPrefs.setChecked(sPrefs.loadBoolean(Prefs.BIRTHDAY_INFINITE_SOUND));
+        infiniteSoundOptionPrefs.setChecked(mPrefs.getBoolean(Prefs.BIRTHDAY_INFINITE_SOUND));
         infiniteSoundOptionPrefs.setOnClickListener(this);
 
         wakeScreenOptionPrefs = (PrefsView) rootView.findViewById(R.id.wakeScreenOptionPrefs);
-        wakeScreenOptionPrefs.setChecked(sPrefs.loadBoolean(Prefs.BIRTHDAY_WAKE_STATUS));
+        wakeScreenOptionPrefs.setChecked(mPrefs.getBoolean(Prefs.BIRTHDAY_WAKE_STATUS));
         wakeScreenOptionPrefs.setOnClickListener(this);
 
         chooseSoundPrefs = (PrefsView) rootView.findViewById(R.id.chooseSoundPrefs);
         chooseSoundPrefs.setOnClickListener(this);
 
         ttsPrefs = (PrefsView) rootView.findViewById(R.id.ttsPrefs);
-        ttsPrefs.setChecked(sPrefs.loadBoolean(Prefs.BIRTHDAY_TTS));
+        ttsPrefs.setChecked(mPrefs.getBoolean(Prefs.BIRTHDAY_TTS));
         ttsPrefs.setOnClickListener(this);
 
         ledPrefs = (PrefsView) rootView.findViewById(R.id.ledPrefs);
-        ledPrefs.setChecked(sPrefs.loadBoolean(Prefs.BIRTHDAY_LED_STATUS));
+        ledPrefs.setChecked(mPrefs.getBoolean(Prefs.BIRTHDAY_LED_STATUS));
         ledPrefs.setOnClickListener(this);
 
         chooseLedColorPrefs = (PrefsView) rootView.findViewById(R.id.chooseLedColorPrefs);
@@ -152,12 +149,11 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
     }
 
     private void ttsChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (ttsPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.BIRTHDAY_TTS, false);
+            mPrefs.putBoolean(Prefs.BIRTHDAY_TTS, false);
             ttsPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.BIRTHDAY_TTS, true);
+            mPrefs.putBoolean(Prefs.BIRTHDAY_TTS, true);
             ttsPrefs.setChecked(true);
             Dialogues.ttsLocale(getActivity(), Prefs.BIRTHDAY_TTS_LOCALE);
         }
@@ -173,10 +169,9 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
     }
 
     private void showMelody(){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (sPrefs.loadBoolean(Prefs.BIRTHDAY_CUSTOM_SOUND)){
-            if (sPrefs.isString(Prefs.BIRTHDAY_CUSTOM_SOUND_FILE)) {
-                String path = sPrefs.loadPrefs(Prefs.BIRTHDAY_CUSTOM_SOUND_FILE);
+        if (mPrefs.getBoolean(Prefs.BIRTHDAY_CUSTOM_SOUND)){
+            if (mPrefs.hasKey(Prefs.BIRTHDAY_CUSTOM_SOUND_FILE)) {
+                String path = mPrefs.getString(Prefs.BIRTHDAY_CUSTOM_SOUND_FILE);
                 if (!path.matches("")) {
                     File sound = new File(path);
                     String fileName = sound.getName();
@@ -193,82 +188,75 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
     }
 
     private void ledChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (ledPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.BIRTHDAY_LED_STATUS, false);
+            mPrefs.putBoolean(Prefs.BIRTHDAY_LED_STATUS, false);
             ledPrefs.setChecked(false);
             checkEnabling();
         } else {
-            sPrefs.saveBoolean(Prefs.BIRTHDAY_LED_STATUS, true);
+            mPrefs.putBoolean(Prefs.BIRTHDAY_LED_STATUS, true);
             ledPrefs.setChecked(true);
             checkEnabling();
         }
     }
 
     private void vibrationChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (vibrationOptionPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.BIRTHDAY_VIBRATION_STATUS, false);
+            mPrefs.putBoolean(Prefs.BIRTHDAY_VIBRATION_STATUS, false);
             vibrationOptionPrefs.setChecked(false);
             checkVibrate();
         } else {
-            sPrefs.saveBoolean(Prefs.BIRTHDAY_VIBRATION_STATUS, true);
+            mPrefs.putBoolean(Prefs.BIRTHDAY_VIBRATION_STATUS, true);
             vibrationOptionPrefs.setChecked(true);
             checkVibrate();
         }
     }
 
     private void infiniteVibrationChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (infiniteVibrateOptionPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.BIRTHDAY_INFINITE_VIBRATION, false);
+            mPrefs.putBoolean(Prefs.BIRTHDAY_INFINITE_VIBRATION, false);
             infiniteVibrateOptionPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.BIRTHDAY_INFINITE_VIBRATION, true);
+            mPrefs.putBoolean(Prefs.BIRTHDAY_INFINITE_VIBRATION, true);
             infiniteVibrateOptionPrefs.setChecked(true);
         }
     }
 
     private void soundChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (soundOptionPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.BIRTHDAY_SOUND_STATUS, false);
+            mPrefs.putBoolean(Prefs.BIRTHDAY_SOUND_STATUS, false);
             soundOptionPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.BIRTHDAY_SOUND_STATUS, true);
+            mPrefs.putBoolean(Prefs.BIRTHDAY_SOUND_STATUS, true);
             soundOptionPrefs.setChecked(true);
         }
     }
 
     private void wakeChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (wakeScreenOptionPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.BIRTHDAY_WAKE_STATUS, false);
+            mPrefs.putBoolean(Prefs.BIRTHDAY_WAKE_STATUS, false);
             wakeScreenOptionPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.BIRTHDAY_WAKE_STATUS, true);
+            mPrefs.putBoolean(Prefs.BIRTHDAY_WAKE_STATUS, true);
             wakeScreenOptionPrefs.setChecked(true);
         }
     }
 
     private void infiniteSoundChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (infiniteSoundOptionPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.BIRTHDAY_INFINITE_SOUND, false);
+            mPrefs.putBoolean(Prefs.BIRTHDAY_INFINITE_SOUND, false);
             infiniteSoundOptionPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.BIRTHDAY_INFINITE_SOUND, true);
+            mPrefs.putBoolean(Prefs.BIRTHDAY_INFINITE_SOUND, true);
             infiniteSoundOptionPrefs.setChecked(true);
         }
     }
 
     private void globalChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (globalOptionPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.BIRTHDAY_USE_GLOBAL, false);
+            mPrefs.putBoolean(Prefs.BIRTHDAY_USE_GLOBAL, false);
             globalOptionPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.BIRTHDAY_USE_GLOBAL, true);
+            mPrefs.putBoolean(Prefs.BIRTHDAY_USE_GLOBAL, true);
             globalOptionPrefs.setChecked(true);
         }
         setUpEnables();
@@ -283,7 +271,7 @@ public class BirthdayNotificationSettingsFragment extends Fragment implements Vi
     @Override
     public void onDetach() {
         super.onDetach();
-        ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (ab != null){
             ab.setTitle(R.string.birthday_notification);
         }

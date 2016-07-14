@@ -59,28 +59,19 @@ public class Dialogues {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
         builder.setMessage(context.getString(R.string.can_you_rate_this_application));
-        builder.setPositiveButton(context.getString(R.string.rate), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                new SharedPrefs(context).saveBoolean(Prefs.RATE_SHOW, true);
-                launchMarket(context);
-            }
+        builder.setPositiveButton(context.getString(R.string.rate), (dialog, which) -> {
+            dialog.dismiss();
+            SharedPrefs.getInstance(context).putBoolean(Prefs.RATE_SHOW, true);
+            launchMarket(context);
         });
-        builder.setNeutralButton(context.getString(R.string.later), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                new SharedPrefs(context).saveBoolean(Prefs.RATE_SHOW, false);
-                new SharedPrefs(context).saveInt(Prefs.APP_RUNS_COUNT, 0);
-            }
+        builder.setNeutralButton(context.getString(R.string.later), (dialog, which) -> {
+            dialog.dismiss();
+            SharedPrefs.getInstance(context).putBoolean(Prefs.RATE_SHOW, false);
+            SharedPrefs.getInstance(context).putInt(Prefs.APP_RUNS_COUNT, 0);
         });
-        builder.setNegativeButton(context.getString(R.string.never), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                new SharedPrefs(context).saveBoolean(Prefs.RATE_SHOW, true);
-            }
+        builder.setNegativeButton(context.getString(R.string.never), (dialog, which) -> {
+            dialog.dismiss();
+            SharedPrefs.getInstance(context).putBoolean(Prefs.RATE_SHOW, true);
         });
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -104,11 +95,9 @@ public class Dialogues {
      */
     public static void showLCAM(Context context, final LCAMListener listener, String... actions) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setItems(actions, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                dialog.dismiss();
-                if (listener != null) listener.onAction(item);
-            }
+        builder.setItems(actions, (dialog, item) -> {
+            dialog.dismiss();
+            if (listener != null) listener.onAction(item);
         });
         AlertDialog alert = builder.create();
         alert.show();
@@ -125,28 +114,17 @@ public class Dialogues {
         String[] types = new String[]{context.getString(R.string.music),
                 context.getString(R.string.alarm),
                 context.getString(R.string.notification)};
-
-        SharedPrefs prefs = new SharedPrefs(context);
-
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_list_item_single_choice, types);
-
-        int stream = prefs.loadInt(Prefs.SOUND_STREAM);
-        builder.setSingleChoiceItems(adapter, stream - 3, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which != -1) {
-                    dialog.dismiss();
-                    SharedPrefs prefs = new SharedPrefs(context);
-                    prefs.saveInt(Prefs.SOUND_STREAM, which + 3);
-                }
+        int stream = SharedPrefs.getInstance(context).getInt(Prefs.SOUND_STREAM);
+        builder.setSingleChoiceItems(adapter, stream - 3, (dialog, which) -> {
+            if (which != -1) {
+                dialog.dismiss();
+                SharedPrefs.getInstance(context).putInt(Prefs.SOUND_STREAM, which + 3);
             }
         });
-        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
+        builder.setPositiveButton(context.getString(R.string.ok), (dialog, which) -> {
+            dialog.dismiss();
         });
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -164,13 +142,9 @@ public class Dialogues {
         String[] types = new String[]{context.getString(R.string.none),
                 context.getString(R.string.default_string),
                 context.getString(R.string.choose_file)};
-
-        SharedPrefs prefs = new SharedPrefs(context);
-
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_list_item_single_choice, types);
-
-        String image = prefs.loadPrefs(Prefs.REMINDER_IMAGE);
+        String image = SharedPrefs.getInstance(context).getString(Prefs.REMINDER_IMAGE);
         int selection;
         if (image.matches(Constants.NONE)) {
             selection = 0;
@@ -179,40 +153,14 @@ public class Dialogues {
         } else {
             selection = 2;
         }
-        
-        builder.setSingleChoiceItems(adapter, selection, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which != -1) {
-                    dialog.dismiss();
-                    SharedPrefs prefs = new SharedPrefs(context);
-                    if (which == 0) {
-                        prefs.savePrefs(Prefs.REMINDER_IMAGE, Constants.NONE);
-                    } else if (which == 1) {
-                        prefs.savePrefs(Prefs.REMINDER_IMAGE, Constants.DEFAULT);
-                    } else if (which == 2) {
-                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                        intent.setType("image/*");
-                        if (Module.isKitkat()) {
-                            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                            intent.addCategory(Intent.CATEGORY_OPENABLE);
-                            intent.setType("image/*");
-                        }
-                        Intent chooser = Intent.createChooser(intent, context.getString(R.string.image));
-                        context.startActivityForResult(chooser, Constants.ACTION_REQUEST_GALLERY);
-                    }
-                }
-            }
-        });
-        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        builder.setSingleChoiceItems(adapter, selection, (dialog, which) -> {
+            if (which != -1) {
                 dialog.dismiss();
-                SharedPrefs prefs = new SharedPrefs(context);
+                SharedPrefs prefs = SharedPrefs.getInstance(context);
                 if (which == 0) {
-                    prefs.savePrefs(Prefs.REMINDER_IMAGE, Constants.NONE);
+                    prefs.putString(Prefs.REMINDER_IMAGE, Constants.NONE);
                 } else if (which == 1) {
-                    prefs.savePrefs(Prefs.REMINDER_IMAGE, Constants.DEFAULT);
+                    prefs.putString(Prefs.REMINDER_IMAGE, Constants.DEFAULT);
                 } else if (which == 2) {
                     Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                     intent.setType("image/*");
@@ -224,6 +172,25 @@ public class Dialogues {
                     Intent chooser = Intent.createChooser(intent, context.getString(R.string.image));
                     context.startActivityForResult(chooser, Constants.ACTION_REQUEST_GALLERY);
                 }
+            }
+        });
+        builder.setPositiveButton(context.getString(R.string.ok), (dialog, which) -> {
+            dialog.dismiss();
+            SharedPrefs prefs = SharedPrefs.getInstance(context);
+            if (which == 0) {
+                prefs.putString(Prefs.REMINDER_IMAGE, Constants.NONE);
+            } else if (which == 1) {
+                prefs.putString(Prefs.REMINDER_IMAGE, Constants.DEFAULT);
+            } else if (which == 2) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                if (Module.isKitkat()) {
+                    intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    intent.setType("image/*");
+                }
+                Intent chooser = Intent.createChooser(intent, context.getString(R.string.image));
+                context.startActivityForResult(chooser, Constants.ACTION_REQUEST_GALLERY);
             }
         });
         AlertDialog dialog = builder.create();
@@ -243,17 +210,13 @@ public class Dialogues {
         for (CategoryModel item : provider.getData()){
             categories.add(item.getTitle());
         }
-
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.choose_group);
         builder.setSingleChoiceItems(new ArrayAdapter<>(context,
-                android.R.layout.simple_list_item_single_choice, categories), provider.getPosition(categoryId), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                if (listener != null) listener.onCategory(provider.getItem(which).getUuID(), provider.getItem(which).getTitle());
-            }
-        });
+                android.R.layout.simple_list_item_single_choice, categories), provider.getPosition(categoryId), (dialog, which) -> {
+                    dialog.dismiss();
+                    if (listener != null) listener.onCategory(provider.getItem(which).getUuID(), provider.getItem(which).getTitle());
+                });
         AlertDialog alert = builder.create();
         alert.show();
     }
@@ -270,13 +233,12 @@ public class Dialogues {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(true);
         builder.setTitle(title);
-        final SharedPrefs sharedPrefs = new SharedPrefs(context);
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.dialog_seekbar, null);
         final TextView textView = (TextView) layout.findViewById(R.id.seekValue);
         SeekBar seekBar = (SeekBar) layout.findViewById(R.id.dialogSeek);
         seekBar.setMax(max);
-        int progress = sharedPrefs.loadInt(prefs);
+        int progress = SharedPrefs.getInstance(context).getInt(prefs);
         seekBar.setProgress(progress);
         if (prefs.matches(Prefs.TEXT_SIZE)){
             textView.setText(String.valueOf(progress + 12));
@@ -291,7 +253,7 @@ public class Dialogues {
                 } else {
                     textView.setText(String.valueOf(progress));
                 }
-                sharedPrefs.saveInt(prefs, progress);
+                SharedPrefs.getInstance(context).putInt(prefs, progress);
             }
 
             @Override
@@ -305,11 +267,8 @@ public class Dialogues {
             }
         });
         builder.setView(layout);
-        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
+        builder.setPositiveButton(context.getString(R.string.ok), (dialog, which) -> {
+            dialog.dismiss();
         });
         AlertDialog dialog = builder.create();
         dialog.setOnDismissListener(listener);
@@ -328,13 +287,9 @@ public class Dialogues {
         String[] types = new String[]{context.getString(R.string.auto),
                 context.getString(R.string.portrait),
                 context.getString(R.string.landscape)};
-
-        SharedPrefs prefs = new SharedPrefs(context);
-
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_list_item_single_choice, types);
-
-        String screen = prefs.loadPrefs(Prefs.SCREEN);
+        String screen = SharedPrefs.getInstance(context).getString(Prefs.SCREEN);
         int selection = 0;
         if (screen.matches(Constants.SCREEN_AUTO)) {
             selection = 0;
@@ -343,26 +298,20 @@ public class Dialogues {
         } else if (screen.matches(Constants.SCREEN_LANDSCAPE)){
             selection = 2;
         }
-        builder.setSingleChoiceItems(adapter, selection, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which != -1) {
-                    SharedPrefs prefs = new SharedPrefs(context);
-                    if (which == 0) {
-                        prefs.savePrefs(Prefs.SCREEN, Constants.SCREEN_AUTO);
-                    } else if (which == 1) {
-                        prefs.savePrefs(Prefs.SCREEN, Constants.SCREEN_PORTRAIT);
-                    } else if (which == 2) {
-                        prefs.savePrefs(Prefs.SCREEN, Constants.SCREEN_LANDSCAPE);
-                    }
+        builder.setSingleChoiceItems(adapter, selection, (dialog, which) -> {
+            if (which != -1) {
+                SharedPrefs prefs = SharedPrefs.getInstance(context);
+                if (which == 0) {
+                    prefs.putString(Prefs.SCREEN, Constants.SCREEN_AUTO);
+                } else if (which == 1) {
+                    prefs.putString(Prefs.SCREEN, Constants.SCREEN_PORTRAIT);
+                } else if (which == 2) {
+                    prefs.putString(Prefs.SCREEN, Constants.SCREEN_LANDSCAPE);
                 }
             }
         });
-        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
+        builder.setPositiveButton(context.getString(R.string.ok), (dialog, which) -> {
+            dialog.dismiss();
         });
         AlertDialog dialog = builder.create();
         dialog.setOnDismissListener(listener);
@@ -382,38 +331,28 @@ public class Dialogues {
         builder.setTitle(context.getString(R.string.melody));
         String[] types = new String[]{context.getString(R.string.default_string),
                 context.getString(R.string.choose_file)};
-
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_list_item_single_choice, types);
-
-        SharedPrefs prefs = new SharedPrefs(context);
         int position;
-        if (!prefs.loadBoolean(prefsToSave)) {
+        if (!SharedPrefs.getInstance(context).getBoolean(prefsToSave)) {
             position = 0;
         } else {
             position = 1;
         }
-
-        builder.setSingleChoiceItems(adapter, position, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which != -1) {
-                    SharedPrefs prefs = new SharedPrefs(context);
-                    if (which == 0) {
-                        prefs.saveBoolean(prefsToSave, false);
-                    } else {
-                        prefs.saveBoolean(prefsToSave, true);
-                        dialog.dismiss();
-                        context.startActivityForResult(new Intent(context, FileExploreActivity.class), requestCode);
-                    }
+        builder.setSingleChoiceItems(adapter, position, (dialog, which) -> {
+            if (which != -1) {
+                SharedPrefs prefs = SharedPrefs.getInstance(context);
+                if (which == 0) {
+                    prefs.putBoolean(prefsToSave, false);
+                } else {
+                    prefs.putBoolean(prefsToSave, true);
+                    dialog.dismiss();
+                    context.startActivityForResult(new Intent(context, FileExploreActivity.class), requestCode);
                 }
             }
         });
-        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
+        builder.setPositiveButton(context.getString(R.string.ok), (dialog, which) -> {
+            dialog.dismiss();
         });
         AlertDialog dialog = builder.create();
         dialog.setOnDismissListener(listener);
@@ -429,41 +368,32 @@ public class Dialogues {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
         builder.setTitle(context.getString(R.string.choose_calendar));
-
         ArrayList<String> spinnerArray = new ArrayList<>();
         if (list != null && list.size() > 0) {
             for (CalendarManager.CalendarItem item : list) {
                 spinnerArray.add(item.getName());
             }
         }
-
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_list_item_single_choice, spinnerArray);
-
-        builder.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which != -1) {
-                    SharedPrefs prefs = new SharedPrefs(context);
-                    if (list != null) {
-                        CalendarManager.CalendarItem item = list.get(which);
-                        prefs.savePrefs(Prefs.CALENDAR_NAME, item.getName());
-                        prefs.saveInt(Prefs.CALENDAR_ID, item.getId());
-                    }
+        builder.setSingleChoiceItems(adapter, 0, (dialog, which) -> {
+            if (which != -1) {
+                SharedPrefs prefs = SharedPrefs.getInstance(context);
+                if (list != null) {
+                    CalendarManager.CalendarItem item = list.get(which);
+                    prefs.putString(Prefs.CALENDAR_NAME, item.getName());
+                    prefs.putInt(Prefs.CALENDAR_ID, item.getId());
                 }
             }
         });
-        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                if (which != -1) {
-                    SharedPrefs prefs = new SharedPrefs(context);
-                    if (list != null) {
-                        CalendarManager.CalendarItem item = list.get(which);
-                        prefs.savePrefs(Prefs.CALENDAR_NAME, item.getName());
-                        prefs.saveInt(Prefs.CALENDAR_ID, item.getId());
-                    }
+        builder.setPositiveButton(context.getString(R.string.ok), (dialog, which) -> {
+            dialog.dismiss();
+            if (which != -1) {
+                SharedPrefs prefs = SharedPrefs.getInstance(context);
+                if (list != null) {
+                    CalendarManager.CalendarItem item = list.get(which);
+                    prefs.putString(Prefs.CALENDAR_NAME, item.getName());
+                    prefs.putInt(Prefs.CALENDAR_ID, item.getId());
                 }
             }
         });
@@ -480,28 +410,16 @@ public class Dialogues {
         builder.setCancelable(false);
         builder.setTitle(context.getString(R.string.language));
         final ArrayList<String> locales = Language.getLanguages(context);
-
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_list_item_single_choice, locales);
-
-        SharedPrefs prefs = new SharedPrefs(context);
-        int language = prefs.loadInt(Prefs.VOICE_LOCALE);
-
-
-        builder.setSingleChoiceItems(adapter, language, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which != -1) {
-                    SharedPrefs prefs = new SharedPrefs(context);
-                    prefs.saveInt(Prefs.VOICE_LOCALE, which);
-                }
+        int language = SharedPrefs.getInstance(context).getInt(Prefs.VOICE_LOCALE);
+        builder.setSingleChoiceItems(adapter, language, (dialog, which) -> {
+            if (which != -1) {
+                SharedPrefs.getInstance(context).putInt(Prefs.VOICE_LOCALE, which);
             }
         });
-        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
+        builder.setPositiveButton(context.getString(R.string.ok), (dialog, which) -> {
+            dialog.dismiss();
         });
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -516,32 +434,20 @@ public class Dialogues {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
         builder.setTitle(context.getString(R.string.led_color));
-
         String[] colors = new String[LED.NUM_OF_LEDS];
         for (int i = 0; i < LED.NUM_OF_LEDS; i++) {
             colors[i] = LED.getTitle(context, i);
         }
-
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_list_item_single_choice, colors);
-
-        SharedPrefs prefs = new SharedPrefs(context);
-        int position = prefs.loadInt(prefsToSave);
-
-        builder.setSingleChoiceItems(adapter, position, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which != -1) {
-                    SharedPrefs prefs = new SharedPrefs(context);
-                    prefs.saveInt(prefsToSave, which);
-                }
+        int position = SharedPrefs.getInstance(context).getInt(prefsToSave);
+        builder.setSingleChoiceItems(adapter, position, (dialog, which) -> {
+            if (which != -1) {
+                SharedPrefs.getInstance(context).putInt(prefsToSave, which);
             }
         });
-        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
+        builder.setPositiveButton(context.getString(R.string.ok), (dialog, which) -> {
+            dialog.dismiss();
         });
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -566,13 +472,10 @@ public class Dialogues {
         names.add(context.getString(R.string.polish));
         names.add(context.getString(R.string.russian));
         names.add(context.getString(R.string.spanish));
-
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_list_item_single_choice, names);
-
-        SharedPrefs prefs = new SharedPrefs(context);
         int position = 1;
-        String locale = prefs.loadPrefs(prefsToSave);
+        String locale = SharedPrefs.getInstance(context).getString(prefsToSave);
         if (locale.matches(Language.ENGLISH)) position = 0;
         if (locale.matches(Language.FRENCH)) position = 1;
         if (locale.matches(Language.GERMAN)) position = 2;
@@ -582,31 +485,23 @@ public class Dialogues {
         if (locale.matches(Language.POLISH)) position = 6;
         if (locale.matches(Language.RUSSIAN)) position = 7;
         if (locale.matches(Language.SPANISH)) position = 8;
-
-        builder.setSingleChoiceItems(adapter, position, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which != -1) {
-                    SharedPrefs prefs = new SharedPrefs(context);
-                    String locale = Language.ENGLISH;
-                    if (which == 0) locale = Language.ENGLISH;
-                    if (which == 1) locale = Language.FRENCH;
-                    if (which == 2) locale = Language.GERMAN;
-                    if (which == 3) locale = Language.ITALIAN;
-                    if (which == 4) locale = Language.JAPANESE;
-                    if (which == 5) locale = Language.KOREAN;
-                    if (which == 6) locale = Language.POLISH;
-                    if (which == 7) locale = Language.RUSSIAN;
-                    if (which == 8) locale = Language.SPANISH;
-                    prefs.savePrefs(prefsToSave, locale);
-                }
+        builder.setSingleChoiceItems(adapter, position, (dialog, which) -> {
+            if (which != -1) {
+                String locale1 = Language.ENGLISH;
+                if (which == 0) locale1 = Language.ENGLISH;
+                if (which == 1) locale1 = Language.FRENCH;
+                if (which == 2) locale1 = Language.GERMAN;
+                if (which == 3) locale1 = Language.ITALIAN;
+                if (which == 4) locale1 = Language.JAPANESE;
+                if (which == 5) locale1 = Language.KOREAN;
+                if (which == 6) locale1 = Language.POLISH;
+                if (which == 7) locale1 = Language.RUSSIAN;
+                if (which == 8) locale1 = Language.SPANISH;
+                SharedPrefs.getInstance(context).putString(prefsToSave, locale1);
             }
         });
-        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
+        builder.setPositiveButton(context.getString(R.string.ok), (dialog, which) -> {
+            dialog.dismiss();
         });
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -620,12 +515,9 @@ public class Dialogues {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(true);
         builder.setTitle(context.getString(R.string.map_type));
-
         final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, R.array.map_types,
                 android.R.layout.simple_list_item_single_choice);
-
-        SharedPrefs prefs = new SharedPrefs(context);
-        int type = prefs.loadInt(Prefs.MAP_TYPE);
+        int type = SharedPrefs.getInstance(context).getInt(Prefs.MAP_TYPE);
         int position;
         if (type == Constants.MAP_NORMAL){
             position = 0;
@@ -638,21 +530,13 @@ public class Dialogues {
         } else {
             position = 0;
         }
-
-        builder.setSingleChoiceItems(adapter, position, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which != -1) {
-                    SharedPrefs prefs = new SharedPrefs(context);
-                    prefs.saveInt(Prefs.MAP_TYPE, which + 1);
-                }
+        builder.setSingleChoiceItems(adapter, position, (dialog, which) -> {
+            if (which != -1) {
+                SharedPrefs.getInstance(context).putInt(Prefs.MAP_TYPE, which + 1);
             }
         });
-        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
+        builder.setPositiveButton(context.getString(R.string.ok), (dialog, which) -> {
+            dialog.dismiss();
         });
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -668,28 +552,17 @@ public class Dialogues {
         builder.setTitle(context.getString(R.string.first_day));
         String[] items = {context.getString(R.string.sunday),
                 context.getString(R.string.monday)};
-
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_list_item_single_choice, items);
-
-        SharedPrefs prefs = new SharedPrefs(context);
-        int day = prefs.loadInt(Prefs.START_DAY);
-
-        builder.setSingleChoiceItems(adapter, day, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which != -1) {
-                    SharedPrefs prefs = new SharedPrefs(context);
-                    prefs.saveInt(Prefs.START_DAY, which);
-                    new UpdatesHelper(context).updateCalendarWidget();
-                }
+        int day = SharedPrefs.getInstance(context).getInt(Prefs.START_DAY);
+        builder.setSingleChoiceItems(adapter, day, (dialog, which) -> {
+            if (which != -1) {
+                SharedPrefs.getInstance(context).putInt(Prefs.START_DAY, which);
+                new UpdatesHelper(context).updateCalendarWidget();
             }
         });
-        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
+        builder.setPositiveButton(context.getString(R.string.ok), (dialog, which) -> {
+            dialog.dismiss();
         });
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -710,10 +583,8 @@ public class Dialogues {
                 context.getString(R.string.twelve_hours),
                 context.getString(R.string.one_day),
                 context.getString(R.string.two_days)};
-
         int position;
-        SharedPrefs prefs = new SharedPrefs(context);
-        int interval = prefs.loadInt(prefsToSave);
+        int interval = SharedPrefs.getInstance(context).getInt(prefsToSave);
         switch (interval){
             case 1:
                 position = 0;
@@ -734,30 +605,23 @@ public class Dialogues {
                 position = 0;
                 break;
         }
-
-        builder.setSingleChoiceItems(items, position, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                SharedPrefs prefs = new SharedPrefs(context);
-                if (item == 0) {
-                    prefs.saveInt(prefsToSave, 1);
-                } else if (item == 1) {
-                    prefs.saveInt(prefsToSave, 6);
-                } else if (item == 2) {
-                    prefs.saveInt(prefsToSave, 12);
-                } else if (item == 3) {
-                    prefs.saveInt(prefsToSave, 24);
-                } else if (item == 4) {
-                    prefs.saveInt(prefsToSave, 48);
-                }
-                if (prefsToSave.matches(Prefs.AUTO_BACKUP_INTERVAL)) new AutoSyncAlarm().setAlarm(context);
-                else new EventsCheckAlarm().setAlarm(context);
+        builder.setSingleChoiceItems(items, position, (dialog, item) -> {
+            if (item == 0) {
+                SharedPrefs.getInstance(context).putInt(prefsToSave, 1);
+            } else if (item == 1) {
+                SharedPrefs.getInstance(context).putInt(prefsToSave, 6);
+            } else if (item == 2) {
+                SharedPrefs.getInstance(context).putInt(prefsToSave, 12);
+            } else if (item == 3) {
+                SharedPrefs.getInstance(context).putInt(prefsToSave, 24);
+            } else if (item == 4) {
+                SharedPrefs.getInstance(context).putInt(prefsToSave, 48);
             }
+            if (prefsToSave.matches(Prefs.AUTO_BACKUP_INTERVAL)) new AutoSyncAlarm().setAlarm(context);
+            else new EventsCheckAlarm().setAlarm(context);
         });
-        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
+        builder.setPositiveButton(context.getString(R.string.ok), (dialog, which) -> {
+            dialog.dismiss();
         });
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -782,39 +646,26 @@ public class Dialogues {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(true);
         builder.setTitle(context.getString(R.string.clean));
-        builder.setNeutralButton(R.string.local, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                File dir = MemoryUtil.getParent();
-                deleteRecursive(dir);
-            }
+        builder.setNeutralButton(R.string.local, (dialog, which) -> {
+            File dir = MemoryUtil.getParent();
+            deleteRecursive(dir);
         });
-        builder.setNegativeButton(context.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
+        builder.setNegativeButton(context.getString(R.string.cancel), (dialog, which) -> {
+            dialog.dismiss();
         });
-        builder.setPositiveButton(R.string.all, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                File dir = MemoryUtil.getParent();
-                deleteRecursive(dir);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        GDriveHelper gdx = new GDriveHelper(context);
-                        DropboxHelper dbx = new DropboxHelper(context);
-                        if (SyncHelper.isConnected(context)) {
-                            gdx.clean();
-                            dbx.cleanFolder();
-                        }
-                    }
-                }).start();
+        builder.setPositiveButton(R.string.all, (dialog, which) -> {
+            File dir = MemoryUtil.getParent();
+            deleteRecursive(dir);
+            new Thread(() -> {
+                GDriveHelper gdx = new GDriveHelper(context);
+                DropboxHelper dbx = new DropboxHelper(context);
+                if (SyncHelper.isConnected(context)) {
+                    gdx.clean();
+                    dbx.cleanFolder();
+                }
+            }).start();
 
-            }
         });
-
         AlertDialog dialog = builder.create();
         dialog.show();
     }

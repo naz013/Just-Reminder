@@ -25,8 +25,8 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.widget.RemoteViews;
 
-import com.cray.software.justreminder.notes.NotesManager;
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.notes.NotesManager;
 
 public class NotesWidget extends AppWidgetProvider {
 
@@ -102,6 +102,6 @@ public class NotesWidget extends AppWidgetProvider {
         for (int widgetID : appWidgetIds) {
             editor.remove(NotesWidgetConfig.NOTES_WIDGET_THEME + widgetID);
         }
-        editor.commit();
+        editor.apply();
     }
 }

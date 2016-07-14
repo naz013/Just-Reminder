@@ -43,10 +43,8 @@ public class OtherSettingsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View rootView =  inflater.inflate(R.layout.settings_other, container, false);
-
-        ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (ab != null){
             ab.setTitle(R.string.other);
         }
@@ -106,14 +104,13 @@ public class OtherSettingsFragment extends Fragment {
         permissionEnable.setOnClickListener(v -> getActivity().getApplicationContext()
                 .startActivity(new Intent(getActivity().getApplicationContext(), PermissionsList.class)
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
-
         return rootView;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (ab != null){
             ab.setTitle(R.string.action_settings);
         }

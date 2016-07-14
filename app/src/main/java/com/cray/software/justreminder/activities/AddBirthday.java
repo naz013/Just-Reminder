@@ -291,7 +291,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
             }
         }
         db.close();
-        new SharedPrefs(this).saveBoolean(Prefs.REMINDER_CHANGED, true);
+        SharedPrefs.getInstance(this).putBoolean(Prefs.REMINDER_CHANGED, true);
     }
 
     @Override

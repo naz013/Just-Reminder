@@ -43,58 +43,54 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
     
     private SharedPrefs sPrefs;
     private ActionBar ab;
-    
     private PrefsView use24TimePrefs, useDarkStylePrefs, themeColorPrefs,
             smartFoldPrefs, wearEnablePrefs, itemPreviewPrefs, wearPrefs, dayNightPrefs;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View rootView =  inflater.inflate(R.layout.settings_general, container, false);
-
-        ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (ab != null){
             ab.setTitle(R.string.general);
         }
-
         getActivity().getIntent().setAction("General attached");
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
+        sPrefs = SharedPrefs.getInstance(getActivity());
 
         use24TimePrefs = (PrefsView) rootView.findViewById(R.id.use24TimePrefs);
-        use24TimePrefs.setChecked(sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
+        use24TimePrefs.setChecked(sPrefs.getBoolean(Prefs.IS_24_TIME_FORMAT));
         use24TimePrefs.setOnClickListener(this);
 
         useDarkStylePrefs = (PrefsView) rootView.findViewById(R.id.useDarkStylePrefs);
-        useDarkStylePrefs.setChecked(sPrefs.loadBoolean(Prefs.USE_DARK_THEME));
+        useDarkStylePrefs.setChecked(sPrefs.getBoolean(Prefs.USE_DARK_THEME));
         useDarkStylePrefs.setOnClickListener(this);
 
         dayNightPrefs = (PrefsView) rootView.findViewById(R.id.dayNightPrefs);
-        dayNightPrefs.setChecked(sPrefs.loadBoolean(Prefs.DAY_NIGHT));
+        dayNightPrefs.setChecked(sPrefs.getBoolean(Prefs.DAY_NIGHT));
         dayNightPrefs.setOnClickListener(this);
 
         themeColorPrefs = (PrefsView) rootView.findViewById(R.id.themeColorPrefs);
         themeColorPrefs.setOnClickListener(this);
 
         smartFoldPrefs = (PrefsView) rootView.findViewById(R.id.smartFoldPrefs);
-        smartFoldPrefs.setChecked(sPrefs.loadBoolean(Prefs.SMART_FOLD));
+        smartFoldPrefs.setChecked(sPrefs.getBoolean(Prefs.SMART_FOLD));
         smartFoldPrefs.setOnClickListener(this);
 
         wearEnablePrefs = (PrefsView) rootView.findViewById(R.id.wearEnablePrefs);
-        wearEnablePrefs.setChecked(sPrefs.loadBoolean(Prefs.WEAR_NOTIFICATION));
+        wearEnablePrefs.setChecked(sPrefs.getBoolean(Prefs.WEAR_NOTIFICATION));
         wearEnablePrefs.setOnClickListener(this);
 
         if (Module.isJellyMR2()) wearEnablePrefs.setVisibility(View.VISIBLE);
         else wearEnablePrefs.setVisibility(View.GONE);
 
         itemPreviewPrefs = (PrefsView) rootView.findViewById(R.id.itemPreviewPrefs);
-        itemPreviewPrefs.setChecked(sPrefs.loadBoolean(Prefs.ITEM_PREVIEW));
+        itemPreviewPrefs.setChecked(sPrefs.getBoolean(Prefs.ITEM_PREVIEW));
         itemPreviewPrefs.setOnClickListener(this);
 
         TextView screenOrientation = (TextView) rootView.findViewById(R.id.screenOrientation);
         screenOrientation.setOnClickListener(this);
 
         wearPrefs = (PrefsView) rootView.findViewById(R.id.wearPrefs);
-        wearPrefs.setChecked(sPrefs.loadBoolean(Prefs.WEAR_SERVICE));
+        wearPrefs.setChecked(sPrefs.getBoolean(Prefs.WEAR_SERVICE));
         wearPrefs.setOnClickListener(this);
         if (Module.isJellyMR2())
             wearPrefs.setVisibility(View.VISIBLE);
@@ -107,67 +103,62 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
     }
 
     private void wearServiceChange() {
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (wearPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.WEAR_SERVICE, false);
+            sPrefs.putBoolean(Prefs.WEAR_SERVICE, false);
             wearPrefs.setChecked(false);
             getActivity().stopService(new Intent(getActivity(), WearService.class));
         } else {
-            sPrefs.saveBoolean(Prefs.WEAR_SERVICE, true);
+            sPrefs.putBoolean(Prefs.WEAR_SERVICE, true);
             wearPrefs.setChecked(true);
             getActivity().startService(new Intent(getActivity(), WearService.class));
         }
     }
 
     private void itemPreviewChange() {
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (itemPreviewPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.ITEM_PREVIEW, false);
+            sPrefs.putBoolean(Prefs.ITEM_PREVIEW, false);
             itemPreviewPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.ITEM_PREVIEW, true);
+            sPrefs.putBoolean(Prefs.ITEM_PREVIEW, true);
             itemPreviewPrefs.setChecked(true);
         }
-        sPrefs.saveBoolean(Prefs.UI_CHANGED, true);
+        sPrefs.putBoolean(Prefs.UI_CHANGED, true);
     }
 
     private void useDarkStyleChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (useDarkStylePrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.USE_DARK_THEME, false);
+            sPrefs.putBoolean(Prefs.USE_DARK_THEME, false);
             useDarkStylePrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.USE_DARK_THEME, true);
-            sPrefs.saveBoolean(Prefs.DAY_NIGHT, false);
+            sPrefs.putBoolean(Prefs.USE_DARK_THEME, true);
+            sPrefs.putBoolean(Prefs.DAY_NIGHT, false);
             useDarkStylePrefs.setChecked(true);
             dayNightPrefs.setChecked(false);
         }
-        sPrefs.saveBoolean(Prefs.UI_CHANGED, true);
+        sPrefs.putBoolean(Prefs.UI_CHANGED, true);
         getActivity().recreate();
     }
 
     private void dayNightChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (dayNightPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.DAY_NIGHT, false);
+            sPrefs.putBoolean(Prefs.DAY_NIGHT, false);
             dayNightPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.DAY_NIGHT, true);
-            sPrefs.saveBoolean(Prefs.USE_DARK_THEME, false);
+            sPrefs.putBoolean(Prefs.DAY_NIGHT, true);
+            sPrefs.putBoolean(Prefs.USE_DARK_THEME, false);
             dayNightPrefs.setChecked(true);
             useDarkStylePrefs.setChecked(false);
         }
-        sPrefs.saveBoolean(Prefs.UI_CHANGED, true);
+        sPrefs.putBoolean(Prefs.UI_CHANGED, true);
         getActivity().recreate();
     }
 
     private void _24Change (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (use24TimePrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.IS_24_TIME_FORMAT, false);
+            sPrefs.putBoolean(Prefs.IS_24_TIME_FORMAT, false);
             use24TimePrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.IS_24_TIME_FORMAT, true);
+            sPrefs.putBoolean(Prefs.IS_24_TIME_FORMAT, true);
             use24TimePrefs.setChecked(true);
         }
 
@@ -175,23 +166,21 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
     }
 
     private void wearChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (wearEnablePrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.WEAR_NOTIFICATION, false);
+            sPrefs.putBoolean(Prefs.WEAR_NOTIFICATION, false);
             wearEnablePrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.WEAR_NOTIFICATION, true);
+            sPrefs.putBoolean(Prefs.WEAR_NOTIFICATION, true);
             wearEnablePrefs.setChecked(true);
         }
     }
 
     private void smartFoldChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (smartFoldPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.SMART_FOLD, false);
+            sPrefs.putBoolean(Prefs.SMART_FOLD, false);
             smartFoldPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.SMART_FOLD, true);
+            sPrefs.putBoolean(Prefs.SMART_FOLD, true);
             smartFoldPrefs.setChecked(true);
         }
     }
@@ -205,25 +194,25 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
     @Override
     public void onDetach() {
         super.onDetach();
-        ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (ab != null){
             ab.setTitle(R.string.action_settings);
         }
     }
 
     private void themeView(){
-        sPrefs = new SharedPrefs(getActivity());
-        int loadedColor = sPrefs.loadInt(Prefs.APP_THEME);
+        int loadedColor = sPrefs.getInt(Prefs.APP_THEME);
         themeColorPrefs.setViewResource(new ColorSetter(getActivity()).getIndicator(loadedColor));
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.themeColorPrefs:
-                Intent i = new Intent(getActivity().getApplicationContext(), ThemerDialog.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                getActivity().startActivity(i);
+            case R.id.themeColorPrefs: {
+                Intent intent = new Intent(getActivity().getApplicationContext(), ThemerDialog.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getActivity().startActivity(intent);
+            }
                 break;
             case R.id.useDarkStylePrefs:
                 useDarkStyleChange();

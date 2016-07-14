@@ -40,14 +40,14 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
 
     private ColorSetter cs;
     private NoteDataProvider provider;
-    private SharedPrefs prefs;
     private SimpleListener mEventListener;
-    private Context mContext;
+    private int mTextSize;
+    private boolean mEncrypt;
 
     public NoteRecyclerAdapter(Context context, NoteDataProvider provider) {
         this.provider = provider;
-        this.mContext = context;
-        prefs = new SharedPrefs(context);
+        mEncrypt = SharedPrefs.getInstance(context).getBoolean(Prefs.NOTE_ENCRYPT);
+        mTextSize = SharedPrefs.getInstance(context).getInt(Prefs.TEXT_SIZE) + 12;
         cs = new ColorSetter(context);
         setHasStableIds(true);
     }
@@ -89,12 +89,8 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // create a new view
         View itemLayoutView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_note, parent, false);
-
-        // create ViewHolder
-
         return new ViewHolder(itemLayoutView);
     }
 
@@ -119,7 +115,7 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
             holder.noteImage.setImageDrawable(null);
         }
 
-        if (prefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
+        if (mEncrypt){
             title = SyncHelper.decrypt(title);
         }
 
@@ -128,7 +124,7 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
             title = substring + "...";
         }
         holder.textView.setText(title);
-        holder.textView.setTextSize(prefs.loadInt(Prefs.TEXT_SIZE) + 12);
+        holder.textView.setTextSize(mTextSize);
     }
 
     @Override

@@ -159,8 +159,7 @@ public class NotesBase {
 
     public Cursor getNotes() throws SQLException {
         openGuard();
-        SharedPrefs prefs = new SharedPrefs(mContext);
-        String orderPrefs = prefs.loadPrefs(Prefs.NOTES_ORDER);
+        String orderPrefs = SharedPrefs.getInstance(mContext).getString(Prefs.NOTES_ORDER);
         String order = null;
         if (orderPrefs.matches(Constants.ORDER_DATE_A_Z)){
             order = Constants.COLUMN_DATE + " ASC";

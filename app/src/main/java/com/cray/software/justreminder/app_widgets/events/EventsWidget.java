@@ -26,9 +26,9 @@ import android.support.annotation.NonNull;
 import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.reminder.ReminderManager;
 import com.cray.software.justreminder.activities.QuickAddReminder;
 import com.cray.software.justreminder.dialogs.VoiceWidgetDialog;
+import com.cray.software.justreminder.reminder.ReminderManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -113,13 +113,12 @@ public class EventsWidget extends AppWidgetProvider {
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         super.onDeleted(context, appWidgetIds);
-
         SharedPreferences.Editor editor = context.getSharedPreferences(
                 EventsWidgetConfig.EVENTS_WIDGET_PREF, Context.MODE_PRIVATE).edit();
         for (int widgetID : appWidgetIds) {
             editor.remove(EventsWidgetConfig.EVENTS_WIDGET_THEME + widgetID);
             editor.remove(EventsWidgetConfig.EVENTS_WIDGET_TEXT_SIZE + widgetID);
         }
-        editor.commit();
+        editor.apply();
     }
 }

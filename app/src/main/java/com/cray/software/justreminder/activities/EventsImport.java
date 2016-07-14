@@ -66,8 +66,6 @@ import java.util.HashMap;
 public class EventsImport extends AppCompatActivity implements View.OnClickListener,
         CompoundButton.OnCheckedChangeListener {
 
-    private SharedPrefs prefs = new SharedPrefs(EventsImport.this);
-
     private RoboCheckBox eventsCheck;
     private Spinner eventCalendar;
     private RoboButton syncInterval;
@@ -106,7 +104,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
         RoboCheckBox autoCheck = (RoboCheckBox) findViewById(R.id.autoCheck);
         eventsCheck.setOnCheckedChangeListener(this);
         autoCheck.setOnCheckedChangeListener(this);
-        autoCheck.setChecked(prefs.loadBoolean(Prefs.AUTO_CHECK_FOR_EVENTS));
+        autoCheck.setChecked(SharedPrefs.getInstance(this).getBoolean(Prefs.AUTO_CHECK_FOR_EVENTS));
 
         if (autoCheck.isChecked()) syncInterval.setEnabled(true);
         else syncInterval.setEnabled(false);
@@ -180,13 +178,13 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
         if (eventsCheck.isChecked()) {
             int selectedPosition = eventCalendar.getSelectedItemPosition() - 1;
             map.put(EVENT_KEY, list.get(selectedPosition).getId());
-            boolean isEnabled = prefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
+            boolean isEnabled = SharedPrefs.getInstance(this).getBoolean(Prefs.EXPORT_TO_CALENDAR);
             if (!isEnabled) {
-                prefs.saveBoolean(Prefs.EXPORT_TO_CALENDAR, true);
-                prefs.savePrefs(Prefs.CALENDAR_NAME, list.get(selectedPosition).getName());
-                prefs.saveInt(Prefs.CALENDAR_ID, list.get(selectedPosition).getId());
+                SharedPrefs.getInstance(this).putBoolean(Prefs.EXPORT_TO_CALENDAR, true);
+                SharedPrefs.getInstance(this).putString(Prefs.CALENDAR_NAME, list.get(selectedPosition).getName());
+                SharedPrefs.getInstance(this).putInt(Prefs.CALENDAR_ID, list.get(selectedPosition).getId());
             }
-            prefs.saveInt(Prefs.EVENTS_CALENDAR, list.get(selectedPosition).getId());
+            SharedPrefs.getInstance(this).putInt(Prefs.EVENTS_CALENDAR, list.get(selectedPosition).getId());
         }
 
         new Import(this).execute(map);
@@ -234,7 +232,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
     }
 
     private void autoCheck(boolean isChecked) {
-        prefs.saveBoolean(Prefs.AUTO_CHECK_FOR_EVENTS, isChecked);
+        SharedPrefs.getInstance(this).putBoolean(Prefs.AUTO_CHECK_FOR_EVENTS, isChecked);
         syncInterval.setEnabled(isChecked);
         EventsCheckAlarm alarm = new EventsCheckAlarm();
         if (isChecked) alarm.setAlarm(this);

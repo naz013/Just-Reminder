@@ -117,8 +117,7 @@ public class NotesWidgetConfig extends AppCompatActivity {
         SharedPreferences sp = getSharedPreferences(NOTES_WIDGET_PREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putInt(NOTES_WIDGET_THEME + widgetID, mThemePager.getCurrentItem());
-        editor.commit();
-
+        editor.apply();
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         NotesWidget.updateWidget(NotesWidgetConfig.this, appWidgetManager, sp, widgetID);
         setResult(RESULT_OK, resultValue);

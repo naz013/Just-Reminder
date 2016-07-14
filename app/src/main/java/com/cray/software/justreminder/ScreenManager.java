@@ -129,7 +129,6 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
     private FloatingActionButton mFab;
 
     private ColorSetter cSetter = new ColorSetter(this);
-    private SharedPrefs mPrefs = new SharedPrefs(this);
 
     public static final String FRAGMENT_ACTIVE = "fragment_active";
     public static final String FRAGMENT_ARCHIVE = "fragment_archive";
@@ -210,9 +209,9 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
 
-        if (mPrefs.loadBoolean(Prefs.UI_CHANGED)) {
-            onItemSelected(mPrefs.loadPrefs(Prefs.LAST_FRAGMENT));
-            mPrefs.saveBoolean(Prefs.UI_CHANGED, false);
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.UI_CHANGED)) {
+            onItemSelected(SharedPrefs.getInstance(this).getString(Prefs.LAST_FRAGMENT));
+            SharedPrefs.getInstance(this).putBoolean(Prefs.UI_CHANGED, false);
         }
 
         if (LocationUtil.isGooglePlayServicesAvailable(this)) {
@@ -244,7 +243,6 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
     }
 
     private void reloadButton(){
-        mPrefs = new SharedPrefs(this);
         if (mTag.matches(FRAGMENT_EVENTS) || mTag.matches(ACTION_CALENDAR)){
             mFab.setVisibility(View.VISIBLE);
             mFab.setOnClickListener(v -> {
@@ -334,9 +332,6 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
             if (listener != null){
                 list.removeOnScrollListener(listener);
             }
-
-            mPrefs = new SharedPrefs(this);
-
             listener = new ReturnScrollListener.Builder(QuickReturnViewType.FOOTER)
                     .footer(mFab)
                     .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
@@ -384,7 +379,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.commitAllowingStateLoss();
         mTag = tag;
-        mPrefs.savePrefs(Prefs.LAST_FRAGMENT, tag);
+        SharedPrefs.getInstance(this).putString(Prefs.LAST_FRAGMENT, tag);
     }
 
     @Override
@@ -414,9 +409,9 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
                 }
             } else if (tag.matches(ACTION_CALENDAR)) {
                 showMonth();
-                mPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 1);
+                SharedPrefs.getInstance(this).putInt(Prefs.LAST_CALENDAR_VIEW, 1);
                 mTag = tag;
-                mPrefs.savePrefs(Prefs.LAST_FRAGMENT, tag);
+                SharedPrefs.getInstance(this).putString(Prefs.LAST_FRAGMENT, tag);
             } else if (tag.matches(FRAGMENT_EVENTS)) {
                 Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis(System.currentTimeMillis());
@@ -424,7 +419,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
                     cal.setTime(eventsDate);
                 }
                 replace(EventsFragment.newInstance(cal.getTimeInMillis(), lastEventPosition), tag);
-                mPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
+                SharedPrefs.getInstance(this).putInt(Prefs.LAST_CALENDAR_VIEW, 0);
             } else if (tag.matches(HELP)) {
                 startActivity(new Intent(this, Help.class));
             } else if (tag.matches(REPORT)) {
@@ -539,13 +534,12 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         cal.setTimeInMillis(System.currentTimeMillis());
         args.putInt(FlextCal.MONTH, cal.get(Calendar.MONTH) + 1);
         args.putInt(FlextCal.YEAR, cal.get(Calendar.YEAR));
-        mPrefs = new SharedPrefs(this);
-        if (mPrefs.loadInt(Prefs.START_DAY) == 0) {
+        if (SharedPrefs.getInstance(this).getInt(Prefs.START_DAY) == 0) {
             args.putInt(FlextCal.START_DAY_OF_WEEK, FlextCal.SUNDAY);
         } else {
             args.putInt(FlextCal.START_DAY_OF_WEEK, FlextCal.MONDAY);
         }
-        args.putBoolean(FlextCal.ENABLE_IMAGES, mPrefs.loadBoolean(Prefs.CALENDAR_IMAGE));
+        args.putBoolean(FlextCal.ENABLE_IMAGES, SharedPrefs.getInstance(this).getBoolean(Prefs.CALENDAR_IMAGE));
         args.putBoolean(FlextCal.DARK_THEME, cSetter.isDark());
         calendarView.setArguments(args);
         calendarView.setBackgroundForToday(cSetter.getColor(cSetter.colorCurrentCalendar()));
@@ -587,12 +581,12 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         calendarView.setCaldroidListener(listener);
         calendarView.refreshView();
 
-        boolean isReminder = mPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR);
-        boolean isFeature = mPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
+        boolean isReminder = SharedPrefs.getInstance(this).getBoolean(Prefs.REMINDERS_IN_CALENDAR);
+        boolean isFeature = SharedPrefs.getInstance(this).getBoolean(Prefs.CALENDAR_FEATURE_TASKS);
         calendarView.setEvents(new ReminderDataProvider(this, isReminder, isFeature).getEvents());
         replace(calendarView, mTag);
 
-        mPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 1);
+        SharedPrefs.getInstance(this).putInt(Prefs.LAST_CALENDAR_VIEW, 1);
         mTitle = getString(R.string.calendar);
         toolbar.setTitle(mTitle);
         invalidateOptionsMenu();
@@ -662,13 +656,13 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPrefs sPrefs = new SharedPrefs(this);
-        if (sPrefs.loadBoolean(Prefs.UI_CHANGED)) recreate();
+        SharedPrefs sPrefs = SharedPrefs.getInstance(this);
+        if (sPrefs.getBoolean(Prefs.UI_CHANGED)) recreate();
 
         setRequestedOrientation(cSetter.getRequestOrientation());
         showRate();
 
-        if (Module.isPro() && !sPrefs.loadBoolean(Prefs.THANKS_SHOWN) && hasChanges()) {
+        if (Module.isPro() && !sPrefs.getBoolean(Prefs.THANKS_SHOWN) && hasChanges()) {
             thanksDialog().show();
         }
 
@@ -677,7 +671,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         }
 
         if (mTag != null) onItemSelected(mTag);
-        if (sPrefs.loadBoolean(Prefs.STATUS_BAR_NOTIFICATION))
+        if (sPrefs.getBoolean(Prefs.STATUS_BAR_NOTIFICATION))
             new Notifier(this).recreatePermanent();
         isChangesShown();
         new DelayedAsync(this, null).execute();
@@ -700,7 +694,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
     }
 
     private void isChangesShown() {
-        SharedPrefs sPrefs = new SharedPrefs(this);
+        SharedPrefs sPrefs = SharedPrefs.getInstance(this);
         PackageInfo pInfo = null;
         try {
             pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -709,7 +703,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         }
         String version = null;
         if (pInfo != null) version = pInfo.versionName;
-        boolean ranBefore = sPrefs.loadVersionBoolean(version);
+        boolean ranBefore = sPrefs.getVersion(version);
         if (!ranBefore) {
             sPrefs.saveVersionBoolean(version);
             showChanges();
@@ -717,7 +711,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
     }
 
     private boolean hasChanges() {
-        SharedPrefs sPrefs = new SharedPrefs(this);
+        SharedPrefs sPrefs = SharedPrefs.getInstance(this);
         PackageInfo pInfo = null;
         try {
             pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -726,24 +720,24 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         }
         String version = null;
         if (pInfo != null) version = pInfo.versionName;
-        return sPrefs.loadVersionBoolean(version);
+        return sPrefs.getVersion(version);
     }
 
     private void showRate(){
-        SharedPrefs sPrefs = new SharedPrefs(this);
-        if (sPrefs.isString(Prefs.RATE_SHOW)) {
-            if (!sPrefs.loadBoolean(Prefs.RATE_SHOW)) {
-                int counts = sPrefs.loadInt(Prefs.APP_RUNS_COUNT);
+        SharedPrefs sPrefs = SharedPrefs.getInstance(this);
+        if (sPrefs.hasKey(Prefs.RATE_SHOW)) {
+            if (!sPrefs.getBoolean(Prefs.RATE_SHOW)) {
+                int counts = sPrefs.getInt(Prefs.APP_RUNS_COUNT);
                 if (counts < 10) {
-                    sPrefs.saveInt(Prefs.APP_RUNS_COUNT, counts + 1);
+                    sPrefs.putInt(Prefs.APP_RUNS_COUNT, counts + 1);
                 } else {
-                    sPrefs.saveInt(Prefs.APP_RUNS_COUNT, 0);
+                    sPrefs.putInt(Prefs.APP_RUNS_COUNT, 0);
                     Dialogues.rateDialog(this);
                 }
             }
         } else {
-            sPrefs.saveBoolean(Prefs.RATE_SHOW, false);
-            sPrefs.saveInt(Prefs.APP_RUNS_COUNT, 0);
+            sPrefs.putBoolean(Prefs.RATE_SHOW, false);
+            sPrefs.putInt(Prefs.APP_RUNS_COUNT, 0);
         }
     }
 
@@ -752,7 +746,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
                 .setMessage(R.string.thank_you_for_buying_pro)
                 .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
                     dialog.dismiss();
-                    new SharedPrefs(ScreenManager.this).saveBoolean(Prefs.THANKS_SHOWN, true);
+                    SharedPrefs.getInstance(this).putBoolean(Prefs.THANKS_SHOWN, true);
                 })
                 .setCancelable(false)
                 .create();
@@ -774,7 +768,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         db.open();
         int color = new Random().nextInt(15);
         final long id;
-        if (mPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT)){
             id = db.saveNote(SyncHelper.encrypt(note), date, color, uuID, null, 5);
         } else {
             id = db.saveNote(note, date, color, uuID, null, 5);
@@ -804,29 +798,25 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
     }
 
     private void askNotification(final String note, final long id){
-        mPrefs = new SharedPrefs(ScreenManager.this);
         ViewUtils.showReveal(noteStatusCard);
-
         buttonYes.setOnClickListener(v -> {
             new Notifier(ScreenManager.this).showNoteNotification(note, id);
             ViewUtils.hideReveal(noteStatusCard);
-            if (mPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER)){
+            if (SharedPrefs.getInstance(this).getBoolean(Prefs.QUICK_NOTE_REMINDER)){
                 new Handler().postDelayed(() -> askReminder(note, id), 300);
             }
         });
 
         buttonNo.setOnClickListener(v -> {
             ViewUtils.hideReveal(noteStatusCard);
-            if (mPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER)){
+            if (SharedPrefs.getInstance(this).getBoolean(Prefs.QUICK_NOTE_REMINDER)){
                 new Handler().postDelayed(() -> askReminder(note, id), 300);
             }
         });
     }
 
     private void askReminder(final String note, final long noteId){
-        mPrefs = new SharedPrefs(ScreenManager.this);
         ViewUtils.showReveal(noteReminderCard);
-
         buttonReminderYes.setOnClickListener(v -> {
             ViewUtils.hideReveal(noteReminderCard);
             DataBase db = new DataBase(ScreenManager.this);
@@ -844,7 +834,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
                 cf.close();
             }
             db.close();
-            long after = new SharedPrefs(ScreenManager.this).loadInt(Prefs.QUICK_NOTE_REMINDER_TIME) * 1000 * 60;
+            long after = SharedPrefs.getInstance(this).getInt(Prefs.QUICK_NOTE_REMINDER_TIME) * 1000 * 60;
             long due = calendar1.getTimeInMillis() + after;
             JModel jModel = new JModel(note, Constants.TYPE_REMINDER, categoryId,
                     SyncHelper.generateID(), due, due, null, null, null);
@@ -950,11 +940,11 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
             accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
             GoogleAccountManager gam = new GoogleAccountManager(this);
             getAndUseAuthTokenInAsyncTask(gam.getAccountByName(accountName));
-            mPrefs.savePrefs(Prefs.DRIVE_USER, SyncHelper.encrypt(accountName));
+            SharedPrefs.getInstance(this).putString(Prefs.DRIVE_USER, SyncHelper.encrypt(accountName));
             new GetTasksListsAsync(this, null).execute();
         } else if (requestCode == REQUEST_ACCOUNT_PICKER && resultCode == RESULT_OK) {
             accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-            mPrefs.savePrefs(Prefs.DRIVE_USER, SyncHelper.encrypt(accountName));
+            SharedPrefs.getInstance(this).putString(Prefs.DRIVE_USER, SyncHelper.encrypt(accountName));
             new GetTasksListsAsync(this, null).execute();
         }
     }
@@ -975,8 +965,8 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
     @Override
     protected void onStop() {
         super.onStop();
-        if (new SharedPrefs(this).loadBoolean(Prefs.EXPORT_SETTINGS)){
-            new SharedPrefs(this).savePrefsBackup();
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.EXPORT_SETTINGS)){
+            SharedPrefs.getInstance(this).savePrefsBackup();
         }
     }
 }

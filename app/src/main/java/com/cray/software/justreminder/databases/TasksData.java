@@ -305,8 +305,7 @@ public class TasksData {
 
     public Cursor getTasks() throws SQLException {
         openGuard();
-        SharedPrefs prefs = new SharedPrefs(mContext);
-        String orderPrefs = prefs.loadPrefs(Prefs.TASKS_ORDER);
+        String orderPrefs = SharedPrefs.getInstance(mContext).getString(Prefs.TASKS_ORDER);
         String order;
         if (orderPrefs.matches(Constants.ORDER_DEFAULT)){
             order = TasksConstants.COLUMN_POSITION + " ASC";
@@ -366,8 +365,7 @@ public class TasksData {
 
     public Cursor getTasks(String listId) throws SQLException {
         openGuard();
-        SharedPrefs prefs = new SharedPrefs(mContext);
-        String orderPrefs = prefs.loadPrefs(Prefs.TASKS_ORDER);
+        String orderPrefs = SharedPrefs.getInstance(mContext).getString(Prefs.TASKS_ORDER);
         String order;
         if (orderPrefs.matches(Constants.ORDER_DEFAULT)){
             order = TasksConstants.COLUMN_POSITION + " ASC";

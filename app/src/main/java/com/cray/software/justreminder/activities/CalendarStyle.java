@@ -37,7 +37,6 @@ import com.cray.software.justreminder.utils.ViewUtils;
 public class CalendarStyle extends AppCompatActivity {
     private ImageButton red, green, blue, yellow, greenLight, blueLight, cyan, purple,
             amber, orange, pink, teal, deepPurple, deepOrange, indigo, lime;
-    private SharedPrefs sPrefs;
     private int i;
     private int prevId;
 
@@ -108,11 +107,11 @@ public class CalendarStyle extends AppCompatActivity {
     private View.OnClickListener listener = v -> themeColorSwitch(v.getId());
 
     private void setUpRadio(){
-        sPrefs = new SharedPrefs(CalendarStyle.this);
+        SharedPrefs sPrefs = SharedPrefs.getInstance(this);
         int loaded;
-        if (i == 2) loaded = sPrefs.loadInt(Prefs.BIRTH_COLOR);
-        else if (i == 3) loaded = sPrefs.loadInt(Prefs.REMINDER_COLOR);
-        else loaded = sPrefs.loadInt(Prefs.TODAY_COLOR);
+        if (i == 2) loaded = sPrefs.getInt(Prefs.BIRTH_COLOR);
+        else if (i == 3) loaded = sPrefs.getInt(Prefs.REMINDER_COLOR);
+        else loaded = sPrefs.getInt(Prefs.TODAY_COLOR);
         switch (loaded) {
             case 0:
                 red.setSelected(true);
@@ -249,17 +248,17 @@ public class CalendarStyle extends AppCompatActivity {
     }
 
     void saveColor(int code) {
-        sPrefs = new SharedPrefs(CalendarStyle.this);
-        if (i == 2) sPrefs.saveInt(Prefs.BIRTH_COLOR, code);
-        else if (i == 3) sPrefs.saveInt(Prefs.REMINDER_COLOR, code);
-        else sPrefs.saveInt(Prefs.TODAY_COLOR, code);
+        SharedPrefs sPrefs = SharedPrefs.getInstance(this);
+        if (i == 2) sPrefs.putInt(Prefs.BIRTH_COLOR, code);
+        else if (i == 3) sPrefs.putInt(Prefs.REMINDER_COLOR, code);
+        else sPrefs.putInt(Prefs.TODAY_COLOR, code);
 
         new UpdatesHelper(CalendarStyle.this).updateCalendarWidget();
     }
 
     @Override
     public void onBackPressed() {
-        if (new SharedPrefs(CalendarStyle.this).loadBoolean(Prefs.STATUS_BAR_NOTIFICATION)) {
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.STATUS_BAR_NOTIFICATION)) {
             new Notifier(CalendarStyle.this).recreatePermanent();
         }
         finish();
@@ -269,7 +268,7 @@ public class CalendarStyle extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (new SharedPrefs(CalendarStyle.this).loadBoolean(Prefs.STATUS_BAR_NOTIFICATION)) {
+                if (SharedPrefs.getInstance(this).getBoolean(Prefs.STATUS_BAR_NOTIFICATION)) {
                     new Notifier(CalendarStyle.this).recreatePermanent();
                 }
                 finish();

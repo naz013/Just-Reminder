@@ -59,8 +59,8 @@ public class DateTimeView extends RelativeLayout implements
     }
 
     private void init(Context context, AttributeSet attrs) {
+        if (isInEditMode()) return;
         this.attrs = attrs;
-
         View.inflate(context, R.layout.date_time_view_layout, this);
         setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
@@ -132,7 +132,7 @@ public class DateTimeView extends RelativeLayout implements
         if (listener != null) {
             listener.onTimeSelect(mills, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
         }
-        time.setText(TimeUtil.getTime(cal.getTime(), new SharedPrefs(mContext).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+        time.setText(TimeUtil.getTime(cal.getTime(), SharedPrefs.getInstance(mContext).getBoolean(Prefs.IS_24_TIME_FORMAT)));
     }
 
     /**
@@ -162,7 +162,7 @@ public class DateTimeView extends RelativeLayout implements
         int myHour = cal.get(Calendar.HOUR_OF_DAY);
         int myMinute = cal.get(Calendar.MINUTE);
         new TimePickerDialog(mContext, this, myHour, myMinute,
-                new SharedPrefs(mContext).loadBoolean(Prefs.IS_24_TIME_FORMAT)).show();
+                SharedPrefs.getInstance(mContext).getBoolean(Prefs.IS_24_TIME_FORMAT)).show();
     }
 
     @Override

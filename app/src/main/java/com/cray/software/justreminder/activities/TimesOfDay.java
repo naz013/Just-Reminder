@@ -46,7 +46,6 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
     private int dayHour, dayMinute;
     private int eveningHour, eveningMinute;
     private int nightHour, nightMinute;
-    private SharedPrefs prefs = new SharedPrefs(TimesOfDay.this);
     private SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
     @Override
@@ -78,10 +77,10 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
         morningTime = (RoboTextView) findViewById(R.id.morningTime);
         morningTime.setOnClickListener(this);
 
-        String morning = prefs.loadPrefs(Prefs.TIME_MORNING);
-        String day = prefs.loadPrefs(Prefs.TIME_DAY);
-        String evening = prefs.loadPrefs(Prefs.TIME_EVENING);
-        String night = prefs.loadPrefs(Prefs.TIME_NIGHT);
+        String morning = SharedPrefs.getInstance(this).getString(Prefs.TIME_MORNING);
+        String day = SharedPrefs.getInstance(this).getString(Prefs.TIME_DAY);
+        String evening = SharedPrefs.getInstance(this).getString(Prefs.TIME_EVENING);
+        String night = SharedPrefs.getInstance(this).getString(Prefs.TIME_NIGHT);
 
         Date date = null;
         try {
@@ -94,7 +93,7 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
         if (date != null) calendar.setTime(date);
         morningHour = calendar.get(Calendar.HOUR_OF_DAY);
         morningMinute = calendar.get(Calendar.MINUTE);
-        boolean is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
+        boolean is24 = SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT);
         morningTime.setText(TimeUtil.getTime(calendar.getTime(), is24));
 
         try {
@@ -144,14 +143,14 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
             morningHour = hourOfDay;
             morningMinute = minute;
             String time = morningHour + ":" + morningMinute;
-            prefs.savePrefs(Prefs.TIME_MORNING, time);
+            SharedPrefs.getInstance(this).putString(Prefs.TIME_MORNING, time);
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
             calendar.set(Calendar.MINUTE, minute);
 
             morningTime.setText(TimeUtil.getTime(calendar.getTime(),
-                    prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-        }, morningHour, morningMinute, prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
+                    SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
+        }, morningHour, morningMinute, SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT));
 }
 
     protected Dialog dayDialog() {
@@ -159,14 +158,14 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
             dayHour = hourOfDay;
             dayMinute = minute;
             String time = dayHour + ":" + dayMinute;
-            prefs.savePrefs(Prefs.TIME_DAY, time);
+            SharedPrefs.getInstance(this).putString(Prefs.TIME_DAY, time);
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
             calendar.set(Calendar.MINUTE, minute);
 
             dayTime.setText(TimeUtil.getTime(calendar.getTime(),
-                    prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-        }, dayHour, dayMinute, prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
+                    SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
+        }, dayHour, dayMinute, SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT));
     }
 
     protected Dialog nightDialog() {
@@ -174,14 +173,14 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
             nightHour = hourOfDay;
             nightMinute = minute;
             String time = nightHour + ":" + nightMinute;
-            prefs.savePrefs(Prefs.TIME_NIGHT, time);
+            SharedPrefs.getInstance(this).putString(Prefs.TIME_NIGHT, time);
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
             calendar.set(Calendar.MINUTE, minute);
 
             nightTime.setText(TimeUtil.getTime(calendar.getTime(),
-                    prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-        }, nightHour, nightMinute, prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
+                    SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
+        }, nightHour, nightMinute, SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT));
     }
 
     protected Dialog eveningDialog() {
@@ -189,14 +188,14 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
             eveningHour = hourOfDay;
             eveningMinute = minute;
             String time = eveningHour + ":" + eveningMinute;
-            prefs.savePrefs(Prefs.TIME_EVENING, time);
+            SharedPrefs.getInstance(this).putString(Prefs.TIME_EVENING, time);
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
             calendar.set(Calendar.MINUTE, minute);
 
             eveningTime.setText(TimeUtil.getTime(calendar.getTime(),
-                    prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
-        }, eveningHour, eveningMinute, prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
+                    SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
+        }, eveningHour, eveningMinute, SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT));
     }
 
     @Override

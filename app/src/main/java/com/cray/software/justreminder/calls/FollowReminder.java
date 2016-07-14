@@ -86,7 +86,6 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
     private boolean mStock = true;
     private boolean mTasks = true;
 
-    private SharedPrefs mShared = new SharedPrefs(FollowReminder.this);
     private GTasksHelper mGoogleTasks = new GTasksHelper(FollowReminder.this);
     private String mNumber;
 
@@ -149,8 +148,8 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         mCalendarCheck = (RoboCheckBox) findViewById(R.id.exportCheck);
         mTasksCheck = (RoboCheckBox) findViewById(R.id.taskExport);
 
-        mCalendar = mShared.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
-        mStock = mShared.loadBoolean(Prefs.EXPORT_TO_STOCK);
+        mCalendar = SharedPrefs.getInstance(this).getBoolean(Prefs.EXPORT_TO_CALENDAR);
+        mStock = SharedPrefs.getInstance(this).getBoolean(Prefs.EXPORT_TO_STOCK);
         mTasks = mGoogleTasks.isLinked();
 
         if (mCalendar || mStock){
@@ -168,7 +167,7 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         mAfterSpinner = (Spinner) findViewById(R.id.afterTime);
         mAfterSpinner.setAdapter(getAdapter());
 
-        mIs24Hour = mShared.loadBoolean(Prefs.IS_24_TIME_FORMAT);
+        mIs24Hour = SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT);
 
         //Calculate custom time
         mCustomDateView.setText(TimeUtil.dateFormat.format(c.getTime()));

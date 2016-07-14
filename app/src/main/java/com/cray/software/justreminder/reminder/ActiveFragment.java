@@ -56,7 +56,6 @@ import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -93,6 +92,7 @@ public class ActiveFragment extends Fragment implements
      * Navigation drawer callbacks.
      */
     private NavigationCallbacks mCallbacks;
+    private Activity mContext;
 
     private Handler mHandler = new Handler();
     /**
@@ -137,7 +137,7 @@ public class ActiveFragment extends Fragment implements
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                new SyncTask(getActivity(), this, false).execute();
+                new SyncTask(mContext, this, false).execute();
                 break;
             case R.id.action_voice:
                 if (mCallbacks != null) {
@@ -148,7 +148,7 @@ public class ActiveFragment extends Fragment implements
                 filterDialog();
                 break;
             case R.id.action_exit:
-                getActivity().finish();
+                mContext.finish();
                 break;
             case R.id.action_search:
                 if (mFilterLayout.getVisibility() == View.VISIBLE) {
@@ -181,13 +181,13 @@ public class ActiveFragment extends Fragment implements
         RoboTextView emptyText = (RoboTextView) rootView.findViewById(R.id.emptyText);
         emptyText.setText(getString(R.string.no_events));
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (new ColorSetter(getActivity()).isDark()) {
+        if (new ColorSetter(mContext).isDark()) {
             emptyImage.setImageResource(R.drawable.ic_alarm_off_white_vector);
         } else {
             emptyImage.setImageResource(R.drawable.ic_alarm_off_black_vector);
         }
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.currentList);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);
         loaderAdapter(mLastGroupId, 0);
         return rootView;
@@ -196,6 +196,9 @@ public class ActiveFragment extends Fragment implements
     @Override
     public void onAttach(final Activity activity) {
         super.onAttach(activity);
+        if (mContext == null) {
+            mContext = activity;
+        }
         if (mCallbacks == null) {
             try {
                 mCallbacks = (NavigationCallbacks) activity;
@@ -203,12 +206,15 @@ public class ActiveFragment extends Fragment implements
                 throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
             }
         }
-        ((ScreenManager)activity).onSectionAttached(ScreenManager.FRAGMENT_ACTIVE);
+        ((ScreenManager) activity).onSectionAttached(ScreenManager.FRAGMENT_ACTIVE);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        if (mContext == null) {
+            mContext = (Activity) context;
+        }
         if (mCallbacks == null) {
             try {
                 mCallbacks = (NavigationCallbacks) context;
@@ -216,6 +222,7 @@ public class ActiveFragment extends Fragment implements
                 throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
             }
         }
+        ((ScreenManager) context).onSectionAttached(ScreenManager.FRAGMENT_ACTIVE);
     }
 
     @Override
@@ -227,7 +234,7 @@ public class ActiveFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.REMINDER_CHANGED)) {
+        if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.REMINDER_CHANGED)) {
             loaderAdapter(mLastGroupId, 0);
         }
     }
@@ -238,11 +245,11 @@ public class ActiveFragment extends Fragment implements
      */
     public void loaderAdapter(final String groupId, long time){
         mLastGroupId = groupId;
-        new SharedPrefs(getActivity()).saveBoolean(Prefs.REMINDER_CHANGED, false);
+        SharedPrefs.getInstance(mContext).putBoolean(Prefs.REMINDER_CHANGED, false);
         ReminderDataProvider provider;
-        if (time > 0) provider = new ReminderDataProvider(getActivity(), time);
-        else provider = new ReminderDataProvider(getActivity(), false, groupId);
-        mAdapter = new RemindersRecyclerAdapter(getActivity(), provider.getData());
+        if (time > 0) provider = new ReminderDataProvider(mContext, time);
+        else provider = new ReminderDataProvider(mContext, false, groupId);
+        mAdapter = new RemindersRecyclerAdapter(mContext, provider.getData());
         mAdapter.setEventListener(this);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -273,9 +280,8 @@ public class ActiveFragment extends Fragment implements
     private void filterDialog(){
         mGroupsIds = new ArrayList<>();
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
-                getActivity(),
-                android.R.layout.select_dialog_item);
-        DataBase db = new DataBase(getActivity());
+                mContext, android.R.layout.select_dialog_item);
+        DataBase db = new DataBase(mContext);
         db.open();
         arrayAdapter.add(getString(R.string.all));
         Cursor c = db.queryCategories();
@@ -289,7 +295,7 @@ public class ActiveFragment extends Fragment implements
         }
         if (c != null) c.close();
         db.close();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle(getString(R.string.choose_group));
         builder.setAdapter(arrayAdapter, (dialog, which) -> {
             if (which == 0) {
@@ -312,9 +318,8 @@ public class ActiveFragment extends Fragment implements
         mGroupsIds = new ArrayList<>();
         mGroupsIds.clear();
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
-                getActivity(),
-                android.R.layout.select_dialog_item);
-        DataBase db = new DataBase(getActivity());
+                mContext, android.R.layout.select_dialog_item);
+        DataBase db = new DataBase(mContext);
         db.open();
         Cursor c = db.queryCategories();
         if (c != null && c.moveToFirst()){
@@ -327,16 +332,16 @@ public class ActiveFragment extends Fragment implements
         }
         if (c != null) c.close();
         db.close();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle(getString(R.string.choose_group));
         builder.setAdapter(arrayAdapter, (dialog, which) -> {
             dialog.dismiss();
             String catId = mGroupsIds.get(which);
             if (oldUuId.matches(catId)) {
-                Messages.toast(getActivity(), getString(R.string.same_group));
+                Messages.toast(mContext, getString(R.string.same_group));
                 return;
             }
-            Reminder.setNewGroup(getActivity(), id, catId);
+            Reminder.setNewGroup(mContext, id, catId);
             loaderAdapter(mLastGroupId, 0);
         });
         AlertDialog alert = builder.create();
@@ -351,26 +356,23 @@ public class ActiveFragment extends Fragment implements
      */
     private void previewReminder(final View view, final long id, final String type){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Intent intent = new Intent(getActivity(), ReminderPreview.class);
+            Intent intent = new Intent(mContext, ReminderPreview.class);
             intent.putExtra(Constants.EDIT_ID, id);
             String transitionName = "toolbar";
             if (type.matches(Constants.TYPE_SHOPPING_LIST)){
-                intent = new Intent(getActivity(), ShopsPreview.class);
+                intent = new Intent(mContext, ShopsPreview.class);
                 intent.putExtra(Constants.EDIT_ID, id);
                 transitionName = "toolbar";
             }
-            ActivityOptionsCompat options =
-                    ActivityOptionsCompat.makeSceneTransitionAnimation(
-                            getActivity(), view, transitionName);
-            getActivity().startActivity(intent, options.toBundle());
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                            mContext, view, transitionName);
+            mContext.startActivity(intent, options.toBundle());
         } else {
             if (type.matches(Constants.TYPE_SHOPPING_LIST)){
-                getActivity().startActivity(
-                        new Intent(getActivity(), ShopsPreview.class)
+                mContext.startActivity(new Intent(mContext, ShopsPreview.class)
                                 .putExtra(Constants.EDIT_ID, id));
             } else {
-                getActivity().startActivity(
-                        new Intent(getActivity(), ReminderPreview.class)
+                mContext.startActivity(new Intent(mContext, ReminderPreview.class)
                                 .putExtra(Constants.EDIT_ID, id));
             }
         }
@@ -378,22 +380,21 @@ public class ActiveFragment extends Fragment implements
 
     @Override
     public void onItemSwitched(final int position, final View switchCompat) {
-        boolean is = Reminder.toggle(mAdapter.getItem(position).getId(), getActivity(), mCallbacks);
+        boolean is = Reminder.toggle(mAdapter.getItem(position).getId(), mContext, mCallbacks);
         if (is) loaderAdapter(mLastGroupId, 0);
         else mAdapter.notifyItemChanged(position);
     }
 
     @Override
     public void onItemClicked(final int position, final View view) {
-        SharedPrefs prefs = new SharedPrefs(getActivity());
         ReminderModel item = mAdapter.getItem(position);
-        if (prefs.loadBoolean(Prefs.ITEM_PREVIEW)) {
+        if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.ITEM_PREVIEW)) {
             previewReminder(view, item.getId(), item.getType());
         } else {
             if (item.getType().matches(Constants.TYPE_SHOPPING_LIST)){
                 previewReminder(view, item.getId(), item.getType());
             } else {
-                Reminder.toggle(item.getId(), getActivity(), mCallbacks);
+                Reminder.toggle(item.getId(), mContext, mCallbacks);
                 loaderAdapter(mLastGroupId, 0);
             }
         }
@@ -403,21 +404,21 @@ public class ActiveFragment extends Fragment implements
     public void onItemLongClicked(final int position, final View view) {
         final String[] items = {getString(R.string.open), getString(R.string.edit),
                 getString(R.string.change_group), getString(R.string.move_to_trash)};
-        Dialogues.showLCAM(getActivity(), item -> {
+        Dialogues.showLCAM(mContext, item -> {
             ReminderModel item1 = mAdapter.getItem(position);
             switch (item){
                 case 0:
                     previewReminder(view, item1.getId(), item1.getType());
                     break;
                 case 1:
-                    Reminder.edit(item1.getId(), getActivity());
+                    Reminder.edit(item1.getId(), mContext);
                     break;
                 case 2:
                     changeGroup(item1.getGroupId(), item1.getId());
                     break;
                 case 3:
                     mAdapter.removeItem(position);
-                    Reminder.moveToTrash(item1.getId(), getActivity(), mCallbacks);
+                    Reminder.moveToTrash(item1.getId(), mContext, mCallbacks);
                     //loaderAdapter(null, 0);
                     break;
             }
@@ -426,7 +427,7 @@ public class ActiveFragment extends Fragment implements
 
     @Override
     public void endExecution(final boolean result) {
-        if (getActivity() != null) {
+        if (mContext != null) {
             loaderAdapter(mLastGroupId, 0);
         }
     }

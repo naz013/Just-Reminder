@@ -79,7 +79,7 @@ public class PlaceDataProvider {
     private void loadReminders() {
         data.clear();
         NextBase db = new NextBase(mContext);
-        int mRadius = new SharedPrefs(mContext).loadInt(Prefs.LOCATION_RADIUS);
+        int mRadius = SharedPrefs.getInstance(mContext).getInt(Prefs.LOCATION_RADIUS);
         db.open();
         Cursor c = db.queryAllLocations();
         if (c != null && c.moveToNext()) {

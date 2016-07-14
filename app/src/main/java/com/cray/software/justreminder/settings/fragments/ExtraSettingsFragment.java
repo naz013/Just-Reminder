@@ -43,33 +43,30 @@ public class ExtraSettingsFragment extends Fragment implements
     private SharedPrefs sPrefs;
     private ActionBar ab;
     private TextView templates;
-    
     private PrefsView missedPrefs, missedTimePrefs, quickSMSPrefs, followReminderPrefs;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View rootView = inflater.inflate(R.layout.settings_extra, container, false);
-
-        ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (ab != null){
             ab.setTitle(R.string.additional);
         }
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
+        sPrefs = SharedPrefs.getInstance(getActivity());
 
         missedPrefs = (PrefsView) rootView.findViewById(R.id.missedPrefs);
-        missedPrefs.setChecked(sPrefs.loadBoolean(Prefs.MISSED_CALL_REMINDER));
+        missedPrefs.setChecked(sPrefs.getBoolean(Prefs.MISSED_CALL_REMINDER));
         missedPrefs.setOnClickListener(this);
 
         missedTimePrefs = (PrefsView) rootView.findViewById(R.id.missedTimePrefs);
         missedTimePrefs.setOnClickListener(this);
 
         quickSMSPrefs = (PrefsView) rootView.findViewById(R.id.quickSMSPrefs);
-        quickSMSPrefs.setChecked(sPrefs.loadBoolean(Prefs.QUICK_SMS));
+        quickSMSPrefs.setChecked(sPrefs.getBoolean(Prefs.QUICK_SMS));
         quickSMSPrefs.setOnClickListener(this);
 
         followReminderPrefs = (PrefsView) rootView.findViewById(R.id.followReminderPrefs);
-        followReminderPrefs.setChecked(sPrefs.loadBoolean(Prefs.FOLLOW_REMINDER));
+        followReminderPrefs.setChecked(sPrefs.getBoolean(Prefs.FOLLOW_REMINDER));
         followReminderPrefs.setOnClickListener(this);
 
         templates = (TextView) rootView.findViewById(R.id.templates);
@@ -90,12 +87,11 @@ public class ExtraSettingsFragment extends Fragment implements
     }
 
     private void missedChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (missedPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.MISSED_CALL_REMINDER, false);
+            sPrefs.putBoolean(Prefs.MISSED_CALL_REMINDER, false);
             missedPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.MISSED_CALL_REMINDER, true);
+            sPrefs.putBoolean(Prefs.MISSED_CALL_REMINDER, true);
             missedPrefs.setChecked(true);
         }
         checkMissedEnabling();
@@ -110,24 +106,22 @@ public class ExtraSettingsFragment extends Fragment implements
     }
 
     private void quickChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (quickSMSPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.QUICK_SMS, false);
+            sPrefs.putBoolean(Prefs.QUICK_SMS, false);
             quickSMSPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.QUICK_SMS, true);
+            sPrefs.putBoolean(Prefs.QUICK_SMS, true);
             quickSMSPrefs.setChecked(true);
         }
         checkQuickEnabling();
     }
 
     private void followChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (followReminderPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.FOLLOW_REMINDER, false);
+            sPrefs.putBoolean(Prefs.FOLLOW_REMINDER, false);
             followReminderPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.FOLLOW_REMINDER, true);
+            sPrefs.putBoolean(Prefs.FOLLOW_REMINDER, true);
             followReminderPrefs.setChecked(true);
         }
     }
@@ -140,7 +134,7 @@ public class ExtraSettingsFragment extends Fragment implements
     @Override
     public void onDetach() {
         super.onDetach();
-        ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (ab != null){
             ab.setTitle(R.string.action_settings);
         }

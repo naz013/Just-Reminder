@@ -33,7 +33,6 @@ import com.cray.software.justreminder.roboto_views.RoboTextView;
 public class SelectVolume extends Activity {
 
     private RoboTextView radiusValue;
-    private SharedPrefs sPrefs;
     private boolean isDark;
     private ImageView volumeImage;
     private int volume, code;
@@ -48,16 +47,16 @@ public class SelectVolume extends Activity {
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
         code = getIntent().getIntExtra("int", 0);
 
-        sPrefs = new SharedPrefs(SelectVolume.this);
+        SharedPrefs sPrefs = SharedPrefs.getInstance(this);
         isDark = cs.isDark();
 
         radiusValue = (RoboTextView) findViewById(R.id.radiusValue);
-        radiusValue.setText(String.valueOf(sPrefs.loadInt(Prefs.VOLUME)));
+        radiusValue.setText(String.valueOf(sPrefs.getInt(Prefs.VOLUME)));
 
         volumeImage = (ImageView) findViewById(R.id.volumeImage);
 
         SeekBar radiusBar = (SeekBar) findViewById(R.id.radiusBar);
-        int n = sPrefs.loadInt(Prefs.VOLUME);
+        int n = sPrefs.getInt(Prefs.VOLUME);
         radiusBar.setProgress(n);
         radiusValue.setText(String.valueOf(n));
         setValue(n);
@@ -67,7 +66,7 @@ public class SelectVolume extends Activity {
                 if (code == 1) {
                     volume = i;
                 } else {
-                    sPrefs.saveInt(Prefs.VOLUME, i);
+                    sPrefs.putInt(Prefs.VOLUME, i);
                 }
                 radiusValue.setText(String.valueOf(i));
                 setValue(i);

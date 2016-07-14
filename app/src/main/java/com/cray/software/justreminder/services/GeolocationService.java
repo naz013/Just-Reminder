@@ -85,9 +85,8 @@ public class GeolocationService extends Service {
 
     private void updateListener() {
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        SharedPrefs prefs = new SharedPrefs(getApplicationContext());
-        long time = (prefs.loadInt(Prefs.TRACK_TIME) * 1000);
-        int distance = prefs.loadInt(Prefs.TRACK_DISTANCE);
+        long time = (SharedPrefs.getInstance(getApplicationContext()).getInt(Prefs.TRACK_TIME) * 1000);
+        int distance = SharedPrefs.getInstance(getApplicationContext()).getInt(Prefs.TRACK_DISTANCE);
         if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
         } else {

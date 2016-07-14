@@ -64,7 +64,6 @@ public class CloudDrives extends AppCompatActivity {
 
     private DropboxHelper dbx = new DropboxHelper(CloudDrives.this);
     private GDriveHelper gdx = new GDriveHelper(CloudDrives.this);
-    private SharedPrefs prefs = new SharedPrefs(CloudDrives.this);
 
     private RoboButton linkDropbox, linkGDrive;
     private RoboTextView gDriveTitle, dropboxTitle;
@@ -115,7 +114,7 @@ public class CloudDrives extends AppCompatActivity {
                     dbx.startLink();
                 }
             }
-            prefs.saveBoolean(Prefs.UI_CHANGED, true);
+            SharedPrefs.getInstance(this).putBoolean(Prefs.UI_CHANGED, true);
         });
 
         linkGDrive = (RoboButton) findViewById(R.id.linkGDrive);
@@ -162,7 +161,7 @@ public class CloudDrives extends AppCompatActivity {
                     new String[]{"com.google"}, false, null, null, null, null);
             startActivityForResult(intent, REQUEST_AUTHORIZATION);
         }
-        prefs.saveBoolean(Prefs.UI_CHANGED, true);
+        SharedPrefs.getInstance(this).putBoolean(Prefs.UI_CHANGED, true);
     }
 
     @Override
@@ -327,7 +326,7 @@ public class CloudDrives extends AppCompatActivity {
     }
 
     private void startSync(String accountName) {
-        prefs.savePrefs(Prefs.DRIVE_USER, SyncHelper.encrypt(accountName));
+        SharedPrefs.getInstance(this).putString(Prefs.DRIVE_USER, SyncHelper.encrypt(accountName));
         new GetTasksListsAsync(CloudDrives.this, null).execute();
     }
 }

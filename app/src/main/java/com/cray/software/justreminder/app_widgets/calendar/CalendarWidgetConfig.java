@@ -128,7 +128,7 @@ public class CalendarWidgetConfig extends AppCompatActivity {
         editor.putInt(CALENDAR_WIDGET_THEME + widgetID, position);
         editor.putInt(CALENDAR_WIDGET_MONTH + widgetID, month);
         editor.putInt(CALENDAR_WIDGET_YEAR + widgetID, year);
-        editor.commit();
+        editor.apply();
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         CalendarWidget.updateWidget(CalendarWidgetConfig.this, appWidgetManager, sp, widgetID);

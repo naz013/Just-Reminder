@@ -18,6 +18,7 @@ package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -37,6 +38,7 @@ public class GeolocationFragment extends Fragment implements SimpleListener {
 
     private PlaceDataProvider provider;
     private MapFragment fragment;
+    private Activity mContext;
 
     public static GeolocationFragment newInstance() {
         return new GeolocationFragment();
@@ -48,8 +50,16 @@ public class GeolocationFragment extends Fragment implements SimpleListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(false);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (mContext == null) {
+            mContext = (Activity) context;
+        }
+        ((ScreenManager) context).onSectionAttached(ScreenManager.FRAGMENT_LOCATIONS);
     }
 
     @Override
@@ -58,7 +68,7 @@ public class GeolocationFragment extends Fragment implements SimpleListener {
         View rootView = inflater.inflate(R.layout.fragment_geolocation_layout, container, false);
 
         fragment = MapFragment.newInstance(false, true, false, false, false, false,
-                new ColorSetter(getActivity()).isDark());
+                new ColorSetter(mContext).isDark());
         fragment.setAdapter(loadPlaces());
 
         getChildFragmentManager().beginTransaction()
@@ -69,14 +79,14 @@ public class GeolocationFragment extends Fragment implements SimpleListener {
     }
 
     private PlaceRecyclerAdapter loadPlaces(){
-        provider = new PlaceDataProvider(getActivity(), false);
-        PlaceRecyclerAdapter adapter = new PlaceRecyclerAdapter(getActivity(), provider, true);
+        provider = new PlaceDataProvider(mContext, false);
+        PlaceRecyclerAdapter adapter = new PlaceRecyclerAdapter(mContext, provider, true);
         adapter.setEventListener(this);
         return adapter;
     }
 
     private void editPlace(int position){
-        Reminder.edit(provider.getItem(position).getId(), getActivity());
+        Reminder.edit(provider.getItem(position).getId(), mContext);
     }
 
     private void moveToPlace(int position){
@@ -86,7 +96,10 @@ public class GeolocationFragment extends Fragment implements SimpleListener {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        ((ScreenManager)activity).onSectionAttached(ScreenManager.FRAGMENT_LOCATIONS);
+        if (mContext == null) {
+            mContext = activity;
+        }
+        ((ScreenManager) activity).onSectionAttached(ScreenManager.FRAGMENT_LOCATIONS);
     }
 
     @Override
@@ -108,7 +121,7 @@ public class GeolocationFragment extends Fragment implements SimpleListener {
     @Override
     public void onItemLongClicked(final int position, View view) {
         final CharSequence[] items = {getString(R.string.edit)};
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setItems(items, (dialog, which) -> {
             dialog.dismiss();
             if (which == 0) {

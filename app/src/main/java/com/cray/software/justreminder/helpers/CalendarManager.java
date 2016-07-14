@@ -38,12 +38,10 @@ import java.util.TimeZone;
  */
 public class CalendarManager {
 
-    private Context ctx;
-    private SharedPrefs sPrefs;
+    private Context mContext;
 
     public CalendarManager(Context context){
-        this.ctx = context;
-        sPrefs = new SharedPrefs(context);
+        this.mContext = context;
     }
 
     /**
@@ -53,16 +51,15 @@ public class CalendarManager {
      * @param id local reminder id.
      */
     public void addEvent(String summary, long startTime, long id){
-        sPrefs = new SharedPrefs(ctx);
-        int mId = sPrefs.loadInt(Prefs.CALENDAR_ID);
+        int mId = SharedPrefs.getInstance(mContext).getInt(Prefs.CALENDAR_ID);
         if (mId != 0){
             TimeZone tz = TimeZone.getDefault();
             String timeZone = tz.getDisplayName();
-            ContentResolver cr = ctx.getContentResolver();
+            ContentResolver cr = mContext.getContentResolver();
             ContentValues values = new ContentValues();
             values.put(CalendarContract.Events.DTSTART, startTime);
             values.put(CalendarContract.Events.DTEND, startTime +
-                    (60 * 1000 * sPrefs.loadInt(Prefs.EVENT_DURATION)));
+                    (60 * 1000 * SharedPrefs.getInstance(mContext).getInt(Prefs.EVENT_DURATION)));
             if (summary != null) {
                 values.put(CalendarContract.Events.TITLE, summary);
             }
@@ -70,12 +67,12 @@ public class CalendarManager {
             values.put(CalendarContract.Events.EVENT_TIMEZONE, timeZone);
             values.put(CalendarContract.Events.ALL_DAY, 0);
             values.put(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CONFIRMED);
-            values.put(CalendarContract.Events.DESCRIPTION, ctx.getString(R.string.from_reminder));
+            values.put(CalendarContract.Events.DESCRIPTION, mContext.getString(R.string.from_reminder));
             Uri l_eventUri = Uri.parse("content://com.android.calendar/events");
             Uri event;
             try {
                 event = cr.insert(l_eventUri, values);
-                DataBase db = new DataBase(ctx);
+                DataBase db = new DataBase(mContext);
                 db.open();
                 if (event != null) {
                     long eventID = Long.parseLong(event.getLastPathSegment());
@@ -83,7 +80,7 @@ public class CalendarManager {
                 }
                 db.close();
             } catch (Exception e) {
-                Toast.makeText(ctx, R.string.no_calendars_found, Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, R.string.no_calendars_found, Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -93,14 +90,14 @@ public class CalendarManager {
      * @param id event identifier inside application.
      */
     public void deleteEvents(long id){
-        DataBase db = new DataBase(ctx);
+        DataBase db = new DataBase(mContext);
         db.open();
         Cursor c = db.getCalendarEvents(id);
         if (c != null && c.moveToFirst()){
             do {
                 long mID = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
                 long eventId = c.getLong(c.getColumnIndex(Constants.COLUMN_EVENT_ID));
-                ContentResolver cr = ctx.getContentResolver();
+                ContentResolver cr = mContext.getContentResolver();
                 cr.delete(CalendarContract.Events.CONTENT_URI,
                         CalendarContract.Events._ID + "='" + eventId + "'", null);
                 db.deleteCalendarEvent(mID);
@@ -116,15 +113,14 @@ public class CalendarManager {
      * @param startTime event start time in milliseconds.
      */
     public void addEventToStock(String summary, long startTime){
-        sPrefs = new SharedPrefs(ctx);
         Intent intent = new Intent(Intent.ACTION_INSERT)
                 .setData(CalendarContract.Events.CONTENT_URI)
                 .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime)
                 .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, startTime +
-                        (60 * 1000 * sPrefs.loadInt(Prefs.EVENT_DURATION)))
+                        (60 * 1000 * SharedPrefs.getInstance(mContext).getInt(Prefs.EVENT_DURATION)))
                 .putExtra(CalendarContract.Events.TITLE, summary)
-                .putExtra(CalendarContract.Events.DESCRIPTION, ctx.getString(R.string.from_reminder));
-        ctx.startActivity(intent);
+                .putExtra(CalendarContract.Events.DESCRIPTION, mContext.getString(R.string.from_reminder));
+        mContext.startActivity(intent);
     }
 
     /**
@@ -143,7 +139,7 @@ public class CalendarManager {
         };
         Cursor c = null;
         try {
-            c = ctx.getContentResolver().query(uri, mProjection, null, null, null);
+            c = mContext.getContentResolver().query(uri, mProjection, null, null, null);
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -155,7 +151,6 @@ public class CalendarManager {
             } while (c.moveToNext());
         }
         if (c != null) c.close();
-
         if (ids.size() == 0) return null;
         else return ids;
     }
@@ -176,7 +171,7 @@ public class CalendarManager {
         };
         Cursor c = null;
         try {
-            c = ctx.getContentResolver().query(uri, mProjection, null, null, null);
+            c = mContext.getContentResolver().query(uri, mProjection, null, null, null);
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -200,8 +195,7 @@ public class CalendarManager {
      */
     public ArrayList<EventItem> getEvents(int id){
         ArrayList<EventItem> list = new ArrayList<>();
-
-        ContentResolver contentResolver = ctx.getContentResolver();
+        ContentResolver contentResolver = mContext.getContentResolver();
         Cursor c = contentResolver.query(CalendarContract.Events.CONTENT_URI,
                 new String[]{CalendarContract.Events.TITLE,
                         CalendarContract.Events.DESCRIPTION,
@@ -288,7 +282,6 @@ public class CalendarManager {
     }
 
     public class CalendarItem{
-
         private String name;
         private int id;
 

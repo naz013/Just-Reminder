@@ -16,6 +16,7 @@
 package com.cray.software.justreminder.reminder;
 
 import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -49,6 +50,7 @@ public class TrashFragment extends Fragment implements RecyclerListener {
     private RemindersRecyclerAdapter mAdapter;
 
     private NavigationCallbacks mCallbacks;
+    private Activity mContext;
 
     public static TrashFragment newInstance() {
         return new TrashFragment();
@@ -60,14 +62,13 @@ public class TrashFragment extends Fragment implements RecyclerListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.archive_menu, menu);
-        NextBase db = new NextBase(getActivity());
+        NextBase db = new NextBase(mContext);
         db.open();
         Cursor c = db.getArchivedReminders();
         if (c.getCount() == 0){
@@ -98,13 +99,13 @@ public class TrashFragment extends Fragment implements RecyclerListener {
         RoboTextView emptyText = (RoboTextView) rootView.findViewById(R.id.emptyText);
         emptyText.setText(R.string.trash_is_empty);
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (new ColorSetter(getActivity()).isDark()) {
+        if (new ColorSetter(mContext).isDark()) {
             emptyImage.setImageResource(R.drawable.ic_delete_white_vector);
         } else {
             emptyImage.setImageResource(R.drawable.ic_delete_black_vector);
         }
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
         currentList.setLayoutManager(mLayoutManager);
         loaderAdapter();
         return rootView;
@@ -113,12 +114,33 @@ public class TrashFragment extends Fragment implements RecyclerListener {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mCallbacks = (NavigationCallbacks) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+        if (mContext == null) {
+            mContext = activity;
         }
-        ((ScreenManager)activity).onSectionAttached(ScreenManager.FRAGMENT_ARCHIVE);
+        if (mCallbacks == null) {
+            try {
+                mCallbacks = (NavigationCallbacks) activity;
+            } catch (ClassCastException e) {
+                throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+            }
+        }
+        ((ScreenManager) activity).onSectionAttached(ScreenManager.FRAGMENT_ARCHIVE);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (mContext == null) {
+            mContext = (Activity) context;
+        }
+        if (mCallbacks == null) {
+            try {
+                mCallbacks = (NavigationCallbacks) context;
+            } catch (ClassCastException e) {
+                throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+            }
+        }
+        ((ScreenManager) context).onSectionAttached(ScreenManager.FRAGMENT_ARCHIVE);
     }
 
     @Override
@@ -130,15 +152,15 @@ public class TrashFragment extends Fragment implements RecyclerListener {
     @Override
     public void onResume() {
         super.onResume();
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.REMINDER_CHANGED)) {
+        if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.REMINDER_CHANGED)) {
             loaderAdapter();
         }
     }
 
     public void loaderAdapter(){
-        new SharedPrefs(getActivity()).saveBoolean(Prefs.REMINDER_CHANGED, false);
-        ReminderDataProvider provider = new ReminderDataProvider(getActivity(), true, null);
-        mAdapter = new RemindersRecyclerAdapter(getActivity(), provider.getData());
+        SharedPrefs.getInstance(mContext).putBoolean(Prefs.REMINDER_CHANGED, false);
+        ReminderDataProvider provider = new ReminderDataProvider(mContext, true, null);
+        mAdapter = new RemindersRecyclerAdapter(mContext, provider.getData());
         mAdapter.setEventListener(this);
         currentList.setAdapter(mAdapter);
         currentList.setItemAnimator(new DefaultItemAnimator());
@@ -159,13 +181,13 @@ public class TrashFragment extends Fragment implements RecyclerListener {
     }
 
     private void deleteAll(){
-        NextBase db = new NextBase(getActivity());
+        NextBase db = new NextBase(mContext);
         if (!db.isOpen()) db.open();
         Cursor c = db.getArchivedReminders();
         if (c != null && c.moveToFirst()){
             do{
                 long rowId = c.getLong(c.getColumnIndex(NextBase._ID));
-                Reminder.delete(rowId, getActivity());
+                Reminder.delete(rowId, mContext);
             }while (c.moveToNext());
         }
         if (c != null) c.close();
@@ -178,19 +200,19 @@ public class TrashFragment extends Fragment implements RecyclerListener {
 
     @Override
     public void onItemClicked(int position, View view) {
-        Reminder.edit(mAdapter.getItem(position).getId(), getActivity());
+        Reminder.edit(mAdapter.getItem(position).getId(), mContext);
     }
 
     @Override
     public void onItemLongClicked(final int position, View view) {
         final String[] items = {getString(R.string.edit), getString(R.string.delete)};
-        Dialogues.showLCAM(getActivity(), item -> {
+        Dialogues.showLCAM(mContext, item -> {
             ReminderModel item1 = mAdapter.getItem(position);
             if (item == 0) {
-                Reminder.edit(item1.getId(), getActivity());
+                Reminder.edit(item1.getId(), mContext);
             }
             if (item == 1) {
-                Reminder.delete(item1.getId(), getActivity());
+                Reminder.delete(item1.getId(), mContext);
                 if (mCallbacks != null) {
                     mCallbacks.showSnackbar(R.string.deleted);
                 }

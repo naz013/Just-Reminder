@@ -127,8 +127,7 @@ public class QuickReminderWidgetConfig extends AppCompatActivity {
                 SharedPreferences sp = getSharedPreferences(QUICK_REMINDER_WIDGET_PREF, MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putInt(QUICK_REMINDER_WIDGET_COLOR + widgetID, color);
-                editor.commit();
-
+                editor.apply();
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
                 QuickReminderWidget.updateWidget(QuickReminderWidgetConfig.this, appWidgetManager, sp, widgetID);
                 setResult(RESULT_OK, resultValue);

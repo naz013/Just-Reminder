@@ -17,6 +17,7 @@
 package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -49,8 +50,7 @@ import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.squareup.picasso.Picasso;
 
-public class NavigationDrawerFragment extends Fragment implements 
-        View.OnClickListener {
+public class NavigationDrawerFragment extends Fragment implements View.OnClickListener {
 
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
@@ -78,6 +78,8 @@ public class NavigationDrawerFragment extends Fragment implements
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
+    private Activity mContext;
+
     public NavigationDrawerFragment() {
     }
 
@@ -87,7 +89,7 @@ public class NavigationDrawerFragment extends Fragment implements
         // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true);
 
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(mContext);
         mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
 
         if (savedInstanceState != null) {
@@ -107,7 +109,7 @@ public class NavigationDrawerFragment extends Fragment implements
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
 
-        rootView.findViewById(R.id.drawerBg).setBackgroundColor(new ColorSetter(getActivity()).getBackgroundStyle());
+        rootView.findViewById(R.id.drawerBg).setBackgroundColor(new ColorSetter(mContext).getBackgroundStyle());
         image = (ImageView) rootView.findViewById(R.id.image);
         appNameBanner = (RoboTextView) rootView.findViewById(R.id.appNameBanner);
         String appName;
@@ -172,7 +174,7 @@ public class NavigationDrawerFragment extends Fragment implements
         if (!Module.isPro()){
             RelativeLayout ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);
             ImageView basket = (ImageView) rootView.findViewById(R.id.basket);
-            if (new ColorSetter(getActivity()).isDark()){
+            if (new ColorSetter(mContext).isDark()){
                 basket.setImageResource(R.drawable.market_icon_white);
             } else {
                 basket.setImageResource(R.drawable.market_icon);
@@ -189,26 +191,23 @@ public class NavigationDrawerFragment extends Fragment implements
     }
 
     private void reloadItems(){
-        appNameBanner.setTextColor(ViewUtils.getColor(getActivity(), R.color.whitePrimary));
+        appNameBanner.setTextColor(ViewUtils.getColor(mContext, R.color.whitePrimary));
         DisplayMetrics metrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        mContext.getWindowManager().getDefaultDisplay().getMetrics(metrics);
         double width = metrics.widthPixels * 0.5;
-        int height = QuickReturnUtils.dp2px(getActivity(), 275);
-        Picasso.with(getActivity())
+        int height = QuickReturnUtils.dp2px(mContext, 275);
+        Picasso.with(mContext)
                 .load(R.drawable.photo_main)
                 .resize((int) width, height)
                 .into(image);
         image.setVisibility(View.VISIBLE);
-
-        if (new GTasksHelper(getActivity()).isLinked()) {
+        if (new GTasksHelper(mContext).isLinked()) {
             googleTasks.setVisibility(View.VISIBLE);
         }
-
-        DataBase db = new DataBase(getActivity());
-        SharedPrefs sPrefs = new SharedPrefs(getActivity());
+        DataBase db = new DataBase(mContext);
         if (!db.isOpen()) db.open();
         Cursor c = db.queryTemplates();
-        if (c != null && c.moveToFirst() && sPrefs.loadBoolean(Prefs.QUICK_SMS)){
+        if (c != null && c.moveToFirst() && SharedPrefs.getInstance(mContext).getBoolean(Prefs.QUICK_SMS)){
             templates.setVisibility(View.VISIBLE);
         }
         if (!db.isOpen()) db.open();
@@ -221,7 +220,7 @@ public class NavigationDrawerFragment extends Fragment implements
     }
 
     private boolean isAppInstalled(String packageName) {
-        PackageManager pm = getActivity().getPackageManager();
+        PackageManager pm = mContext.getPackageManager();
         boolean installed;
         try {
             pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
@@ -233,7 +232,7 @@ public class NavigationDrawerFragment extends Fragment implements
     }
 
     private void loadMenu() {
-        if (!new ColorSetter(getActivity()).isDark()){
+        if (!new ColorSetter(mContext).isDark()){
             activeScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_notifications_black_24dp, 0, 0, 0);
             archiveScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_delete_black_24dp, 0, 0, 0);
             calendar.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_today_black_vector, 0, 0, 0);
@@ -261,11 +260,10 @@ public class NavigationDrawerFragment extends Fragment implements
     }
 
     public void setUp(int fragmentId, DrawerLayout drawerLayout, Toolbar toolbar) {
-        mFragmentContainerView = getActivity().findViewById(fragmentId);
+        mFragmentContainerView = mContext.findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
-
         mDrawerToggle = new ActionBarDrawerToggle(
-                getActivity(),                    /* host Activity */
+                mContext,                    /* host Activity */
                 mDrawerLayout,                    /* DrawerLayout object */
                 toolbar,             /* nav drawer image to replace 'Up' caret */
                 R.string.app_name,  /* "open drawer" description for accessibility */
@@ -277,42 +275,33 @@ public class NavigationDrawerFragment extends Fragment implements
                 if (!isAdded()) {
                     return;
                 }
-
                 getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
-
                 if (mCallbacks != null) {
                     mCallbacks.isDrawerOpen(false);
                 }
             }
-
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 if (!isAdded()) {
                     return;
                 }
-
                 if (!mUserLearnedDrawer) {
                     mUserLearnedDrawer = true;
                     SharedPreferences sp = PreferenceManager
-                            .getDefaultSharedPreferences(getActivity());
+                            .getDefaultSharedPreferences(mContext);
                     sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
                 }
-
                 getActivity().supportInvalidateOptionsMenu(); // calls onPrepareOptionsMenu()
-
                 if (mCallbacks != null) {
                     mCallbacks.isDrawerOpen(true);
                 }
             }
         };
-
         if (!mUserLearnedDrawer && !mFromSavedInstanceState) {
             mDrawerLayout.openDrawer(mFragmentContainerView);
         }
-
         mDrawerLayout.post(() -> mDrawerToggle.syncState());
-
         mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
 
@@ -375,12 +364,32 @@ public class NavigationDrawerFragment extends Fragment implements
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (mContext == null) {
+            mContext = (Activity) context;
+        }
+        if (mCallbacks == null) {
+            try {
+                mCallbacks = (NavigationCallbacks) context;
+            } catch (ClassCastException e) {
+                throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+            }
+        }
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mCallbacks = (NavigationCallbacks) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+        if (mContext == null) {
+            mContext = activity;
+        }
+        if (mCallbacks == null) {
+            try {
+                mCallbacks = (NavigationCallbacks) activity;
+            } catch (ClassCastException e) {
+                throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+            }
         }
     }
 
@@ -432,8 +441,7 @@ public class NavigationDrawerFragment extends Fragment implements
                 disableItem(ScreenManager.FRAGMENT_TASKS);
                 break;
             case R.id.calendar:
-                SharedPrefs sPrefs = new SharedPrefs(getActivity());
-                if (sPrefs.loadInt(Prefs.LAST_CALENDAR_VIEW) == 1) {
+                if (SharedPrefs.getInstance(mContext).getInt(Prefs.LAST_CALENDAR_VIEW) == 1) {
                     selectItem(ScreenManager.ACTION_CALENDAR, true);
                     disableItem(ScreenManager.ACTION_CALENDAR);
                 } else {

@@ -50,19 +50,12 @@ public class TaskListFragment extends Fragment implements SyncListener {
         this.datas = datas;
     }
 
-    public void setmCallbacks(NavigationCallbacks mCallbacks) {
+    public void setCallbacks(NavigationCallbacks mCallbacks) {
         this.mCallbacks = mCallbacks;
     }
 
     public static TaskListFragment newInstance() {
-        TaskListFragment pageFragment = new TaskListFragment();
-        return pageFragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Bundle intent = getArguments();
+        return new TaskListFragment();
     }
 
     @Override

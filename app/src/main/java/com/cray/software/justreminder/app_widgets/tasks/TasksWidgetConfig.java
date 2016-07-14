@@ -117,8 +117,7 @@ public class TasksWidgetConfig extends AppCompatActivity {
         SharedPreferences sp = getSharedPreferences(TASKS_WIDGET_PREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putInt(TASKS_WIDGET_THEME + widgetID, mThemePager.getCurrentItem());
-        editor.commit();
-
+        editor.apply();
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         TasksWidget.updateWidget(TasksWidgetConfig.this, appWidgetManager, sp, widgetID);
         setResult(RESULT_OK, resultValue);

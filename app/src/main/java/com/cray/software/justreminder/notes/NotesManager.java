@@ -117,7 +117,6 @@ public class NotesManager extends AppCompatActivity {
     private ImageView noteImage;
 
     private ColorSetter cSetter = new ColorSetter(NotesManager.this);
-    private SharedPrefs sPrefs = new SharedPrefs(NotesManager.this);
 
     private long id;
     private Toolbar toolbar;
@@ -136,12 +135,8 @@ public class NotesManager extends AppCompatActivity {
         }
         setContentView(R.layout.create_note_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());
-
-        sPrefs = new SharedPrefs(NotesManager.this);
-
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         toolbar.setOnMenuItemClickListener(item -> {
                     switch (item.getItemId()) {
                         case R.id.action_color:
@@ -181,7 +176,7 @@ public class NotesManager extends AppCompatActivity {
         toolbar.inflateMenu(R.menu.create_note);
 
         taskField = (EditText) findViewById(R.id.task_message);
-        taskField.setTextSize(sPrefs.loadInt(Prefs.TEXT_SIZE) + 12);
+        taskField.setTextSize(SharedPrefs.getInstance(this).getInt(Prefs.TEXT_SIZE) + 12);
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -257,8 +252,7 @@ public class NotesManager extends AppCompatActivity {
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(v -> {
-            sPrefs = new SharedPrefs(NotesManager.this);
-            sPrefs.saveBoolean("isNew", true);
+            SharedPrefs.getInstance(this).putBoolean("isNew", true);
             saveNote();
         });
         mFab.setOnLongClickListener(v -> {
@@ -283,7 +277,7 @@ public class NotesManager extends AppCompatActivity {
             Cursor c = db.getNote(id);
             if (c != null && c.moveToFirst()){
                 String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
-                if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
+                if (SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT)){
                     note = SyncHelper.decrypt(note);
                 }
                 uuID = c.getString(c.getColumnIndex(Constants.COLUMN_UUID));
@@ -478,7 +472,7 @@ public class NotesManager extends AppCompatActivity {
         remindDate.setText(dayStr + "/" + monthStr + "/" + String.valueOf(myYear));
 
         remindTime.setText(TimeUtil.getTime(calendar.getTime(),
-                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+                SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
     }
 
     private boolean isReminderAttached(){
@@ -512,13 +506,13 @@ public class NotesManager extends AppCompatActivity {
         NotesBase db = new NotesBase(NotesManager.this);
         db.open();
         if (id != 0){
-            if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
+            if (SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT)){
                 db.updateNote(id, SyncHelper.encrypt(note), date, color, uuID, image, style);
             } else {
                 db.updateNote(id, note, date, color, uuID, image, style);
             }
         } else {
-            if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
+            if (SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT)){
                 id = db.saveNote(SyncHelper.encrypt(note), date, color, uuID, image, style);
             } else {
                 id = db.saveNote(note, date, color, uuID, image, style);
@@ -543,7 +537,7 @@ public class NotesManager extends AppCompatActivity {
             db.linkToReminder(id, remId);
         }
         db.close();
-        new SharedPrefs(this).saveBoolean(Prefs.NOTE_CHANGED, true);
+        SharedPrefs.getInstance(this).putBoolean(Prefs.NOTE_CHANGED, true);
         new UpdatesHelper(NotesManager.this).updateNotesWidget();
         finish();
     }
@@ -564,8 +558,8 @@ public class NotesManager extends AppCompatActivity {
         builder.setMessage(getString(R.string.delete_this_note));
         builder.setPositiveButton(getString(R.string.yes), (dialog, which) -> {
             dialog.dismiss();
-            NoteModel.deleteNote(id, NotesManager.this, null);
-            new SharedPrefs(NotesManager.this).saveBoolean("isNew", true);
+            Note.deleteNote(id, NotesManager.this, null);
+            SharedPrefs.getInstance(this).putBoolean("isNew", true);
             finish();
         });
         builder.setNegativeButton(getString(R.string.no), (dialog, which) -> {
@@ -770,7 +764,7 @@ public class NotesManager extends AppCompatActivity {
 
     protected Dialog timeDialog() {
         return new TimePickerDialog(this, myCallBack, myHour, myMinute,
-                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
+                SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT));
     }
 
     TimePickerDialog.OnTimeSetListener myCallBack = new TimePickerDialog.OnTimeSetListener() {
@@ -783,7 +777,7 @@ public class NotesManager extends AppCompatActivity {
             c.set(Calendar.MINUTE, minute);
 
             remindTime.setText(TimeUtil.getTime(c.getTime(),
-                    new SharedPrefs(NotesManager.this).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+                    SharedPrefs.getInstance(NotesManager.this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
         }
     };
 

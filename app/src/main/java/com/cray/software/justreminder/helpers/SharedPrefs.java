@@ -35,12 +35,20 @@ import java.util.Map;
  */
 public class SharedPrefs {
     private SharedPreferences prefs;
-    private Context mContext;
-    public static final String APP_UI_PREFERENCES = "ui_settings";
-    public static final String APP_CHANGES_PREFERENCES = "changes_settings";
-    private static int MODE = Context.MODE_PRIVATE;
-    public SharedPrefs(Context context){
-        this.mContext = context;
+    private static SharedPrefs sharedPrefs;
+
+    private SharedPrefs() {
+    }
+
+    public static SharedPrefs getInstance(Context context) {
+        if (sharedPrefs == null) {
+            sharedPrefs = new SharedPrefs(context);
+        }
+        return sharedPrefs;
+    }
+
+    private SharedPrefs(Context context){
+        prefs = context.getSharedPreferences("ui_settings", Context.MODE_PRIVATE);
     }
 
     /**
@@ -48,11 +56,8 @@ public class SharedPrefs {
      * @param stringToSave key.
      * @param value value.
      */
-    public void savePrefs(String stringToSave, String value){
-        prefs = mContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
-        SharedPreferences.Editor uiEd = prefs.edit();
-        uiEd.putString(stringToSave, value);
-        uiEd.commit();
+    public void putString(String stringToSave, String value){
+        prefs.edit().putString(stringToSave, value).apply();
     }
 
     /**
@@ -60,11 +65,8 @@ public class SharedPrefs {
      * @param stringToSave key.
      * @param value value.
      */
-    public void saveInt(String stringToSave, int value){
-        prefs = mContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
-        SharedPreferences.Editor uiEd = prefs.edit();
-        uiEd.putInt(stringToSave, value);
-        uiEd.commit();
+    public void putInt(String stringToSave, int value){
+        prefs.edit().putInt(stringToSave, value).apply();
     }
 
     /**
@@ -72,8 +74,7 @@ public class SharedPrefs {
      * @param stringToLoad key.
      * @return Integer
      */
-    public int loadInt(String stringToLoad){
-        prefs = mContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
+    public int getInt(String stringToLoad){
         int x;
         try {
             x = prefs.getInt(stringToLoad, 0);
@@ -88,11 +89,8 @@ public class SharedPrefs {
      * @param stringToSave key.
      * @param value value.
      */
-    public void saveLong(String stringToSave, long value){
-        prefs = mContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
-        SharedPreferences.Editor uiEd = prefs.edit();
-        uiEd.putLong(stringToSave, value);
-        uiEd.commit();
+    public void putLong(String stringToSave, long value){
+        prefs.edit().putLong(stringToSave, value).apply();
     }
 
     /**
@@ -100,8 +98,7 @@ public class SharedPrefs {
      * @param stringToLoad key.
      * @return Long
      */
-    public long loadLong(String stringToLoad){
-        prefs = mContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
+    public long getLong(String stringToLoad){
         long x;
         try {
             x = prefs.getLong(stringToLoad, 1000);
@@ -116,10 +113,9 @@ public class SharedPrefs {
      * @param stringToLoad key.
      * @return String
      */
-    public String loadPrefs(String stringToLoad){
+    public String getString(String stringToLoad){
         String res;
         try {
-            prefs = mContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
             res = prefs.getString(stringToLoad, "");
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -133,8 +129,7 @@ public class SharedPrefs {
      * @param checkString key.
      * @return Boolean
      */
-    public boolean isString(String checkString){
-        prefs = mContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
+    public boolean hasKey(String checkString){
         return prefs.contains(checkString);
     }
 
@@ -143,11 +138,8 @@ public class SharedPrefs {
      * @param stringToSave key.
      * @param value value.
      */
-    public void saveBoolean(String stringToSave, boolean value){
-        prefs = mContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
-        SharedPreferences.Editor uiEd = prefs.edit();
-        uiEd.putBoolean(stringToSave, value);
-        uiEd.commit();
+    public void putBoolean(String stringToSave, boolean value){
+        prefs.edit().putBoolean(stringToSave, value).apply();
     }
 
     /**
@@ -155,8 +147,7 @@ public class SharedPrefs {
      * @param stringToLoad key.
      * @return Boolean
      */
-    public boolean loadBoolean(String stringToLoad){
-        prefs = mContext.getSharedPreferences(APP_UI_PREFERENCES, MODE);
+    public boolean getBoolean(String stringToLoad){
         boolean res;
         try {
             res = prefs.getBoolean(stringToLoad, false);
@@ -167,14 +158,10 @@ public class SharedPrefs {
     }
 
     public void saveVersionBoolean(String stringToSave){
-        prefs = mContext.getSharedPreferences(APP_CHANGES_PREFERENCES, MODE);
-        SharedPreferences.Editor uiEd = prefs.edit();
-        uiEd.putBoolean(stringToSave, true);
-        uiEd.commit();
+        prefs.edit().putBoolean(stringToSave, true).apply();
     }
 
-    public boolean loadVersionBoolean(String stringToLoad){
-        prefs = mContext.getSharedPreferences(APP_CHANGES_PREFERENCES, MODE);
+    public boolean getVersion(String stringToLoad){
         boolean res;
         try {
             res = prefs.getBoolean(stringToLoad, false);
@@ -190,16 +177,13 @@ public class SharedPrefs {
     public void savePrefsBackup(){
         File dir = MemoryUtil.getPrefsDir();
         if (dir != null) {
-            File prefs = new File(dir + "/prefs.xml");
-            if (prefs.exists()) prefs.delete();
+            File prefsFile = new File(dir + "/prefs.xml");
+            if (prefsFile.exists()) prefsFile.delete();
             ObjectOutputStream output = null;
             try {
-                output = new ObjectOutputStream(new FileOutputStream(prefs));
-                SharedPreferences pref =
-                        mContext.getSharedPreferences(APP_UI_PREFERENCES, Context.MODE_PRIVATE);
-                Map<String, ?> list = pref.getAll();
+                output = new ObjectOutputStream(new FileOutputStream(prefsFile));
+                Map<String, ?> list = prefs.getAll();
                 if (list.containsKey(Prefs.CONTACTS_IMPORT_DIALOG)) list.remove(Prefs.CONTACTS_IMPORT_DIALOG);
-                //if (list.containsKey(Prefs.DRIVE_USER)) list.remove(Prefs.DRIVE_USER);
                 output.writeObject(list);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -223,18 +207,17 @@ public class SharedPrefs {
         File dir = MemoryUtil.getPrefsDir();
         if (dir == null) return;
 
-        File prefs = new File(dir + "/prefs.xml");
-        if (prefs.exists()) {
+        File prefsFile = new File(dir + "/prefs.xml");
+        if (prefsFile.exists()) {
             ObjectInputStream input = null;
             try {
-                input = new ObjectInputStream(new FileInputStream(prefs));
-                SharedPreferences.Editor prefEdit = mContext.getSharedPreferences(APP_UI_PREFERENCES, Context.MODE_PRIVATE).edit();
+                input = new ObjectInputStream(new FileInputStream(prefsFile));
+                SharedPreferences.Editor prefEdit = prefs.edit();
                 prefEdit.clear();
                 Map<String, ?> entries = (Map<String, ?>) input.readObject();
                 for (Map.Entry<String, ?> entry : entries.entrySet()) {
                     Object v = entry.getValue();
                     String key = entry.getKey();
-
                     if (v instanceof Boolean)
                         prefEdit.putBoolean(key, (Boolean) v);
                     else if (v instanceof Float)
@@ -246,7 +229,7 @@ public class SharedPrefs {
                     else if (v instanceof String)
                         prefEdit.putString(key, ((String) v));
                 }
-                prefEdit.commit();
+                prefEdit.apply();
             } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
             } finally {

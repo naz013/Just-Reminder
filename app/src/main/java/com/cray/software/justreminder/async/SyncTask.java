@@ -23,6 +23,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
@@ -32,7 +33,6 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 
 public class SyncTask extends AsyncTask<Void, String, Boolean> {
 
@@ -110,15 +110,15 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
         ioHelper.backupReminder(true);
 
         //export & import notes
-        SharedPrefs prefs = new SharedPrefs(mContext);
-        if (prefs.loadBoolean(Prefs.SYNC_NOTES)) {
+        SharedPrefs prefs = SharedPrefs.getInstance(mContext);
+        if (prefs.getBoolean(Prefs.SYNC_NOTES)) {
             publishProgress(mContext.getString(R.string.syncing_notes));
             ioHelper.restoreNote(true);
             ioHelper.backupNote(true);
         }
 
         //export & import birthdays
-        if (prefs.loadBoolean(Prefs.SYNC_BIRTHDAYS)) {
+        if (prefs.getBoolean(Prefs.SYNC_BIRTHDAYS)) {
             publishProgress(mContext.getString(R.string.syncing_birthdays));
             ioHelper.restoreBirthday(true, true);
             ioHelper.backupBirthday(true);

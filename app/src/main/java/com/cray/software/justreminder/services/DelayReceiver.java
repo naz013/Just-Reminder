@@ -51,8 +51,7 @@ public class DelayReceiver extends WakefulBroadcastReceiver {
         int min = 60 * 1000;
         Intent intent = new Intent(context, DelayReceiver.class);
         intent.putExtra(Constants.ITEM_ID_INTENT, id);
-        SharedPrefs sPrefs = new SharedPrefs(context);
-        int inTime = sPrefs.loadInt(Prefs.DELAY_TIME);
+        int inTime = SharedPrefs.getInstance(context).getInt(Prefs.DELAY_TIME);
         alarmIntent = PendingIntent.getBroadcast(context, i, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Calendar calendar = Calendar.getInstance();

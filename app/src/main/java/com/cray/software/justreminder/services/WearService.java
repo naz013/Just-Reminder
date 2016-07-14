@@ -89,7 +89,7 @@ public class WearService extends Service implements GoogleApiClient.ConnectionCa
                     if (dataMap.getInt(SharedConst.KEY_LANGUAGE, 0) == 1) {
                         PutDataMapRequest putDataMapReq = PutDataMapRequest.create(SharedConst.WEAR_VOICE);
                         putDataMapReq.getDataMap().putString(SharedConst.KEY_LANGUAGE,
-                                Language.getLanguage(new SharedPrefs(getApplicationContext()).loadInt(Prefs.VOICE_LOCALE)));
+                                Language.getLanguage(SharedPrefs.getInstance(getApplicationContext()).getInt(Prefs.VOICE_LOCALE)));
                         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
                         Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
                     }

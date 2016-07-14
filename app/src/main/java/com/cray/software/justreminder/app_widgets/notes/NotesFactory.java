@@ -27,12 +27,12 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.notes.NotesBase;
+import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.notes.NotesBase;
 
 import java.util.ArrayList;
 
@@ -68,7 +68,6 @@ public class NotesFactory implements RemoteViewsService.RemoteViewsFactory {
                 id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
                 title = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
                 img = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
-
                 notes.add(new Note(title, col, id, img));
             } while (c.moveToNext());
         }
@@ -101,11 +100,9 @@ public class NotesFactory implements RemoteViewsService.RemoteViewsFactory {
                 rView.setViewVisibility(R.id.noteImage, View.VISIBLE);
             } else rView.setViewVisibility(R.id.noteImage, View.GONE);
         } else rView.setViewVisibility(R.id.noteImage, View.GONE);
-
-        SharedPrefs prefs = new SharedPrefs(mContext);
         String title = note.getText();
-        if (prefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
-            title = SyncHelper.decrypt(title);
+        if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.NOTE_ENCRYPT)){
+                title = SyncHelper.decrypt(title);
         }
 
         rView.setTextViewText(R.id.note, title);

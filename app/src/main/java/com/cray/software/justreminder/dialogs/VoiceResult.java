@@ -91,10 +91,7 @@ public class VoiceResult extends Activity {
         if (Module.isLollipop()) {
             itemCard.setCardElevation(Configs.CARD_ELEVATION);
         }
-
-        SharedPrefs prefs = new SharedPrefs(VoiceResult.this);
-        boolean is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
-
+        boolean is24 = SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT);
         ReminderModel model = ReminderDataProvider.getItem(this, id);
         String title = model.getTitle();
         String type = model.getType();

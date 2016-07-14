@@ -18,6 +18,7 @@ package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -29,14 +30,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.adapters.CalendarPagerAdapter;
+import com.cray.software.justreminder.constants.Configs;
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.EventsDataProvider;
 import com.cray.software.justreminder.datas.models.EventsItem;
 import com.cray.software.justreminder.datas.models.EventsPagerItem;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.constants.Configs;
-import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 
 import java.util.ArrayList;
@@ -51,6 +52,7 @@ public class EventsFragment extends Fragment {
     private String dayString;
 
     private NavigationCallbacks mCallbacks;
+    private Activity mContext;
 
     public static EventsFragment newInstance(long date, int lastPosition) {
         EventsFragment pageFragment = new EventsFragment();
@@ -113,32 +115,49 @@ public class EventsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_calendar, container, false);
-
-        SharedPrefs sPrefs = new SharedPrefs(getActivity());
         pager = (ViewPager) rootView.findViewById(R.id.pager);
-
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
-
         if (dateMills != 0) {
             cal.setTimeInMillis(dateMills);
         }
         updateMenuTitles(cal.get(Calendar.DAY_OF_MONTH) + "/" + (cal.get(Calendar.MONTH) + 1) +
                 "/" + cal.get(Calendar.YEAR));
-        sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
+        SharedPrefs.getInstance(mContext).putInt(Prefs.LAST_CALENDAR_VIEW, 0);
         loadData();
         return rootView;
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (mContext == null) {
+            mContext = (Activity) context;
+        }
+        if (mCallbacks == null) {
+            try {
+                mCallbacks = (NavigationCallbacks) context;
+            } catch (ClassCastException e) {
+                throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+            }
+        }
+        ((ScreenManager) context).onSectionAttached(ScreenManager.FRAGMENT_EVENTS);
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mCallbacks = (NavigationCallbacks) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+        if (mContext == null) {
+            mContext = activity;
         }
-        ((ScreenManager)activity).onSectionAttached(ScreenManager.FRAGMENT_EVENTS);
+        if (mCallbacks == null) {
+            try {
+                mCallbacks = (NavigationCallbacks) activity;
+            } catch (ClassCastException e) {
+                throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+            }
+        }
+        ((ScreenManager) activity).onSectionAttached(ScreenManager.FRAGMENT_EVENTS);
     }
 
     @Override
@@ -155,13 +174,13 @@ public class EventsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.REMINDER_CHANGED)) {
+        if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.REMINDER_CHANGED)) {
             loadData();
         }
     }
 
     private void loadData() {
-        new SharedPrefs(getActivity()).saveBoolean(Prefs.REMINDER_CHANGED, false);
+        SharedPrefs.getInstance(mContext).putBoolean(Prefs.REMINDER_CHANGED, false);
         Calendar calendar = Calendar.getInstance();
         if (dateMills != 0){
             calendar.setTimeInMillis(dateMills);
@@ -182,13 +201,13 @@ public class EventsFragment extends Fragment {
 
         calendar.setTimeInMillis(System.currentTimeMillis());
 
-        SharedPrefs sPrefs = new SharedPrefs(getActivity());
-        int hour = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_HOUR);
-        int minute = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
-        boolean isFeature = sPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
-        boolean isRemindersEnabled = sPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR);
+        SharedPrefs sPrefs = SharedPrefs.getInstance(mContext);
+        int hour = sPrefs.getInt(Prefs.BIRTHDAY_REMINDER_HOUR);
+        int minute = sPrefs.getInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
+        boolean isFeature = sPrefs.getBoolean(Prefs.CALENDAR_FEATURE_TASKS);
+        boolean isRemindersEnabled = sPrefs.getBoolean(Prefs.REMINDERS_IN_CALENDAR);
 
-        EventsDataProvider provider = new EventsDataProvider(getActivity());
+        EventsDataProvider provider = new EventsDataProvider(mContext);
         provider.setBirthdays(true);
         provider.setTime(hour, minute);
         provider.setReminders(isRemindersEnabled);

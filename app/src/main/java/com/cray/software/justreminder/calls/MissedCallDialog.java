@@ -42,9 +42,9 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Permissions;
@@ -105,11 +105,11 @@ public class MissedCallDialog extends Activity implements GoogleApiClient.Connec
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPrefs prefs = new SharedPrefs(MissedCallDialog.this);
-        boolean systemVol = prefs.loadBoolean(Prefs.SYSTEM_VOLUME);
-        boolean increasing = prefs.loadBoolean(Prefs.INCREASING_VOLUME);
+        SharedPrefs prefs = SharedPrefs.getInstance(this);
+        boolean systemVol = prefs.getBoolean(Prefs.SYSTEM_VOLUME);
+        boolean increasing = prefs.getBoolean(Prefs.INCREASING_VOLUME);
         if (systemVol) {
-            mStream = prefs.loadInt(Prefs.SOUND_STREAM);
+            mStream = prefs.getInt(Prefs.SOUND_STREAM);
             AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             currVolume = am.getStreamVolume(mStream);
             streamVol = currVolume;
@@ -123,7 +123,7 @@ public class MissedCallDialog extends Activity implements GoogleApiClient.Connec
             AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             mStream = 3;
             currVolume = am.getStreamVolume(mStream);
-            int prefsVol = prefs.loadInt(Prefs.VOLUME);
+            int prefsVol = prefs.getInt(Prefs.VOLUME);
             float volPercent = (float) prefsVol / Configs.MAX_VOLUME;
             int maxVol = am.getStreamMaxVolume(mStream);
             streamVol = (int) (maxVol * volPercent);
@@ -135,7 +135,7 @@ public class MissedCallDialog extends Activity implements GoogleApiClient.Connec
             am.setStreamVolume(mStream, mVolume, 0);
         }
 
-        boolean isFull = prefs.loadBoolean(Prefs.UNLOCK_DEVICE);
+        boolean isFull = prefs.getBoolean(Prefs.UNLOCK_DEVICE);
         if (isFull) {
             runOnUiThread(() -> getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                     | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
@@ -195,7 +195,7 @@ public class MissedCallDialog extends Activity implements GoogleApiClient.Connec
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(time);
         String formattedTime = TimeUtil.getTime(calendar.getTime(),
-                prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT));
+                prefs.getBoolean(Prefs.IS_24_TIME_FORMAT));
 
         String name = Contacts.getNameFromNumber(number, MissedCallDialog.this);
 
@@ -228,7 +228,7 @@ public class MissedCallDialog extends Activity implements GoogleApiClient.Connec
 
         notifier.showMissedReminder(name == null || name.matches("") ? number : name, id);
 
-        if (prefs.loadBoolean(Prefs.WEAR_SERVICE)) {
+        if (prefs.getBoolean(Prefs.WEAR_SERVICE)) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addApi(Wearable.API)
                     .addConnectionCallbacks(this)
@@ -296,8 +296,7 @@ public class MissedCallDialog extends Activity implements GoogleApiClient.Connec
     }
 
     public void wakeScreen() {
-        SharedPrefs prefs = new SharedPrefs(MissedCallDialog.this);
-        if (prefs.loadBoolean(Prefs.WAKE_STATUS)) {
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.WAKE_STATUS)) {
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             boolean isScreenOn = pm.isScreenOn();
             if (!isScreenOn) {
@@ -316,7 +315,7 @@ public class MissedCallDialog extends Activity implements GoogleApiClient.Connec
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
 
-        if (new SharedPrefs(this).loadBoolean(Prefs.WEAR_SERVICE)) {
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.WEAR_SERVICE)) {
             PutDataMapRequest putDataMapReq = PutDataMapRequest.create(SharedConst.WEAR_STOP);
             DataMap map = putDataMapReq.getDataMap();
             map.putBoolean(SharedConst.KEY_STOP_B, true);
@@ -338,8 +337,7 @@ public class MissedCallDialog extends Activity implements GoogleApiClient.Connec
         super.onDestroy();
         notifier.recreatePermanent();
         removeFlags();
-        SharedPrefs prefs = new SharedPrefs(MissedCallDialog.this);
-        boolean systemVol = prefs.loadBoolean(Prefs.SYSTEM_VOLUME);
+        boolean systemVol = SharedPrefs.getInstance(this).getBoolean(Prefs.SYSTEM_VOLUME);
         if (!systemVol) {
             AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             am.setStreamVolume(mStream, currVolume, 0);
@@ -349,14 +347,14 @@ public class MissedCallDialog extends Activity implements GoogleApiClient.Connec
     @Override
     protected void onResume() {
         super.onResume();
-        if (new SharedPrefs(this).loadBoolean(Prefs.WEAR_SERVICE))
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.WEAR_SERVICE))
             mGoogleApiClient.connect();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (new SharedPrefs(this).loadBoolean(Prefs.WEAR_SERVICE)) {
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.WEAR_SERVICE)) {
             Wearable.DataApi.removeListener(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
@@ -365,7 +363,7 @@ public class MissedCallDialog extends Activity implements GoogleApiClient.Connec
     @Override
     public void onBackPressed() {
         notifier.discardMedia();
-        if (new SharedPrefs(MissedCallDialog.this).loadBoolean(Prefs.SMART_FOLD)){
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.SMART_FOLD)){
             moveTaskToBack(true);
             removeFlags();
         } else Messages.toast(getApplicationContext(), getString(R.string.select_one_of_item));

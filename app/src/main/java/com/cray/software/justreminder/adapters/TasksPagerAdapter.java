@@ -63,7 +63,7 @@ public class TasksPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(final int position) {
         TaskListFragment fragment = new TaskListFragment();
         fragment.setData(datas.get(position).getmData());
-        fragment.setmCallbacks(mCallbacks);
+        fragment.setCallbacks(mCallbacks);
         return fragment;
     }
 

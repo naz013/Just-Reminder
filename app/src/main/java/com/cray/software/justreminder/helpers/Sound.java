@@ -111,12 +111,7 @@ public class Sound {
         }
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mMediaPlayer.setLooping(false);
-        mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                mp.start();
-            }
-        });
+        mMediaPlayer.setOnPreparedListener(MediaPlayer::start);
         try {
             mMediaPlayer.prepareAsync();
         } catch (IllegalStateException e){
@@ -140,20 +135,15 @@ public class Sound {
             e.printStackTrace();
         }
 
-        SharedPrefs prefs = new SharedPrefs(mContext);
-        boolean isSystem = prefs.loadBoolean(Prefs.SYSTEM_VOLUME);
+        SharedPrefs prefs = SharedPrefs.getInstance(mContext);
+        boolean isSystem = prefs.getBoolean(Prefs.SYSTEM_VOLUME);
         if (isSystem) {
-            int stream = prefs.loadInt(Prefs.SOUND_STREAM);
+            int stream = prefs.getInt(Prefs.SOUND_STREAM);
             mMediaPlayer.setAudioStreamType(stream);
         } else mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
         mMediaPlayer.setLooping(looping);
-        mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                mp.start();
-            }
-        });
+        mMediaPlayer.setOnPreparedListener(MediaPlayer::start);
         try {
             mMediaPlayer.prepareAsync();
         } catch (IllegalStateException e){
@@ -176,19 +166,14 @@ public class Sound {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        SharedPrefs prefs = new SharedPrefs(mContext);
-        boolean isSystem = prefs.loadBoolean(Prefs.SYSTEM_VOLUME);
+        SharedPrefs prefs = SharedPrefs.getInstance(mContext);
+        boolean isSystem = prefs.getBoolean(Prefs.SYSTEM_VOLUME);
         if (isSystem) {
-            int stream = prefs.loadInt(Prefs.SOUND_STREAM);
+            int stream = prefs.getInt(Prefs.SOUND_STREAM);
             mMediaPlayer.setAudioStreamType(stream);
         } else mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mMediaPlayer.setLooping(looping);
-        mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                mp.start();
-            }
-        });
+        mMediaPlayer.setOnPreparedListener(MediaPlayer::start);
         try {
             mMediaPlayer.prepareAsync();
         } catch (IllegalStateException e){

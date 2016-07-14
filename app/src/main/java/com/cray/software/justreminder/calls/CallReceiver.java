@@ -32,8 +32,8 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 public class CallReceiver extends BroadcastReceiver {
 
     private Context mContext;
-    private String incoming_nr;
-    private int prev_state;
+    private String mIncomingNumber;
+    private int prevState;
     private long startCallTime;
 
     @Override
@@ -49,46 +49,46 @@ public class CallReceiver extends BroadcastReceiver {
 
         @Override
         public void onCallStateChanged(int state, String incomingNumber){
-            SharedPrefs prefs = new SharedPrefs(mContext);
-            if (incomingNumber != null && incomingNumber.length() > 0) incoming_nr = incomingNumber;
+            SharedPrefs prefs = SharedPrefs.getInstance(mContext);
+            if (incomingNumber != null && incomingNumber.length() > 0) mIncomingNumber = incomingNumber;
             else return;
 
             switch(state){
                 case TelephonyManager.CALL_STATE_RINGING:
-                    prev_state = state;
+                    prevState = state;
                     startCallTime = System.currentTimeMillis();
                     break;
                 case TelephonyManager.CALL_STATE_OFFHOOK:
-                    prev_state = state;
+                    prevState = state;
                     break;
                 case TelephonyManager.CALL_STATE_IDLE:
-                    if((prev_state == TelephonyManager.CALL_STATE_OFFHOOK)){
-                        prev_state = state;
+                    if((prevState == TelephonyManager.CALL_STATE_OFFHOOK)){
+                        prevState = state;
                         //Answered Call which is ended
                         //Start quick contact reminder window
-                        boolean isFollow = prefs.loadBoolean(Prefs.FOLLOW_REMINDER);
-                        if (incoming_nr != null && isFollow ) {
+                        boolean isFollow = prefs.getBoolean(Prefs.FOLLOW_REMINDER);
+                        if (mIncomingNumber != null && isFollow ) {
                             mContext.startActivity(new Intent(mContext, FollowReminder.class)
-                                    .putExtra(Constants.SELECTED_CONTACT_NUMBER, incoming_nr)
+                                    .putExtra(Constants.SELECTED_CONTACT_NUMBER, mIncomingNumber)
                                     .putExtra(Constants.SELECTED_RADIUS, startCallTime)
                                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                                             Intent.FLAG_ACTIVITY_SINGLE_TOP));
                             break;
                         }
                     }
-                    if((prev_state == TelephonyManager.CALL_STATE_RINGING)){
-                        prev_state = state;
+                    if((prevState == TelephonyManager.CALL_STATE_RINGING)){
+                        prevState = state;
                         //Rejected or Missed call
                         long currTime = System.currentTimeMillis();
                         if (currTime - startCallTime >= 1000 * 10){
                             //missed call
                             //Set missed call reminder
-                            if (prefs.loadBoolean(Prefs.MISSED_CALL_REMINDER) &&
-                                    incoming_nr != null){
+                            if (prefs.getBoolean(Prefs.MISSED_CALL_REMINDER) &&
+                                    mIncomingNumber != null){
                                 DataBase db = new DataBase(mContext);
                                 db.open();
 
-                                Cursor c = db.getMissedCall(incoming_nr);
+                                Cursor c = db.getMissedCall(mIncomingNumber);
                                 MissedCallAlarm alarm = new MissedCallAlarm();
                                 if (c != null && c.moveToFirst()){
                                     do {
@@ -97,11 +97,11 @@ public class CallReceiver extends BroadcastReceiver {
                                         alarm.cancelAlarm(mContext, id);
                                     } while (c.moveToNext());
 
-                                    long id = db.addMissedCall(incoming_nr, currTime);
-                                    alarm.setAlarm(mContext, id, incoming_nr, currTime);
+                                    long id = db.addMissedCall(mIncomingNumber, currTime);
+                                    alarm.setAlarm(mContext, id, mIncomingNumber, currTime);
                                 } else {
-                                    long id = db.addMissedCall(incoming_nr, currTime);
-                                    alarm.setAlarm(mContext, id, incoming_nr, currTime);
+                                    long id = db.addMissedCall(mIncomingNumber, currTime);
+                                    alarm.setAlarm(mContext, id, mIncomingNumber, currTime);
                                 }
                                 if (c != null) c.close();
                                 db.close();
@@ -110,7 +110,7 @@ public class CallReceiver extends BroadcastReceiver {
                         } else {
                             //rejected call
                             //Show quick SMS sending window
-                            if (incoming_nr != null && prefs.loadBoolean(Prefs.QUICK_SMS)) {
+                            if (mIncomingNumber != null && prefs.getBoolean(Prefs.QUICK_SMS)) {
                                 DataBase db = new DataBase(mContext);
                                 db.open();
                                 Cursor c = db.queryTemplates();
@@ -119,7 +119,7 @@ public class CallReceiver extends BroadcastReceiver {
                                 db.close();
                                 if (size > 0) {
                                     mContext.startActivity(new Intent(mContext, QuickSMS.class)
-                                            .putExtra(Constants.ITEM_ID_INTENT, incoming_nr)
+                                            .putExtra(Constants.ITEM_ID_INTENT, mIncomingNumber)
                                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                                 }
                                 break;

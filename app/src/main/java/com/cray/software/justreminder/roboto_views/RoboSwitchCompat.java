@@ -48,6 +48,7 @@ public class RoboSwitchCompat extends SwitchCompat {
     }
 
     private void init(AttributeSet attrs) {
+        if (isInEditMode()) return;
         if (attrs != null) {
             TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.RoboSwitchCompat);
             int fontCode = a.getInt(R.styleable.RoboSwitchCompat_switch_font_style, -1);

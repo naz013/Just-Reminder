@@ -168,8 +168,7 @@ public class CalendarThemeFragment extends Fragment{
             // 17 Feb 2013 is Sunday
             DateTime sunday = new DateTime(2013, 2, 17, 0, 0, 0, 0);
             DateTime nextDay = sunday.plusDays(startDayOfWeek - SUNDAY);
-            SharedPrefs prefs = new SharedPrefs(context);
-            if (prefs.loadInt(Prefs.START_DAY) == 1){
+            if (SharedPrefs.getInstance(context).getInt(Prefs.START_DAY) == 1){
                 nextDay = nextDay.plusDays(1);
             }
 
@@ -263,9 +262,8 @@ public class CalendarThemeFragment extends Fragment{
             }
 
             while (weekdayOfFirstDate > 0) {
-                SharedPrefs prefs = new SharedPrefs(context);
                 int temp = startDayOfWeek;
-                if (prefs.loadInt(Prefs.START_DAY) == 1){
+                if (SharedPrefs.getInstance(context).getInt(Prefs.START_DAY) == 1){
                     temp = startDayOfWeek + 1;
                 }
 

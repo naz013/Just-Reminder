@@ -47,6 +47,7 @@ public class RoboButton extends Button {
     }
 
     private void init(AttributeSet attrs) {
+        if (isInEditMode()) return;
         if (attrs != null) {
             TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.RoboButton);
             int fontCode = a.getInt(R.styleable.RoboButton_button_font_style, -1);

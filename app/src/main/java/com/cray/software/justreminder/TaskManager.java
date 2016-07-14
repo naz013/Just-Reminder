@@ -49,7 +49,6 @@ import java.util.Calendar;
 
 public class TaskManager extends AppCompatActivity {
     private ColorSetter cSetter = new ColorSetter(TaskManager.this);
-    private SharedPrefs sPrefs = new SharedPrefs(TaskManager.this);
 
     private long id;
     private Toolbar toolbar;
@@ -86,9 +85,6 @@ public class TaskManager extends AppCompatActivity {
         }
         setContentView(R.layout.task_manager_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());
-
-        sPrefs = new SharedPrefs(TaskManager.this);
-
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         setSupportActionBar(toolbar);
@@ -216,7 +212,7 @@ public class TaskManager extends AppCompatActivity {
                             long eventTime = r.getLong(r.getColumnIndex(NextBase.EVENT_TIME));
                             calendar.setTimeInMillis(eventTime);
                             timeField.setText(TimeUtil.getTime(calendar.getTime(),
-                                    sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+                                    SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
                             isReminder = true;
                         }
                         if (r != null) r.close();
@@ -345,8 +341,7 @@ public class TaskManager extends AppCompatActivity {
     }
 
     private void saveTask() {
-        sPrefs = new SharedPrefs(this);
-        sPrefs.saveBoolean(Prefs.TASK_CHANGED, true);
+        SharedPrefs.getInstance(this).putBoolean(Prefs.TASK_CHANGED, true);
         String taskName = editField.getText().toString().trim();
         if (taskName.matches("")) {
             editField.setError(getString(R.string.must_be_not_empty));
@@ -503,7 +498,7 @@ public class TaskManager extends AppCompatActivity {
 
     protected Dialog timeDialog() {
         return new TimePickerDialog(this, myCallBack, myHour, myMinute,
-                new SharedPrefs(TaskManager.this).loadBoolean(Prefs.IS_24_TIME_FORMAT));
+                SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT));
     }
 
     TimePickerDialog.OnTimeSetListener myCallBack = new TimePickerDialog.OnTimeSetListener() {
@@ -516,7 +511,7 @@ public class TaskManager extends AppCompatActivity {
             c.set(Calendar.MINUTE, minute);
 
             timeField.setText(TimeUtil.getTime(c.getTime(),
-                    sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+                    SharedPrefs.getInstance(TaskManager.this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
         }
     };
 

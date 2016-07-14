@@ -77,7 +77,7 @@ public class FileDataProvider {
 
     public void load() {
         data.clear();
-        boolean is24 = new SharedPrefs(mContext).loadBoolean(Prefs.IS_24_TIME_FORMAT);
+        boolean is24 = SharedPrefs.getInstance(mContext).getBoolean(Prefs.IS_24_TIME_FORMAT);
         if (where.matches(Constants.DIR_SD)) {
             Log.d(Constants.LOG_TAG, "Local");
             File dir = MemoryUtil.getRDir();

@@ -38,7 +38,6 @@ public class TargetRadius extends Activity implements View.OnTouchListener {
 
     private SeekBar radiusBar;
     private RoboTextView radiusValue;
-    private SharedPrefs sPrefs;
     private int progressInt, i;
     private long touchTime;
     private static final long TRIGGER_TIME = 500;
@@ -52,11 +51,10 @@ public class TargetRadius extends Activity implements View.OnTouchListener {
         setContentView(R.layout.radius_dialog_layout);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
-        sPrefs = new SharedPrefs(TargetRadius.this);
         Intent intent = getIntent();
         i = intent.getIntExtra("item", 0);
         radiusValue = (RoboTextView) findViewById(R.id.radiusValue);
-        progressInt = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
+        progressInt = SharedPrefs.getInstance(this).getInt(Prefs.LOCATION_RADIUS);
         radiusValue.setText(String.format(getString(R.string.radius_x_meters), progressInt));
 
         radiusBar = (SeekBar) findViewById(R.id.radiusBar);
@@ -96,8 +94,7 @@ public class TargetRadius extends Activity implements View.OnTouchListener {
         RoboButton aboutClose = (RoboButton) findViewById(R.id.aboutClose);
         aboutClose.setOnClickListener(v -> {
             if (i == 0) {
-                sPrefs = new SharedPrefs(TargetRadius.this);
-                sPrefs.saveInt(Prefs.LOCATION_RADIUS, radiusBar.getProgress());
+                SharedPrefs.getInstance(this).putInt(Prefs.LOCATION_RADIUS, radiusBar.getProgress());
                 finish();
             } else {
                 Intent intent1 = new Intent();

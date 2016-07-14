@@ -48,6 +48,7 @@ public class RoboTextView extends TextView {
     }
 
     private void init(AttributeSet attrs) {
+        if (isInEditMode()) return;
         setDrawingCacheEnabled(true);
         if (attrs != null) {
             TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.RoboTextView);

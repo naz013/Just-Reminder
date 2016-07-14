@@ -111,9 +111,8 @@ public class SuperUtil {
      */
     public static void startVoiceRecognitionActivity(Activity activity, int requestCode, boolean free) {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        SharedPrefs sPrefs = new SharedPrefs(activity);
         if (free) intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        else intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Language.getLanguage(sPrefs.loadInt(Prefs.VOICE_LOCALE)));
+        else intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Language.getLanguage(SharedPrefs.getInstance(activity).getInt(Prefs.VOICE_LOCALE)));
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, activity.getString(R.string.say_something));
         try {
             activity.startActivityForResult(intent, requestCode);

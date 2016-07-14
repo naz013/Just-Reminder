@@ -48,9 +48,8 @@ public class BirthdayAlarm extends WakefulBroadcastReceiver {
         Intent intent1 = new Intent(context, BirthdayAlarm.class);
         alarmIntent = PendingIntent.getBroadcast(context, 210, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        SharedPrefs sharedPrefs = new SharedPrefs(context);
-        int hour = sharedPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_HOUR);
-        int minute = sharedPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
+        int hour = SharedPrefs.getInstance(context).getInt(Prefs.BIRTHDAY_REMINDER_HOUR);
+        int minute = SharedPrefs.getInstance(context).getInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, hour);

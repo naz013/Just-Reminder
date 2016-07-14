@@ -134,7 +134,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                     map.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
                     int radius = jPlace.getRadius();
                     if (radius == -1) {
-                        radius = new SharedPrefs(this).loadInt(Prefs.LOCATION_RADIUS);
+                        radius = SharedPrefs.getInstance(this).getInt(Prefs.LOCATION_RADIUS);
                     }
                     if (radius != -1) {
                         int[] circleColors = cs.getMarkerRadiusStyle(marker);
@@ -157,7 +157,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
                 int radius = item.getRadius();
                 if (radius == -1) {
-                    radius = new SharedPrefs(this).loadInt(Prefs.LOCATION_RADIUS);
+                    radius = SharedPrefs.getInstance(this).getInt(Prefs.LOCATION_RADIUS);
                 }
                 if (radius != -1) {
                     int[] circleColors = cs.getMarkerRadiusStyle(marker);
@@ -291,7 +291,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
 
             long due = item.getDue();
             if (due > 0) {
-                time.setText(TimeUtil.getFullDateTime(due, new SharedPrefs(this).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+                time.setText(TimeUtil.getFullDateTime(due, SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
                 String repeatStr = IntervalUtil.getInterval(this, item.getRepeat());
                 if (item.getType().startsWith(Constants.TYPE_WEEKDAY)) {
                     repeatStr = ReminderUtils.getRepeatString(this, item.getWeekdays());
@@ -330,8 +330,8 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                 file = new File(melodyStr);
             } else {
                 Uri soundUri;
-                if (new SharedPrefs(this).loadBoolean(Prefs.CUSTOM_SOUND)) {
-                    String path = new SharedPrefs(this).loadPrefs(Prefs.CUSTOM_SOUND_FILE);
+                if (SharedPrefs.getInstance(this).getBoolean(Prefs.CUSTOM_SOUND)) {
+                    String path = SharedPrefs.getInstance(this).getString(Prefs.CUSTOM_SOUND_FILE);
                     if (path != null) {
                         file = new File(path);
                     } else {
@@ -421,7 +421,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
         int minute = 0;
         list = new ArrayList<>();
         ArrayList<String> time = new ArrayList<>();
-        boolean is24 = new SharedPrefs(this).loadBoolean(Prefs.IS_24_TIME_FORMAT);
+        boolean is24 = SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT);
         do {
             if (hour == 23 && minute == 30) {
                 hour = -1;
@@ -460,10 +460,10 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
 
     public class LoadOtherData extends AsyncTask<Void, Void, ReminderNote> {
 
-        Context mContext;
-        CircularProgress mProgress;
-        long mId;
-        SimpleDateFormat full24Format = new SimpleDateFormat("EEE,\ndd/MM", Locale.getDefault());
+        private Context mContext;
+        private CircularProgress mProgress;
+        private long mId;
+        private SimpleDateFormat full24Format = new SimpleDateFormat("EEE,\ndd/MM", Locale.getDefault());
 
         public LoadOtherData(Context context, CircularProgress circularProgress, long id) {
             this.mContext = context;
@@ -580,7 +580,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                 if (reminderNote.getNoteId() > 0) {
                     notesContainer.setVisibility(View.VISIBLE);
                     String note = reminderNote.getNoteText();
-                    if (new SharedPrefs(mContext).loadBoolean(Prefs.NOTE_ENCRYPT)) {
+                    if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.NOTE_ENCRYPT)) {
                         note = SyncHelper.decrypt(note);
                     }
                     noteText.setText(note);

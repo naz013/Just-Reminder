@@ -82,6 +82,7 @@ public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
     public void onDataSetChanged() {
         data.clear();
         map.clear();
+        boolean is24 = SharedPrefs.getInstance(mContext).getBoolean(Prefs.IS_24_TIME_FORMAT);
         NextBase db = new NextBase(mContext);
         db.open();
         Cursor c = db.getActiveReminders();
@@ -106,8 +107,6 @@ public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
                     date = String.format("%.5f", jPlace.getLatitude());
                     time = String.format("%.5f", jPlace.getLongitude());
                 } else {
-                    boolean is24 = new SharedPrefs(mContext)
-                            .loadBoolean(Prefs.IS_24_TIME_FORMAT);
                     if (mType.startsWith(Constants.TYPE_WEEKDAY)) {
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTimeInMillis(eventTime);
@@ -144,14 +143,14 @@ public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
 
         DataBase DB = new DataBase(mContext);
         DB.open();
-        SharedPrefs prefs = new SharedPrefs(mContext);
-        if (prefs.loadBoolean(Prefs.WIDGET_BIRTHDAYS)) {
+        SharedPrefs prefs = SharedPrefs.getInstance(mContext);
+        if (prefs.getBoolean(Prefs.WIDGET_BIRTHDAYS)) {
             int mDay;
             int mMonth;
             int n = 0;
             Calendar calendar = Calendar.getInstance();
-            int hour = prefs.loadInt(Prefs.BIRTHDAY_REMINDER_HOUR);
-            int minute = prefs.loadInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
+            int hour = prefs.getInt(Prefs.BIRTHDAY_REMINDER_HOUR);
+            int minute = prefs.getInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
             do {
                 mDay = calendar.get(Calendar.DAY_OF_MONTH);
                 mMonth = calendar.get(Calendar.MONTH);

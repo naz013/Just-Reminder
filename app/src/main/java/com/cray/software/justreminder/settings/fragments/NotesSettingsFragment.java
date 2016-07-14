@@ -44,35 +44,31 @@ public class NotesSettingsFragment extends Fragment implements View.OnClickListe
     private TextView noteReminderTime;
     private SharedPrefs sPrefs;
     private ActionBar ab;
-    
     private PrefsView encryptNotePrefs, backupNotePrefs, noteReminderPrefs, deleteFilePrefs;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View rootView =  inflater.inflate(R.layout.settings_note, container, false);
-
-        ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (ab != null){
             ab.setTitle(R.string.notes);
         }
-
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
+        sPrefs = SharedPrefs.getInstance(getActivity());
 
         encryptNotePrefs = (PrefsView) rootView.findViewById(R.id.encryptNotePrefs);
-        encryptNotePrefs.setChecked(sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT));
+        encryptNotePrefs.setChecked(sPrefs.getBoolean(Prefs.NOTE_ENCRYPT));
         encryptNotePrefs.setOnClickListener(this);
 
         backupNotePrefs = (PrefsView) rootView.findViewById(R.id.backupNotePrefs);
-        backupNotePrefs.setChecked(sPrefs.loadBoolean(Prefs.SYNC_NOTES));
+        backupNotePrefs.setChecked(sPrefs.getBoolean(Prefs.SYNC_NOTES));
         backupNotePrefs.setOnClickListener(this);
 
         noteReminderPrefs = (PrefsView) rootView.findViewById(R.id.noteReminderPrefs);
-        noteReminderPrefs.setChecked(sPrefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER));
+        noteReminderPrefs.setChecked(sPrefs.getBoolean(Prefs.QUICK_NOTE_REMINDER));
         noteReminderPrefs.setOnClickListener(this);
 
         deleteFilePrefs = (PrefsView) rootView.findViewById(R.id.deleteFilePrefs);
-        deleteFilePrefs.setChecked(sPrefs.loadBoolean(Prefs.DELETE_NOTE_FILE));
+        deleteFilePrefs.setChecked(sPrefs.getBoolean(Prefs.DELETE_NOTE_FILE));
         deleteFilePrefs.setOnClickListener(this);
 
         noteReminderTime = (TextView) rootView.findViewById(R.id.noteReminderTime);
@@ -94,47 +90,43 @@ public class NotesSettingsFragment extends Fragment implements View.OnClickListe
     }
 
     private void encryptNoteChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (encryptNotePrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.NOTE_ENCRYPT, false);
+            sPrefs.putBoolean(Prefs.NOTE_ENCRYPT, false);
             encryptNotePrefs.setChecked(false);
             new EncryptNotes(getActivity(), false).execute();
         } else {
-            sPrefs.saveBoolean(Prefs.NOTE_ENCRYPT, true);
+            sPrefs.putBoolean(Prefs.NOTE_ENCRYPT, true);
             encryptNotePrefs.setChecked(true);
             new EncryptNotes(getActivity(), true).execute();
         }
     }
 
     private void backupChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (backupNotePrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.SYNC_NOTES, false);
+            sPrefs.putBoolean(Prefs.SYNC_NOTES, false);
             backupNotePrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.SYNC_NOTES, true);
+            sPrefs.putBoolean(Prefs.SYNC_NOTES, true);
             backupNotePrefs.setChecked(true);
         }
     }
 
     private void deleteChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (deleteFilePrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.DELETE_NOTE_FILE, false);
+            sPrefs.putBoolean(Prefs.DELETE_NOTE_FILE, false);
             deleteFilePrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.DELETE_NOTE_FILE, true);
+            sPrefs.putBoolean(Prefs.DELETE_NOTE_FILE, true);
             deleteFilePrefs.setChecked(true);
         }
     }
 
     private void noteReminderChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (noteReminderPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.QUICK_NOTE_REMINDER, false);
+            sPrefs.putBoolean(Prefs.QUICK_NOTE_REMINDER, false);
             noteReminderPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.QUICK_NOTE_REMINDER, true);
+            sPrefs.putBoolean(Prefs.QUICK_NOTE_REMINDER, true);
             noteReminderPrefs.setChecked(true);
         }
         checkEnables();
@@ -148,7 +140,7 @@ public class NotesSettingsFragment extends Fragment implements View.OnClickListe
     @Override
     public void onDetach() {
         super.onDetach();
-        ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (ab != null){
             ab.setTitle(R.string.action_settings);
         }
@@ -184,7 +176,6 @@ public class NotesSettingsFragment extends Fragment implements View.OnClickListe
     }
 
     class EncryptNotes extends AsyncTask<Void, Void, Integer> {
-
         private ProgressDialog pd;
         private Context tContext;
         private boolean encrypt;

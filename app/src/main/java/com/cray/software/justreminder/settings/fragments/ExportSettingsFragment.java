@@ -49,36 +49,32 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
     private TextView syncInterval;
     private SharedPrefs sPrefs;
     private ActionBar ab;
-    
     private PrefsView exportToCalendarPrefs, exportToStockPrefs, autoBackupPrefs, 
             syncSettingsPrefs;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View rootView =  inflater.inflate(R.layout.settings_export, container, false);
-
-        ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (ab != null){
             ab.setTitle(R.string.export_and_sync);
         }
-
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
+        sPrefs = SharedPrefs.getInstance(getActivity());
 
         exportToCalendarPrefs = (PrefsView) rootView.findViewById(R.id.exportToCalendarPrefs);
-        exportToCalendarPrefs.setChecked(sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR));
+        exportToCalendarPrefs.setChecked(sPrefs.getBoolean(Prefs.EXPORT_TO_CALENDAR));
         exportToCalendarPrefs.setOnClickListener(this);
 
         exportToStockPrefs = (PrefsView) rootView.findViewById(R.id.exportToStockPrefs);
-        exportToStockPrefs.setChecked(sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK));
+        exportToStockPrefs.setChecked(sPrefs.getBoolean(Prefs.EXPORT_TO_STOCK));
         exportToStockPrefs.setOnClickListener(this);
 
         autoBackupPrefs = (PrefsView) rootView.findViewById(R.id.autoBackupPrefs);
-        autoBackupPrefs.setChecked(sPrefs.loadBoolean(Prefs.AUTO_BACKUP));
+        autoBackupPrefs.setChecked(sPrefs.getBoolean(Prefs.AUTO_BACKUP));
         autoBackupPrefs.setOnClickListener(this);
 
         syncSettingsPrefs = (PrefsView) rootView.findViewById(R.id.syncSettingsPrefs);
-        syncSettingsPrefs.setChecked(sPrefs.loadBoolean(Prefs.EXPORT_SETTINGS));
+        syncSettingsPrefs.setChecked(sPrefs.getBoolean(Prefs.EXPORT_SETTINGS));
         syncSettingsPrefs.setOnClickListener(this);
 
         eventDuration = (TextView) rootView.findViewById(R.id.eventDuration);
@@ -103,35 +99,32 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
     }
 
     private void prefsChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (syncSettingsPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.EXPORT_SETTINGS, false);
+            sPrefs.putBoolean(Prefs.EXPORT_SETTINGS, false);
             syncSettingsPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.EXPORT_SETTINGS, true);
+            sPrefs.putBoolean(Prefs.EXPORT_SETTINGS, true);
             syncSettingsPrefs.setChecked(true);
         }
     }
 
     private void stockChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (exportToStockPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.EXPORT_TO_STOCK, false);
+            sPrefs.putBoolean(Prefs.EXPORT_TO_STOCK, false);
             exportToStockPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.EXPORT_TO_STOCK, true);
+            sPrefs.putBoolean(Prefs.EXPORT_TO_STOCK, true);
             exportToStockPrefs.setChecked(true);
         }
     }
 
     private void autoBackupChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (autoBackupPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.AUTO_BACKUP, false);
+            sPrefs.putBoolean(Prefs.AUTO_BACKUP, false);
             autoBackupPrefs.setChecked(false);
             new AutoSyncAlarm().cancelAlarm(getActivity());
         } else {
-            sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
+            sPrefs.putBoolean(Prefs.AUTO_BACKUP, true);
             autoBackupPrefs.setChecked(true);
             new AutoSyncAlarm().setAlarm(getActivity());
         }
@@ -154,9 +147,8 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
     }
 
     private void exportToCalendarChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (exportToCalendarPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.EXPORT_TO_CALENDAR, false);
+            sPrefs.putBoolean(Prefs.EXPORT_TO_CALENDAR, false);
             exportToCalendarPrefs.setChecked(false);
             eventDuration.setEnabled(false);
             selectCalendar.setEnabled(false);
@@ -173,7 +165,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
     private void loadCalendars() {
         ArrayList<String> i = new CalendarManager(getActivity()).getCalendars();
         if (i != null && i.size() > 0) {
-            sPrefs.saveBoolean(Prefs.EXPORT_TO_CALENDAR, true);
+            sPrefs.putBoolean(Prefs.EXPORT_TO_CALENDAR, true);
             exportToCalendarPrefs.setChecked(true);
             eventDuration.setEnabled(true);
             selectCalendar.setEnabled(true);
@@ -189,7 +181,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
     @Override
     public void onDetach() {
         super.onDetach();
-        ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (ab != null){
             ab.setTitle(R.string.action_settings);
         }

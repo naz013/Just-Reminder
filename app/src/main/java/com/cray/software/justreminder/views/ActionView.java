@@ -64,6 +64,7 @@ public class ActionView extends LinearLayout {
     }
 
     private void init(final Context context, AttributeSet attrs) {
+        if (isInEditMode()) return;
         View.inflate(context, R.layout.action_view_layout, this);
         //setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         setOrientation(VERTICAL);

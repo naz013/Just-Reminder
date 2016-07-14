@@ -89,12 +89,12 @@ public class PlacesFragment extends BaseFragment implements MapCallback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reminder_places_layout, container, false);
-        SharedPrefs prefs = new SharedPrefs(getActivity());
+        SharedPrefs prefs = SharedPrefs.getInstance(getActivity());
         placesMap = new PlacesMap();
         placesMap.setListener(mListener);
         placesMap.setCallback(this);
-        placesMap.setRadius(prefs.loadInt(Prefs.LOCATION_RADIUS));
-        placesMap.setMarkerStyle(prefs.loadInt(Prefs.MARKER_STYLE));
+        placesMap.setRadius(prefs.getInt(Prefs.LOCATION_RADIUS));
+        placesMap.setMarkerStyle(prefs.getInt(Prefs.MARKER_STYLE));
         FragmentManager fragMan = getChildFragmentManager();
         FragmentTransaction fragTransaction = fragMan.beginTransaction();
         fragTransaction.replace(R.id.mapPlace, placesMap);

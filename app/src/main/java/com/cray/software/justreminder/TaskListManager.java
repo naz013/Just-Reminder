@@ -44,7 +44,6 @@ import com.cray.software.justreminder.utils.ViewUtils;
 
 public class TaskListManager extends AppCompatActivity {
     private ColorSetter cSetter = new ColorSetter(TaskListManager.this);
-    private SharedPrefs sPrefs = new SharedPrefs(TaskListManager.this);
     private ImageButton red_checkbox, violet_checkbox, green_checkbox, light_green_checkbox,
             blue_checkbox, light_blue_checkbox, yellow_checkbox, orange_checkbox, grey_checkbox,
             pink_checkbox, sand_checkbox, brown_checkbox, deepPurple, indigoCheckbox, limeCheckbox,
@@ -69,9 +68,6 @@ public class TaskListManager extends AppCompatActivity {
         }
         setContentView(R.layout.task_list_manager_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());
-
-        sPrefs = new SharedPrefs(TaskListManager.this);
-
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         setSupportActionBar(toolbar);
@@ -166,8 +162,7 @@ public class TaskListManager extends AppCompatActivity {
     private View.OnClickListener listener = v -> colorSwitch(v.getId());
 
     private void saveTaskList() {
-        sPrefs = new SharedPrefs(this);
-        sPrefs.saveBoolean(Prefs.TASK_CHANGED, true);
+        SharedPrefs.getInstance(this).putBoolean(Prefs.TASK_CHANGED, true);
         String listName = editField.getText().toString();
         if (listName.matches("")) {
             editField.setError(getString(R.string.must_be_not_empty));

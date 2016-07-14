@@ -51,8 +51,7 @@ public class MissedCallAlarm extends WakefulBroadcastReceiver {
         intent.putExtra("number", number);
         intent.putExtra("time", timeStamp);
         intent.putExtra(Constants.ITEM_ID_INTENT, id);
-        SharedPrefs prefs = new SharedPrefs(context);
-        int time = prefs.loadInt(Prefs.MISSED_CALL_TIME);
+        int time = SharedPrefs.getInstance(context).getInt(Prefs.MISSED_CALL_TIME);
         long mills = 1000 * 60;
         Integer i = (int) (long) id;
         PendingIntent alarmIntent = PendingIntent.getBroadcast(context, i, intent, PendingIntent.FLAG_UPDATE_CURRENT);

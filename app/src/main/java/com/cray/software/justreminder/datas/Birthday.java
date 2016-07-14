@@ -36,8 +36,7 @@ public class Birthday {
 
     public static ArrayList<Long> getTodayBirthdays(Context context){
         ArrayList<Long> list = new ArrayList<>();
-        SharedPrefs sharedPrefs = new SharedPrefs(context);
-        int mDays = sharedPrefs.loadInt(Prefs.DAYS_TO_BIRTHDAY);
+        int mDays = SharedPrefs.getInstance(context).getInt(Prefs.DAYS_TO_BIRTHDAY);
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
         int mYear = cal.get(Calendar.YEAR);

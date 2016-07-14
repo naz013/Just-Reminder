@@ -30,11 +30,11 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.activities.AddBirthday;
 import com.cray.software.justreminder.activities.QuickAddReminder;
 import com.cray.software.justreminder.activities.SplashScreen;
+import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Language;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.notes.NotesBase;
 import com.cray.software.justreminder.datas.models.CategoryModel;
 import com.cray.software.justreminder.dialogs.SelectVolume;
 import com.cray.software.justreminder.dialogs.VoiceHelp;
@@ -44,11 +44,11 @@ import com.cray.software.justreminder.json.JAction;
 import com.cray.software.justreminder.json.JExport;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JRecurrence;
+import com.cray.software.justreminder.notes.NotesBase;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.settings.SettingsActivity;
 import com.cray.software.justreminder.utils.TimeUtil;
-import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -69,15 +69,15 @@ public class Recognize {
     }
 
     public void parseResults(ArrayList matches, boolean isWidget){
-        SharedPrefs prefs = new SharedPrefs(mContext);
-        String language = Language.getLanguage(prefs.loadInt(Prefs.VOICE_LOCALE));
+        SharedPrefs prefs = SharedPrefs.getInstance(mContext);
+        String language = Language.getLanguage(prefs.getInt(Prefs.VOICE_LOCALE));
         for (Object key : matches){
             String keyStr = key.toString();
             Log.d(Constants.LOG_TAG, "Key " + keyStr);
-            String morning = prefs.loadPrefs(Prefs.TIME_MORNING);
-            String day = prefs.loadPrefs(Prefs.TIME_DAY);
-            String evening = prefs.loadPrefs(Prefs.TIME_EVENING);
-            String night = prefs.loadPrefs(Prefs.TIME_NIGHT);
+            String morning = prefs.getString(Prefs.TIME_MORNING);
+            String day = prefs.getString(Prefs.TIME_DAY);
+            String evening = prefs.getString(Prefs.TIME_EVENING);
+            String night = prefs.getString(Prefs.TIME_NIGHT);
 
             Model model = new Recognizer(mContext, new String[]{morning, day, evening, night}).parseResults(keyStr, language);
             if (model != null){
@@ -131,9 +131,9 @@ public class Recognize {
         JRecurrence jRecurrence = new JRecurrence(0, repeat, -1, weekdays, 0);
         JAction jAction = new JAction(type, number, -1, "", null);
 
-        SharedPrefs prefs = new SharedPrefs(mContext);
-        boolean isCal = prefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
-        boolean isStock = prefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
+        SharedPrefs prefs = SharedPrefs.getInstance(mContext);
+        boolean isCal = prefs.getBoolean(Prefs.EXPORT_TO_CALENDAR);
+        boolean isStock = prefs.getBoolean(Prefs.EXPORT_TO_STOCK);
         int exp = (isCalendar && (isCal || isStock)) ? 1 : 0;
         JExport jExport = new JExport(0, exp, null);
 
@@ -157,7 +157,7 @@ public class Recognize {
     }
 
     private void saveNote(String note) {
-        SharedPrefs prefs = new SharedPrefs(mContext);
+        SharedPrefs prefs = SharedPrefs.getInstance(mContext);
         Calendar calendar1 = Calendar.getInstance();
         int day = calendar1.get(Calendar.DAY_OF_MONTH);
         int month = calendar1.get(Calendar.MONTH);
@@ -169,14 +169,14 @@ public class Recognize {
         int color = new Random().nextInt(15);
         db.open();
         long id;
-        if (prefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
+        if (prefs.getBoolean(Prefs.NOTE_ENCRYPT)){
             id = db.saveNote(SyncHelper.encrypt(note), date, color, uuID, null, 5);
         } else {
             id = db.saveNote(note, date, color, uuID, null, 5);
         }
 
         long remId = 0;
-        if (prefs.loadBoolean(Prefs.QUICK_NOTE_REMINDER)){
+        if (prefs.getBoolean(Prefs.QUICK_NOTE_REMINDER)){
             DataBase DB = new DataBase(mContext);
             DB.open();
             Cursor cf = DB.queryCategories();
@@ -187,7 +187,7 @@ public class Recognize {
             if (cf != null) cf.close();
             DB.close();
 
-            long after = prefs.loadInt(Prefs.QUICK_NOTE_REMINDER_TIME) * 1000 * 60;
+            long after = prefs.getInt(Prefs.QUICK_NOTE_REMINDER_TIME) * 1000 * 60;
             long due = calendar1.getTimeInMillis() + after;
             JRecurrence jRecurrence = new JRecurrence(0, 0, -1, null, after);
             JModel jModel = new JModel(note, Constants.TYPE_REMINDER, categoryId,

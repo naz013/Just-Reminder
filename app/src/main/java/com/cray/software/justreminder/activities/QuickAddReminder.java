@@ -69,7 +69,6 @@ public class QuickAddReminder extends AppCompatActivity {
     private int myMonth = 0;
     private int myDay = 1;
 
-    private SharedPrefs sPrefs = new SharedPrefs(QuickAddReminder.this);
     private GTasksHelper gtx = new GTasksHelper(QuickAddReminder.this);
     private ColorSetter cs;
 
@@ -115,7 +114,7 @@ public class QuickAddReminder extends AppCompatActivity {
         timeField = (RoboTextView) findViewById(R.id.timeField);
         timeField.setOnClickListener(v -> timeDialog().show());
         timeField.setText(TimeUtil.getTime(c.getTime(),
-                sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+                SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
 
         repeatDays = (RoboEditText) findViewById(R.id.repeatDays);
 
@@ -187,7 +186,7 @@ public class QuickAddReminder extends AppCompatActivity {
 
     protected Dialog timeDialog() {
         return new TimePickerDialog(this, myCallBack, myHour, myMinute,
-                new SharedPrefs(QuickAddReminder.this).loadBoolean(Prefs.IS_24_TIME_FORMAT));
+                SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT));
     }
 
     TimePickerDialog.OnTimeSetListener myCallBack = new TimePickerDialog.OnTimeSetListener() {
@@ -200,7 +199,7 @@ public class QuickAddReminder extends AppCompatActivity {
             c.set(Calendar.MINUTE, minute);
 
             timeField.setText(TimeUtil.getTime(c.getTime(),
-                    sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+                    SharedPrefs.getInstance(QuickAddReminder.this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
         }
     };
 
@@ -214,8 +213,8 @@ public class QuickAddReminder extends AppCompatActivity {
         int repeat = Integer.parseInt(repeatDays.getText().toString().trim());
         String categoryId = CategoryModel.getDefault(QuickAddReminder.this);
         long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
-        boolean isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
-        boolean isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
+        boolean isCalendar = SharedPrefs.getInstance(this).getBoolean(Prefs.EXPORT_TO_CALENDAR);
+        boolean isStock = SharedPrefs.getInstance(this).getBoolean(Prefs.EXPORT_TO_STOCK);
         boolean isTasks = gtx.isLinked() && taskExport.isChecked();
         int isCal = isCalendar || isStock ? 1 : 0;
         JExport jExport = new JExport(isTasks ? 1 : 0, isCal, null);
@@ -229,7 +228,7 @@ public class QuickAddReminder extends AppCompatActivity {
         if (isTasks) {
             ReminderUtils.exportToTasks(this, text, startTime, remId);
         }
-        new SharedPrefs(this).saveBoolean(Prefs.REMINDER_CHANGED, true);
+        SharedPrefs.getInstance(this).putBoolean(Prefs.REMINDER_CHANGED, true);
         finish();
     }
 

@@ -52,7 +52,6 @@ import java.util.Collections;
 public class GDriveHelper {
 
     private Context mContext;
-    private SharedPrefs prefs;
 
     private final HttpTransport mTransport = AndroidHttp.newCompatibleTransport();
     private final JsonFactory mJsonFactory = GsonFactory.getDefaultInstance();
@@ -67,9 +66,8 @@ public class GDriveHelper {
      * Authorization method.
      */
     public void authorize(){
-        prefs = new SharedPrefs(mContext);
         GoogleAccountCredential m_credential = GoogleAccountCredential.usingOAuth2(mContext, Collections.singleton(DriveScopes.DRIVE));
-        m_credential.setSelectedAccountName(SyncHelper.decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)));
+        m_credential.setSelectedAccountName(SyncHelper.decrypt(SharedPrefs.getInstance(mContext).getString(Prefs.DRIVE_USER)));
         driveService = new Drive.Builder(
                 mTransport, mJsonFactory, m_credential).setApplicationName(APPLICATION_NAME)
                 .build();
@@ -80,16 +78,14 @@ public class GDriveHelper {
      * @return return true if user was already logged.
      */
     public boolean isLinked(){
-        prefs = new SharedPrefs(mContext);
-        return SyncHelper.decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)).matches(".*@.*");
+        return SyncHelper.decrypt(SharedPrefs.getInstance(mContext).getString(Prefs.DRIVE_USER)).matches(".*@.*");
     }
 
     /**
      * Logout from Drive on this application.
      */
     public void unlink(){
-        prefs = new SharedPrefs(mContext);
-        prefs.savePrefs(Prefs.DRIVE_USER, Constants.DRIVE_USER_NONE);
+        SharedPrefs.getInstance(mContext).putString(Prefs.DRIVE_USER, Constants.DRIVE_USER_NONE);
     }
 
     /**

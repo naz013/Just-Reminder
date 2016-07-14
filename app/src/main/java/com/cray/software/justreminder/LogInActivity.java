@@ -69,7 +69,6 @@ import java.util.Locale;
 
 public class LogInActivity extends Activity implements LoginListener {
 
-    private SharedPrefs sPrefs;
     private ColorSetter cs = new ColorSetter(LogInActivity.this);
     private PaperButton connectGDrive, connectDropbox;
     private RoboCheckBox checkBox;
@@ -99,10 +98,7 @@ public class LogInActivity extends Activity implements LoginListener {
             getWindow().setStatusBarColor(cs.getColor(cs.colorPrimaryDark()));
         }
         setRequestedOrientation(cs.getRequestOrientation());
-
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
-
-        sPrefs = new SharedPrefs(LogInActivity.this);
         dbx = new DropboxHelper(LogInActivity.this);
 
         connectGDrive = (PaperButton) findViewById(R.id.connectGDrive);
@@ -228,7 +224,7 @@ public class LogInActivity extends Activity implements LoginListener {
                 connectDropbox.setEnabled(false);
                 connectGDrive.setEnabled(false);
                 skipButton.setEnabled(false);
-                sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
+                SharedPrefs.getInstance(this).putBoolean(Prefs.AUTO_BACKUP, true);
                 if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL,
                         Permissions.WRITE_EXTERNAL, Permissions.ACCESS_FINE_LOCATION)) {
                     new CloudLogin(LogInActivity.this, checkBox.isChecked(), this).execute();
@@ -324,11 +320,11 @@ public class LogInActivity extends Activity implements LoginListener {
             accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
             GoogleAccountManager gam = new GoogleAccountManager(this);
             getAndUseAuthTokenInAsyncTask(gam.getAccountByName(accountName));
-            sPrefs.savePrefs(Prefs.DRIVE_USER, SyncHelper.encrypt(accountName));
+            SharedPrefs.getInstance(this).putString(Prefs.DRIVE_USER, SyncHelper.encrypt(accountName));
             connectDropbox.setEnabled(false);
             connectGDrive.setEnabled(false);
             skipButton.setEnabled(false);
-            sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
+            SharedPrefs.getInstance(this).putBoolean(Prefs.AUTO_BACKUP, true);
             if (Permissions.checkPermission(LogInActivity.this,
                     Permissions.READ_EXTERNAL,
                     Permissions.WRITE_EXTERNAL)) {
@@ -339,11 +335,11 @@ public class LogInActivity extends Activity implements LoginListener {
             }
         } else if (requestCode == REQUEST_ACCOUNT_PICKER && resultCode == RESULT_OK) {
             accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-            sPrefs.savePrefs(Prefs.DRIVE_USER, SyncHelper.encrypt(accountName));
+            SharedPrefs.getInstance(this).putString(Prefs.DRIVE_USER, SyncHelper.encrypt(accountName));
             connectDropbox.setEnabled(false);
             connectGDrive.setEnabled(false);
             skipButton.setEnabled(false);
-            sPrefs.saveBoolean(Prefs.AUTO_BACKUP, true);
+            SharedPrefs.getInstance(this).putBoolean(Prefs.AUTO_BACKUP, true);
             if (Permissions.checkPermission(LogInActivity.this,
                     Permissions.READ_EXTERNAL,
                     Permissions.WRITE_EXTERNAL)) {
@@ -357,13 +353,13 @@ public class LogInActivity extends Activity implements LoginListener {
 
     @Override
     public void onLocal() {
-        SharedPrefs sPrefs = new SharedPrefs(LogInActivity.this);
+        SharedPrefs sPrefs = SharedPrefs.getInstance(this);
         if (checkBox.isChecked()) {
-            sPrefs.saveBoolean(Prefs.CONTACT_BIRTHDAYS, true);
-            sPrefs.saveBoolean(Prefs.CONTACTS_IMPORT_DIALOG, true);
-            sPrefs.saveBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, true);
-            sPrefs.saveBoolean(Prefs.WIDGET_BIRTHDAYS, true);
-            sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, true);
+            sPrefs.putBoolean(Prefs.CONTACT_BIRTHDAYS, true);
+            sPrefs.putBoolean(Prefs.CONTACTS_IMPORT_DIALOG, true);
+            sPrefs.putBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, true);
+            sPrefs.putBoolean(Prefs.WIDGET_BIRTHDAYS, true);
+            sPrefs.putBoolean(Prefs.SYNC_BIRTHDAYS, true);
             if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_CONTACTS)) {
                 new ImportBirthdays(LogInActivity.this).execute();
             } else {
@@ -371,11 +367,11 @@ public class LogInActivity extends Activity implements LoginListener {
                         Permissions.READ_CONTACTS);
             }
         } else {
-            sPrefs.saveBoolean(Prefs.CONTACT_BIRTHDAYS, false);
-            sPrefs.saveBoolean(Prefs.CONTACTS_IMPORT_DIALOG, true);
-            sPrefs.saveBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, false);
-            sPrefs.saveBoolean(Prefs.WIDGET_BIRTHDAYS, false);
-            sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, false);
+            sPrefs.putBoolean(Prefs.CONTACT_BIRTHDAYS, false);
+            sPrefs.putBoolean(Prefs.CONTACTS_IMPORT_DIALOG, true);
+            sPrefs.putBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, false);
+            sPrefs.putBoolean(Prefs.WIDGET_BIRTHDAYS, false);
+            sPrefs.putBoolean(Prefs.SYNC_BIRTHDAYS, false);
         }
         startActivity(new Intent(LogInActivity.this, ScreenManager.class));
         finish();
@@ -383,12 +379,13 @@ public class LogInActivity extends Activity implements LoginListener {
 
     @Override
     public void onCloud() {
+        SharedPrefs sPrefs = SharedPrefs.getInstance(this);
         if (checkBox.isChecked()) {
-            sPrefs.saveBoolean(Prefs.CONTACT_BIRTHDAYS, true);
-            sPrefs.saveBoolean(Prefs.CONTACTS_IMPORT_DIALOG, true);
-            sPrefs.saveBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, true);
-            sPrefs.saveBoolean(Prefs.WIDGET_BIRTHDAYS, true);
-            sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, true);
+            sPrefs.putBoolean(Prefs.CONTACT_BIRTHDAYS, true);
+            sPrefs.putBoolean(Prefs.CONTACTS_IMPORT_DIALOG, true);
+            sPrefs.putBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, true);
+            sPrefs.putBoolean(Prefs.WIDGET_BIRTHDAYS, true);
+            sPrefs.putBoolean(Prefs.SYNC_BIRTHDAYS, true);
             if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_CONTACTS)) {
                 new ImportBirthdays(LogInActivity.this).execute();
             } else {
@@ -396,11 +393,11 @@ public class LogInActivity extends Activity implements LoginListener {
                         Permissions.READ_CONTACTS);
             }
         } else {
-            sPrefs.saveBoolean(Prefs.CONTACT_BIRTHDAYS, false);
-            sPrefs.saveBoolean(Prefs.CONTACTS_IMPORT_DIALOG, true);
-            sPrefs.saveBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, false);
-            sPrefs.saveBoolean(Prefs.WIDGET_BIRTHDAYS, false);
-            sPrefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, false);
+            sPrefs.putBoolean(Prefs.CONTACT_BIRTHDAYS, false);
+            sPrefs.putBoolean(Prefs.CONTACTS_IMPORT_DIALOG, true);
+            sPrefs.putBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, false);
+            sPrefs.putBoolean(Prefs.WIDGET_BIRTHDAYS, false);
+            sPrefs.putBoolean(Prefs.SYNC_BIRTHDAYS, false);
         }
         startActivity(new Intent(this, ScreenManager.class));
         finish();

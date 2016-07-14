@@ -58,8 +58,7 @@ public class CheckPosition extends IntentService {
         locationA.setLongitude(currentLong);
         NextBase db = new NextBase(getApplicationContext());
         TimeCount timeCount = new TimeCount(getApplicationContext());
-        SharedPrefs sPrefs = new SharedPrefs(getApplicationContext());
-        boolean isEnabled = sPrefs.loadBoolean(Prefs.TRACKING_NOTIFICATION);
+        boolean isEnabled = SharedPrefs.getInstance(getApplicationContext()).getBoolean(Prefs.TRACKING_NOTIFICATION);
         db.open();
         Cursor c = db.queryAllLocations();
         if (c != null && c.moveToFirst()) {
@@ -73,7 +72,7 @@ public class CheckPosition extends IntentService {
                 int shown = c.getInt(c.getColumnIndex(NextBase.NOTIFICATION_STATUS));
                 String json = c.getString(c.getColumnIndex(NextBase.JSON));
 
-                int stockRadius = sPrefs.loadInt(Prefs.LOCATION_RADIUS);
+                int stockRadius = SharedPrefs.getInstance(getApplicationContext()).getInt(Prefs.LOCATION_RADIUS);
                 if (isDone != 1) {
                     if (type.matches(Constants.TYPE_PLACES)) {
                         checkPlace(json, locationA, stockRadius, id);

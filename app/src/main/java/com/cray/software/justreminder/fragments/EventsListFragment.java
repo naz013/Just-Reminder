@@ -16,6 +16,8 @@
 
 package com.cray.software.justreminder.fragments;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -28,7 +30,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.activities.AddBirthday;
@@ -50,6 +51,7 @@ public class EventsListFragment extends Fragment implements SimpleListener {
     private RecyclerView mEventsList;
     private LinearLayout mEmptyItem;
     private boolean isCreate = false;
+    private Context mContext;
 
     public void setData(ArrayList<EventsItem> datas){
         this.mDataList = new ArrayList<>(datas);
@@ -64,6 +66,22 @@ public class EventsListFragment extends Fragment implements SimpleListener {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (mContext == null) {
+            mContext = context;
+        }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (mContext == null) {
+            mContext = activity;
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.birthdays_list_fragment, container, false);
         mEmptyItem = (LinearLayout) view.findViewById(R.id.emptyItem);
@@ -71,7 +89,7 @@ public class EventsListFragment extends Fragment implements SimpleListener {
         RoboTextView emptyText = (RoboTextView) view.findViewById(R.id.emptyText);
         emptyText.setText(getString(R.string.no_events));
         ImageView emptyImage = (ImageView) view.findViewById(R.id.emptyImage);
-        if (new ColorSetter(getActivity()).isDark()) {
+        if (new ColorSetter(mContext).isDark()) {
             emptyImage.setImageResource(R.drawable.ic_today_white_vector);
         } else {
             emptyImage.setImageResource(R.drawable.ic_today_black_vector);
@@ -91,9 +109,9 @@ public class EventsListFragment extends Fragment implements SimpleListener {
     }
 
     public void loaderAdapter(){
-        CalendarEventsAdapter customAdapter = new CalendarEventsAdapter(getActivity(), mDataList);
-        customAdapter.setmEventListener(this);
-        mEventsList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        CalendarEventsAdapter customAdapter = new CalendarEventsAdapter(mContext, mDataList);
+        customAdapter.setEventListener(this);
+        mEventsList.setLayoutManager(new LinearLayoutManager(mContext));
         mEventsList.setItemAnimator(new DefaultItemAnimator());
         mEventsList.setAdapter(customAdapter);
         reloadView();
@@ -113,24 +131,24 @@ public class EventsListFragment extends Fragment implements SimpleListener {
     @Override
     public void onItemClicked(int position, View view) {
         if (mDataList.get(position).getType().matches("birthday")) {
-            startActivity(new Intent(getActivity(), AddBirthday.class)
+            startActivity(new Intent(mContext, AddBirthday.class)
                     .putExtra("BDid", mDataList.get(position).getId())
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         } else {
-            Reminder.edit(mDataList.get(position).getId(), getActivity());
+            Reminder.edit(mDataList.get(position).getId(), mContext);
         }
     }
 
     @Override
     public void onItemLongClicked(int position, View view) {
         if (mDataList.get(position).getType().matches("birthday")) {
-            DataBase db = new DataBase(getActivity());
+            DataBase db = new DataBase(mContext);
             db.open();
             db.deleteBirthday(mDataList.get(position).getId());
             db.close();
             mDataList.remove(position);
             loaderAdapter();
-            Messages.toast(getActivity(), getString(R.string.deleted));
+            Messages.toast(mContext, getString(R.string.deleted));
         }
     }
 }

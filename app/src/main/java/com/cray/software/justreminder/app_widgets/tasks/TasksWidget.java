@@ -43,10 +43,8 @@ public class TasksWidget extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-
         SharedPreferences sp = context.getSharedPreferences(
                 TasksWidgetConfig.TASKS_WIDGET_PREF, Context.MODE_PRIVATE);
-
         for (int i : appWidgetIds) {
             updateWidget(context, appWidgetManager, sp, i);
         }
@@ -55,7 +53,6 @@ public class TasksWidget extends AppWidgetProvider {
 
     public static void updateWidget(Context context, AppWidgetManager appWidgetManager,
                                     SharedPreferences sp, int widgetID){
-
         RemoteViews rv = new RemoteViews(context.getPackageName(),
                 R.layout.tasks_widget_layout);
         int theme = sp.getInt(TasksWidgetConfig.TASKS_WIDGET_THEME + widgetID, 0);
@@ -99,12 +96,11 @@ public class TasksWidget extends AppWidgetProvider {
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         super.onDeleted(context, appWidgetIds);
-
         SharedPreferences.Editor editor = context.getSharedPreferences(
                 TasksWidgetConfig.TASKS_WIDGET_PREF, Context.MODE_PRIVATE).edit();
         for (int widgetID : appWidgetIds) {
             editor.remove(TasksWidgetConfig.TASKS_WIDGET_THEME + widgetID);
         }
-        editor.commit();
+        editor.apply();
     }
 }

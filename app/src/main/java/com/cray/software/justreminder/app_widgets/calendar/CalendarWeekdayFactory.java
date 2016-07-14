@@ -64,8 +64,7 @@ public class CalendarWeekdayFactory implements RemoteViewsService.RemoteViewsFac
         // 17 Feb 2013 is Sunday
         DateTime sunday = new DateTime(2013, 2, 17, 0, 0, 0, 0);
         DateTime nextDay = sunday.plusDays(startDayOfWeek - SUNDAY);
-        SharedPrefs prefs = new SharedPrefs(mContext);
-        if (prefs.loadInt(Prefs.START_DAY) == 1){
+        if (SharedPrefs.getInstance(mContext).getInt(Prefs.START_DAY) == 1){
             nextDay = nextDay.plusDays(1);
         }
 

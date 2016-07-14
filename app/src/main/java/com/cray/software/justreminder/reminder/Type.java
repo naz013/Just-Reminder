@@ -174,9 +174,8 @@ public class Type {
     protected void exportToServices(JModel item, long id){
         long due = item.getEventTime();
         if (due > 0) {
-            SharedPrefs prefs = new SharedPrefs(mContext);
-            boolean stock = prefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
-            boolean calendar = prefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
+            boolean stock = SharedPrefs.getInstance(mContext).getBoolean(Prefs.EXPORT_TO_STOCK);
+            boolean calendar = SharedPrefs.getInstance(mContext).getBoolean(Prefs.EXPORT_TO_CALENDAR);
             JExport jExport = item.getExport();
             if (jExport != null) {
                 if (jExport.getCalendar() == 1)

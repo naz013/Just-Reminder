@@ -63,10 +63,9 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
     public RemindersRecyclerAdapter(Context context, ArrayList<ReminderModel> list) {
         this.mContext = context;
         mDataList = new ArrayList<>(list);
-        SharedPrefs prefs = new SharedPrefs(context);
         cs = new ColorSetter(context);
         mCount = new TimeCount(context);
-        is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
+        is24 = SharedPrefs.getInstance(context).getBoolean(Prefs.IS_24_TIME_FORMAT);
         isDark = cs.isDark();
         setHasStableIds(true);
     }

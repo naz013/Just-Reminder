@@ -73,7 +73,7 @@ public class WeekFragment extends BaseFragment implements CompoundButton.OnCheck
      * Click listener for time fields.
      */
     public View.OnClickListener timeClick = v -> new TimePickerDialog(getActivity(), WeekFragment.this, myHour, myMinute,
-            new SharedPrefs(getActivity()).loadBoolean(Prefs.IS_24_TIME_FORMAT)).show();
+            SharedPrefs.getInstance(getActivity()).getBoolean(Prefs.IS_24_TIME_FORMAT)).show();
 
     public static WeekFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
                                                   boolean hasStock, boolean hasTasks) {
@@ -130,7 +130,7 @@ public class WeekFragment extends BaseFragment implements CompoundButton.OnCheck
         timeField = (RoboTextView) view.findViewById(R.id.timeField);
         timeField.setOnClickListener(timeClick);
         timeField.setText(TimeUtil.getTime(updateTime(System.currentTimeMillis(), false),
-                new SharedPrefs(getActivity()).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+                SharedPrefs.getInstance(getActivity()).getBoolean(Prefs.IS_24_TIME_FORMAT)));
 
         ColorSetter cs = new ColorSetter(getActivity());
         mondayCheck = (ToggleButton) view.findViewById(R.id.mondayCheck);
@@ -169,7 +169,7 @@ public class WeekFragment extends BaseFragment implements CompoundButton.OnCheck
             }
 
             timeField.setText(TimeUtil.getTime(updateTime(eventTime, true),
-                    new SharedPrefs(getActivity()).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+                    SharedPrefs.getInstance(getActivity()).getBoolean(Prefs.IS_24_TIME_FORMAT)));
             if (weekdays != null && weekdays.size() > 0) {
                 setCheckForDays(weekdays);
             }
@@ -262,7 +262,7 @@ public class WeekFragment extends BaseFragment implements CompoundButton.OnCheck
         c.set(Calendar.MINUTE, minute);
 
         String formattedTime = TimeUtil.getTime(c.getTime(),
-                new SharedPrefs(getActivity()).loadBoolean(Prefs.IS_24_TIME_FORMAT));
+                SharedPrefs.getInstance(getActivity()).getBoolean(Prefs.IS_24_TIME_FORMAT));
 
         timeField.setText(formattedTime);
 

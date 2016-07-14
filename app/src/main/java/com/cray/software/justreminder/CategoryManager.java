@@ -159,7 +159,7 @@ public class CategoryManager extends AppCompatActivity {
             db.addCategory(text, System.currentTimeMillis(), SyncHelper.generateID(), color);
         }
         db.close();
-        new SharedPrefs(this).saveBoolean(Prefs.GROUP_CHANGED, true);
+        SharedPrefs.getInstance(this).putBoolean(Prefs.GROUP_CHANGED, true);
         finish();
     }
 

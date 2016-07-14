@@ -103,7 +103,7 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
 
     public void setPointRadius(int pointRadius) {
         if (pointRadius == -1) {
-            this.pointRadius.setProgress(new SharedPrefs(mContext).loadInt(Prefs.LOCATION_RADIUS));
+            this.pointRadius.setProgress(SharedPrefs.getInstance(mContext).getInt(Prefs.LOCATION_RADIUS));
         } else this.pointRadius.setProgress(pointRadius);
     }
 
@@ -150,10 +150,9 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reminder_location_out_layout, container, false);
-        SharedPrefs prefs = new SharedPrefs(mContext);
         mapFragment = new MapFragment();
         mapFragment.setListener(this);
-        mapFragment.setMarkerStyle(prefs.loadInt(Prefs.MARKER_STYLE));
+        mapFragment.setMarkerStyle(SharedPrefs.getInstance(mContext).getInt(Prefs.MARKER_STYLE));
         mapFragment.setMarkerTitle(eventTask);
         mapFragment.setCallback(this);
         FragmentManager fragMan = getChildFragmentManager();
@@ -213,7 +212,7 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
             }
         });
         if (pointRadius.getProgress() == 0) {
-            pointRadius.setProgress(prefs.loadInt(Prefs.LOCATION_RADIUS));
+            pointRadius.setProgress(SharedPrefs.getInstance(mContext).getInt(Prefs.LOCATION_RADIUS));
         }
 
         actionViewLocationOut = (ActionView) view.findViewById(R.id.actionViewLocationOut);
@@ -414,9 +413,8 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
     private void updateListener() {
         if (mContext == null) return;
         mLocationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
-        SharedPrefs prefs = new SharedPrefs(mContext);
-        long time = (prefs.loadInt(Prefs.TRACK_TIME) * 1000) * 2;
-        int distance = prefs.loadInt(Prefs.TRACK_DISTANCE) * 2;
+        long time = (SharedPrefs.getInstance(mContext).getInt(Prefs.TRACK_TIME) * 1000) * 2;
+        int distance = SharedPrefs.getInstance(mContext).getInt(Prefs.TRACK_DISTANCE) * 2;
         if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, time, distance, mLocList);
         } else {

@@ -62,14 +62,10 @@ public class CalendarEventsAdapter extends RecyclerView.Adapter<CalendarEventsAd
     private ColorSetter cs;
 
     /**
-     * Shared Preferences helper class.
-     */
-    private SharedPrefs prefs;
-
-    /**
      * RecyclerView action listener.
      */
     private SimpleListener mEventListener;
+    private boolean is24;
 
     /**
      * Adapter constructor.
@@ -80,14 +76,14 @@ public class CalendarEventsAdapter extends RecyclerView.Adapter<CalendarEventsAd
         this.mContext = context;
         this.mDatas = datas;
         cs = new ColorSetter(context);
-        prefs = new SharedPrefs(context);
+        is24 = SharedPrefs.getInstance(context).getBoolean(Prefs.IS_24_TIME_FORMAT);
     }
 
     /**
      * Set action listener for adapter.
      * @param listener action listener.
      */
-    public final void setmEventListener(final SimpleListener listener) {
+    public final void setEventListener(final SimpleListener listener) {
         this.mEventListener = listener;
     }
 
@@ -157,8 +153,6 @@ public class CalendarEventsAdapter extends RecyclerView.Adapter<CalendarEventsAd
     public final void onBindViewHolder(final ViewHolder holder, final int position) {
         final EventsItem item = mDatas.get(position);
         EventType type = item.getInn();
-        boolean is24 = prefs.loadBoolean(Prefs.IS_24_TIME_FORMAT);
-
         if (type == EventType.birthday) {
             holder.eventColor.setBackgroundColor(cs.getColor(cs.colorBirthdayCalendar()));
             holder.eventType.setText(R.string.birthday);

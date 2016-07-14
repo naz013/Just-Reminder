@@ -32,7 +32,6 @@ public class TrackerOption extends Activity {
 
     private SeekBar radiusBar, timeBar;
     private RoboTextView radiusValue, timeValue;
-    private SharedPrefs sPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +41,12 @@ public class TrackerOption extends Activity {
         setContentView(R.layout.tracker_settings_layout);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
-        sPrefs = new SharedPrefs(TrackerOption.this);
-
         radiusValue = (RoboTextView) findViewById(R.id.radiusValue);
-        radiusValue.setText(String.format(getString(R.string.x_meters), sPrefs.loadInt(Prefs.TRACK_DISTANCE)));
+        radiusValue.setText(String.format(getString(R.string.x_meters), SharedPrefs.getInstance(this).getInt(Prefs.TRACK_DISTANCE)));
 
         radiusBar = (SeekBar) findViewById(R.id.radiusBar);
         radiusBar.setMax(149);
-        radiusBar.setProgress(sPrefs.loadInt(Prefs.TRACK_DISTANCE) - 1);
+        radiusBar.setProgress(SharedPrefs.getInstance(this).getInt(Prefs.TRACK_DISTANCE) - 1);
         radiusBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -68,11 +65,11 @@ public class TrackerOption extends Activity {
         });
 
         timeValue = (RoboTextView) findViewById(R.id.timeValue);
-        timeValue.setText(String.format(getString(R.string.x_seconds), sPrefs.loadInt(Prefs.TRACK_TIME)));
+        timeValue.setText(String.format(getString(R.string.x_seconds), SharedPrefs.getInstance(this).getInt(Prefs.TRACK_TIME)));
 
         timeBar = (SeekBar) findViewById(R.id.timeBar);
         timeBar.setMax(59);
-        timeBar.setProgress(sPrefs.loadInt(Prefs.TRACK_TIME) - 1);
+        timeBar.setProgress(SharedPrefs.getInstance(this).getInt(Prefs.TRACK_TIME) - 1);
         timeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -91,9 +88,8 @@ public class TrackerOption extends Activity {
         });
 
         findViewById(R.id.aboutClose).setOnClickListener(v -> {
-            sPrefs = new SharedPrefs(TrackerOption.this);
-            sPrefs.saveInt(Prefs.TRACK_DISTANCE, radiusBar.getProgress() + 1);
-            sPrefs.saveInt(Prefs.TRACK_TIME, timeBar.getProgress() + 1);
+            SharedPrefs.getInstance(this).putInt(Prefs.TRACK_DISTANCE, radiusBar.getProgress() + 1);
+            SharedPrefs.getInstance(this).putInt(Prefs.TRACK_TIME, timeBar.getProgress() + 1);
             new DisableAsync(TrackerOption.this).execute();
             finish();
         });

@@ -32,7 +32,6 @@ public class MarkerStyle extends Activity implements View.OnClickListener{
     private RoboRadioButton red, green, blue, yellow, greenLight, blueLight, cyan, purple,
             amber, orange, pink, teal, deepPurple, deepOrange, indigo, lime;
     private RadioGroup themeGroup, themeGroup2, themeGroup3, themeGroup4;
-    private SharedPrefs sPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,8 +147,7 @@ public class MarkerStyle extends Activity implements View.OnClickListener{
     };
 
     public void setUpRadio(){
-        sPrefs = new SharedPrefs(MarkerStyle.this);
-        int loaded = sPrefs.loadInt(Prefs.MARKER_STYLE);
+        int loaded = SharedPrefs.getInstance(this).getInt(Prefs.MARKER_STYLE);
         if (loaded == 0){
             red.setChecked(true);
         } else if (loaded == 1){
@@ -241,8 +239,7 @@ public class MarkerStyle extends Activity implements View.OnClickListener{
     }
 
     void saveColor(int style) {
-        sPrefs = new SharedPrefs(MarkerStyle.this);
-        sPrefs.saveInt(Prefs.MARKER_STYLE, style);
+        SharedPrefs.getInstance(this).putInt(Prefs.MARKER_STYLE, style);
     }
 
     @Override

@@ -18,6 +18,7 @@ package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -56,15 +57,12 @@ import java.util.Map;
 public class TasksFragment extends Fragment {
 
     private ViewPager pager;
-
     private ArrayList<TaskListData> taskListDatum;
     private Map<String, Integer> map = new HashMap<>();
     private int currentPos;
-    private Activity activity;
-
     private boolean onCreate = false;
-
     private NavigationCallbacks mCallbacks;
+    private Activity mContext;
 
     public static TasksFragment newInstance() {
         return new TasksFragment();
@@ -76,7 +74,6 @@ public class TasksFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true);
     }
 
@@ -87,7 +84,7 @@ public class TasksFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.tasks_menu, menu);
-        TasksData db = new TasksData(activity);
+        TasksData db = new TasksData(mContext);
         db.open();
         if (currentPos != 0) {
             menu.add(Menu.NONE, MENU_ITEM_EDIT, 100, R.string.edit_list);
@@ -111,14 +108,14 @@ public class TasksFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_sync:
-                new DelayedAsync(activity, null).execute();
+                new DelayedAsync(mContext, null).execute();
                 return true;
             case R.id.action_add_list:
-                startActivity(new Intent(activity, TaskListManager.class));
+                startActivity(new Intent(mContext, TaskListManager.class));
                 return true;
             case MENU_ITEM_EDIT:
                 if (currentPos != 0){
-                    startActivity(new Intent(activity, TaskListManager.class)
+                    startActivity(new Intent(mContext, TaskListManager.class)
                             .putExtra(Constants.ITEM_ID_INTENT, taskListDatum.get(currentPos).getTaskList().getId()));
                 }
                 return true;
@@ -146,15 +143,35 @@ public class TasksFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (mContext == null) {
+            mContext = (Activity) context;
+        }
+        if (mCallbacks == null) {
+            try {
+                mCallbacks = (NavigationCallbacks) context;
+            } catch (ClassCastException e) {
+                throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+            }
+        }
+        ((ScreenManager) context).onSectionAttached(ScreenManager.FRAGMENT_TASKS);
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = activity;
-        try {
-            mCallbacks = (NavigationCallbacks) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+        if (mContext == null) {
+            this.mContext = activity;
         }
-        ((ScreenManager)activity).onSectionAttached(ScreenManager.FRAGMENT_TASKS);
+        if (mCallbacks == null) {
+            try {
+                mCallbacks = (NavigationCallbacks) activity;
+            } catch (ClassCastException e) {
+                throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+            }
+        }
+        ((ScreenManager) activity).onSectionAttached(ScreenManager.FRAGMENT_TASKS);
     }
 
     @Override
@@ -170,10 +187,8 @@ public class TasksFragment extends Fragment {
             loadData();
         }
         onCreate = false;
-
-        SharedPrefs sPrefs = new SharedPrefs(activity);
-        if (sPrefs.loadBoolean(Prefs.TASK_CHANGED)) {
-            sPrefs.saveBoolean(Prefs.TASK_CHANGED, false);
+        if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.TASK_CHANGED)) {
+            SharedPrefs.getInstance(mContext).putBoolean(Prefs.TASK_CHANGED, false);
             if (mCallbacks != null) {
                 mCallbacks.onItemSelected(ScreenManager.FRAGMENT_TASKS);
             }
@@ -186,20 +201,20 @@ public class TasksFragment extends Fragment {
                 getString(R.string.by_date_za),
                 getString(R.string.active_first),
                 getString(R.string.completed_first)};
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle(getString(R.string.order));
         builder.setItems(items, (dialog, which) -> {
-            SharedPrefs prefs = new SharedPrefs(activity);
+            SharedPrefs prefs = SharedPrefs.getInstance(mContext);
             if (which == 0) {
-                prefs.savePrefs(Prefs.TASKS_ORDER, Constants.ORDER_DEFAULT);
+                prefs.putString(Prefs.TASKS_ORDER, Constants.ORDER_DEFAULT);
             } else if (which == 1) {
-                prefs.savePrefs(Prefs.TASKS_ORDER, Constants.ORDER_DATE_A_Z);
+                prefs.putString(Prefs.TASKS_ORDER, Constants.ORDER_DATE_A_Z);
             } else if (which == 2) {
-                prefs.savePrefs(Prefs.TASKS_ORDER, Constants.ORDER_DATE_Z_A);
+                prefs.putString(Prefs.TASKS_ORDER, Constants.ORDER_DATE_Z_A);
             } else if (which == 3) {
-                prefs.savePrefs(Prefs.TASKS_ORDER, Constants.ORDER_COMPLETED_Z_A);
+                prefs.putString(Prefs.TASKS_ORDER, Constants.ORDER_COMPLETED_Z_A);
             } else if (which == 4) {
-                prefs.savePrefs(Prefs.TASKS_ORDER, Constants.ORDER_COMPLETED_A_Z);
+                prefs.putString(Prefs.TASKS_ORDER, Constants.ORDER_COMPLETED_A_Z);
             }
             dialog.dismiss();
             loadData();
@@ -209,7 +224,7 @@ public class TasksFragment extends Fragment {
     }
 
     private void deleteDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setCancelable(true);
         builder.setMessage(getString(R.string.delete_this_list));
         builder.setNegativeButton(getString(R.string.no), (dialog, which) -> {
@@ -228,7 +243,7 @@ public class TasksFragment extends Fragment {
     }
 
     private void deleteList() {
-        TasksData db = new TasksData(activity);
+        TasksData db = new TasksData(mContext);
         db.open();
         long id = taskListDatum.get(currentPos).getTaskList().getId();
         Cursor c = db.getTasksList(id);
@@ -236,7 +251,7 @@ public class TasksFragment extends Fragment {
             String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
             int def = c.getInt(c.getColumnIndex(TasksConstants.COLUMN_DEFAULT));
             db.deleteTasksList(id);
-            new TaskListAsync(activity, null, 0, 0, listId, TasksConstants.DELETE_TASK_LIST).execute();
+            new TaskListAsync(mContext, null, 0, 0, listId, TasksConstants.DELETE_TASK_LIST).execute();
             Cursor x = db.getTasks(listId);
             if (x != null && x.moveToFirst()){
                 do {
@@ -257,7 +272,6 @@ public class TasksFragment extends Fragment {
     }
 
     private void loadData() {
-        SharedPrefs sPrefs = new SharedPrefs(activity);
         taskListDatum = new ArrayList<>();
         taskListDatum.clear();
 
@@ -267,9 +281,7 @@ public class TasksFragment extends Fragment {
         for (int position = 1; position < taskLists.size(); position++){
             taskListDatum.add(new TaskListData(taskLists.get(position), getList(taskLists.get(position)), position));
         }
-
-        int pos = sPrefs.loadInt(Prefs.LAST_LIST);
-
+        int pos = SharedPrefs.getInstance(mContext).getInt(Prefs.LAST_LIST);
         final TasksPagerAdapter pagerAdapter =
                 new TasksPagerAdapter(getChildFragmentManager(), taskListDatum);
         pagerAdapter.setCallbacks(mCallbacks);
@@ -283,28 +295,26 @@ public class TasksFragment extends Fragment {
             @Override
             public void onPageSelected(int i) {
                 if (mCallbacks != null) {
-                    ColorSetter mColor = new ColorSetter(activity);
+                    ColorSetter mColor = new ColorSetter(mContext);
                     if (i == 0) {
                         mCallbacks.onTitleChanged(getString(R.string.all));
-                        mCallbacks.onUiChanged(ViewUtils.getColor(getActivity(), mColor.colorPrimary()),
-                                ViewUtils.getColor(getActivity(), mColor.colorPrimaryDark()),
-                                ViewUtils.getColor(getActivity(), mColor.colorAccent()));
+                        mCallbacks.onUiChanged(ViewUtils.getColor(mContext, mColor.colorPrimary()),
+                                ViewUtils.getColor(mContext, mColor.colorPrimaryDark()),
+                                ViewUtils.getColor(mContext, mColor.colorAccent()));
                         mCallbacks.onListIdChanged(0);
                     } else {
                         TaskList taskList = taskListDatum.get(i).getTaskList();
                         mCallbacks.onTitleChanged(taskList.getTitle());
                         int tmp = taskList.getColor();
                         mCallbacks.onUiChanged(mColor.getNoteColor(tmp), mColor.getNoteDarkColor(tmp),
-                                ViewUtils.getColor(getActivity(), mColor.colorAccent(tmp)));
+                                ViewUtils.getColor(mContext, mColor.colorAccent(tmp)));
                         long idS = taskList.getId();
                         mCallbacks.onListIdChanged(idS);
                     }
                 }
-
-                SharedPrefs sPrefs = new SharedPrefs(activity);
-                sPrefs.saveInt(Prefs.LAST_LIST, i);
+                SharedPrefs.getInstance(mContext).putInt(Prefs.LAST_LIST, i);
                 currentPos = i;
-                getActivity().invalidateOptionsMenu();
+                mContext.invalidateOptionsMenu();
             }
 
             @Override
@@ -315,20 +325,20 @@ public class TasksFragment extends Fragment {
 
         pager.setCurrentItem(pos < taskListDatum.size() ? pos : 0);
         if (mCallbacks != null) {
-            ColorSetter mColor = new ColorSetter(activity);
+            ColorSetter mColor = new ColorSetter(mContext);
             if (pos == 0) {
                 mCallbacks.onTitleChanged(getString(R.string.all));
-                mCallbacks.onUiChanged(ViewUtils.getColor(getActivity(), mColor.colorPrimary()),
-                        ViewUtils.getColor(getActivity(), mColor.colorPrimaryDark()),
-                        ViewUtils.getColor(getActivity(), mColor.colorAccent()));
+                mCallbacks.onUiChanged(ViewUtils.getColor(mContext, mColor.colorPrimary()),
+                        ViewUtils.getColor(mContext, mColor.colorPrimaryDark()),
+                        ViewUtils.getColor(mContext, mColor.colorAccent()));
                 mCallbacks.onListIdChanged(0);
             } else {
                 TaskList taskList = taskListDatum.get(pos).getTaskList();
                 mCallbacks.onTitleChanged(taskList.getTitle());
                 int tmp = taskList.getColor();
-                mCallbacks.onUiChanged(ViewUtils.getColor(getActivity(), mColor.colorPrimary(tmp)),
-                        ViewUtils.getColor(getActivity(), mColor.colorPrimaryDark(tmp)),
-                        ViewUtils.getColor(getActivity(), mColor.colorAccent(tmp)));
+                mCallbacks.onUiChanged(ViewUtils.getColor(mContext, mColor.colorPrimary(tmp)),
+                        ViewUtils.getColor(mContext, mColor.colorPrimaryDark(tmp)),
+                        ViewUtils.getColor(mContext, mColor.colorAccent(tmp)));
                 long idS = taskList.getId();
                 mCallbacks.onListIdChanged(idS);
             }
@@ -341,7 +351,7 @@ public class TasksFragment extends Fragment {
         map = new HashMap<>();
         map.clear();
         lists.add(new TaskList(getString(R.string.all), 0, GTasksHelper.TASKS_ALL, 25));
-        TasksData db = new TasksData(activity);
+        TasksData db = new TasksData(mContext);
         db.open();
         Cursor c = db.getTasksLists();
         if (c != null && c.moveToFirst()){
@@ -360,7 +370,7 @@ public class TasksFragment extends Fragment {
     }
 
     private ArrayList<Task> getList(TaskList taskList) {
-        TasksData db = new TasksData(activity);
+        TasksData db = new TasksData(mContext);
         db.open();
         ArrayList<Task> mData = new ArrayList<>();
         mData.clear();
@@ -406,7 +416,7 @@ public class TasksFragment extends Fragment {
     }
 
     private void clearList() {
-        TasksData db = new TasksData(activity);
+        TasksData db = new TasksData(mContext);
         db.open();
         String listId = taskListDatum.get(currentPos).getTaskList().getListId();
         Cursor c = db.getTasks(listId);
@@ -422,7 +432,7 @@ public class TasksFragment extends Fragment {
 
         if (c != null) c.close();
         db.close();
-        new TaskListAsync(activity, null, 0, 0, listId, TasksConstants.CLEAR_TASK_LIST).execute();
+        new TaskListAsync(mContext, null, 0, 0, listId, TasksConstants.CLEAR_TASK_LIST).execute();
 
         if (mCallbacks != null) mCallbacks.onItemSelected(ScreenManager.FRAGMENT_TASKS);
     }

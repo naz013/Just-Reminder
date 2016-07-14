@@ -38,7 +38,6 @@ public class ColorSetter {
     public static final int NUM_OF_MARKERS = 16;
 
     private Context mContext;
-    private SharedPrefs sPrefs;
 
     public ColorSetter(Context context){
         this.mContext = context;
@@ -97,7 +96,7 @@ public class ColorSetter {
      */
     @ColorRes
     public int colorPrimary(){
-        return colorPrimary(new SharedPrefs(mContext).loadInt(Prefs.APP_THEME));
+        return colorPrimary(SharedPrefs.getInstance(mContext).getInt(Prefs.APP_THEME));
     }
 
     /**
@@ -106,7 +105,7 @@ public class ColorSetter {
      */
     @ColorRes
     public int colorAccent(){
-        return colorAccent(new SharedPrefs(mContext).loadInt(Prefs.APP_THEME));
+        return colorAccent(SharedPrefs.getInstance(mContext).getInt(Prefs.APP_THEME));
     }
 
     /**
@@ -247,9 +246,9 @@ public class ColorSetter {
      * @return boolean
      */
     public boolean isDark() {
-        sPrefs = new SharedPrefs(mContext);
-        boolean isDark = sPrefs.loadBoolean(Prefs.USE_DARK_THEME);
-        boolean isDayNight = sPrefs.loadBoolean(Prefs.DAY_NIGHT);
+        SharedPrefs sPrefs = SharedPrefs.getInstance(mContext);
+        boolean isDark = sPrefs.getBoolean(Prefs.USE_DARK_THEME);
+        boolean isDayNight = sPrefs.getBoolean(Prefs.DAY_NIGHT);
         if (isDayNight) {
             Calendar calendar = Calendar.getInstance();
             long mTime = System.currentTimeMillis();
@@ -271,8 +270,7 @@ public class ColorSetter {
     @StyleRes
     public int getStyle(){
         int id;
-        sPrefs = new SharedPrefs(mContext);
-        int loadedColor = sPrefs.loadInt(Prefs.APP_THEME);
+        int loadedColor = SharedPrefs.getInstance(mContext).getInt(Prefs.APP_THEME);
         if (isDark()) {
             switch (loadedColor) {
                 case 0:
@@ -403,7 +401,7 @@ public class ColorSetter {
      */
     @ColorRes
     public int colorBirthdayCalendar(){
-        return colorPrimary(new SharedPrefs(mContext).loadInt(Prefs.BIRTH_COLOR));
+        return colorPrimary(SharedPrefs.getInstance(mContext).getInt(Prefs.BIRTH_COLOR));
     }
 
     /**
@@ -484,7 +482,7 @@ public class ColorSetter {
      */
     @ColorRes
     public int colorReminderCalendar(){
-        return colorPrimary(new SharedPrefs(mContext).loadInt(Prefs.REMINDER_COLOR));
+        return colorPrimary(SharedPrefs.getInstance(mContext).getInt(Prefs.REMINDER_COLOR));
     }
 
     /**
@@ -493,7 +491,7 @@ public class ColorSetter {
      */
     @ColorRes
     public int colorCurrentCalendar(){
-        return colorPrimary(new SharedPrefs(mContext).loadInt(Prefs.TODAY_COLOR));
+        return colorPrimary(SharedPrefs.getInstance(mContext).getInt(Prefs.TODAY_COLOR));
     }
 
     /**
@@ -574,7 +572,7 @@ public class ColorSetter {
      * @return Drawable
      */
     public Drawable toggleDrawable(){
-        int loadedColor = new SharedPrefs(mContext).loadInt(Prefs.APP_THEME);
+        int loadedColor = SharedPrefs.getInstance(mContext).getInt(Prefs.APP_THEME);
         int color;
         switch (loadedColor) {
             case 0:
@@ -714,7 +712,7 @@ public class ColorSetter {
      */
     @ColorRes
     public int colorPrimaryDark(){
-        int loadedColor = new SharedPrefs(mContext).loadInt(Prefs.APP_THEME);
+        int loadedColor = SharedPrefs.getInstance(mContext).getInt(Prefs.APP_THEME);
         return colorPrimaryDark(loadedColor);
     }
 
@@ -725,10 +723,8 @@ public class ColorSetter {
     @ColorInt
     public int getSpinnerStyle(){
         int color;
-        sPrefs = new SharedPrefs(mContext);
-        if (isDark()) {
-            color = R.color.material_grey;
-        } else color = R.color.whitePrimary;
+        if (isDark()) color = R.color.material_grey;
+        else color = R.color.whitePrimary;
         return getColor(color);
     }
 
@@ -739,8 +735,7 @@ public class ColorSetter {
     @StyleRes
     public int getDialogStyle(){
         int id;
-        sPrefs = new SharedPrefs(mContext);
-        int loadedColor = sPrefs.loadInt(Prefs.APP_THEME);
+        int loadedColor = SharedPrefs.getInstance(mContext).getInt(Prefs.APP_THEME);
         if (isDark()) {
             switch (loadedColor) {
                 case 0:
@@ -872,10 +867,8 @@ public class ColorSetter {
     @StyleRes
     public int getFullscreenStyle(){
         int id;
-        sPrefs = new SharedPrefs(mContext);
-        if (isDark()) {
-            id = R.style.HomeDarkFullscreen;
-        } else id = R.style.HomeWhiteFullscreen;
+        if (isDark()) id = R.style.HomeDarkFullscreen;
+        else id = R.style.HomeWhiteFullscreen;
         return id;
     }
 
@@ -886,10 +879,8 @@ public class ColorSetter {
     @StyleRes
     public int getTransparentStyle(){
         int id;
-        sPrefs = new SharedPrefs(mContext);
-        if (isDark()) {
-            id = R.style.HomeDarkTranslucent;
-        } else id = R.style.HomeWhiteTranslucent;
+        if (isDark()) id = R.style.HomeDarkTranslucent;
+        else id = R.style.HomeWhiteTranslucent;
         return id;
     }
 
@@ -900,10 +891,8 @@ public class ColorSetter {
     @ColorInt
     public int getBackgroundStyle(){
         int id;
-        sPrefs = new SharedPrefs(mContext);
-        if (isDark()) {
-            id = getColor(R.color.material_grey);
-        } else id = getColor(R.color.material_white);
+        if (isDark()) id = getColor(R.color.material_grey);
+        else id = getColor(R.color.material_white);
         return id;
     }
 
@@ -913,10 +902,8 @@ public class ColorSetter {
      */
     @ColorInt
     public int getStatusBarStyle(){
-        sPrefs = new SharedPrefs(mContext);
-        if (isDark()) {
-            return getColor(R.color.material_grey);
-        } else return getColor(colorPrimaryDark());
+        if (isDark()) return getColor(R.color.material_grey);
+        else return getColor(colorPrimaryDark());
     }
 
     /**
@@ -926,10 +913,8 @@ public class ColorSetter {
     @ColorInt
     public int getCardStyle(){
         int color;
-        sPrefs = new SharedPrefs(mContext);
-        if (isDark()) {
-            color = getColor(R.color.grey_x);
-        } else color = getColor(R.color.whitePrimary);
+        if (isDark()) color = getColor(R.color.grey_x);
+        else color = getColor(R.color.whitePrimary);
         return color;
     }
 
@@ -940,10 +925,8 @@ public class ColorSetter {
     @DrawableRes
     public int getCardDrawableStyle(){
         int color;
-        sPrefs = new SharedPrefs(mContext);
-        if (isDark()) {
-            color = R.drawable.card_bg_dark;
-        } else color = R.drawable.card_bg;
+        if (isDark()) color = R.drawable.card_bg_dark;
+        else color = R.drawable.card_bg;
         return color;
     }
 
@@ -953,8 +936,7 @@ public class ColorSetter {
      */
     public int getRequestOrientation(){
         int i;
-        sPrefs = new SharedPrefs(mContext);
-        String prefs = sPrefs.loadPrefs(Prefs.SCREEN);
+        String prefs = SharedPrefs.getInstance(mContext).getString(Prefs.SCREEN);
         if (prefs.matches(Constants.SCREEN_PORTRAIT)){
             i = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
         } else if (prefs.matches(Constants.SCREEN_LANDSCAPE)){
@@ -971,7 +953,7 @@ public class ColorSetter {
      */
     @ColorRes
     public int[] getMarkerRadiusStyle(){
-        int color = new SharedPrefs(mContext).loadInt(Prefs.MARKER_STYLE);
+        int color = SharedPrefs.getInstance(mContext).getInt(Prefs.MARKER_STYLE);
         return getMarkerRadiusStyle(color);
     }
 
@@ -1064,7 +1046,7 @@ public class ColorSetter {
     @DrawableRes
     public int getMarkerStyle(){
         if (Module.isPro()) {
-            int loaded = new SharedPrefs(mContext).loadInt(Prefs.MARKER_STYLE);
+            int loaded = SharedPrefs.getInstance(mContext).getInt(Prefs.MARKER_STYLE);
             return getMarkerStyle(loaded);
         } else {
             return R.drawable.marker_blue;

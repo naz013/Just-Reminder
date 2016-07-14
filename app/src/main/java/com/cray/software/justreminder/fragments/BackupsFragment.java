@@ -17,6 +17,7 @@
 package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -37,7 +38,6 @@ import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.spinner.SpinnerItem;
 import com.cray.software.justreminder.spinner.TitleNavigationAdapter;
 
@@ -55,7 +55,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     private Toolbar toolbar;
     private Spinner spinner;
 
-    private NavigationCallbacks mCallbacks;
+    private Activity mContext;
 
     public static BackupsFragment newInstance() {
         return new BackupsFragment();
@@ -101,23 +101,29 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mCallbacks = (NavigationCallbacks) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+        if (mContext == null) {
+            mContext = activity;
         }
-        ((ScreenManager)activity).onSectionAttached(ScreenManager.FRAGMENT_BACKUPS);
+        ((ScreenManager) activity).onSectionAttached(ScreenManager.FRAGMENT_BACKUPS);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (mContext == null) {
+            mContext = (Activity) context;
+        }
+        ((ScreenManager) context).onSectionAttached(ScreenManager.FRAGMENT_BACKUPS);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mCallbacks = null;
     }
 
     private void setNavigation(){
         navIds.clear();
-        boolean isDark = new ColorSetter(getActivity()).isDark();
+        boolean isDark = new ColorSetter(mContext).isDark();
         if (isDark) {
             navIds.add(new Item(new SpinnerItem(getString(R.string.local),
                     R.drawable.ic_sd_storage_white_24dp), LOCAL_INT,
@@ -127,7 +133,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                     R.drawable.ic_sd_storage_black_24dp), LOCAL_INT,
                     R.drawable.ic_sd_storage_white_24dp));
         }
-        DropboxHelper dbx = new DropboxHelper(getActivity());
+        DropboxHelper dbx = new DropboxHelper(mContext);
         dbx.startSession();
         if (dbx.isLinked()){
             if (isDark) {
@@ -140,7 +146,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                         R.drawable.dropbox_icon_white));
             }
         }
-        GDriveHelper gdx = new GDriveHelper(getActivity());
+        GDriveHelper gdx = new GDriveHelper(mContext);
         if (gdx.isLinked()) {
             if (isDark) {
                 navIds.add(new Item(new SpinnerItem(getString(R.string.google_drive),
@@ -158,7 +164,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             navSpinner.add(item.getSpinnerItem());
         }
 
-        TitleNavigationAdapter adapter = new TitleNavigationAdapter(getActivity(), navSpinner);
+        TitleNavigationAdapter adapter = new TitleNavigationAdapter(mContext, navSpinner);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
 
@@ -186,8 +192,8 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         } else {
             if (item.getId() == DROPBOX_INT){
                 new Thread(() -> {
-                    final boolean isC = SyncHelper.isConnected(getActivity());
-                    getActivity().runOnUiThread(() -> {
+                    final boolean isC = SyncHelper.isConnected(mContext);
+                    mContext.runOnUiThread(() -> {
                         if (isC) {
                             addFragment(CloudFragment.newInstance(DROPBOX_INT));
                             toolbar.setLogo(item.getLogo());
@@ -199,8 +205,8 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
             }
             if (item.getId() == GOOGLE_DRIVE_INT){
                 new Thread(() -> {
-                    final boolean isC = SyncHelper.isConnected(getActivity());
-                    getActivity().runOnUiThread(() -> {
+                    final boolean isC = SyncHelper.isConnected(mContext);
+                    mContext.runOnUiThread(() -> {
                         if (isC) {
                             addFragment(CloudFragment.newInstance(GOOGLE_DRIVE_INT));
                             toolbar.setLogo(item.getLogo());

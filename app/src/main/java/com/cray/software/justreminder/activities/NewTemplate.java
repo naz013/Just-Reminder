@@ -111,7 +111,7 @@ public class NewTemplate extends AppCompatActivity {
             db.addTemplate(text, System.currentTimeMillis());
         }
         db.close();
-        new SharedPrefs(this).saveBoolean(Prefs.TEMPLATE_CHANGED, true);
+        SharedPrefs.getInstance(this).putBoolean(Prefs.TEMPLATE_CHANGED, true);
         finish();
     }
 

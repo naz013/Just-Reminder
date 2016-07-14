@@ -48,6 +48,7 @@ public class RoboCheckBox extends CheckBox {
     }
 
     private void init(AttributeSet attrs) {
+        if (isInEditMode()) return;
         if (attrs != null) {
             TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.RoboCheckBox);
             int fontCode = a.getInt(R.styleable.RoboCheckBox_check_font_style, -1);

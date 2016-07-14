@@ -47,7 +47,6 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     private SharedPrefs sPrefs;
     private ActionBar ab;
     private TextView locale, volume;
-    
     private PrefsView blurPrefs, notificationDismissPrefs, permanentNotificationPrefs, 
             statusIconPrefs, vibrationOptionPrefs, infiniteVibrateOptionPrefs, 
             soundOptionPrefs, infiniteSoundOptionPrefs, ttsPrefs, wakeScreenOptionPrefs, 
@@ -58,15 +57,12 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View rootView =  inflater.inflate(R.layout.settings_notification, container, false);
-
-        ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (ab != null){
             ab.setTitle(R.string.notification);
         }
-
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
+        sPrefs = SharedPrefs.getInstance(getActivity());
 
         TextView selectImage = (TextView) rootView.findViewById(R.id.selectImage);
         selectImage.setOnClickListener(v -> {
@@ -80,7 +76,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
         blurPrefs = (PrefsView) rootView.findViewById(R.id.blurPrefs);
         if (Module.isPro()) {
             blurPrefs.setOnClickListener(this);
-            blurPrefs.setChecked(sPrefs.loadBoolean(Prefs.REMINDER_IMAGE_BLUR));
+            blurPrefs.setChecked(sPrefs.getBoolean(Prefs.REMINDER_IMAGE_BLUR));
             blurPrefs.setVisibility(View.VISIBLE);
         } else {
             blurPrefs.setVisibility(View.GONE);
@@ -88,66 +84,66 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
 
         notificationDismissPrefs = (PrefsView) rootView.findViewById(R.id.notificationDismissPrefs);
         notificationDismissPrefs.setOnClickListener(this);
-        notificationDismissPrefs.setChecked(sPrefs.loadBoolean(Prefs.NOTIFICATION_REMOVE));
+        notificationDismissPrefs.setChecked(sPrefs.getBoolean(Prefs.NOTIFICATION_REMOVE));
 
         permanentNotificationPrefs = (PrefsView) rootView.findViewById(R.id.permanentNotificationPrefs);
         permanentNotificationPrefs.setOnClickListener(this);
-        permanentNotificationPrefs.setChecked(sPrefs.loadBoolean(Prefs.STATUS_BAR_NOTIFICATION));
+        permanentNotificationPrefs.setChecked(sPrefs.getBoolean(Prefs.STATUS_BAR_NOTIFICATION));
 
         statusIconPrefs = (PrefsView) rootView.findViewById(R.id.statusIconPrefs);
         statusIconPrefs.setOnClickListener(this);
-        statusIconPrefs.setChecked(sPrefs.loadBoolean(Prefs.STATUS_BAR_ICON));
+        statusIconPrefs.setChecked(sPrefs.getBoolean(Prefs.STATUS_BAR_ICON));
 
         vibrationOptionPrefs = (PrefsView) rootView.findViewById(R.id.vibrationOptionPrefs);
         vibrationOptionPrefs.setOnClickListener(this);
-        vibrationOptionPrefs.setChecked(sPrefs.loadBoolean(Prefs.VIBRATION_STATUS));
+        vibrationOptionPrefs.setChecked(sPrefs.getBoolean(Prefs.VIBRATION_STATUS));
 
         infiniteVibrateOptionPrefs = (PrefsView) rootView.findViewById(R.id.infiniteVibrateOptionPrefs);
         infiniteVibrateOptionPrefs.setOnClickListener(this);
-        infiniteVibrateOptionPrefs.setChecked(sPrefs.loadBoolean(Prefs.INFINITE_VIBRATION));
+        infiniteVibrateOptionPrefs.setChecked(sPrefs.getBoolean(Prefs.INFINITE_VIBRATION));
 
         soundOptionPrefs = (PrefsView) rootView.findViewById(R.id.soundOptionPrefs);
         soundOptionPrefs.setOnClickListener(this);
-        soundOptionPrefs.setChecked(sPrefs.loadBoolean(Prefs.SILENT_SOUND));
+        soundOptionPrefs.setChecked(sPrefs.getBoolean(Prefs.SILENT_SOUND));
 
         infiniteSoundOptionPrefs = (PrefsView) rootView.findViewById(R.id.infiniteSoundOptionPrefs);
         infiniteSoundOptionPrefs.setOnClickListener(this);
-        infiniteSoundOptionPrefs.setChecked(sPrefs.loadBoolean(Prefs.INFINITE_SOUND));
+        infiniteSoundOptionPrefs.setChecked(sPrefs.getBoolean(Prefs.INFINITE_SOUND));
 
         ttsPrefs = (PrefsView) rootView.findViewById(R.id.ttsPrefs);
         ttsPrefs.setOnClickListener(this);
-        ttsPrefs.setChecked(sPrefs.loadBoolean(Prefs.TTS));
+        ttsPrefs.setChecked(sPrefs.getBoolean(Prefs.TTS));
 
         wakeScreenOptionPrefs = (PrefsView) rootView.findViewById(R.id.wakeScreenOptionPrefs);
         wakeScreenOptionPrefs.setOnClickListener(this);
-        wakeScreenOptionPrefs.setChecked(sPrefs.loadBoolean(Prefs.WAKE_STATUS));
+        wakeScreenOptionPrefs.setChecked(sPrefs.getBoolean(Prefs.WAKE_STATUS));
 
         unlockScreenPrefs = (PrefsView) rootView.findViewById(R.id.unlockScreenPrefs);
         unlockScreenPrefs.setOnClickListener(this);
-        unlockScreenPrefs.setChecked(sPrefs.loadBoolean(Prefs.UNLOCK_DEVICE));
+        unlockScreenPrefs.setChecked(sPrefs.getBoolean(Prefs.UNLOCK_DEVICE));
 
         silentSMSOptionPrefs = (PrefsView) rootView.findViewById(R.id.silentSMSOptionPrefs);
         silentSMSOptionPrefs.setOnClickListener(this);
-        silentSMSOptionPrefs.setChecked(sPrefs.loadBoolean(Prefs.SILENT_SMS));
+        silentSMSOptionPrefs.setChecked(sPrefs.getBoolean(Prefs.SILENT_SMS));
 
         autoLaunchPrefs = (PrefsView) rootView.findViewById(R.id.autoLaunchPrefs);
         autoLaunchPrefs.setOnClickListener(this);
-        autoLaunchPrefs.setChecked(sPrefs.loadBoolean(Prefs.APPLICATION_AUTO_LAUNCH));
+        autoLaunchPrefs.setChecked(sPrefs.getBoolean(Prefs.APPLICATION_AUTO_LAUNCH));
 
         repeatNotificationOptionPrefs = (PrefsView) rootView.findViewById(R.id.repeatNotificationOptionPrefs);
         repeatNotificationOptionPrefs.setOnClickListener(this);
-        repeatNotificationOptionPrefs.setChecked(sPrefs.loadBoolean(Prefs.NOTIFICATION_REPEAT));
+        repeatNotificationOptionPrefs.setChecked(sPrefs.getBoolean(Prefs.NOTIFICATION_REPEAT));
 
         systemPrefs = (PrefsView) rootView.findViewById(R.id.systemPrefs);
         systemPrefs.setOnClickListener(this);
-        systemPrefs.setChecked(sPrefs.loadBoolean(Prefs.SYSTEM_VOLUME));
+        systemPrefs.setChecked(sPrefs.getBoolean(Prefs.SYSTEM_VOLUME));
 
         streamPrefs = (PrefsView) rootView.findViewById(R.id.streamPrefs);
         streamPrefs.setOnClickListener(this);
 
         increasePrefs = (PrefsView) rootView.findViewById(R.id.increasePrefs);
         increasePrefs.setOnClickListener(this);
-        increasePrefs.setChecked(sPrefs.loadBoolean(Prefs.INCREASING_VOLUME));
+        increasePrefs.setChecked(sPrefs.getBoolean(Prefs.INCREASING_VOLUME));
 
         repeatIntervalPrefs = (PrefsView) rootView.findViewById(R.id.repeatIntervalPrefs);
         repeatIntervalPrefs.setOnClickListener(this);
@@ -168,55 +164,43 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
 
         ledPrefs = (PrefsView) rootView.findViewById(R.id.ledPrefs);
         chooseLedColorPrefs = (PrefsView) rootView.findViewById(R.id.chooseLedColorPrefs);
-
         checkVibrate();
-
         checkRepeat();
-
         checkInfinite();
-
         checkTTS();
-
         checkIcon();
-
         checkSystem();
-
         if (Module.isPro()){
             ledPrefs.setOnClickListener(this);
             ledPrefs.setVisibility(View.VISIBLE);
-            ledPrefs.setChecked(sPrefs.loadBoolean(Prefs.LED_STATUS));
-            
+            ledPrefs.setChecked(sPrefs.getBoolean(Prefs.LED_STATUS));
             chooseLedColorPrefs.setVisibility(View.VISIBLE);
             chooseLedColorPrefs.setOnClickListener(view -> Dialogues.ledColor(getActivity(), Prefs.LED_COLOR));
-
             checkEnabling();
         } else {
             ledPrefs.setVisibility(View.GONE);
             chooseLedColorPrefs.setVisibility(View.GONE);
         }
-
         return rootView;
     }
 
     private void increaseChange() {
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (increasePrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.INCREASING_VOLUME, false);
+            sPrefs.putBoolean(Prefs.INCREASING_VOLUME, false);
             increasePrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.INCREASING_VOLUME, true);
+            sPrefs.putBoolean(Prefs.INCREASING_VOLUME, true);
             increasePrefs.setChecked(true);
         }
         checkSystem();
     }
 
     private void systemChange() {
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (systemPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.SYSTEM_VOLUME, false);
+            sPrefs.putBoolean(Prefs.SYSTEM_VOLUME, false);
             systemPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.SYSTEM_VOLUME, true);
+            sPrefs.putBoolean(Prefs.SYSTEM_VOLUME, true);
             systemPrefs.setChecked(true);
         }
         checkSystem();
@@ -266,10 +250,9 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     }
 
     private void showMelody(){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        if (sPrefs.loadBoolean(Prefs.CUSTOM_SOUND)){
-            if (sPrefs.isString(Prefs.CUSTOM_SOUND_FILE)) {
-                String path = sPrefs.loadPrefs(Prefs.CUSTOM_SOUND_FILE);
+        if (sPrefs.getBoolean(Prefs.CUSTOM_SOUND)){
+            if (sPrefs.hasKey(Prefs.CUSTOM_SOUND_FILE)) {
+                String path = sPrefs.getString(Prefs.CUSTOM_SOUND_FILE);
                 if (!path.matches("")) {
                     File sound = new File(path);
                     String fileName = sound.getName();
@@ -286,35 +269,32 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     }
 
     private void vibrationChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (vibrationOptionPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.VIBRATION_STATUS, false);
+            sPrefs.putBoolean(Prefs.VIBRATION_STATUS, false);
             vibrationOptionPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.VIBRATION_STATUS, true);
+            sPrefs.putBoolean(Prefs.VIBRATION_STATUS, true);
             vibrationOptionPrefs.setChecked(true);
         }
         checkVibrate();
     }
 
     private void infiniteVibrationChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (infiniteVibrateOptionPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.INFINITE_VIBRATION, false);
+            sPrefs.putBoolean(Prefs.INFINITE_VIBRATION, false);
             infiniteVibrateOptionPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.INFINITE_VIBRATION, true);
+            sPrefs.putBoolean(Prefs.INFINITE_VIBRATION, true);
             infiniteVibrateOptionPrefs.setChecked(true);
         }
     }
 
     private void ttsChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (ttsPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.TTS, false);
+            sPrefs.putBoolean(Prefs.TTS, false);
             ttsPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.TTS, true);
+            sPrefs.putBoolean(Prefs.TTS, true);
             ttsPrefs.setChecked(true);
             Dialogues.ttsLocale(getActivity(), Prefs.TTS_LOCALE);
         }
@@ -322,61 +302,56 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     }
 
     private void blurChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (blurPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.REMINDER_IMAGE_BLUR, false);
+            sPrefs.putBoolean(Prefs.REMINDER_IMAGE_BLUR, false);
             blurPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.REMINDER_IMAGE_BLUR, true);
+            sPrefs.putBoolean(Prefs.REMINDER_IMAGE_BLUR, true);
             blurPrefs.setChecked(true);
         }
     }
 
     private void soundChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (soundOptionPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.SILENT_SOUND, false);
+            sPrefs.putBoolean(Prefs.SILENT_SOUND, false);
             soundOptionPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.SILENT_SOUND, true);
+            sPrefs.putBoolean(Prefs.SILENT_SOUND, true);
             soundOptionPrefs.setChecked(true);
         }
     }
 
     private void infiniteSoundChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (infiniteSoundOptionPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.INFINITE_SOUND, false);
+            sPrefs.putBoolean(Prefs.INFINITE_SOUND, false);
             infiniteSoundOptionPrefs.setChecked(false);
         } else {
-            if (!sPrefs.loadBoolean(Prefs.NOTIFICATION_REPEAT)) {
-                sPrefs.saveBoolean(Prefs.INFINITE_SOUND, true);
+            if (!sPrefs.getBoolean(Prefs.NOTIFICATION_REPEAT)) {
+                sPrefs.putBoolean(Prefs.INFINITE_SOUND, true);
                 infiniteSoundOptionPrefs.setChecked(true);
             }
         }
     }
 
     private void iconChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (statusIconPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.STATUS_BAR_ICON, false);
+            sPrefs.putBoolean(Prefs.STATUS_BAR_ICON, false);
             statusIconPrefs.setChecked(false);
             new Notifier(getActivity()).recreatePermanent();
         } else {
-            sPrefs.saveBoolean(Prefs.STATUS_BAR_ICON, true);
+            sPrefs.putBoolean(Prefs.STATUS_BAR_ICON, true);
             statusIconPrefs.setChecked(true);
             new Notifier(getActivity()).recreatePermanent();
         }
     }
 
     private void notificationChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (permanentNotificationPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.STATUS_BAR_NOTIFICATION, false);
+            sPrefs.putBoolean(Prefs.STATUS_BAR_NOTIFICATION, false);
             permanentNotificationPrefs.setChecked(false);
             new Notifier(getActivity()).hidePermanent();
         } else {
-            sPrefs.saveBoolean(Prefs.STATUS_BAR_NOTIFICATION, true);
+            sPrefs.putBoolean(Prefs.STATUS_BAR_NOTIFICATION, true);
             permanentNotificationPrefs.setChecked(true);
             new Notifier(getActivity()).recreatePermanent();
         }
@@ -384,12 +359,11 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     }
 
     private void notificationDismissChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (notificationDismissPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.NOTIFICATION_REMOVE, false);
+            sPrefs.putBoolean(Prefs.NOTIFICATION_REMOVE, false);
             notificationDismissPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.NOTIFICATION_REMOVE, true);
+            sPrefs.putBoolean(Prefs.NOTIFICATION_REMOVE, true);
             notificationDismissPrefs.setChecked(true);
         }
     }
@@ -403,53 +377,48 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     }
 
     private void showDays(){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         int days;
-        if (sPrefs.isString(Prefs.DELAY_TIME)) {
-            days = sPrefs.loadInt(Prefs.DELAY_TIME);
+        if (sPrefs.hasKey(Prefs.DELAY_TIME)) {
+            days = sPrefs.getInt(Prefs.DELAY_TIME);
         } else days = 0;
         delayForPrefs.setValueText(String.valueOf(days));
     }
 
     private void showRepeat(){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         int days;
-        if (sPrefs.isString(Prefs.NOTIFICATION_REPEAT_INTERVAL)) {
-            days = sPrefs.loadInt(Prefs.NOTIFICATION_REPEAT_INTERVAL);
+        if (sPrefs.hasKey(Prefs.NOTIFICATION_REPEAT_INTERVAL)) {
+            days = sPrefs.getInt(Prefs.NOTIFICATION_REPEAT_INTERVAL);
         } else days = 0;
         repeatIntervalPrefs.setValueText(String.valueOf(days));
     }
 
     private void ledChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (ledPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.LED_STATUS, false);
+            sPrefs.putBoolean(Prefs.LED_STATUS, false);
             ledPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.LED_STATUS, true);
+            sPrefs.putBoolean(Prefs.LED_STATUS, true);
             ledPrefs.setChecked(true);
         }
         checkEnabling();
     }
 
     private void silentSMSChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (silentSMSOptionPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.SILENT_SMS, false);
+            sPrefs.putBoolean(Prefs.SILENT_SMS, false);
             silentSMSOptionPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.SILENT_SMS, true);
+            sPrefs.putBoolean(Prefs.SILENT_SMS, true);
             silentSMSOptionPrefs.setChecked(true);
         }
     }
 
     private void autoLaunchChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (autoLaunchPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.APPLICATION_AUTO_LAUNCH, false);
+            sPrefs.putBoolean(Prefs.APPLICATION_AUTO_LAUNCH, false);
             autoLaunchPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.APPLICATION_AUTO_LAUNCH, true);
+            sPrefs.putBoolean(Prefs.APPLICATION_AUTO_LAUNCH, true);
             autoLaunchPrefs.setChecked(true);
         }
     }
@@ -463,36 +432,33 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     }
 
     private void wakeChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (wakeScreenOptionPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.WAKE_STATUS, false);
+            sPrefs.putBoolean(Prefs.WAKE_STATUS, false);
             wakeScreenOptionPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.WAKE_STATUS, true);
+            sPrefs.putBoolean(Prefs.WAKE_STATUS, true);
             wakeScreenOptionPrefs.setChecked(true);
         }
     }
 
     private void unlockChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (unlockScreenPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.UNLOCK_DEVICE, false);
+            sPrefs.putBoolean(Prefs.UNLOCK_DEVICE, false);
             unlockScreenPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.UNLOCK_DEVICE, true);
+            sPrefs.putBoolean(Prefs.UNLOCK_DEVICE, true);
             unlockScreenPrefs.setChecked(true);
         }
     }
 
     private void repeatChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (repeatNotificationOptionPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.NOTIFICATION_REPEAT, false);
+            sPrefs.putBoolean(Prefs.NOTIFICATION_REPEAT, false);
             repeatNotificationOptionPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.NOTIFICATION_REPEAT, true);
+            sPrefs.putBoolean(Prefs.NOTIFICATION_REPEAT, true);
             repeatNotificationOptionPrefs.setChecked(true);
-            sPrefs.saveBoolean(Prefs.INFINITE_SOUND, false);
+            sPrefs.putBoolean(Prefs.INFINITE_SOUND, false);
         }
         checkRepeat();
         checkInfinite();
@@ -508,7 +474,7 @@ public class NotificationSettingsFragment extends Fragment implements View.OnCli
     @Override
     public void onDetach() {
         super.onDetach();
-        ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (ab != null){
             ab.setTitle(R.string.action_settings);
         }

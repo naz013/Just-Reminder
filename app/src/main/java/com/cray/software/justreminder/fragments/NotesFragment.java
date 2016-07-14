@@ -18,6 +18,7 @@ package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
@@ -49,6 +50,7 @@ import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.notes.Note;
 import com.cray.software.justreminder.notes.NoteDataProvider;
 import com.cray.software.justreminder.notes.NoteModel;
 import com.cray.software.justreminder.notes.NotePreview;
@@ -60,7 +62,6 @@ import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 public class NotesFragment extends Fragment implements SyncListener, SimpleListener {
 
-    private SharedPrefs sPrefs;
     private RecyclerView currentList;
     private LinearLayout emptyItem;
     private NoteDataProvider provider;
@@ -68,6 +69,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     private boolean enableGrid = false;
 
     private NavigationCallbacks mCallbacks;
+    private Activity mContext;
 
     public static NotesFragment newInstance() {
         return new NotesFragment();
@@ -79,7 +81,6 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true);
     }
 
@@ -96,9 +97,9 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         MenuItem item = menu.findItem(R.id.action_list);
         if (item != null){
             item.setIcon(!enableGrid ? R.drawable.ic_view_quilt_white_24dp : R.drawable.ic_view_list_white_24dp);
-            item.setTitle(!enableGrid ? getActivity().getString(R.string.grid_view) : getActivity().getString(R.string.list_view));
+            item.setTitle(!enableGrid ? mContext.getString(R.string.grid_view) : mContext.getString(R.string.list_view));
         }
-        NotesBase db = new NotesBase(getActivity());
+        NotesBase db = new NotesBase(mContext);
         if (!db.isOpen()) {
             db.open();
         }
@@ -113,7 +114,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_sync:
-                new SyncNotes(getActivity(), this).execute();
+                new SyncNotes(mContext, this).execute();
                 break;
             case R.id.action_order:
                 showDialog();
@@ -123,9 +124,9 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                 break;
             case R.id.action_list:
                 enableGrid = !enableGrid;
-                new SharedPrefs(getActivity()).saveBoolean(Prefs.REMINDER_CHANGED, enableGrid);
+                SharedPrefs.getInstance(mContext).putBoolean(Prefs.REMINDER_CHANGED, enableGrid);
                 loaderAdapter();
-                getActivity().invalidateOptionsMenu();
+                mContext.invalidateOptionsMenu();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -135,28 +136,25 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
-
-        sPrefs = new SharedPrefs(getActivity());
-        enableGrid = sPrefs.loadBoolean(Prefs.REMINDER_CHANGED);
-
+        enableGrid = SharedPrefs.getInstance(mContext).getBoolean(Prefs.REMINDER_CHANGED);
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
-        currentList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        currentList.setLayoutManager(new LinearLayoutManager(mContext));
 
         emptyItem = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
         RoboTextView emptyText = (RoboTextView) rootView.findViewById(R.id.emptyText);
-        emptyText.setText(getActivity().getString(R.string.no_notes));
+        emptyText.setText(mContext.getString(R.string.no_notes));
         emptyItem.setVisibility(View.VISIBLE);
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (new ColorSetter(getActivity()).isDark()) {
+        if (new ColorSetter(mContext).isDark()) {
             emptyImage.setImageResource(R.drawable.ic_event_note_white_vector);
         } else {
             emptyImage.setImageResource(R.drawable.ic_event_note_black_vector);
         }
 
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.REMINDER_CHANGED)){
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(mContext);
+        if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.REMINDER_CHANGED)){
             layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         }
         currentList.setLayoutManager(layoutManager);
@@ -166,14 +164,35 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (mContext == null) {
+            mContext = (Activity) context;
+        }
+        if (mCallbacks == null) {
+            try {
+                mCallbacks = (NavigationCallbacks) context;
+            } catch (ClassCastException e) {
+                throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+            }
+        }
+        ((ScreenManager) context).onSectionAttached(ScreenManager.FRAGMENT_NOTE);
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mCallbacks = (NavigationCallbacks) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+        if (mContext == null) {
+            mContext = activity;
         }
-        ((ScreenManager)activity).onSectionAttached(ScreenManager.FRAGMENT_NOTE);
+        if (mCallbacks == null) {
+            try {
+                mCallbacks = (NavigationCallbacks) activity;
+            } catch (ClassCastException e) {
+                throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+            }
+        }
+        ((ScreenManager) activity).onSectionAttached(ScreenManager.FRAGMENT_NOTE);
     }
 
     @Override
@@ -185,31 +204,31 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     @Override
     public void onResume() {
         super.onResume();
-        sPrefs = new SharedPrefs(getActivity());
-        if (sPrefs.loadBoolean(Prefs.NOTE_CHANGED)) {
+        if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.NOTE_CHANGED)) {
             loaderAdapter();
         }
-        getActivity().invalidateOptionsMenu();
+        mContext.invalidateOptionsMenu();
     }
 
     private void showDialog(){
-        final CharSequence[] items = {getActivity().getString(R.string.by_date_az),
-                getActivity().getString(R.string.by_date_za),
-                getActivity().getString(R.string.name_az),
-                getActivity().getString(R.string.name_za)};
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final CharSequence[] items = {mContext.getString(R.string.by_date_az),
+                mContext.getString(R.string.by_date_za),
+                mContext.getString(R.string.name_az),
+                mContext.getString(R.string.name_za)};
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle(getString(R.string.order));
         builder.setItems(items, (dialog, which) -> {
-            SharedPrefs prefs = new SharedPrefs(getActivity());
+            String value = null;
             if (which == 0) {
-                prefs.savePrefs(Prefs.NOTES_ORDER, Constants.ORDER_DATE_A_Z);
+                value = Constants.ORDER_DATE_A_Z;
             } else if (which == 1) {
-                prefs.savePrefs(Prefs.NOTES_ORDER, Constants.ORDER_DATE_Z_A);
+                value = Constants.ORDER_DATE_Z_A;
             } else if (which == 2) {
-                prefs.savePrefs(Prefs.NOTES_ORDER, Constants.ORDER_NAME_A_Z);
+                value = Constants.ORDER_NAME_A_Z;
             } else if (which == 3) {
-                prefs.savePrefs(Prefs.NOTES_ORDER, Constants.ORDER_NAME_Z_A);
+                value = Constants.ORDER_NAME_Z_A;
             }
+            SharedPrefs.getInstance(mContext).putString(Prefs.NOTES_ORDER, value);
             dialog.dismiss();
             loaderAdapter();
         });
@@ -218,15 +237,15 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     }
 
     public void loaderAdapter(){
-        new SharedPrefs(getActivity()).saveBoolean(Prefs.NOTE_CHANGED, false);
-        provider = new NoteDataProvider(getActivity());
+        SharedPrefs.getInstance(mContext).putBoolean(Prefs.NOTE_CHANGED, false);
+        provider = new NoteDataProvider(mContext);
         reloadView();
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.REMINDER_CHANGED)){
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(mContext);
+        if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.REMINDER_CHANGED)){
             layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         }
         currentList.setLayoutManager(layoutManager);
-        NoteRecyclerAdapter adapter = new NoteRecyclerAdapter(getActivity(), provider);
+        NoteRecyclerAdapter adapter = new NoteRecyclerAdapter(mContext, provider);
         adapter.setEventListener(this);
         currentList.setAdapter(adapter);
         currentList.setItemAnimator(new DefaultItemAnimator());
@@ -247,7 +266,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     }
 
     private void deleteDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setCancelable(true);
         builder.setMessage(R.string.delete_all_notes);
         builder.setNegativeButton(getString(R.string.no), (dialog, which) -> {
@@ -264,13 +283,13 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     }
 
     private void deleteAll(){
-        NotesBase db = new NotesBase(getActivity());
+        NotesBase db = new NotesBase(mContext);
         if (!db.isOpen()) db.open();
         Cursor c = db.getNotes();
         if (c != null && c.moveToFirst()) {
             do {
                 long rowId = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                NoteModel.deleteNote(rowId, getActivity(), mCallbacks);
+                Note.deleteNote(rowId, mContext, mCallbacks);
 
             } while (c.moveToNext());
         }
@@ -280,36 +299,34 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
 
     private void previewNote(long id, View view){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Intent intent = new Intent(getActivity(), NotePreview.class);
+            Intent intent = new Intent(mContext, NotePreview.class);
             intent.putExtra(Constants.EDIT_ID, id);
             String transitionName = "image";
             ActivityOptionsCompat options =
-                    ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), view,
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(mContext, view,
                             transitionName);
-            getActivity().startActivity(intent, options.toBundle());
+            mContext.startActivity(intent, options.toBundle());
         } else {
-            getActivity().startActivity(
-                    new Intent(getActivity(), NotePreview.class)
+            mContext.startActivity(new Intent(mContext, NotePreview.class)
                             .putExtra(Constants.EDIT_ID, id));
         }
     }
 
     @Override
     public void endExecution(boolean result) {
-        if (result && getActivity() != null) {
+        if (result && mContext != null) {
             loaderAdapter();
-            getActivity().invalidateOptionsMenu();
+            mContext.invalidateOptionsMenu();
         }
     }
 
     @Override
     public void onItemClicked(int position, View view) {
         long id = provider.getItem(position).getId();
-        sPrefs = new SharedPrefs(getActivity());
-        if (sPrefs.loadBoolean(Prefs.ITEM_PREVIEW)) {
+        if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.ITEM_PREVIEW)) {
             previewNote(id, view);
         } else {
-            getActivity().startActivity(new Intent(getActivity(), NotesManager.class)
+            mContext.startActivity(new Intent(mContext, NotesManager.class)
                     .putExtra(Constants.EDIT_ID, id));
         }
     }
@@ -318,20 +335,20 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     public void onItemLongClicked(final int position, final View view) {
         final String[] items = {getString(R.string.open), getString(R.string.share),
                 getString(R.string.change_color), getString(R.string.edit), getString(R.string.delete)};
-        Dialogues.showLCAM(getActivity(), item -> {
+        Dialogues.showLCAM(mContext, item -> {
             long id = provider.getItem(position).getId();
             switch (item){
                 case 0:
                     previewNote(id, view);
                     break;
                 case 1:
-                    if (NoteModel.shareNote(id, getActivity())){
-                        Messages.toast(getActivity(), getActivity().getString(R.string.sent));
+                    if (Note.shareNote(id, mContext)){
+                        Messages.toast(mContext, mContext.getString(R.string.sent));
                     } else {
                         if (mCallbacks != null) {
                             mCallbacks.showSnackbar(R.string.error_sending);
                         } else {
-                            Messages.toast(getActivity(), R.string.error_sending);
+                            Messages.toast(mContext, R.string.error_sending);
                         }
                     }
                     break;
@@ -339,11 +356,11 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                     selectColor(id);
                     break;
                 case 3:
-                    getActivity().startActivity(new Intent(getActivity(), NotesManager.class)
+                    mContext.startActivity(new Intent(mContext, NotesManager.class)
                             .putExtra(Constants.EDIT_ID, id));
                     break;
                 case 4:
-                    NoteModel.deleteNote(id, getActivity(), mCallbacks);
+                    Note.deleteNote(id, mContext, mCallbacks);
                     loaderAdapter();
                     break;
             }
@@ -367,8 +384,8 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                     getString(R.string.dark_purple), getString(R.string.dark_orange),
                     getString(R.string.lime), getString(R.string.indigo)};
         }
-        Dialogues.showLCAM(getActivity(), item -> {
-            NoteModel.setNewColor(getActivity(), id, item);
+        Dialogues.showLCAM(mContext, item -> {
+            Note.setNewColor(mContext, id, item);
             loaderAdapter();
         }, items);
     }

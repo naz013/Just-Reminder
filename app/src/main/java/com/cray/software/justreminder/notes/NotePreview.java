@@ -274,10 +274,9 @@ public class NotePreview extends AppCompatActivity {
             base.open();
         }
         Cursor c = base.getNote(mParam1);
-        SharedPrefs sPrefs = new SharedPrefs(NotePreview.this);
         if (c != null && c.moveToFirst()){
             new Notifier(this)
-                    .showNoteNotification((sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT) ?
+                    .showNoteNotification((SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT) ?
                             SyncHelper.decrypt(c.getString(c.getColumnIndex(Constants.COLUMN_NOTE))):
                             c.getString(c.getColumnIndex(Constants.COLUMN_NOTE))), mParam1);
         }
@@ -306,8 +305,7 @@ public class NotePreview extends AppCompatActivity {
         Cursor c = base.getNote(mParam1);
         if (c != null && c.moveToFirst()){
             String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
-            SharedPrefs sPrefs = new SharedPrefs(NotePreview.this);
-            if (sPrefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
+            if (SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT)){
                 note = SyncHelper.decrypt(note);
             }
             noteText.setText(note);
@@ -360,7 +358,7 @@ public class NotePreview extends AppCompatActivity {
                     }
 
                     reminderTime.setText(TimeUtil.getDateTime(calendar.getTime(),
-                            sPrefs.loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+                            SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
                     reminderContainer.setVisibility(View.VISIBLE);
                 }
                 if (r != null) r.close();
@@ -372,7 +370,7 @@ public class NotePreview extends AppCompatActivity {
     }
 
     private void shareNote(){
-        if (!NoteModel.shareNote(mParam1, this)) {
+        if (!Note.shareNote(mParam1, this)) {
             Messages.toast(this, getString(R.string.error_sending));
             closeWindow();
         }
@@ -427,8 +425,8 @@ public class NotePreview extends AppCompatActivity {
     }
 
     private void deleteNote() {
-        NoteModel.deleteNote(mParam1, this, null);
-        new SharedPrefs(this).saveBoolean("isNew", true);
+        Note.deleteNote(mParam1, this, null);
+        SharedPrefs.getInstance(this).putBoolean("isNew", true);
     }
 
     @Override

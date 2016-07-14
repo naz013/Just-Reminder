@@ -127,11 +127,9 @@ public class VoiceWidgetConfig extends AppCompatActivity {
                 SharedPreferences sp = getSharedPreferences(VOICE_WIDGET_PREF, MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putInt(VOICE_WIDGET_COLOR + widgetID, color);
-                editor.commit();
-
+                editor.apply();
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
                 VoiceWidget.updateWidget(VoiceWidgetConfig.this, appWidgetManager, sp, widgetID);
-
                 setResult(RESULT_OK, resultValue);
                 finish();
                 return true;

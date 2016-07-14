@@ -177,8 +177,6 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     private int radius = -1, ledColor = -1;
     private LatLng curPlace;
 
-    private SharedPrefs sPrefs = new SharedPrefs(ReminderManager.this);
-
     private static final int VOICE_RECOGNITION_REQUEST_CODE = 109;
     private static final int MENU_ITEM_DELETE = 12;
     private boolean isCalendar = false, isStock = false, isDark = false;
@@ -202,7 +200,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         int i = intent.getIntExtra(Constants.EDIT_WIDGET, 0);
         if (i != 0) Reminder.disable(this, id);
 
-        int selection = sPrefs.loadInt(Prefs.LAST_USED_REMINDER);
+        int selection = SharedPrefs.getInstance(this).getInt(Prefs.LAST_USED_REMINDER);
         if (!Module.isPro() && selection == 12) selection = 0;
 
         colorSetter = new ColorSetter(ReminderManager.this);
@@ -379,8 +377,8 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     }
 
     private void initFlags() {
-        isCalendar = sPrefs.loadBoolean(Prefs.EXPORT_TO_CALENDAR);
-        isStock = sPrefs.loadBoolean(Prefs.EXPORT_TO_STOCK);
+        isCalendar = SharedPrefs.getInstance(this).getBoolean(Prefs.EXPORT_TO_CALENDAR);
+        isStock = SharedPrefs.getInstance(this).getBoolean(Prefs.EXPORT_TO_STOCK);
         isDark = colorSetter.isDark();
         hasTasks = new GTasksHelper(this).isLinked();
     }
@@ -869,7 +867,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 return;
             }
         }
-        new SharedPrefs(this).saveBoolean(Prefs.REMINDER_CHANGED, true);
+        SharedPrefs.getInstance(this).putBoolean(Prefs.REMINDER_CHANGED, true);
         finish();
     }
 
@@ -1132,7 +1130,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 LocationUtil.showLocationAlert(this, this);
                 return null;
             }
-            LatLng dest = null;
+            LatLng dest;
             if (curPlace == null) {
                 showSnackbar(getString(R.string.you_dont_select_place));
                 return null;
@@ -1436,7 +1434,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 } else spinner.setSelection(0);
                 break;
         }
-        sPrefs.saveInt(Prefs.LAST_USED_REMINDER, position);
+        SharedPrefs.getInstance(this).putInt(Prefs.LAST_USED_REMINDER, position);
         invalidateOptionsMenu();
     }
 
@@ -1527,11 +1525,8 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 if (melody != null) {
                     File musicFile = new File(melody);
                     showSnackbar(String.format(getString(R.string.melody_x), musicFile.getName()),
-                            R.string.cancel, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    melody = null;
-                                }
+                            R.string.cancel, v -> {
+                                melody = null;
                             });
                 }
             }
@@ -1546,12 +1541,9 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                     File file = new File(attachment);
                     ((MailFragment) baseFragment).setFileName(file.getPath());
                     showSnackbar(String.format(getString(R.string.file_x_attached), file.getName()),
-                            R.string.cancel, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    attachment = null;
-                                    ((MailFragment) baseFragment).setFileName(null);
-                                }
+                            R.string.cancel, v -> {
+                                attachment = null;
+                                ((MailFragment) baseFragment).setFileName(null);
                             });
                 }
             }
@@ -1562,17 +1554,14 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 radius = data.getIntExtra(Constants.SELECTED_RADIUS, -1);
                 if (radius != -1) {
                     String str = String.format(getString(R.string.radius_x_meters), radius);
-                    showSnackbar(str, R.string.cancel, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            radius = -1;
-                            if (isLocationAttached()) {
-                                ((LocationFragment) baseFragment).recreateMarkers(radius);
-                            }
-                            if (isLocationOutAttached()) {
-                                ((OutLocationFragment) baseFragment).recreateMarkers(radius);
-                                ((OutLocationFragment) baseFragment).setPointRadius(radius);
-                            }
+                    showSnackbar(str, R.string.cancel, v -> {
+                        radius = -1;
+                        if (isLocationAttached()) {
+                            ((LocationFragment) baseFragment).recreateMarkers(radius);
+                        }
+                        if (isLocationOutAttached()) {
+                            ((OutLocationFragment) baseFragment).recreateMarkers(radius);
+                            ((OutLocationFragment) baseFragment).setPointRadius(radius);
                         }
                     });
                     if (isLocationAttached()) {
@@ -1592,12 +1581,9 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             if (resultCode == RESULT_OK){
                 exclusion = data.getStringExtra("excl");
                 ((TimerFragment) baseFragment).setExclusion(exclusion);
-                showSnackbar(getString(R.string.exclusion_added), R.string.cancel, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        exclusion = null;
-                        ((TimerFragment) baseFragment).setExclusion(null);
-                    }
+                showSnackbar(getString(R.string.exclusion_added), R.string.cancel, v -> {
+                    exclusion = null;
+                    ((TimerFragment) baseFragment).setExclusion(null);
                 });
             }
         }
@@ -1620,11 +1606,8 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 String selColor = LED.getTitle(this, position);
                 ledColor = LED.getLED(position);
                 String str = String.format(getString(R.string.led_color_x), selColor);
-                showSnackbar(str, R.string.cancel, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ledColor = -1;
-                    }
+                showSnackbar(str, R.string.cancel, v -> {
+                    ledColor = -1;
                 });
             }
         }
@@ -1647,11 +1630,8 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             if (resultCode == RESULT_OK){
                 volume = data.getIntExtra(Constants.SELECTED_VOLUME, -1);
                 String str = String.format(getString(R.string.selected_loudness_x_for_reminder), volume);
-                showSnackbar(str, R.string.cancel, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        volume = -1;
-                    }
+                showSnackbar(str, R.string.cancel, v -> {
+                    volume = -1;
                 });
             }
         }
@@ -1672,8 +1652,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         } else {
             menu.getItem(4).setVisible(true);
         }
-        sPrefs = new SharedPrefs(ReminderManager.this);
-        if (Module.isPro() && sPrefs.loadBoolean(Prefs.LED_STATUS)){
+        if (Module.isPro() && SharedPrefs.getInstance(this).getBoolean(Prefs.LED_STATUS)){
             menu.getItem(3).setVisible(true);
         } else {
             menu.getItem(3).setVisible(false);
@@ -1697,8 +1676,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         } else {
             menu.getItem(4).setVisible(true);
         }
-        sPrefs = new SharedPrefs(ReminderManager.this);
-        if (Module.isPro() && sPrefs.loadBoolean(Prefs.LED_STATUS)){
+        if (Module.isPro() && SharedPrefs.getInstance(this).getBoolean(Prefs.LED_STATUS)){
             menu.getItem(3).setVisible(true);
         } else {
             menu.getItem(3).setVisible(false);
@@ -1717,8 +1695,8 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     }
 
     public void showShowcase() {
-        if (!new SharedPrefs(this).loadBoolean(HAS_SHOWCASE)) {
-            new SharedPrefs(this).saveBoolean(HAS_SHOWCASE, true);
+        if (!SharedPrefs.getInstance(this).getBoolean(HAS_SHOWCASE)) {
+            SharedPrefs.getInstance(this).putBoolean(HAS_SHOWCASE, true);
             ColorSetter coloring = new ColorSetter(this);
             ShowcaseConfig config = new ShowcaseConfig();
             config.setDelay(350);

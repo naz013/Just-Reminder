@@ -130,8 +130,7 @@ public class ReminderUtils {
      */
     public static String getRepeatString(Context context, ArrayList<Integer> repCode){
         StringBuilder sb = new StringBuilder();
-        SharedPrefs prefs = new SharedPrefs(context);
-        int first = prefs.loadInt(Prefs.START_DAY);
+        int first = SharedPrefs.getInstance(context).getInt(Prefs.START_DAY);
         if (first == 0) {
             if (repCode.get(0) == Constants.DAY_CHECKED) {
                 sb.append(" ");

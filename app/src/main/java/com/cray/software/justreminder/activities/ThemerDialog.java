@@ -39,7 +39,6 @@ public class ThemerDialog extends AppCompatActivity {
             amber, orange, pink, teal, deepPurple, deepOrange, indigo, lime;
     private FloatingActionButton mFab;
 
-    private SharedPrefs sPrefs;
     private ColorSetter cs;
     private Toolbar toolbar;
     private int prevId;
@@ -105,8 +104,7 @@ public class ThemerDialog extends AppCompatActivity {
     private View.OnClickListener listener = v -> themeColorSwitch(v.getId());
 
     private void setUpRadio(){
-        sPrefs = new SharedPrefs(ThemerDialog.this);
-        int loaded = sPrefs.loadInt(Prefs.APP_THEME);
+        int loaded = SharedPrefs.getInstance(this).getInt(Prefs.APP_THEME);
         switch (loaded) {
             case 0:
                 red.setSelected(true);
@@ -250,14 +248,13 @@ public class ThemerDialog extends AppCompatActivity {
     }
 
     private void saveColor(int code) {
-        sPrefs = new SharedPrefs(ThemerDialog.this);
-        sPrefs.saveInt(Prefs.APP_THEME, code);
-        sPrefs.saveBoolean(Prefs.UI_CHANGED, true);
+        SharedPrefs.getInstance(this).putInt(Prefs.APP_THEME, code);
+        SharedPrefs.getInstance(this).putBoolean(Prefs.UI_CHANGED, true);
     }
 
     @Override
     public void onBackPressed() {
-        if (new SharedPrefs(ThemerDialog.this).loadBoolean(Prefs.STATUS_BAR_NOTIFICATION)) {
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.STATUS_BAR_NOTIFICATION)) {
             new Notifier(ThemerDialog.this).recreatePermanent();
         }
         finish();
@@ -267,7 +264,7 @@ public class ThemerDialog extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (new SharedPrefs(ThemerDialog.this).loadBoolean(Prefs.STATUS_BAR_NOTIFICATION)) {
+                if (SharedPrefs.getInstance(this).getBoolean(Prefs.STATUS_BAR_NOTIFICATION)) {
                     new Notifier(ThemerDialog.this).recreatePermanent();
                 }
                 finish();

@@ -116,11 +116,11 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(cs.getFullscreenStyle());
-        SharedPrefs prefs = new SharedPrefs(ShowBirthday.this);
-        boolean systemVol = prefs.loadBoolean(Prefs.SYSTEM_VOLUME);
-        boolean increasing = prefs.loadBoolean(Prefs.INCREASING_VOLUME);
+        SharedPrefs prefs = SharedPrefs.getInstance(this);
+        boolean systemVol = prefs.getBoolean(Prefs.SYSTEM_VOLUME);
+        boolean increasing = prefs.getBoolean(Prefs.INCREASING_VOLUME);
         if (systemVol) {
-            mStream = prefs.loadInt(Prefs.SOUND_STREAM);
+            mStream = prefs.getInt(Prefs.SOUND_STREAM);
             AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             currVolume = am.getStreamVolume(mStream);
             streamVol = currVolume;
@@ -134,7 +134,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
             AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             mStream = 3;
             currVolume = am.getStreamVolume(mStream);
-            int prefsVol = prefs.loadInt(Prefs.VOLUME);
+            int prefsVol = prefs.getInt(Prefs.VOLUME);
             float volPercent = (float) prefsVol / Configs.MAX_VOLUME;
             int maxVol = am.getStreamMaxVolume(mStream);
             streamVol = (int) (maxVol * volPercent);
@@ -146,7 +146,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
             am.setStreamVolume(mStream, mVolume, 0);
         }
         
-        boolean isFull = prefs.loadBoolean(Prefs.UNLOCK_DEVICE);
+        boolean isFull = prefs.getBoolean(Prefs.UNLOCK_DEVICE);
         if (isFull) {
             runOnUiThread(() -> getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                     | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
@@ -155,13 +155,13 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
 
         boolean isWake;
         if (Module.isPro()) {
-            if (!prefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL)) {
-                isWake = prefs.loadBoolean(Prefs.BIRTHDAY_WAKE_STATUS);
+            if (!prefs.getBoolean(Prefs.BIRTHDAY_USE_GLOBAL)) {
+                isWake = prefs.getBoolean(Prefs.BIRTHDAY_WAKE_STATUS);
             } else {
-                isWake = prefs.loadBoolean(Prefs.WAKE_STATUS);
+                isWake = prefs.getBoolean(Prefs.WAKE_STATUS);
             }
         } else {
-            isWake = prefs.loadBoolean(Prefs.WAKE_STATUS);
+            isWake = prefs.getBoolean(Prefs.WAKE_STATUS);
         }
         if (isWake) {
             PowerManager.WakeLock screenLock = ((PowerManager) getSystemService(POWER_SERVICE)).newWakeLock(
@@ -243,8 +243,8 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
 
         notifier.showNotification(TimeUtil.getYears(birthDate), name);
 
-        boolean isGlobal = prefs.loadBoolean(Prefs.BIRTHDAY_USE_GLOBAL);
-        if (!isGlobal && prefs.loadBoolean(Prefs.BIRTHDAY_TTS)) {
+        boolean isGlobal = prefs.getBoolean(Prefs.BIRTHDAY_USE_GLOBAL);
+        if (!isGlobal && prefs.getBoolean(Prefs.BIRTHDAY_TTS)) {
             Intent checkTTSIntent = new Intent();
             checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
             try {
@@ -254,7 +254,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
             }
         }
 
-        if (prefs.loadBoolean(Prefs.WEAR_SERVICE)) {
+        if (prefs.getBoolean(Prefs.WEAR_SERVICE)) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addApi(Wearable.API)
                     .addConnectionCallbacks(this)
@@ -265,9 +265,9 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
     private void loadImage() {
         ImageView bgImage = (ImageView) findViewById(R.id.bgImage);
         bgImage.setVisibility(View.GONE);
-        SharedPrefs prefs = new SharedPrefs(ShowBirthday.this);
-        String imagePrefs = prefs.loadPrefs(Prefs.REMINDER_IMAGE);
-        boolean blur = prefs.loadBoolean(Prefs.REMINDER_IMAGE_BLUR);
+        SharedPrefs prefs = SharedPrefs.getInstance(this);
+        String imagePrefs = prefs.getString(Prefs.REMINDER_IMAGE);
+        boolean blur = prefs.getBoolean(Prefs.REMINDER_IMAGE_BLUR);
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -323,7 +323,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
             tts.shutdown();
         }
 
-        if (new SharedPrefs(this).loadBoolean(Prefs.WEAR_SERVICE)) {
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.WEAR_SERVICE)) {
             PutDataMapRequest putDataMapReq = PutDataMapRequest.create(SharedConst.WEAR_STOP);
             DataMap map = putDataMapReq.getDataMap();
             map.putBoolean(SharedConst.KEY_STOP_B, true);
@@ -405,8 +405,8 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
     @Override
     public void onBackPressed() {
         notifier.discardMedia();
-        SharedPrefs prefs = new SharedPrefs(ShowBirthday.this);
-        if (prefs.loadBoolean(Prefs.SMART_FOLD)){
+        SharedPrefs prefs = SharedPrefs.getInstance(this);
+        if (prefs.getBoolean(Prefs.SMART_FOLD)){
             moveTaskToBack(true);
             new RepeatNotificationReceiver().cancelAlarm(ShowBirthday.this, id);
             new RepeatNotificationReceiver().cancelAlarm(ShowBirthday.this, 0);
@@ -419,14 +419,14 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
     @Override
     protected void onResume() {
         super.onResume();
-        if (new SharedPrefs(this).loadBoolean(Prefs.WEAR_SERVICE))
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.WEAR_SERVICE))
             mGoogleApiClient.connect();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (new SharedPrefs(this).loadBoolean(Prefs.WEAR_SERVICE)) {
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.WEAR_SERVICE)) {
             Wearable.DataApi.removeListener(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
@@ -436,8 +436,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
     protected void onDestroy() {
         super.onDestroy();
         removeFlags();
-        SharedPrefs prefs = new SharedPrefs(ShowBirthday.this);
-        if (!prefs.loadBoolean(Prefs.SYSTEM_VOLUME)) {
+        if (!SharedPrefs.getInstance(this).getBoolean(Prefs.SYSTEM_VOLUME)) {
             AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             am.setStreamVolume(mStream, currVolume, 0);
         }

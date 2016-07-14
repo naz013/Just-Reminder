@@ -33,10 +33,10 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.app_widgets.WidgetUtils;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.app_widgets.WidgetUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -128,11 +128,9 @@ public class AddBirthdayWidgetConfig extends AppCompatActivity {
                 SharedPreferences sp = getSharedPreferences(ADD_BIRTHDAY_WIDGET_PREF, MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putInt(ADD_BIRTHDAY_WIDGET_COLOR + widgetID, color);
-                editor.commit();
-
+                editor.apply();
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
                 AddBirthdayWidget.updateWidget(AddBirthdayWidgetConfig.this, appWidgetManager, sp, widgetID);
-
                 setResult(RESULT_OK, resultValue);
                 finish();
                 return true;

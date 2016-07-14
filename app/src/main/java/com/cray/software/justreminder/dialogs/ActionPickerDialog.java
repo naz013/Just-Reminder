@@ -56,7 +56,7 @@ public class ActionPickerDialog extends Activity {
         });
         ImageButton addBirth = (ImageButton) findViewById(R.id.addBirth);
         addBirth.setOnClickListener(v -> {
-            new SharedPrefs(ActionPickerDialog.this).saveBoolean(Prefs.BIRTHDAY_REMINDER, true);
+            SharedPrefs.getInstance(this).putBoolean(Prefs.BIRTHDAY_REMINDER, true);
             startActivity(new Intent(ActionPickerDialog.this, AddBirthday.class)
                     .putExtra("date", receivedDate));
             finish();

@@ -139,11 +139,10 @@ public class LocationFragment extends BaseFragment implements GeocoderTask.Geoco
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reminder_location_layout, container, false);
-        SharedPrefs prefs = new SharedPrefs(mContext);
         mapFragment = new MapFragment();
         mapFragment.setListener(this);
         mapFragment.setCallback(this);
-        mapFragment.setMarkerStyle(prefs.loadInt(Prefs.MARKER_STYLE));
+        mapFragment.setMarkerStyle(SharedPrefs.getInstance(mContext).getInt(Prefs.MARKER_STYLE));
         mapFragment.setMarkerTitle(eventTask);
         FragmentManager fragMan = getChildFragmentManager();
         FragmentTransaction fragTransaction = fragMan.beginTransaction();

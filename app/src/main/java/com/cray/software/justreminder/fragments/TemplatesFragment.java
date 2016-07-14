@@ -17,6 +17,7 @@
 package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -50,6 +51,7 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
     private LinearLayout emptyItem;
     private TemplateDataProvider provider;
     private NavigationCallbacks mCallbacks;
+    private Activity mContext;
 
     public static TemplatesFragment newInstance() {
         return new TemplatesFragment();
@@ -61,7 +63,6 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(false);
     }
 
@@ -75,7 +76,7 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
         RoboTextView emptyText = (RoboTextView) rootView.findViewById(R.id.emptyText);
         emptyText.setText(getString(R.string.no_messages));
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (new ColorSetter(getActivity()).isDark()) {
+        if (new ColorSetter(mContext).isDark()) {
             emptyImage.setImageResource(R.drawable.ic_textsms_white_vector);
         } else {
             emptyImage.setImageResource(R.drawable.ic_textsms_black_vector);
@@ -87,14 +88,35 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (mContext == null) {
+            mContext = (Activity) context;
+        }
+        if (mCallbacks == null) {
+            try {
+                mCallbacks = (NavigationCallbacks) context;
+            } catch (ClassCastException e) {
+                throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+            }
+        }
+        ((ScreenManager) context).onSectionAttached(ScreenManager.FRAGMENT_TEMPLATES);
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mCallbacks = (NavigationCallbacks) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+        if (mContext == null) {
+            mContext = activity;
         }
-        ((ScreenManager)activity).onSectionAttached(ScreenManager.FRAGMENT_TEMPLATES);
+        if (mCallbacks == null) {
+            try {
+                mCallbacks = (NavigationCallbacks) activity;
+            } catch (ClassCastException e) {
+                throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+            }
+        }
+        ((ScreenManager) activity).onSectionAttached(ScreenManager.FRAGMENT_TEMPLATES);
     }
 
     @Override
@@ -106,18 +128,18 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
     @Override
     public void onResume() {
         super.onResume();
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.TEMPLATE_CHANGED)) {
+        if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.TEMPLATE_CHANGED)) {
             loadTemplates();
         }
     }
 
     private void loadTemplates(){
-        new SharedPrefs(getActivity()).saveBoolean(Prefs.TEMPLATE_CHANGED, false);
-        provider = new TemplateDataProvider(getActivity());
+        SharedPrefs.getInstance(mContext).putBoolean(Prefs.TEMPLATE_CHANGED, false);
+        provider = new TemplateDataProvider(mContext);
         reloadView();
-        TemplateRecyclerAdapter adapter = new TemplateRecyclerAdapter(getActivity(), provider);
+        TemplateRecyclerAdapter adapter = new TemplateRecyclerAdapter(mContext, provider);
         adapter.setEventListener(this);
-        listView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        listView.setLayoutManager(new LinearLayoutManager(mContext));
         listView.setAdapter(adapter);
         listView.setItemAnimator(new DefaultItemAnimator());
         if (mCallbacks != null) {
@@ -137,12 +159,12 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
     }
 
     private void editTemplate(int position){
-        startActivity(new Intent(getActivity(), NewTemplate.class)
+        startActivity(new Intent(mContext, NewTemplate.class)
                 .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
     }
 
     private void removeTemplate(int position){
-        DataBase db = new DataBase(getActivity());
+        DataBase db = new DataBase(mContext);
         db.open();
         db.deleteTemplate(provider.getItem(position).getId());
         db.close();
@@ -160,7 +182,7 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
     @Override
     public void onItemLongClicked(final int position, View view) {
         final String[] items = {getString(R.string.edit), getString(R.string.delete)};
-        Dialogues.showLCAM(getActivity(), item -> {
+        Dialogues.showLCAM(mContext, item -> {
             if (item == 0) {
                 editTemplate(position);
             }

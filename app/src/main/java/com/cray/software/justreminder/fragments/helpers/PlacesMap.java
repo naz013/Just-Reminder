@@ -17,6 +17,7 @@
 package com.cray.software.justreminder.fragments.helpers;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -77,6 +78,8 @@ import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 public class PlacesMap extends Fragment implements View.OnClickListener, ExecutionListener {
 
     private static final String HAS_SHOWCASE = "places_showcase";
+
+    private Activity mContext;
 
     /**
      * UI elements;
@@ -218,7 +221,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
             if (pos.latitude == 0.0 && pos.longitude == 0.0) return;
             mRadius = radius;
             if (mRadius == -1) {
-                mRadius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
+                mRadius = SharedPrefs.getInstance(mContext).getInt(Prefs.LOCATION_RADIUS);
             }
             if (clear) {
                 mMap.clear();
@@ -237,8 +240,8 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
                     .center(pos)
                     .radius(mRadius)
                     .strokeWidth(strokeWidth)
-                    .fillColor(ViewUtils.getColor(getActivity(), circleColors[0]))
-                    .strokeColor(ViewUtils.getColor(getActivity(), circleColors[1])));
+                    .fillColor(ViewUtils.getColor(mContext, circleColors[0]))
+                    .strokeColor(ViewUtils.getColor(mContext, circleColors[1])));
             if (animate) {
                 animate(pos);
             }
@@ -252,7 +255,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     public void recreateMarker(int radius) {
         mRadius = radius;
         if (mRadius == -1) {
-            mRadius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
+            mRadius = SharedPrefs.getInstance(mContext).getInt(Prefs.LOCATION_RADIUS);
         }
         if (mMap != null) {
             addMarkers();
@@ -321,30 +324,30 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     }
 
     public void showShowcase() {
-        if (!new SharedPrefs(getActivity()).loadBoolean(HAS_SHOWCASE)) {
-            ColorSetter coloring = new ColorSetter(getActivity());
+        if (!SharedPrefs.getInstance(mContext).getBoolean(HAS_SHOWCASE)) {
+            ColorSetter coloring = new ColorSetter(mContext);
             ShowcaseConfig config = new ShowcaseConfig();
             config.setDelay(350);
             config.setMaskColor(coloring.getColor(coloring.colorAccent()));
             config.setContentTextColor(coloring.getColor(R.color.whitePrimary));
             config.setDismissTextColor(coloring.getColor(R.color.whitePrimary));
 
-            MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(getActivity());
+            MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(mContext);
             sequence.setConfig(config);
 
             sequence.addSequenceItem(zoomOut,
-                    getActivity().getString(R.string.click_to_expand_collapse_map),
-                    getActivity().getString(R.string.got_it));
+                    mContext.getString(R.string.click_to_expand_collapse_map),
+                    mContext.getString(R.string.got_it));
 
             sequence.addSequenceItem(markers,
-                    getActivity().getString(R.string.select_style_for_marker),
-                    getActivity().getString(R.string.got_it));
+                    mContext.getString(R.string.select_style_for_marker),
+                    mContext.getString(R.string.got_it));
 
             sequence.addSequenceItem(places,
-                    getActivity().getString(R.string.select_place_from_list),
-                    getActivity().getString(R.string.got_it));
+                    mContext.getString(R.string.select_place_from_list),
+                    mContext.getString(R.string.got_it));
             sequence.start();
-            new SharedPrefs(getActivity()).saveBoolean(HAS_SHOWCASE, true);
+            SharedPrefs.getInstance(mContext).putBoolean(HAS_SHOWCASE, true);
         }
     }
 
@@ -354,7 +357,23 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
             isZoom = args.getBoolean(ENABLE_ZOOM, true);
             isDark = args.getBoolean(THEME_MODE, false);
             markerStyle = args.getInt(MARKER_STYLE,
-                    new SharedPrefs(getActivity()).loadInt(Prefs.MARKER_STYLE));
+                    SharedPrefs.getInstance(mContext).getInt(Prefs.MARKER_STYLE));
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (mContext == null) {
+            mContext = (Activity) context;
+        }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (mContext == null) {
+            mContext = activity;
         }
     }
 
@@ -363,11 +382,11 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
                              Bundle savedInstanceState) {
         initArgs();
         View view = inflater.inflate(R.layout.fragment_places_map, container, false);
-        final SharedPrefs prefs = new SharedPrefs(getActivity());
-        mRadius = prefs.loadInt(Prefs.LOCATION_RADIUS);
-        mMapType = prefs.loadInt(Prefs.MAP_TYPE);
+        final SharedPrefs prefs = SharedPrefs.getInstance(mContext);
+        mRadius = prefs.getInt(Prefs.LOCATION_RADIUS);
+        mMapType = prefs.getInt(Prefs.MAP_TYPE);
 
-        mColor = new ColorSetter(getActivity());
+        mColor = new ColorSetter(mContext);
         isDark = mColor.isDark();
 
         ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMapAsync(mMapCallback);
@@ -516,7 +535,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
 
     private void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager)
-                getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(cardSearch.getWindowToken(), 0);
     }
 
@@ -526,15 +545,15 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         groupThree.removeAllViewsInLayout();
 
         for (int i = 0; i < ColorSetter.NUM_OF_MARKERS; i++) {
-            ImageButton ib = new ImageButton(getActivity());
+            ImageButton ib = new ImageButton(mContext);
             ib.setBackgroundResource(android.R.color.transparent);
-            ib.setImageResource(new ColorSetter(getActivity()).getMarkerStyle(i));
+            ib.setImageResource(new ColorSetter(mContext).getMarkerStyle(i));
             ib.setId(i + ColorSetter.NUM_OF_MARKERS);
             ib.setOnClickListener(this);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    QuickReturnUtils.dp2px(getActivity(), 35),
-                    QuickReturnUtils.dp2px(getActivity(), 35));
-            int px = QuickReturnUtils.dp2px(getActivity(), 2);
+                    QuickReturnUtils.dp2px(mContext, 35),
+                    QuickReturnUtils.dp2px(mContext, 35));
+            int px = QuickReturnUtils.dp2px(mContext, 2);
             params.setMargins(px, px, px, px);
             ib.setLayoutParams(params);
 
@@ -551,19 +570,19 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     private void setMapType(int type) {
         if (mMap != null) {
             mMap.setMapType(type);
-            new SharedPrefs(getActivity()).saveInt(Prefs.MAP_TYPE, type);
+            SharedPrefs.getInstance(mContext).putInt(Prefs.MAP_TYPE, type);
             ViewUtils.hideOver(layersContainer);
         }
     }
 
     private void setMyLocation() {
-        if (ActivityCompat.checkSelfPermission(getActivity(),
+        if (ActivityCompat.checkSelfPermission(mContext,
                 Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(getActivity(),
+                ActivityCompat.checkSelfPermission(mContext,
                         Manifest.permission.ACCESS_COARSE_LOCATION) !=
                         PackageManager.PERMISSION_GRANTED) {
-            Permissions.requestPermission(getActivity(), 205,
+            Permissions.requestPermission(mContext, 205,
                     Permissions.ACCESS_FINE_LOCATION,
                     Permissions.ACCESS_COARSE_LOCATION);
         } else {
@@ -586,7 +605,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     }
 
     private void refreshAdapter(boolean show) {
-        GooglePlacesAdapter placesAdapter = new GooglePlacesAdapter(getActivity(), spinnerArray);
+        GooglePlacesAdapter placesAdapter = new GooglePlacesAdapter(mContext, spinnerArray);
         placesAdapter.setEventListener(new SimpleListener() {
             @Override
             public void onItemClicked(int position, View view) {
@@ -604,10 +623,10 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         if (spinnerArray != null && spinnerArray.size() > 0) {
             emptyItem.setVisibility(View.GONE);
             placesList.setVisibility(View.VISIBLE);
-            placesList.setLayoutManager(new LinearLayoutManager(getActivity()));
+            placesList.setLayoutManager(new LinearLayoutManager(mContext));
             placesList.setAdapter(placesAdapter);
             addMarkers();
-            if (!isPlacesVisible() && show) ViewUtils.slideInUp(getActivity(), placesListCard);
+            if (!isPlacesVisible() && show) ViewUtils.slideInUp(mContext, placesListCard);
         } else {
             placesList.setVisibility(View.GONE);
             emptyItem.setVisibility(View.VISIBLE);
@@ -660,13 +679,13 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         if (isMarkersVisible()) {
             hideStyles();
         } else {
-            ViewUtils.slideInUp(getActivity(), styleCard);
+            ViewUtils.slideInUp(mContext, styleCard);
         }
     }
 
     private void hideStyles() {
         if (isMarkersVisible()) {
-            ViewUtils.slideOutDown(getActivity(), styleCard);
+            ViewUtils.slideOutDown(mContext, styleCard);
         }
     }
 
@@ -684,13 +703,13 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         if (isPlacesVisible()) {
             hidePlaces();
         } else {
-            ViewUtils.slideInUp(getActivity(), placesListCard);
+            ViewUtils.slideInUp(mContext, placesListCard);
         }
     }
 
     private void hidePlaces() {
         if (isPlacesVisible()) {
-            ViewUtils.slideOutDown(getActivity(), placesListCard);
+            ViewUtils.slideOutDown(mContext, placesListCard);
         }
     }
 
@@ -750,14 +769,14 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     setMyLocation();
                 } else {
-                    Messages.toast(getActivity(), R.string.cant_access_location_services);
+                    Messages.toast(mContext, R.string.cant_access_location_services);
                 }
                 break;
             case 200:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     updateListener();
                 } else {
-                    Messages.toast(getActivity(), R.string.cant_access_location_services);
+                    Messages.toast(mContext, R.string.cant_access_location_services);
                 }
                 break;
         }
@@ -835,11 +854,11 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
 
     private void removeUpdates() {
         if (mLocList != null) {
-            if (Permissions.checkPermission(getActivity(),
+            if (Permissions.checkPermission(mContext,
                     Permissions.ACCESS_COARSE_LOCATION, Permissions.ACCESS_FINE_LOCATION)) {
                 mLocationManager.removeUpdates(mLocList);
             } else {
-                Permissions.requestPermission(getActivity(), 201,
+                Permissions.requestPermission(mContext, 201,
                         Permissions.ACCESS_FINE_LOCATION,
                         Permissions.ACCESS_COARSE_LOCATION);
             }
@@ -850,10 +869,10 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     public void onFinish(ArrayList<PlaceModel> places) {
         spinnerArray = places;
         if (spinnerArray.size() == 0)
-            Messages.toast(getActivity(), getActivity().getString(R.string.no_places_found));
+            Messages.toast(mContext, mContext.getString(R.string.no_places_found));
 
         if (spinnerArray != null && spinnerArray.size() > 1) {
-            spinnerArray.add(new PlaceModel(getActivity().getString(R.string.add_all), null, null, null, null, null, 0));
+            spinnerArray.add(new PlaceModel(mContext.getString(R.string.add_all), null, null, null, null, null, 0));
         }
         refreshAdapter(true);
     }
@@ -883,12 +902,12 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     }
 
     private void updateListener() {
-        if (getActivity() != null) {
-            mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-            SharedPrefs prefs = new SharedPrefs(getActivity());
-            long time = (prefs.loadInt(Prefs.TRACK_TIME) * 1000) * 2;
-            int distance = prefs.loadInt(Prefs.TRACK_DISTANCE) * 2;
-            if (Permissions.checkPermission(getActivity(),
+        if (mContext != null) {
+            mLocationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+            SharedPrefs prefs = SharedPrefs.getInstance(mContext);
+            long time = (prefs.getInt(Prefs.TRACK_TIME) * 1000) * 2;
+            int distance = prefs.getInt(Prefs.TRACK_DISTANCE) * 2;
+            if (Permissions.checkPermission(mContext,
                     Permissions.ACCESS_COARSE_LOCATION,
                     Permissions.ACCESS_FINE_LOCATION)) {
                 if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -897,7 +916,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
                     mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, time, distance, mLocList);
                 }
             } else {
-                Permissions.requestPermission(getActivity(), 200,
+                Permissions.requestPermission(mContext, 200,
                         Permissions.ACCESS_COARSE_LOCATION,
                         Permissions.ACCESS_FINE_LOCATION);
             }

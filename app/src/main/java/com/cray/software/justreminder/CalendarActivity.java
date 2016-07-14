@@ -52,7 +52,6 @@ import java.util.Date;
 
 public class CalendarActivity extends AppCompatActivity {
 
-    private SharedPrefs sPrefs;
     private long dateMills;
     private RoboButton currentEvent;
     private RoboTextView title;
@@ -75,8 +74,6 @@ public class CalendarActivity extends AppCompatActivity {
         setContentView(R.layout.calender_layout);
         setRequestedOrientation(cSetter.getRequestOrientation());
 
-        sPrefs = new SharedPrefs(CalendarActivity.this);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -98,7 +95,7 @@ public class CalendarActivity extends AppCompatActivity {
             Calendar cal1 = Calendar.getInstance();
             cal1.setTimeInMillis(System.currentTimeMillis());
             showEvents(cal1.getTime());
-            sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
+            SharedPrefs.getInstance(this).putInt(Prefs.LAST_CALENDAR_VIEW, 0);
         });
 
         pager = (ViewPager) findViewById(R.id.pager);
@@ -122,11 +119,11 @@ public class CalendarActivity extends AppCompatActivity {
         if (dateMills != 0){
             cal.setTimeInMillis(dateMills);
             showEvents(cal.getTime());
-            sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
+            SharedPrefs.getInstance(this).putInt(Prefs.LAST_CALENDAR_VIEW, 0);
         } else {
             cal.setTimeInMillis(System.currentTimeMillis());
             showEvents(cal.getTime());
-            sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
+            SharedPrefs.getInstance(this).putInt(Prefs.LAST_CALENDAR_VIEW, 0);
         }
     }
 
@@ -147,14 +144,11 @@ public class CalendarActivity extends AppCompatActivity {
         int targetDay = calendar.get(Calendar.DAY_OF_MONTH);
         int targetMonth = calendar.get(Calendar.MONTH);
         int targetYear = calendar.get(Calendar.YEAR);
-
         calendar.setTimeInMillis(System.currentTimeMillis());
-
-        sPrefs = new SharedPrefs(getApplicationContext());
-        int hour = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_HOUR);
-        int minute = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
-        boolean isFeature = sPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
-        boolean isRemindersEnabled = sPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR);
+        int hour = SharedPrefs.getInstance(this).getInt(Prefs.BIRTHDAY_REMINDER_HOUR);
+        int minute = SharedPrefs.getInstance(this).getInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
+        boolean isFeature = SharedPrefs.getInstance(this).getBoolean(Prefs.CALENDAR_FEATURE_TASKS);
+        boolean isRemindersEnabled = SharedPrefs.getInstance(this).getBoolean(Prefs.REMINDERS_IN_CALENDAR);
 
         EventsDataProvider provider = new EventsDataProvider(this);
         provider.setBirthdays(true);
@@ -234,16 +228,15 @@ public class CalendarActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        sPrefs = new SharedPrefs(CalendarActivity.this);
         Calendar calendar = Calendar.getInstance();
         if (dateMills != 0){
             calendar.setTimeInMillis(dateMills);
             showEvents(calendar.getTime());
-            sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
+            SharedPrefs.getInstance(this).putInt(Prefs.LAST_CALENDAR_VIEW, 0);
         } else {
             calendar.setTimeInMillis(System.currentTimeMillis());
             showEvents(calendar.getTime());
-            sPrefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 0);
+            SharedPrefs.getInstance(this).putInt(Prefs.LAST_CALENDAR_VIEW, 0);
         }
     }
 

@@ -63,7 +63,6 @@ public class ShopsPreview extends AppCompatActivity {
 
     private long id;
     private boolean isHidden = false;
-    private ArrayList<JShopping> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,7 +137,7 @@ public class ShopsPreview extends AppCompatActivity {
             toolbar.setTitle(title);
             long due = item.getDue();
             if (due > 0) {
-                time.setText(TimeUtil.getFullDateTime(due, new SharedPrefs(this).loadBoolean(Prefs.IS_24_TIME_FORMAT)));
+                time.setText(TimeUtil.getFullDateTime(due, SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
                 reminderContainer.setVisibility(View.VISIBLE);
             } else {
                 reminderContainer.setVisibility(View.GONE);
@@ -162,7 +161,7 @@ public class ShopsPreview extends AppCompatActivity {
             mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorAccent(catColor),
                     cSetter.colorAccent(catColor)));
 
-            list = item.getShoppings();
+            ArrayList<JShopping> list = item.getShoppings();
             provider = new ShoppingListDataProvider(list, isHidden);
             TaskListRecyclerAdapter shoppingAdapter = new TaskListRecyclerAdapter(this, provider, new TaskListRecyclerAdapter.ActionListener() {
                 @Override

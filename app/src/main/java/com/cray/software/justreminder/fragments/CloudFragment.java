@@ -17,6 +17,7 @@
 package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -89,6 +90,8 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
 
     private int type;
 
+    private Activity mContext;
+
     public static CloudFragment newInstance(int type) {
         CloudFragment fragment = new CloudFragment();
         Bundle args = new Bundle();
@@ -119,7 +122,7 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
         CardView card1 = (CardView) view.findViewById(R.id.card1);
         CardView card2 = (CardView) view.findViewById(R.id.card2);
         CardView card3 = (CardView) view.findViewById(R.id.card3);
-        ColorSetter colorSetter = new ColorSetter(getActivity());
+        ColorSetter colorSetter = new ColorSetter(mContext);
         card1.setCardBackgroundColor(colorSetter.getCardStyle());
         card2.setCardBackgroundColor(colorSetter.getCardStyle());
         card3.setCardBackgroundColor(colorSetter.getCardStyle());
@@ -149,11 +152,11 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
         });
 
         PaperButton deleteAllCloudButton = (PaperButton) view.findViewById(R.id.deleteAllCloudButton);
-        deleteAllCloudButton.setOnClickListener(v -> new DeleteAsync(getActivity(), mCallbacks,
+        deleteAllCloudButton.setOnClickListener(v -> new DeleteAsync(mContext, mCallbacks,
                 CloudFragment.this, type).execute(getFolders()));
 
         filesCloudList = (RecyclerView) view.findViewById(R.id.filesCloudList);
-        filesCloudList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        filesCloudList.setLayoutManager(new LinearLayoutManager(mContext));
         filesCloudList.setItemAnimator(new DefaultItemAnimator());
 
         if (type == BackupsFragment.LOCAL_INT) {
@@ -161,7 +164,7 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
             card2.setVisibility(View.GONE);
         }
 
-        new UserInfoAsync(getActivity(), type, this).execute();
+        new UserInfoAsync(mContext, type, this).execute();
         return view;
     }
 
@@ -190,7 +193,7 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
     private void reload() {
         ViewUtils.fadeOutAnimation(filesCloudList);
         if (isDeleted) {
-            new UserInfoAsync(getActivity(), type, this).execute();
+            new UserInfoAsync(mContext, type, this).execute();
         } else {
             new android.os.Handler().postDelayed(() -> {
                 ViewUtils.expand(cloudContainer);
@@ -206,8 +209,8 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
         else if (type == BackupsFragment.GOOGLE_DRIVE_INT)
             where = Constants.DIR_SD_GDRIVE_TMP;
 
-        provider = new FileDataProvider(getActivity(), where);
-        FileRecyclerAdapter adapter = new FileRecyclerAdapter(getActivity(), provider.getData());
+        provider = new FileDataProvider(mContext, where);
+        FileRecyclerAdapter adapter = new FileRecyclerAdapter(mContext, provider.getData());
         adapter.setEventListener(this);
         filesCloudList.setAdapter(adapter);
     }
@@ -234,13 +237,13 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
                 PieSlice slice = new PieSlice();
                 final String usTitle = String.format(getString(R.string.used_x), used);
                 slice.setTitle(usTitle);
-                slice.setColor(ViewUtils.getColor(getActivity(), R.color.redPrimary));
+                slice.setColor(ViewUtils.getColor(mContext, R.color.redPrimary));
                 slice.setValue(used);
                 pieChart.addSlice(slice);
                 slice = new PieSlice();
                 final String avTitle = String.format(getString(R.string.available_x), free);
                 slice.setTitle(avTitle);
-                slice.setColor(ViewUtils.getColor(getActivity(), R.color.greenPrimary));
+                slice.setColor(ViewUtils.getColor(mContext, R.color.greenPrimary));
                 slice.setValue(free);
                 pieChart.addSlice(slice);
 
@@ -264,12 +267,12 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
         File dir = MemoryUtil.getImagesDir();
         File image = new File(dir, FILE_NAME);
         if (image.exists()) {
-            Picasso.with(getActivity()).load(image).transform(new CropCircleTransformation()).into(userPhoto);
+            Picasso.with(mContext).load(image).transform(new CropCircleTransformation()).into(userPhoto);
             userPhoto.setVisibility(View.VISIBLE);
         } else {
             new Thread(() -> {
                 try {
-                    Bitmap bitmap = Picasso.with(getActivity())
+                    Bitmap bitmap = Picasso.with(mContext)
                             .load(photoLink)
                             .get();
                     try {
@@ -287,11 +290,11 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
                     e.printStackTrace();
                 }
 
-                getActivity().runOnUiThread(() -> {
+                mContext.runOnUiThread(() -> {
                     File dir1 = MemoryUtil.getImagesDir();
                     File image1 = new File(dir1, FILE_NAME);
                     if (image1.exists()) {
-                        Picasso.with(getActivity()).load(image1).into(userPhoto);
+                        Picasso.with(mContext).load(image1).into(userPhoto);
                         userPhoto.setVisibility(View.VISIBLE);
                     }
                 });
@@ -302,10 +305,30 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mCallbacks = (NavigationCallbacks) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement NavigationCallbacks.");
+        if (mContext == null) {
+            mContext = activity;
+        }
+        if (mCallbacks == null) {
+            try {
+                mCallbacks = (NavigationCallbacks) activity;
+            } catch (ClassCastException e) {
+                throw new ClassCastException("Activity must implement NavigationCallbacks.");
+            }
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (mContext == null) {
+            mContext = (Activity) context;
+        }
+        if (mCallbacks == null) {
+            try {
+                mCallbacks = (NavigationCallbacks) context;
+            } catch (ClassCastException e) {
+                throw new ClassCastException("Activity must implement NavigationCallbacks.");
+            }
         }
     }
 
@@ -319,19 +342,19 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
         FileModel model = provider.getItem(position);
         String fileName = model.getFileName();
         if (fileName.endsWith(FileConfig.FILE_NAME_REMINDER)) {
-            startActivity(new Intent(getActivity(),
+            startActivity(new Intent(mContext,
                     ReminderManager.class).putExtra(Constants.EDIT_PATH,
                     provider.getItem(position).getFilePath()));
         } else if (fileName.endsWith(FileConfig.FILE_NAME_NOTE)) {
-            startActivity(new Intent(getActivity(),
+            startActivity(new Intent(mContext,
                     NotesManager.class).putExtra(Constants.EDIT_PATH,
                     provider.getItem(position).getFilePath()));
         } else if (fileName.endsWith(FileConfig.FILE_NAME_BIRTHDAY)) {
-            startActivity(new Intent(getActivity(),
+            startActivity(new Intent(mContext,
                     AddBirthday.class).putExtra(Constants.EDIT_PATH,
                     provider.getItem(position).getFilePath()));
         } else if (fileName.endsWith(FileConfig.FILE_NAME_GROUP)) {
-            startActivity(new Intent(getActivity(),
+            startActivity(new Intent(mContext,
                     CategoryManager.class).putExtra(Constants.EDIT_PATH,
                     provider.getItem(position).getFilePath()));
         }
@@ -345,12 +368,12 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
     @Override
     public void onItemLongClicked(final int position, View view) {
         final String[] items = {getString(R.string.edit), getString(R.string.delete)};
-        Dialogues.showLCAM(getActivity(), item -> {
+        Dialogues.showLCAM(mContext, item -> {
             if (item == 0) {
                 editFile(position);
             }
             if (item == 1) {
-                new DeleteAsync(getActivity(), mCallbacks, CloudFragment.this, type)
+                new DeleteAsync(mContext, mCallbacks, CloudFragment.this, type)
                         .execute(provider.getItem(position).getFilePath());
                 reload();
             }

@@ -52,7 +52,6 @@ public class GTasksHelper {
     public static final String TASKS_COMPLETE = "completed";
 
     private Context mContext;
-    private SharedPrefs prefs;
 
     private final HttpTransport m_transport = AndroidHttp.newCompatibleTransport();
     private final JsonFactory m_jsonFactory = GsonFactory.getDefaultInstance();
@@ -67,9 +66,8 @@ public class GTasksHelper {
      * API authorization method;
      */
     public void authorize(){
-        prefs = new SharedPrefs(mContext);
         GoogleAccountCredential m_credential = GoogleAccountCredential.usingOAuth2(mContext, Collections.singleton(TasksScopes.TASKS));
-        m_credential.setSelectedAccountName(SyncHelper.decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)));
+        m_credential.setSelectedAccountName(SyncHelper.decrypt(SharedPrefs.getInstance(mContext).getString(Prefs.DRIVE_USER)));
         service = new Tasks.Builder(m_transport, m_jsonFactory, m_credential).setApplicationName(APPLICATION_NAME).build();
     }
 
@@ -78,8 +76,7 @@ public class GTasksHelper {
      * @return Boolean
      */
     public boolean isLinked(){
-        prefs = new SharedPrefs(mContext);
-        return SyncHelper.decrypt(prefs.loadPrefs(Prefs.DRIVE_USER)).matches(".*@.*");
+        return SyncHelper.decrypt(SharedPrefs.getInstance(mContext).getString(Prefs.DRIVE_USER)).matches(".*@.*");
     }
 
     /**

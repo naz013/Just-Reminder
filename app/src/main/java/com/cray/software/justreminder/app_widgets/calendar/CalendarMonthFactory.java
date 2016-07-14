@@ -82,9 +82,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
 
         // Add dates of first week from previous month
         int weekdayOfFirstDate = firstDateOfMonth.getWeekDay();
-
-        SharedPrefs prefs = new SharedPrefs(mContext);
-        int startDayOfWeek = prefs.loadInt(Prefs.START_DAY) + 1;
+        int startDayOfWeek = SharedPrefs.getInstance(mContext).getInt(Prefs.START_DAY) + 1;
 
         // If weekdayOfFirstDate smaller than startDayOfWeek
         // For e.g: weekdayFirstDate is Monday, startDayOfWeek is Tuesday
@@ -147,11 +145,11 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
         int currentMonth;
         int currentYear;
 
-        SharedPrefs sPrefs = new SharedPrefs(mContext);
-        int hour = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_HOUR);
-        int minute = sPrefs.loadInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
-        boolean isFeature = sPrefs.loadBoolean(Prefs.CALENDAR_FEATURE_TASKS);
-        boolean isRemindersEnabled = sPrefs.loadBoolean(Prefs.REMINDERS_IN_CALENDAR);
+        SharedPrefs sPrefs = SharedPrefs.getInstance(mContext);
+        int hour = sPrefs.getInt(Prefs.BIRTHDAY_REMINDER_HOUR);
+        int minute = sPrefs.getInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
+        boolean isFeature = sPrefs.getBoolean(Prefs.CALENDAR_FEATURE_TASKS);
+        boolean isRemindersEnabled = sPrefs.getBoolean(Prefs.REMINDERS_IN_CALENDAR);
 
         WidgetDataProvider provider = new WidgetDataProvider(mContext);
         provider.setTime(hour, minute);

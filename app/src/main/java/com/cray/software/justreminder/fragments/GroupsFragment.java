@@ -17,6 +17,7 @@
 package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -50,6 +51,7 @@ public class GroupsFragment extends Fragment implements SimpleListener {
     private RecyclerView listView;
     private CategoryDataProvider provider;
     private NavigationCallbacks mCallbacks;
+    private Activity mContext;
 
     public static GroupsFragment newInstance() {
         return new GroupsFragment();
@@ -61,7 +63,6 @@ public class GroupsFragment extends Fragment implements SimpleListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(false);
     }
 
@@ -72,21 +73,42 @@ public class GroupsFragment extends Fragment implements SimpleListener {
         LinearLayout emptyItem = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.GONE);
         listView = (RecyclerView) rootView.findViewById(R.id.currentList);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
         listView.setLayoutManager(mLayoutManager);
         loadCategories();
         return rootView;
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (mContext == null) {
+            mContext = (Activity) context;
+        }
+        if (mCallbacks != null) {
+            try {
+                mCallbacks = (NavigationCallbacks) context;
+            } catch (ClassCastException e) {
+                throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+            }
+        }
+        ((ScreenManager) context).onSectionAttached(ScreenManager.FRAGMENT_GROUPS);
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mCallbacks = (NavigationCallbacks) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+        if (mContext == activity) {
+            mContext = activity;
         }
-        ((ScreenManager)activity).onSectionAttached(ScreenManager.FRAGMENT_GROUPS);
+        if (mCallbacks == null) {
+            try {
+                mCallbacks = (NavigationCallbacks) activity;
+            } catch (ClassCastException e) {
+                throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+            }
+        }
+        ((ScreenManager) activity).onSectionAttached(ScreenManager.FRAGMENT_GROUPS);
     }
 
     @Override
@@ -98,15 +120,15 @@ public class GroupsFragment extends Fragment implements SimpleListener {
     @Override
     public void onResume() {
         super.onResume();
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.GROUP_CHANGED)) {
+        if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.GROUP_CHANGED)) {
             loadCategories();
         }
     }
 
     private void loadCategories(){
-        new SharedPrefs(getActivity()).saveBoolean(Prefs.GROUP_CHANGED, false);
-        provider = new CategoryDataProvider(getActivity());
-        CategoryRecyclerAdapter adapter = new CategoryRecyclerAdapter(getActivity(), provider);
+        SharedPrefs.getInstance(mContext).putBoolean(Prefs.GROUP_CHANGED, false);
+        provider = new CategoryDataProvider(mContext);
+        CategoryRecyclerAdapter adapter = new CategoryRecyclerAdapter(mContext, provider);
         adapter.setEventListener(this);
         listView.setAdapter(adapter);
         listView.setItemAnimator(new DefaultItemAnimator());
@@ -118,13 +140,13 @@ public class GroupsFragment extends Fragment implements SimpleListener {
     private void removeGroup(int position){
         long itemId = provider.getItem(position).getId();
         if (itemId != 0) {
-            DataBase db = new DataBase(getActivity());
+            DataBase db = new DataBase(mContext);
             db.open();
             Cursor s = db.getCategory(itemId);
             if (s != null && s.moveToFirst()) {
                 String uuId = s.getString(s.getColumnIndex(Constants.COLUMN_TECH_VAR));
                 db.deleteCategory(itemId);
-                new DeleteGroupAsync(getActivity(), uuId).execute();
+                new DeleteGroupAsync(mContext, uuId).execute();
             }
             if (s != null) s.close();
             db.close();
@@ -137,22 +159,21 @@ public class GroupsFragment extends Fragment implements SimpleListener {
 
     @Override
     public void onItemClicked(int position, View view) {
-        startActivity(new Intent(getActivity(), CategoryManager.class)
+        startActivity(new Intent(mContext, CategoryManager.class)
                 .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
     }
 
     @Override
     public void onItemLongClicked(final int position, View view) {
         String[] items = {getString(R.string.change_color), getString(R.string.edit), getString(R.string.delete)};
-        if (provider.getCount() == 1)
-            items = new String[]{getString(R.string.change_color), getString(R.string.edit)};
-        Dialogues.showLCAM(getActivity(), item -> {
+        if (provider.getCount() == 1) items = new String[]{getString(R.string.change_color), getString(R.string.edit)};
+        Dialogues.showLCAM(mContext, item -> {
             switch (item){
                 case 0:
                     changeColor(provider.getItem(position).getId());
                     break;
                 case 1:
-                    startActivity(new Intent(getActivity(), CategoryManager.class)
+                    startActivity(new Intent(mContext, CategoryManager.class)
                             .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
                     break;
                 case 2:
@@ -179,8 +200,8 @@ public class GroupsFragment extends Fragment implements SimpleListener {
                     getString(R.string.dark_purple), getString(R.string.dark_orange),
                     getString(R.string.lime), getString(R.string.indigo)};
         }
-        Dialogues.showLCAM(getActivity(), item -> {
-            CategoryModel.setNewIndicator(getActivity(), id, item);
+        Dialogues.showLCAM(mContext, item -> {
+            CategoryModel.setNewIndicator(mContext, id, item);
             loadCategories();
         }, items);
     }

@@ -47,8 +47,7 @@ public class AutoSyncAlarm extends WakefulBroadcastReceiver {
         alarmIntent = PendingIntent.getBroadcast(context, 1101, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Calendar calendar = Calendar.getInstance();
-        SharedPrefs prefs = new SharedPrefs(context);
-        int interval = prefs.loadInt(Prefs.AUTO_BACKUP_INTERVAL);
+        int interval = SharedPrefs.getInstance(context).getInt(Prefs.AUTO_BACKUP_INTERVAL);
         calendar.setTimeInMillis(System.currentTimeMillis() + (AlarmManager.INTERVAL_HOUR * interval));
         if (Module.isMarshmallow())
             alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),

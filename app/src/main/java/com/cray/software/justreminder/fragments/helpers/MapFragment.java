@@ -17,6 +17,7 @@
 package com.cray.software.justreminder.fragments.helpers;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -82,6 +83,8 @@ import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 public class MapFragment extends Fragment implements View.OnClickListener {
 
     private static final String HAS_SHOWCASE = "has_showcase";
+
+    private Activity mContext;
 
     /**
      * UI elements;
@@ -278,7 +281,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         if (mMap != null) {
             markerRadius = radius;
             if (markerRadius == -1)
-                markerRadius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
+                markerRadius = SharedPrefs.getInstance(mContext).getInt(Prefs.LOCATION_RADIUS);
             if (clear) mMap.clear();
             if (title == null || title.matches("")) title = pos.toString();
             if (!Module.isPro()) markerStyle = 5;
@@ -294,8 +297,8 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                     .center(pos)
                     .radius(markerRadius)
                     .strokeWidth(strokeWidth)
-                    .fillColor(ViewUtils.getColor(getActivity(), circleColors[0]))
-                    .strokeColor(ViewUtils.getColor(getActivity(), circleColors[1])));
+                    .fillColor(ViewUtils.getColor(mContext, circleColors[0]))
+                    .strokeColor(ViewUtils.getColor(mContext, circleColors[1])));
             if (animate) animate(pos);
         }
     }
@@ -313,7 +316,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         if (mMap != null) {
             markerRadius = radius;
             if (markerRadius == -1) {
-                markerRadius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
+                markerRadius = SharedPrefs.getInstance(mContext).getInt(Prefs.LOCATION_RADIUS);
             }
             if (!Module.isPro()) markerStyle = 5;
             this.markerStyle = markerStyle;
@@ -332,8 +335,8 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                     .center(pos)
                     .radius(markerRadius)
                     .strokeWidth(strokeWidth)
-                    .fillColor(ViewUtils.getColor(getActivity(), circleColors[0]))
-                    .strokeColor(ViewUtils.getColor(getActivity(), circleColors[1])));
+                    .fillColor(ViewUtils.getColor(mContext, circleColors[0]))
+                    .strokeColor(ViewUtils.getColor(mContext, circleColors[1])));
             if (animate) animate(pos);
         } else {
             Log.d(Constants.LOG_TAG, "map is null");
@@ -347,7 +350,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     public void recreateMarker(int radius) {
         markerRadius = radius;
         if (markerRadius == -1)
-            markerRadius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
+            markerRadius = SharedPrefs.getInstance(mContext).getInt(Prefs.LOCATION_RADIUS);
         if (mMap != null && lastPos != null) {
             mMap.clear();
             if (markerTitle == null || markerTitle.matches(""))
@@ -364,8 +367,8 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                     .center(lastPos)
                     .radius(markerRadius)
                     .strokeWidth(strokeWidth)
-                    .fillColor(ViewUtils.getColor(getActivity(), circleColors[0]))
-                    .strokeColor(ViewUtils.getColor(getActivity(), circleColors[1])));
+                    .fillColor(ViewUtils.getColor(mContext, circleColors[0]))
+                    .strokeColor(ViewUtils.getColor(mContext, circleColors[1])));
             animate(lastPos);
         }
     }
@@ -390,14 +393,14 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             if (markerStyle >= 0) {
                 int[] circleColors = mColor.getMarkerRadiusStyle(markerStyle);
                 if (markerRadius == -1) {
-                    markerRadius = new SharedPrefs(getActivity()).loadInt(Prefs.LOCATION_RADIUS);
+                    markerRadius = SharedPrefs.getInstance(mContext).getInt(Prefs.LOCATION_RADIUS);
                 }
                 mMap.addCircle(new CircleOptions()
                         .center(lastPos)
                         .radius(markerRadius)
                         .strokeWidth(strokeWidth)
-                        .fillColor(ViewUtils.getColor(getActivity(), circleColors[0]))
-                        .strokeColor(ViewUtils.getColor(getActivity(), circleColors[1])));
+                        .fillColor(ViewUtils.getColor(mContext, circleColors[0]))
+                        .strokeColor(ViewUtils.getColor(mContext, circleColors[1])));
             }
             animate(lastPos);
         }
@@ -425,7 +428,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
      */
     public void moveToMyLocation() {
         if (mMap != null) {
-            LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+            LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
             Criteria criteria = new Criteria();
             Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
             if (location != null) {
@@ -463,39 +466,39 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     }
 
     public void showShowcase() {
-        if (getActivity() == null) {
+        if (mContext == null) {
             return;
         }
-        if (!new SharedPrefs(getActivity()).loadBoolean(HAS_SHOWCASE) && isBack) {
-            ColorSetter coloring = new ColorSetter(getActivity());
+        if (!SharedPrefs.getInstance(mContext).getBoolean(HAS_SHOWCASE) && isBack) {
+            ColorSetter coloring = new ColorSetter(mContext);
             ShowcaseConfig config = new ShowcaseConfig();
             config.setDelay(350);
             config.setMaskColor(coloring.getColor(coloring.colorAccent()));
             config.setContentTextColor(coloring.getColor(R.color.whitePrimary));
             config.setDismissTextColor(coloring.getColor(R.color.whitePrimary));
 
-            MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(getActivity());
+            MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(mContext);
             sequence.setConfig(config);
 
             sequence.addSequenceItem(zoomOut,
-                    getActivity().getString(R.string.click_to_expand_collapse_map),
-                    getActivity().getString(R.string.got_it));
+                    mContext.getString(R.string.click_to_expand_collapse_map),
+                    mContext.getString(R.string.got_it));
 
             sequence.addSequenceItem(backButton,
-                    getActivity().getString(R.string.click_when_add_place),
-                    getActivity().getString(R.string.got_it));
+                    mContext.getString(R.string.click_when_add_place),
+                    mContext.getString(R.string.got_it));
 
             if (Module.isPro()) {
                 sequence.addSequenceItem(markers,
-                        getActivity().getString(R.string.select_style_for_marker),
-                        getActivity().getString(R.string.got_it));
+                        mContext.getString(R.string.select_style_for_marker),
+                        mContext.getString(R.string.got_it));
             }
 
             sequence.addSequenceItem(places,
-                    getActivity().getString(R.string.select_place_from_list),
-                    getActivity().getString(R.string.got_it));
+                    mContext.getString(R.string.select_place_from_list),
+                    mContext.getString(R.string.got_it));
             sequence.start();
-            new SharedPrefs(getActivity()).saveBoolean(HAS_SHOWCASE, true);
+            SharedPrefs.getInstance(mContext).putBoolean(HAS_SHOWCASE, true);
         }
     }
 
@@ -510,7 +513,23 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             isZoom = args.getBoolean(ENABLE_ZOOM, true);
             isDark = args.getBoolean(THEME_MODE, false);
             markerStyle = args.getInt(MARKER_STYLE,
-                    new SharedPrefs(getActivity()).loadInt(Prefs.MARKER_STYLE));
+                    SharedPrefs.getInstance(mContext).getInt(Prefs.MARKER_STYLE));
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (mContext == null) {
+            mContext = (Activity) context;
+        }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (mContext == null) {
+            mContext = activity;
         }
     }
 
@@ -519,14 +538,14 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         initArgs();
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-        final SharedPrefs prefs = new SharedPrefs(getActivity());
-        markerRadius = prefs.loadInt(Prefs.LOCATION_RADIUS);
-        mMapType = prefs.loadInt(Prefs.MAP_TYPE);
+        final SharedPrefs prefs = SharedPrefs.getInstance(mContext);
+        markerRadius = prefs.getInt(Prefs.LOCATION_RADIUS);
+        mMapType = prefs.getInt(Prefs.MAP_TYPE);
         if (!Module.isPro()) {
-            markerStyle = prefs.loadInt(Prefs.MARKER_STYLE);
+            markerStyle = prefs.getInt(Prefs.MARKER_STYLE);
         }
 
-        mColor = new ColorSetter(getActivity());
+        mColor = new ColorSetter(mContext);
         isDark = mColor.isDark();
 
         ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMapAsync(mMapCallback);
@@ -534,7 +553,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         cardSearch = (AutoCompleteTextView) view.findViewById(R.id.cardSearch);
         cardSearch.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_search_white_24dp, 0, 0, 0);
         cardSearch.setThreshold(3);
-        mAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, mAddressNames);
+        mAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_dropdown_item_1line, mAddressNames);
         mAdapter.setNotifyOnChange(true);
         cardSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -548,7 +567,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                     mAddressTask.cancel(true);
                 }
                 if (s.length() != 0) {
-                    mAddressTask = new GeocoderTask(getActivity(), addresses -> {
+                    mAddressTask = new GeocoderTask(mContext, addresses -> {
                         mFoundPlaces = addresses;
 
                         mAddressNames = new ArrayList<>();
@@ -560,7 +579,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                                     selected.getCountryName());
                             mAddressNames.add(addressText);
                         }
-                        mAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, mAddressNames);
+                        mAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_dropdown_item_1line, mAddressNames);
                         cardSearch.setAdapter(mAdapter);
                         mAdapter.notifyDataSetChanged();
                     });
@@ -725,15 +744,15 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         groupThree.removeAllViewsInLayout();
 
         for (int i = 0; i < ColorSetter.NUM_OF_MARKERS; i++) {
-            ImageButton ib = new ImageButton(getActivity());
+            ImageButton ib = new ImageButton(mContext);
             ib.setBackgroundResource(android.R.color.transparent);
-            ib.setImageResource(new ColorSetter(getActivity()).getMarkerStyle(i));
+            ib.setImageResource(new ColorSetter(mContext).getMarkerStyle(i));
             ib.setId(i + ColorSetter.NUM_OF_MARKERS);
             ib.setOnClickListener(this);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    QuickReturnUtils.dp2px(getActivity(), 35),
-                    QuickReturnUtils.dp2px(getActivity(), 35));
-            int px = QuickReturnUtils.dp2px(getActivity(), 2);
+                    QuickReturnUtils.dp2px(mContext, 35),
+                    QuickReturnUtils.dp2px(mContext, 35));
+            int px = QuickReturnUtils.dp2px(mContext, 2);
             params.setMargins(px, px, px, px);
             ib.setLayoutParams(params);
 
@@ -750,19 +769,19 @@ public class MapFragment extends Fragment implements View.OnClickListener {
     private void setMapType(int type) {
         if (mMap != null) {
             mMap.setMapType(type);
-            new SharedPrefs(getActivity()).saveInt(Prefs.MAP_TYPE, type);
+            SharedPrefs.getInstance(mContext).putInt(Prefs.MAP_TYPE, type);
             ViewUtils.hideOver(layersContainer);
         }
     }
 
     private void setMyLocation() {
-        if (ActivityCompat.checkSelfPermission(getActivity(),
+        if (ActivityCompat.checkSelfPermission(mContext,
                 Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(getActivity(),
+                ActivityCompat.checkSelfPermission(mContext,
                         Manifest.permission.ACCESS_COARSE_LOCATION) !=
                         PackageManager.PERMISSION_GRANTED) {
-            Permissions.requestPermission(getActivity(), 205,
+            Permissions.requestPermission(mContext, 205,
                     Permissions.ACCESS_FINE_LOCATION,
                     Permissions.ACCESS_COARSE_LOCATION);
         } else {
@@ -772,7 +791,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
 
     private void loadPlaces(){
         if (placeRecyclerAdapter == null) {
-            DataBase DB = new DataBase(getActivity());
+            DataBase DB = new DataBase(mContext);
             DB.open();
             Cursor c = DB.queryPlaces();
             spinnerArray = new ArrayList<>();
@@ -797,14 +816,14 @@ public class MapFragment extends Fragment implements View.OnClickListener {
             } else {
                 emptyItem.setVisibility(View.GONE);
                 placesList.setVisibility(View.VISIBLE);
-                PlaceAdapter adapter = new PlaceAdapter(getActivity(), spinnerArray);
+                PlaceAdapter adapter = new PlaceAdapter(mContext, spinnerArray);
                 adapter.setEventListener(new SimpleListener() {
                     @Override
                     public void onItemClicked(int position, View view) {
                         hideLayers();
                         hidePlaces();
                         String placeName = spinnerArray.get(position);
-                        DataBase db = new DataBase(getActivity());
+                        DataBase db = new DataBase(mContext);
                         db.open();
                         Cursor c = db.getPlace(placeName);
                         if (c != null && c.moveToFirst()) {
@@ -824,14 +843,14 @@ public class MapFragment extends Fragment implements View.OnClickListener {
 
                     }
                 });
-                placesList.setLayoutManager(new LinearLayoutManager(getActivity()));
+                placesList.setLayoutManager(new LinearLayoutManager(mContext));
                 placesList.setAdapter(adapter);
             }
         } else {
             if (placeRecyclerAdapter.getItemCount() > 0) {
                 emptyItem.setVisibility(View.GONE);
                 placesList.setVisibility(View.VISIBLE);
-                placesList.setLayoutManager(new LinearLayoutManager(getActivity()));
+                placesList.setLayoutManager(new LinearLayoutManager(mContext));
                 placesList.setAdapter(placeRecyclerAdapter);
                 addMarkers(placeRecyclerAdapter.getProvider());
             } else {
@@ -861,13 +880,13 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         if (isMarkersVisible()) {
             hideStyles();
         } else {
-            ViewUtils.slideInUp(getActivity(), styleCard);
+            ViewUtils.slideInUp(mContext, styleCard);
         }
     }
 
     private void hideStyles() {
         if (isMarkersVisible()) {
-            ViewUtils.slideOutDown(getActivity(), styleCard);
+            ViewUtils.slideOutDown(mContext, styleCard);
         }
     }
 
@@ -885,13 +904,13 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         if (isPlacesVisible()) {
             hidePlaces();
         } else {
-            ViewUtils.slideInUp(getActivity(), placesListCard);
+            ViewUtils.slideInUp(mContext, placesListCard);
         }
     }
 
     private void hidePlaces() {
         if (isPlacesVisible()) {
-            ViewUtils.slideOutDown(getActivity(), placesListCard);
+            ViewUtils.slideOutDown(mContext, placesListCard);
         }
     }
 
@@ -949,7 +968,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     setMyLocation();
                 } else {
-                    Messages.toast(getActivity(), R.string.cant_access_location_services);
+                    Messages.toast(mContext, R.string.cant_access_location_services);
                 }
                 break;
         }

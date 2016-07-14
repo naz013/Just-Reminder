@@ -17,6 +17,7 @@
 package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -51,6 +52,8 @@ public class PlacesFragment extends Fragment implements SimpleListener {
     private PlaceDataProvider provider;
     private NavigationCallbacks mCallbacks;
 
+    private Activity mContext;
+
     public static PlacesFragment newInstance() {
         return new PlacesFragment();
     }
@@ -61,7 +64,6 @@ public class PlacesFragment extends Fragment implements SimpleListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(false);
     }
 
@@ -73,9 +75,9 @@ public class PlacesFragment extends Fragment implements SimpleListener {
         emptyItem = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
         RoboTextView emptyText = (RoboTextView) rootView.findViewById(R.id.emptyText);
-        emptyText.setText(getActivity().getString(R.string.no_places));
+        emptyText.setText(mContext.getString(R.string.no_places));
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (new ColorSetter(getActivity()).isDark()) {
+        if (new ColorSetter(mContext).isDark()) {
             emptyImage.setImageResource(R.drawable.ic_place_white_vector);
         } else {
             emptyImage.setImageResource(R.drawable.ic_place_black_vector);
@@ -88,14 +90,35 @@ public class PlacesFragment extends Fragment implements SimpleListener {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (mContext == null) {
+            mContext = (Activity) context;
+        }
+        if (mCallbacks == null) {
+            try {
+                mCallbacks = (NavigationCallbacks) context;
+            } catch (ClassCastException e) {
+                throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+            }
+        }
+        ((ScreenManager) context).onSectionAttached(ScreenManager.FRAGMENT_PLACES);
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mCallbacks = (NavigationCallbacks) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+        if (mContext == null) {
+            mContext = activity;
         }
-        ((ScreenManager)activity).onSectionAttached(ScreenManager.FRAGMENT_PLACES);
+        if (mCallbacks == null) {
+            try {
+                mCallbacks = (NavigationCallbacks) activity;
+            } catch (ClassCastException e) {
+                throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
+            }
+        }
+        ((ScreenManager) activity).onSectionAttached(ScreenManager.FRAGMENT_PLACES);
     }
 
     @Override
@@ -107,17 +130,17 @@ public class PlacesFragment extends Fragment implements SimpleListener {
     @Override
     public void onResume() {
         super.onResume();
-        if (new SharedPrefs(getActivity()).loadBoolean(Prefs.PLACE_CHANGED)) {
+        if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.PLACE_CHANGED)) {
             loadPlaces();
         }
     }
 
     private void loadPlaces(){
-        new SharedPrefs(getActivity()).saveBoolean(Prefs.PLACE_CHANGED, false);
-        provider = new PlaceDataProvider(getActivity(), true);
+        SharedPrefs.getInstance(mContext).putBoolean(Prefs.PLACE_CHANGED, false);
+        provider = new PlaceDataProvider(mContext, true);
         reloadView();
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        PlaceRecyclerAdapter adapter = new PlaceRecyclerAdapter(getActivity(), provider, false);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
+        PlaceRecyclerAdapter adapter = new PlaceRecyclerAdapter(mContext, provider, false);
         adapter.setEventListener(this);
         listView.setLayoutManager(mLayoutManager);
         listView.setAdapter(adapter);
@@ -141,7 +164,7 @@ public class PlacesFragment extends Fragment implements SimpleListener {
     private void deletePlace(int position){
         long id = provider.getItem(position).getId();
         if (id != 0) {
-            DataBase db = new DataBase(getActivity());
+            DataBase db = new DataBase(mContext);
             db.open();
             db.deletePlace(id);
             db.close();
@@ -153,7 +176,7 @@ public class PlacesFragment extends Fragment implements SimpleListener {
     }
 
     private void editPlace(int position){
-        startActivity(new Intent(getActivity(), AddPlace.class)
+        startActivity(new Intent(mContext, AddPlace.class)
                 .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
     }
 
@@ -165,7 +188,7 @@ public class PlacesFragment extends Fragment implements SimpleListener {
     @Override
     public void onItemLongClicked(final int position, View view) {
         final String[] items = {getString(R.string.edit), getString(R.string.delete)};
-        Dialogues.showLCAM(getActivity(), item -> {
+        Dialogues.showLCAM(mContext, item -> {
             if (item == 0) {
                 editPlace(position);
             }

@@ -87,12 +87,10 @@ public class TasksFactory implements RemoteViewsService.RemoteViewsFactory {
                     String checks = c.getString(c.getColumnIndex(TasksConstants.COLUMN_STATUS));
                     String note = c.getString(c.getColumnIndex(TasksConstants.COLUMN_NOTES));
                     long mId = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID));
-
                     int color = 0;
                     if (map.containsKey(listId)) {
                         color = map.get(listId);
                     }
-
                     if (checks.matches(GTasksHelper.TASKS_NEED_ACTION)) {
                         mData.add(new Task(title, mId, checks, taskId, date, listId, note, color));
                     }

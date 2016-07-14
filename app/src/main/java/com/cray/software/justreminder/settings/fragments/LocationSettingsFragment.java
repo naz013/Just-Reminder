@@ -42,25 +42,22 @@ public class LocationSettingsFragment extends Fragment implements View.OnClickLi
 
     private SharedPrefs sPrefs;
     private ActionBar ab;
-    
     private PrefsView notificationOptionPrefs, radiusPrefs;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView =  inflater.inflate(R.layout.settings_location, container, false);
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-
-        ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        sPrefs = SharedPrefs.getInstance(getActivity());
+        ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (ab != null){
             ab.setTitle(R.string.location);
         }
-
         TextView mapType = (TextView) rootView.findViewById(R.id.mapType);
         mapType.setOnClickListener(this);
 
         notificationOptionPrefs = (PrefsView) rootView.findViewById(R.id.notificationOptionPrefs);
-        notificationOptionPrefs.setChecked(sPrefs.loadBoolean(Prefs.TRACKING_NOTIFICATION));
+        notificationOptionPrefs.setChecked(sPrefs.getBoolean(Prefs.TRACKING_NOTIFICATION));
         notificationOptionPrefs.setOnClickListener(this);
 
         radiusPrefs = (PrefsView) rootView.findViewById(R.id.radiusPrefs);
@@ -84,12 +81,11 @@ public class LocationSettingsFragment extends Fragment implements View.OnClickLi
     }
 
     private void notificationChange (){
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
         if (notificationOptionPrefs.isChecked()){
-            sPrefs.saveBoolean(Prefs.TRACKING_NOTIFICATION, false);
+            sPrefs.putBoolean(Prefs.TRACKING_NOTIFICATION, false);
             notificationOptionPrefs.setChecked(false);
         } else {
-            sPrefs.saveBoolean(Prefs.TRACKING_NOTIFICATION, true);
+            sPrefs.putBoolean(Prefs.TRACKING_NOTIFICATION, true);
             notificationOptionPrefs.setChecked(true);
         }
     }
@@ -97,15 +93,13 @@ public class LocationSettingsFragment extends Fragment implements View.OnClickLi
     @Override
     public void onResume() {
         super.onResume();
-
-        sPrefs = new SharedPrefs(getActivity().getApplicationContext());
-        radiusPrefs.setValueText(String.valueOf(sPrefs.loadInt(Prefs.LOCATION_RADIUS)));
+        radiusPrefs.setValueText(String.valueOf(sPrefs.getInt(Prefs.LOCATION_RADIUS)));
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (ab != null){
             ab.setTitle(R.string.action_settings);
         }
@@ -122,23 +116,23 @@ public class LocationSettingsFragment extends Fragment implements View.OnClickLi
                 break;
             case R.id.radiusPrefs:
                 getActivity().getApplicationContext()
-                        .startActivity(new Intent(getActivity().getApplicationContext()
-                                , TargetRadius.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                        .startActivity(new Intent(getActivity().getApplicationContext(),
+                                TargetRadius.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
             case R.id.places:
                 getActivity().getApplicationContext()
-                        .startActivity(new Intent(getActivity().getApplicationContext()
-                                , PlacesList.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                        .startActivity(new Intent(getActivity().getApplicationContext(),
+                                PlacesList.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
             case R.id.tracker:
                 getActivity().getApplicationContext()
-                        .startActivity(new Intent(getActivity().getApplicationContext()
-                                , TrackerOption.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                        .startActivity(new Intent(getActivity().getApplicationContext(),
+                                TrackerOption.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
             case R.id.markerStyle:
                 getActivity().getApplicationContext()
-                        .startActivity(new Intent(getActivity().getApplicationContext()
-                                , MarkerStyle.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                        .startActivity(new Intent(getActivity().getApplicationContext(),
+                                MarkerStyle.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
         }
     }

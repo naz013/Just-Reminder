@@ -28,14 +28,14 @@ import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
-import com.cray.software.justreminder.notes.NotesBase;
 import com.cray.software.justreminder.datas.models.BirthdayModel;
 import com.cray.software.justreminder.datas.models.CategoryModel;
-import com.cray.software.justreminder.notes.NoteModel;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JParser;
 import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.json.JShopping;
+import com.cray.software.justreminder.notes.NoteModel;
+import com.cray.software.justreminder.notes.NotesBase;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.LocationType;
 import com.cray.software.justreminder.reminder.Reminder;
@@ -229,8 +229,10 @@ public class SyncHelper {
         jObjectData.put(Constants.COLUMN_NOTE, encrypt(note));
         if (image != null) {
             jObjectData.put(Constants.COLUMN_IMAGE, Base64.encodeToString(image, Base64.DEFAULT));
-        } else jObjectData.put(Constants.COLUMN_IMAGE, image);
-        if (new SharedPrefs(mContext).loadBoolean(Prefs.NOTE_ENCRYPT)){
+        } else {
+            jObjectData.put(Constants.COLUMN_IMAGE, image);
+        }
+        if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.NOTE_ENCRYPT)){
             jObjectData.put(Constants.COLUMN_ENCRYPTED, 1);
         } else {
             jObjectData.put(Constants.COLUMN_ENCRYPTED, 0);
@@ -276,7 +278,7 @@ public class SyncHelper {
                 if (image != null) {
                     jObjectData.put(Constants.COLUMN_IMAGE, Base64.encodeToString(image, Base64.DEFAULT));
                 } else jObjectData.put(Constants.COLUMN_IMAGE, image);
-                if (new SharedPrefs(mContext).loadBoolean(Prefs.NOTE_ENCRYPT)){
+                if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.NOTE_ENCRYPT)){
                     jObjectData.put(Constants.COLUMN_ENCRYPTED, 1);
                     jObjectData.put(Constants.COLUMN_NOTE, note);
                 } else {
@@ -416,8 +418,7 @@ public class SyncHelper {
         if (!jsonObj.isNull(Constants.COLUMN_IMAGE)) {
             image = Base64.decode(jsonObj.getString(Constants.COLUMN_IMAGE), Base64.DEFAULT);
         }
-        SharedPrefs prefs = new SharedPrefs(mContext);
-        if (!prefs.loadBoolean(Prefs.NOTE_ENCRYPT)){
+        if (!SharedPrefs.getInstance(mContext).getBoolean(Prefs.NOTE_ENCRYPT)){
             note = decrypt(note);
         }
         long linkId = jsonObj.getLong(Constants.COLUMN_LINK_ID);

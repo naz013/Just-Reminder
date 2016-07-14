@@ -38,7 +38,7 @@ public class BirthdayPermanentAlarm extends WakefulBroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Intent service = new Intent(context, BirthdayPermanentAlarm.class);
         context.startService(service);
-        if (new SharedPrefs(context).loadBoolean(Prefs.BIRTHDAY_PERMANENT)){
+        if (SharedPrefs.getInstance(context).getBoolean(Prefs.BIRTHDAY_PERMANENT)){
             new Notifier(context).showBirthdayPermanent();
         }
     }

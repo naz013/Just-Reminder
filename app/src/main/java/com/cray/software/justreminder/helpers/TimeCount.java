@@ -64,8 +64,7 @@ public class TimeCount {
             cl.setTimeInMillis(timeLong);
             Date mTime = cl.getTime();
             date = TimeUtil.dateFormat.format(mTime);
-            time = TimeUtil.getTime(mTime,
-                    new SharedPrefs(mContext).loadBoolean(Prefs.IS_24_TIME_FORMAT));
+            time = TimeUtil.getTime(mTime, SharedPrefs.getInstance(mContext).getBoolean(Prefs.IS_24_TIME_FORMAT));
         }
         return new String[]{date, time};
     }

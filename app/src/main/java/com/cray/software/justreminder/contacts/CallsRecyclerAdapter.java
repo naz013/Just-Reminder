@@ -144,7 +144,7 @@ public class CallsRecyclerAdapter extends RecyclerView.Adapter<CallsRecyclerAdap
 
     @BindingAdapter("app:loadDate")
     public static void loadDate(RoboTextView textView, long date) {
-        boolean is24 = new SharedPrefs(textView.getContext()).loadBoolean(Prefs.IS_24_TIME_FORMAT);
+        boolean is24 = SharedPrefs.getInstance(textView.getContext()).getBoolean(Prefs.IS_24_TIME_FORMAT);
         textView.setText(TimeUtil.getSimpleDateTime(date, is24));
     }
 

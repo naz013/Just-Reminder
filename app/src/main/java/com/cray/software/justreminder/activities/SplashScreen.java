@@ -57,10 +57,11 @@ import com.cray.software.justreminder.services.CheckPosition;
 import com.cray.software.justreminder.services.GeolocationService;
 import com.cray.software.justreminder.tests.TestActivity;
 
-import io.fabric.sdk.android.Fabric;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Application splash screen for checking preferences.
@@ -180,13 +181,13 @@ public class SplashScreen extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPrefs prefs = new SharedPrefs(SplashScreen.this);
-        if (prefs.loadBoolean(Prefs.EXPORT_SETTINGS)){
+        SharedPrefs prefs = SharedPrefs.getInstance(this);
+        if (prefs.getBoolean(Prefs.EXPORT_SETTINGS)){
             prefs.loadPrefsFromFile();
         }
         initPrefs();
 
-        if (!prefs.loadBoolean("isGenB")){
+        if (!prefs.getBoolean("isGenB")){
             DataBase db = new DataBase(this);
             db.open();
             Cursor c = db.getBirthdays();
@@ -203,17 +204,17 @@ public class SplashScreen extends AppCompatActivity {
             }
             if (c != null) c.close();
             db.close();
-            prefs.saveBoolean("isGenB", true);
+            prefs.putBoolean("isGenB", true);
         }
 
-        if (!prefs.loadBoolean(Prefs.IS_MIGRATION)) {
+        if (!prefs.getBoolean(Prefs.IS_MIGRATION)) {
             try {
                 migrateToNewDb();
             } catch (SQLiteException e) {
                 e.printStackTrace();
             }
             checkGroups();
-            prefs.saveBoolean(Prefs.IS_MIGRATION, true);
+            prefs.putBoolean(Prefs.IS_MIGRATION, true);
         }
 
         checkPrefs();
@@ -223,7 +224,7 @@ public class SplashScreen extends AppCompatActivity {
         } else if (Module.isCloud()) {
             startActivity(new Intent(SplashScreen.this, ScreenManager.class));
         } else {
-            if (isFirstTime() && !prefs.loadBoolean(Prefs.CONTACTS_IMPORT_DIALOG)) {
+            if (isFirstTime() && !prefs.getBoolean(Prefs.CONTACTS_IMPORT_DIALOG)) {
                 startActivity(new Intent(SplashScreen.this, LogInActivity.class));
             } else {
                 startActivity(new Intent(SplashScreen.this, ScreenManager.class));
@@ -380,244 +381,244 @@ public class SplashScreen extends AppCompatActivity {
      * Check if preference exist. If no save default.
      */
     private void checkPrefs(){
-        SharedPrefs prefs = new SharedPrefs(SplashScreen.this);
-        if (!prefs.isString(Prefs.TODAY_COLOR)){
-            prefs.saveInt(Prefs.TODAY_COLOR, 4);
+        SharedPrefs prefs = SharedPrefs.getInstance(this);
+        if (!prefs.hasKey(Prefs.TODAY_COLOR)){
+            prefs.putInt(Prefs.TODAY_COLOR, 4);
         }
-        if (!prefs.isString(Prefs.BIRTH_COLOR)){
-            prefs.saveInt(Prefs.BIRTH_COLOR, 1);
+        if (!prefs.hasKey(Prefs.BIRTH_COLOR)){
+            prefs.putInt(Prefs.BIRTH_COLOR, 1);
         }
-        if (!prefs.isString(Prefs.REMINDER_COLOR)){
-            prefs.saveInt(Prefs.REMINDER_COLOR, 6);
+        if (!prefs.hasKey(Prefs.REMINDER_COLOR)){
+            prefs.putInt(Prefs.REMINDER_COLOR, 6);
         }
-        if (!prefs.isString(Prefs.APP_THEME)){
-            prefs.saveInt(Prefs.APP_THEME, Configs.DEFAULT_THEME);
+        if (!prefs.hasKey(Prefs.APP_THEME)){
+            prefs.putInt(Prefs.APP_THEME, Configs.DEFAULT_THEME);
         }
-        if (!prefs.isString(Prefs.SCREEN)){
-            prefs.savePrefs(Prefs.SCREEN, Constants.SCREEN_AUTO);
+        if (!prefs.hasKey(Prefs.SCREEN)){
+            prefs.putString(Prefs.SCREEN, Constants.SCREEN_AUTO);
         }
-        if (!prefs.isString(Prefs.DRIVE_USER)){
-            prefs.savePrefs(Prefs.DRIVE_USER, Constants.DRIVE_USER_NONE);
+        if (!prefs.hasKey(Prefs.DRIVE_USER)){
+            prefs.putString(Prefs.DRIVE_USER, Constants.DRIVE_USER_NONE);
         }
-        if (!prefs.isString(Prefs.TTS_LOCALE)){
-            prefs.savePrefs(Prefs.TTS_LOCALE, Language.ENGLISH);
+        if (!prefs.hasKey(Prefs.TTS_LOCALE)){
+            prefs.putString(Prefs.TTS_LOCALE, Language.ENGLISH);
         }
-        if (!prefs.isString(Prefs.REMINDER_IMAGE)){
-            prefs.savePrefs(Prefs.REMINDER_IMAGE, Constants.DEFAULT);
-        }
-
-        if (!prefs.isString(Prefs.VOICE_LOCALE)){
-            prefs.saveInt(Prefs.VOICE_LOCALE, 0);
-        }
-        if (!prefs.isString(Prefs.TIME_MORNING)){
-            prefs.savePrefs(Prefs.TIME_MORNING, "7:0");
-        }
-        if (!prefs.isString(Prefs.TIME_DAY)){
-            prefs.savePrefs(Prefs.TIME_DAY, "12:0");
-        }
-        if (!prefs.isString(Prefs.TIME_EVENING)){
-            prefs.savePrefs(Prefs.TIME_EVENING, "19:0");
-        }
-        if (!prefs.isString(Prefs.TIME_NIGHT)){
-            prefs.savePrefs(Prefs.TIME_NIGHT, "23:0");
-        }
-        if (!prefs.isString(Prefs.DAYS_TO_BIRTHDAY)){
-            prefs.saveInt(Prefs.DAYS_TO_BIRTHDAY, 0);
-        }
-        if (!prefs.isString(Prefs.QUICK_NOTE_REMINDER_TIME)){
-            prefs.saveInt(Prefs.QUICK_NOTE_REMINDER_TIME, 10);
-        }
-        if (!prefs.isString(Prefs.TEXT_SIZE)){
-            prefs.saveInt(Prefs.TEXT_SIZE, 4);
-        }
-        if (!prefs.isString(Prefs.START_DAY)){
-            prefs.saveInt(Prefs.START_DAY, 1);
-        }
-        if (!prefs.isString(Prefs.BIRTHDAY_REMINDER_HOUR)){
-            prefs.saveInt(Prefs.BIRTHDAY_REMINDER_HOUR, 12);
-        }
-        if (!prefs.isString(Prefs.BIRTHDAY_REMINDER_MINUTE)){
-            prefs.saveInt(Prefs.BIRTHDAY_REMINDER_MINUTE, 0);
-        }
-        if (!prefs.isString(Prefs.TRACK_DISTANCE)){
-            prefs.saveInt(Prefs.TRACK_DISTANCE, 1);
-        }
-        if (!prefs.isString(Prefs.AUTO_BACKUP_INTERVAL)){
-            prefs.saveInt(Prefs.AUTO_BACKUP_INTERVAL, 6);
-        }
-        if (!prefs.isString(Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL)){
-            prefs.saveInt(Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL, 6);
-        }
-        if (!prefs.isString(Prefs.TRACK_TIME)){
-            prefs.saveInt(Prefs.TRACK_TIME, 1);
-        }
-        if (!prefs.isString(Prefs.APP_RUNS_COUNT)){
-            prefs.saveInt(Prefs.APP_RUNS_COUNT, 0);
-        }
-        if (!prefs.isString(Prefs.LAST_CALENDAR_VIEW)){
-            prefs.saveInt(Prefs.LAST_CALENDAR_VIEW, 1);
-        }
-        if (!prefs.isString(Prefs.DELAY_TIME)){
-            prefs.saveInt(Prefs.DELAY_TIME, 5);
-        }
-        if (!prefs.isString(Prefs.EVENT_DURATION)){
-            prefs.saveInt(Prefs.EVENT_DURATION, 30);
-        }
-        if (!prefs.isString(Prefs.NOTIFICATION_REPEAT_INTERVAL)){
-            prefs.saveInt(Prefs.NOTIFICATION_REPEAT_INTERVAL, 15);
-        }
-        if (!prefs.isString(Prefs.VOLUME)){
-            prefs.saveInt(Prefs.VOLUME, 25);
-        }
-        if (!prefs.isString(Prefs.MAP_TYPE)){
-            prefs.saveInt(Prefs.MAP_TYPE, Constants.MAP_NORMAL);
-        }
-        if (!prefs.isString(Prefs.MISSED_CALL_TIME)){
-            prefs.saveInt(Prefs.MISSED_CALL_TIME, 10);
-        }
-        if (!prefs.isString(Prefs.SOUND_STREAM)){
-            prefs.saveInt(Prefs.SOUND_STREAM, 5);
+        if (!prefs.hasKey(Prefs.REMINDER_IMAGE)){
+            prefs.putString(Prefs.REMINDER_IMAGE, Constants.DEFAULT);
         }
 
-        if (!prefs.isString(Prefs.DAY_NIGHT)){
-            prefs.saveBoolean(Prefs.DAY_NIGHT, false);
+        if (!prefs.hasKey(Prefs.VOICE_LOCALE)){
+            prefs.putInt(Prefs.VOICE_LOCALE, 0);
         }
-        if (!prefs.isString(Prefs.RATE_SHOW)){
-            prefs.saveBoolean(Prefs.RATE_SHOW, false);
+        if (!prefs.hasKey(Prefs.TIME_MORNING)){
+            prefs.putString(Prefs.TIME_MORNING, "7:0");
         }
-        if (!prefs.isString(Prefs.REMINDER_IMAGE_BLUR)){
-            prefs.saveBoolean(Prefs.REMINDER_IMAGE_BLUR, false);
+        if (!prefs.hasKey(Prefs.TIME_DAY)){
+            prefs.putString(Prefs.TIME_DAY, "12:0");
         }
-        if (!prefs.isString(Prefs.QUICK_NOTE_REMINDER)){
-            prefs.saveBoolean(Prefs.QUICK_NOTE_REMINDER, false);
+        if (!prefs.hasKey(Prefs.TIME_EVENING)){
+            prefs.putString(Prefs.TIME_EVENING, "19:0");
         }
-        if (!prefs.isString(Prefs.SYNC_NOTES)){
-            prefs.saveBoolean(Prefs.SYNC_NOTES, true);
+        if (!prefs.hasKey(Prefs.TIME_NIGHT)){
+            prefs.putString(Prefs.TIME_NIGHT, "23:0");
         }
-        if (!prefs.isString(Prefs.REMINDERS_IN_CALENDAR)){
-            prefs.saveBoolean(Prefs.REMINDERS_IN_CALENDAR, false);
+        if (!prefs.hasKey(Prefs.DAYS_TO_BIRTHDAY)){
+            prefs.putInt(Prefs.DAYS_TO_BIRTHDAY, 0);
         }
-        if (!prefs.isString(Prefs.TTS)){
-            prefs.saveBoolean(Prefs.TTS, false);
+        if (!prefs.hasKey(Prefs.QUICK_NOTE_REMINDER_TIME)){
+            prefs.putInt(Prefs.QUICK_NOTE_REMINDER_TIME, 10);
         }
-        if (!prefs.isString(Prefs.SYNC_BIRTHDAYS)){
-            prefs.saveBoolean(Prefs.SYNC_BIRTHDAYS, true);
+        if (!prefs.hasKey(Prefs.TEXT_SIZE)){
+            prefs.putInt(Prefs.TEXT_SIZE, 4);
         }
-        if (!prefs.isString(Prefs.NOTE_ENCRYPT)){
-            prefs.saveBoolean(Prefs.NOTE_ENCRYPT, true);
+        if (!prefs.hasKey(Prefs.START_DAY)){
+            prefs.putInt(Prefs.START_DAY, 1);
         }
-        if (!prefs.isString(Prefs.CONTACTS_IMPORT_DIALOG)){
-            prefs.saveBoolean(Prefs.CONTACTS_IMPORT_DIALOG, false);
+        if (!prefs.hasKey(Prefs.BIRTHDAY_REMINDER_HOUR)){
+            prefs.putInt(Prefs.BIRTHDAY_REMINDER_HOUR, 12);
         }
-        if (!prefs.isString(Prefs.CONTACT_BIRTHDAYS)){
-            prefs.saveBoolean(Prefs.CONTACT_BIRTHDAYS, false);
+        if (!prefs.hasKey(Prefs.BIRTHDAY_REMINDER_MINUTE)){
+            prefs.putInt(Prefs.BIRTHDAY_REMINDER_MINUTE, 0);
         }
-        if (!prefs.isString(Prefs.BIRTHDAY_REMINDER)){
-            prefs.saveBoolean(Prefs.BIRTHDAY_REMINDER, true);
+        if (!prefs.hasKey(Prefs.TRACK_DISTANCE)){
+            prefs.putInt(Prefs.TRACK_DISTANCE, 1);
         }
-        if (!prefs.isString(Prefs.CALENDAR_IMAGE)){
-            prefs.saveBoolean(Prefs.CALENDAR_IMAGE, false);
+        if (!prefs.hasKey(Prefs.AUTO_BACKUP_INTERVAL)){
+            prefs.putInt(Prefs.AUTO_BACKUP_INTERVAL, 6);
         }
-        if (!prefs.isString(Prefs.SILENT_SMS)){
-            prefs.saveBoolean(Prefs.SILENT_SMS, false);
+        if (!prefs.hasKey(Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL)){
+            prefs.putInt(Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL, 6);
         }
-        if (!prefs.isString(Prefs.ITEM_PREVIEW)){
-            prefs.saveBoolean(Prefs.ITEM_PREVIEW, true);
+        if (!prefs.hasKey(Prefs.TRACK_TIME)){
+            prefs.putInt(Prefs.TRACK_TIME, 1);
         }
-        if (!prefs.isString(Prefs.WIDGET_BIRTHDAYS)){
-            prefs.saveBoolean(Prefs.WIDGET_BIRTHDAYS, false);
+        if (!prefs.hasKey(Prefs.APP_RUNS_COUNT)){
+            prefs.putInt(Prefs.APP_RUNS_COUNT, 0);
         }
-        if (!prefs.isString(Prefs.WEAR_NOTIFICATION)){
-            prefs.saveBoolean(Prefs.WEAR_NOTIFICATION, false);
+        if (!prefs.hasKey(Prefs.LAST_CALENDAR_VIEW)){
+            prefs.putInt(Prefs.LAST_CALENDAR_VIEW, 1);
         }
-        if (!prefs.isString(Prefs.EXPORT_TO_STOCK)){
-            prefs.saveBoolean(Prefs.EXPORT_TO_STOCK, false);
+        if (!prefs.hasKey(Prefs.DELAY_TIME)){
+            prefs.putInt(Prefs.DELAY_TIME, 5);
         }
-        if (!prefs.isString(Prefs.USE_DARK_THEME)){
-            prefs.saveBoolean(Prefs.USE_DARK_THEME, false);
+        if (!prefs.hasKey(Prefs.EVENT_DURATION)){
+            prefs.putInt(Prefs.EVENT_DURATION, 30);
         }
-        if (!prefs.isString(Prefs.EXPORT_TO_CALENDAR)){
-            prefs.saveBoolean(Prefs.EXPORT_TO_CALENDAR, false);
+        if (!prefs.hasKey(Prefs.NOTIFICATION_REPEAT_INTERVAL)){
+            prefs.putInt(Prefs.NOTIFICATION_REPEAT_INTERVAL, 15);
         }
-        if (!prefs.isString(Prefs.AUTO_CHECK_BIRTHDAYS)){
-            prefs.saveBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, false);
+        if (!prefs.hasKey(Prefs.VOLUME)){
+            prefs.putInt(Prefs.VOLUME, 25);
         }
-        if (!prefs.isString(Prefs.INFINITE_VIBRATION)){
-            prefs.saveBoolean(Prefs.INFINITE_VIBRATION, false);
+        if (!prefs.hasKey(Prefs.MAP_TYPE)){
+            prefs.putInt(Prefs.MAP_TYPE, Constants.MAP_NORMAL);
         }
-        if (!prefs.isString(Prefs.AUTO_BACKUP)){
-            prefs.saveBoolean(Prefs.AUTO_BACKUP, false);
+        if (!prefs.hasKey(Prefs.MISSED_CALL_TIME)){
+            prefs.putInt(Prefs.MISSED_CALL_TIME, 10);
         }
-        if (!prefs.isString(Prefs.SMART_FOLD)){
-            prefs.saveBoolean(Prefs.SMART_FOLD, false);
+        if (!prefs.hasKey(Prefs.SOUND_STREAM)){
+            prefs.putInt(Prefs.SOUND_STREAM, 5);
         }
-        if (!prefs.isString(Prefs.NOTIFICATION_REPEAT)){
-            prefs.saveBoolean(Prefs.NOTIFICATION_REPEAT, false);
+
+        if (!prefs.hasKey(Prefs.DAY_NIGHT)){
+            prefs.putBoolean(Prefs.DAY_NIGHT, false);
         }
-        if (!prefs.isString(Prefs.IS_24_TIME_FORMAT)){
-            prefs.saveBoolean(Prefs.IS_24_TIME_FORMAT, true);
+        if (!prefs.hasKey(Prefs.RATE_SHOW)){
+            prefs.putBoolean(Prefs.RATE_SHOW, false);
         }
-        if (!prefs.isString(Prefs.UNLOCK_DEVICE)){
-            prefs.saveBoolean(Prefs.UNLOCK_DEVICE, false);
+        if (!prefs.hasKey(Prefs.REMINDER_IMAGE_BLUR)){
+            prefs.putBoolean(Prefs.REMINDER_IMAGE_BLUR, false);
         }
-        if (!prefs.isString(Prefs.CALENDAR_FEATURE_TASKS)){
-            prefs.saveBoolean(Prefs.CALENDAR_FEATURE_TASKS, false);
+        if (!prefs.hasKey(Prefs.QUICK_NOTE_REMINDER)){
+            prefs.putBoolean(Prefs.QUICK_NOTE_REMINDER, false);
         }
-        if (!prefs.isString(Prefs.MISSED_CALL_REMINDER)){
-            prefs.saveBoolean(Prefs.MISSED_CALL_REMINDER, false);
+        if (!prefs.hasKey(Prefs.SYNC_NOTES)){
+            prefs.putBoolean(Prefs.SYNC_NOTES, true);
         }
-        if (!prefs.isString(Prefs.QUICK_SMS)){
-            prefs.saveBoolean(Prefs.QUICK_SMS, false);
+        if (!prefs.hasKey(Prefs.REMINDERS_IN_CALENDAR)){
+            prefs.putBoolean(Prefs.REMINDERS_IN_CALENDAR, false);
         }
-        if (!prefs.isString(Prefs.FOLLOW_REMINDER)){
-            prefs.saveBoolean(Prefs.FOLLOW_REMINDER, false);
+        if (!prefs.hasKey(Prefs.TTS)){
+            prefs.putBoolean(Prefs.TTS, false);
         }
-        if (!prefs.isString(Prefs.BIRTHDAY_PERMANENT)){
-            prefs.saveBoolean(Prefs.BIRTHDAY_PERMANENT, false);
+        if (!prefs.hasKey(Prefs.SYNC_BIRTHDAYS)){
+            prefs.putBoolean(Prefs.SYNC_BIRTHDAYS, true);
         }
-        if (!prefs.isString(Prefs.REMINDER_CHANGED)){
-            prefs.saveBoolean(Prefs.REMINDER_CHANGED, false);
+        if (!prefs.hasKey(Prefs.NOTE_ENCRYPT)){
+            prefs.putBoolean(Prefs.NOTE_ENCRYPT, true);
         }
-        if (!prefs.isString(Prefs.SYSTEM_VOLUME)){
-            prefs.saveBoolean(Prefs.SYSTEM_VOLUME, false);
+        if (!prefs.hasKey(Prefs.CONTACTS_IMPORT_DIALOG)){
+            prefs.putBoolean(Prefs.CONTACTS_IMPORT_DIALOG, false);
         }
-        if (!prefs.isString(Prefs.INCREASING_VOLUME)){
-            prefs.saveBoolean(Prefs.INCREASING_VOLUME, false);
+        if (!prefs.hasKey(Prefs.CONTACT_BIRTHDAYS)){
+            prefs.putBoolean(Prefs.CONTACT_BIRTHDAYS, false);
+        }
+        if (!prefs.hasKey(Prefs.BIRTHDAY_REMINDER)){
+            prefs.putBoolean(Prefs.BIRTHDAY_REMINDER, true);
+        }
+        if (!prefs.hasKey(Prefs.CALENDAR_IMAGE)){
+            prefs.putBoolean(Prefs.CALENDAR_IMAGE, false);
+        }
+        if (!prefs.hasKey(Prefs.SILENT_SMS)){
+            prefs.putBoolean(Prefs.SILENT_SMS, false);
+        }
+        if (!prefs.hasKey(Prefs.ITEM_PREVIEW)){
+            prefs.putBoolean(Prefs.ITEM_PREVIEW, true);
+        }
+        if (!prefs.hasKey(Prefs.WIDGET_BIRTHDAYS)){
+            prefs.putBoolean(Prefs.WIDGET_BIRTHDAYS, false);
+        }
+        if (!prefs.hasKey(Prefs.WEAR_NOTIFICATION)){
+            prefs.putBoolean(Prefs.WEAR_NOTIFICATION, false);
+        }
+        if (!prefs.hasKey(Prefs.EXPORT_TO_STOCK)){
+            prefs.putBoolean(Prefs.EXPORT_TO_STOCK, false);
+        }
+        if (!prefs.hasKey(Prefs.USE_DARK_THEME)){
+            prefs.putBoolean(Prefs.USE_DARK_THEME, false);
+        }
+        if (!prefs.hasKey(Prefs.EXPORT_TO_CALENDAR)){
+            prefs.putBoolean(Prefs.EXPORT_TO_CALENDAR, false);
+        }
+        if (!prefs.hasKey(Prefs.AUTO_CHECK_BIRTHDAYS)){
+            prefs.putBoolean(Prefs.AUTO_CHECK_BIRTHDAYS, false);
+        }
+        if (!prefs.hasKey(Prefs.INFINITE_VIBRATION)){
+            prefs.putBoolean(Prefs.INFINITE_VIBRATION, false);
+        }
+        if (!prefs.hasKey(Prefs.AUTO_BACKUP)){
+            prefs.putBoolean(Prefs.AUTO_BACKUP, false);
+        }
+        if (!prefs.hasKey(Prefs.SMART_FOLD)){
+            prefs.putBoolean(Prefs.SMART_FOLD, false);
+        }
+        if (!prefs.hasKey(Prefs.NOTIFICATION_REPEAT)){
+            prefs.putBoolean(Prefs.NOTIFICATION_REPEAT, false);
+        }
+        if (!prefs.hasKey(Prefs.IS_24_TIME_FORMAT)){
+            prefs.putBoolean(Prefs.IS_24_TIME_FORMAT, true);
+        }
+        if (!prefs.hasKey(Prefs.UNLOCK_DEVICE)){
+            prefs.putBoolean(Prefs.UNLOCK_DEVICE, false);
+        }
+        if (!prefs.hasKey(Prefs.CALENDAR_FEATURE_TASKS)){
+            prefs.putBoolean(Prefs.CALENDAR_FEATURE_TASKS, false);
+        }
+        if (!prefs.hasKey(Prefs.MISSED_CALL_REMINDER)){
+            prefs.putBoolean(Prefs.MISSED_CALL_REMINDER, false);
+        }
+        if (!prefs.hasKey(Prefs.QUICK_SMS)){
+            prefs.putBoolean(Prefs.QUICK_SMS, false);
+        }
+        if (!prefs.hasKey(Prefs.FOLLOW_REMINDER)){
+            prefs.putBoolean(Prefs.FOLLOW_REMINDER, false);
+        }
+        if (!prefs.hasKey(Prefs.BIRTHDAY_PERMANENT)){
+            prefs.putBoolean(Prefs.BIRTHDAY_PERMANENT, false);
+        }
+        if (!prefs.hasKey(Prefs.REMINDER_CHANGED)){
+            prefs.putBoolean(Prefs.REMINDER_CHANGED, false);
+        }
+        if (!prefs.hasKey(Prefs.SYSTEM_VOLUME)){
+            prefs.putBoolean(Prefs.SYSTEM_VOLUME, false);
+        }
+        if (!prefs.hasKey(Prefs.INCREASING_VOLUME)){
+            prefs.putBoolean(Prefs.INCREASING_VOLUME, false);
         }
 
         if (Module.isPro()) {
-            if (!prefs.isString(Prefs.LED_STATUS)) {
-                prefs.saveBoolean(Prefs.LED_STATUS, true);
+            if (!prefs.hasKey(Prefs.LED_STATUS)) {
+                prefs.putBoolean(Prefs.LED_STATUS, true);
             }
-            if (!prefs.isString(Prefs.LED_COLOR)) {
-                prefs.saveInt(Prefs.LED_COLOR, 11);
+            if (!prefs.hasKey(Prefs.LED_COLOR)) {
+                prefs.putInt(Prefs.LED_COLOR, 11);
             }
-            if (!prefs.isString(Prefs.BIRTHDAY_LED_STATUS)) {
-                prefs.saveBoolean(Prefs.BIRTHDAY_LED_STATUS, false);
+            if (!prefs.hasKey(Prefs.BIRTHDAY_LED_STATUS)) {
+                prefs.putBoolean(Prefs.BIRTHDAY_LED_STATUS, false);
             }
-            if (!prefs.isString(Prefs.BIRTHDAY_LED_COLOR)) {
-                prefs.saveInt(Prefs.BIRTHDAY_LED_COLOR, 6);
+            if (!prefs.hasKey(Prefs.BIRTHDAY_LED_COLOR)) {
+                prefs.putInt(Prefs.BIRTHDAY_LED_COLOR, 6);
             }
-            if (!prefs.isString(Prefs.BIRTHDAY_VIBRATION_STATUS)) {
-                prefs.saveBoolean(Prefs.BIRTHDAY_VIBRATION_STATUS, false);
+            if (!prefs.hasKey(Prefs.BIRTHDAY_VIBRATION_STATUS)) {
+                prefs.putBoolean(Prefs.BIRTHDAY_VIBRATION_STATUS, false);
             }
-            if (!prefs.isString(Prefs.BIRTHDAY_SOUND_STATUS)) {
-                prefs.saveBoolean(Prefs.BIRTHDAY_SOUND_STATUS, false);
+            if (!prefs.hasKey(Prefs.BIRTHDAY_SOUND_STATUS)) {
+                prefs.putBoolean(Prefs.BIRTHDAY_SOUND_STATUS, false);
             }
-            if (!prefs.isString(Prefs.BIRTHDAY_WAKE_STATUS)) {
-                prefs.saveBoolean(Prefs.BIRTHDAY_WAKE_STATUS, false);
+            if (!prefs.hasKey(Prefs.BIRTHDAY_WAKE_STATUS)) {
+                prefs.putBoolean(Prefs.BIRTHDAY_WAKE_STATUS, false);
             }
-            if (!prefs.isString(Prefs.BIRTHDAY_INFINITE_SOUND)) {
-                prefs.saveBoolean(Prefs.BIRTHDAY_INFINITE_SOUND, false);
+            if (!prefs.hasKey(Prefs.BIRTHDAY_INFINITE_SOUND)) {
+                prefs.putBoolean(Prefs.BIRTHDAY_INFINITE_SOUND, false);
             }
-            if (!prefs.isString(Prefs.BIRTHDAY_INFINITE_VIBRATION)) {
-                prefs.saveBoolean(Prefs.BIRTHDAY_INFINITE_VIBRATION, false);
+            if (!prefs.hasKey(Prefs.BIRTHDAY_INFINITE_VIBRATION)) {
+                prefs.putBoolean(Prefs.BIRTHDAY_INFINITE_VIBRATION, false);
             }
-            if (!prefs.isString(Prefs.BIRTHDAY_USE_GLOBAL)) {
-                prefs.saveBoolean(Prefs.BIRTHDAY_USE_GLOBAL, true);
+            if (!prefs.hasKey(Prefs.BIRTHDAY_USE_GLOBAL)) {
+                prefs.putBoolean(Prefs.BIRTHDAY_USE_GLOBAL, true);
             }
         } else {
-            prefs.saveInt(Prefs.MARKER_STYLE, 5);
+            prefs.putInt(Prefs.MARKER_STYLE, 5);
         }
     }
 

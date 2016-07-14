@@ -170,11 +170,11 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
 
         Log.d("----ON_REMINDER-----", TimeUtil.getFullDateTime(System.currentTimeMillis(), true));
 
-        SharedPrefs prefs = new SharedPrefs(ReminderDialog.this);
-        boolean systemVol = prefs.loadBoolean(Prefs.SYSTEM_VOLUME);
-        boolean increasing = prefs.loadBoolean(Prefs.INCREASING_VOLUME);
+        SharedPrefs prefs = SharedPrefs.getInstance(this);
+        boolean systemVol = prefs.getBoolean(Prefs.SYSTEM_VOLUME);
+        boolean increasing = prefs.getBoolean(Prefs.INCREASING_VOLUME);
         if (systemVol) {
-            mStream = prefs.loadInt(Prefs.SOUND_STREAM);
+            mStream = prefs.getInt(Prefs.SOUND_STREAM);
             AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             currVolume = am.getStreamVolume(mStream);
             streamVol = currVolume;
@@ -188,7 +188,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             mStream = 3;
             currVolume = am.getStreamVolume(mStream);
-            int prefsVol = prefs.loadInt(Prefs.VOLUME);
+            int prefsVol = prefs.getInt(Prefs.VOLUME);
             float volPercent = (float) prefsVol / Configs.MAX_VOLUME;
             int maxVol = am.getStreamMaxVolume(mStream);
             streamVol = (int) (maxVol * volPercent);
@@ -240,7 +240,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             finish();
         }
 
-        boolean isFull = prefs.loadBoolean(Prefs.UNLOCK_DEVICE);
+        boolean isFull = prefs.getBoolean(Prefs.UNLOCK_DEVICE);
         if (unlock != -1) {
             isFull = unlock == 1;
         }
@@ -250,7 +250,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                     | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD));
         }
 
-        boolean isWake = prefs.loadBoolean(Prefs.WAKE_STATUS);
+        boolean isWake = prefs.getBoolean(Prefs.WAKE_STATUS);
         if (wake != -1) {
             isWake = wake == 1;
         }
@@ -261,8 +261,8 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             screenLock.release();
         }
 
-        boolean autoLaunch = prefs.loadBoolean(Prefs.APPLICATION_AUTO_LAUNCH);
-        boolean silentSMS = prefs.loadBoolean(Prefs.SILENT_SMS);
+        boolean autoLaunch = prefs.getBoolean(Prefs.APPLICATION_AUTO_LAUNCH);
+        boolean silentSMS = prefs.getBoolean(Prefs.SILENT_SMS);
         if (auto != -1) {
             autoLaunch = auto == 1;
             silentSMS = auto == 1;
@@ -298,7 +298,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         FloatingActionButton buttonNotification = (FloatingActionButton) findViewById(R.id.buttonNotification);
         colorify(buttonOk, buttonCall, buttonCancel, buttonDelay, buttonDelayFor,
                 buttonNotification, buttonEdit);
-        int mins = prefs.loadInt(Prefs.DELAY_TIME);
+        int mins = prefs.getInt(Prefs.DELAY_TIME);
         setTextDrawable(buttonDelay, String.valueOf(mins));
         setTextDrawable(buttonDelayFor, "...");
         buttonOk.setImageResource(R.drawable.ic_done_black_24dp);
@@ -471,7 +471,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             showReminder(1);
         }
 
-        boolean isRepeat = prefs.loadBoolean(Prefs.NOTIFICATION_REPEAT);
+        boolean isRepeat = prefs.getBoolean(Prefs.NOTIFICATION_REPEAT);
         if (notificationRepeat != -1) {
             isRepeat = notificationRepeat == 1;
         }
@@ -479,7 +479,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             repeater.setAlarm(ReminderDialog.this, id);
         }
 
-        boolean isTTS = prefs.loadBoolean(Prefs.TTS);
+        boolean isTTS = prefs.getBoolean(Prefs.TTS);
         if (voice != -1) {
             isTTS = voice == 1;
         }
@@ -493,7 +493,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             }
         }
 
-        if (prefs.loadBoolean(Prefs.WEAR_SERVICE)) {
+        if (prefs.getBoolean(Prefs.WEAR_SERVICE)) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addApi(Wearable.API)
                     .addConnectionCallbacks(this)
@@ -531,7 +531,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     }
 
     private void delay() {
-        int delay = new SharedPrefs(ReminderDialog.this).loadInt(Prefs.DELAY_TIME);
+        int delay = SharedPrefs.getInstance(this).getInt(Prefs.DELAY_TIME);
         Reminder.setDelay(ReminderDialog.this, id, delay, true);
         update(1);
         finish();
@@ -564,9 +564,9 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     private void loadImage() {
         ImageView bgImage = (ImageView) findViewById(R.id.bgImage);
         bgImage.setVisibility(View.GONE);
-        SharedPrefs prefs = new SharedPrefs(this);
-        String imagePrefs = prefs.loadPrefs(Prefs.REMINDER_IMAGE);
-        boolean blur = prefs.loadBoolean(Prefs.REMINDER_IMAGE_BLUR);
+        SharedPrefs prefs = SharedPrefs.getInstance(this);
+        String imagePrefs = prefs.getString(Prefs.REMINDER_IMAGE);
+        boolean blur = prefs.getBoolean(Prefs.REMINDER_IMAGE_BLUR);
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -677,16 +677,16 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     }
 
     private void showReminder(int i){
-        SharedPrefs prefs = new SharedPrefs(ReminderDialog.this);
+        SharedPrefs prefs = SharedPrefs.getInstance(this);
         String type = getType();
-        boolean isTTS = prefs.loadBoolean(Prefs.TTS);
+        boolean isTTS = prefs.getBoolean(Prefs.TTS);
         if (isMelody == 1) {
             i = 0;
         }
         if (voice != -1) {
             isTTS = voice == 1;
         }
-        boolean isV = prefs.loadBoolean(Prefs.VIBRATION_STATUS);
+        boolean isV = prefs.getBoolean(Prefs.VIBRATION_STATUS);
         if (vibration != -1) isV = vibration == 1;
         if (!isTTS) {
             notifier.showReminder(task, type, i, id, melody, color, isV);
@@ -805,7 +805,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
 
         new UpdatesHelper(ReminderDialog.this).updateWidget();
 
-        if (new SharedPrefs(this).loadBoolean(Prefs.WEAR_SERVICE)) {
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.WEAR_SERVICE)) {
             PutDataMapRequest putDataMapReq = PutDataMapRequest.create(SharedConst.WEAR_STOP);
             DataMap map = putDataMapReq.getDataMap();
             map.putBoolean(SharedConst.KEY_STOP, true);
@@ -830,14 +830,14 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             mTracker.send(new HitBuilders.ScreenViewBuilder().build());
         }
 
-        if (new SharedPrefs(this).loadBoolean(Prefs.WEAR_SERVICE))
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.WEAR_SERVICE))
             mGoogleApiClient.connect();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (new SharedPrefs(this).loadBoolean(Prefs.WEAR_SERVICE)) {
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.WEAR_SERVICE)) {
             Wearable.DataApi.removeListener(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
@@ -854,7 +854,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         }
         notifier.recreatePermanent();
         removeFlags();
-        if (!new SharedPrefs(this).loadBoolean(Prefs.SYSTEM_VOLUME)) {
+        if (!SharedPrefs.getInstance(this).getBoolean(Prefs.SYSTEM_VOLUME)) {
             AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             am.setStreamVolume(mStream, currVolume, 0);
         }
@@ -863,8 +863,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     @Override
     public void onBackPressed() {
         notifier.discardMedia();
-        if (new SharedPrefs(ReminderDialog.this)
-                .loadBoolean(Prefs.SMART_FOLD)){
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.SMART_FOLD)){
             moveTaskToBack(true);
             repeater.cancelAlarm(ReminderDialog.this, id);
             removeFlags();
@@ -919,7 +918,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Wearable.DataApi.addListener(mGoogleApiClient, this);
-        boolean silentSMS = new SharedPrefs(this).loadBoolean(Prefs.SILENT_SMS);
+        boolean silentSMS = SharedPrefs.getInstance(this).getBoolean(Prefs.SILENT_SMS);
         String type = getType();
         if (type != null && type.contains(Constants.TYPE_MESSAGE) && silentSMS)
             return;
