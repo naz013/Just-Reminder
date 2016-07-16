@@ -316,7 +316,7 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         }
         String type = getType();
         setUpTimes();
-        String categoryId = GroupHelper.getDefaultUuId(this);
+        String categoryId = GroupHelper.getInstance(this).getDefaultUuId();
         long due = ReminderUtils.getTime(mDay, mMonth, mYear, mHour, mMinute, 0);
         JAction jAction = new JAction(type, mNumber, -1, null, null);
 

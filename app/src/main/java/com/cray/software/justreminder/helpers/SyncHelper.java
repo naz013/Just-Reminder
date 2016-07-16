@@ -29,6 +29,7 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.BirthdayModel;
+import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JParser;
@@ -99,9 +100,7 @@ public class SyncHelper {
      * @throws JSONException
      */
     public void groupToJson() throws JSONException {
-        DataBase dataBase = new DataBase(mContext);
-        dataBase.open();
-        List<GroupItem> groups = dataBase.getAllGroups();
+        List<GroupItem> groups = GroupHelper.getInstance(mContext).getAll();
         if (groups != null && groups.size() > 0){
             for (GroupItem item : groups) {
                 JSONObject jObjectData = new JSONObject();
@@ -123,7 +122,6 @@ public class SyncHelper {
                 }
             }
         }
-        dataBase.close();
     }
 
     /**
@@ -616,14 +614,10 @@ public class SyncHelper {
      * @throws JSONException
      */
     public void groupFromJson(File file) throws JSONException {
-        DataBase db = new DataBase(mContext);
-        db.open();
         List<String> uuIdList = new ArrayList<>();
-        List<GroupItem> groups = db.getAllGroups();
-        for (GroupItem groupItem : groups) {
+        for (GroupItem groupItem : GroupHelper.getInstance(mContext).getAll()) {
             uuIdList.add(groupItem.getUuId());
         }
-        db.close();
 
         if (file != null){
             String fileNameR = file.getName();
@@ -669,10 +663,9 @@ public class SyncHelper {
         if (!jsonObj.isNull(Constants.COLUMN_TECH_VAR)) {
             uuID = jsonObj.getString(Constants.COLUMN_TECH_VAR);
         }
-        DataBase db = new DataBase(mContext);
-        db.open();
-        List<GroupItem> itemList = db.getAllGroups();
-        if (itemList != null && itemList.size() > 0) {
+        GroupHelper helper = GroupHelper.getInstance(mContext);
+        List<GroupItem> itemList = helper.getAll();
+        if (itemList.size() > 0) {
             List<String> uuIdsList = new ArrayList<>();
             List<String> titles = new ArrayList<>();
             for (GroupItem item : itemList) {
@@ -680,12 +673,11 @@ public class SyncHelper {
                 titles.add(item.getTitle());
             }
             if (!uuIdsList.contains(uuID) && !titles.contains(title)) {
-                db.setGroup(new GroupItem(title, uuID, color, 0, date));
+                helper.saveGroup(new GroupItem(title, uuID, color, 0, date));
             }
         } else {
-            db.setGroup(new GroupItem(title, uuID, color, 0, date));
+            helper.saveGroup(new GroupItem(title, uuID, color, 0, date));
         }
-        db.close();
     }
 
     /**

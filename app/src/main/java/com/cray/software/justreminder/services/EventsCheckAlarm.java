@@ -125,7 +125,7 @@ public class EventsCheckAlarm extends WakefulBroadcastReceiver {
                         }
                         String summary = item.getTitle();
                         String uuID = SyncHelper.generateID();
-                        String categoryId = GroupHelper.getDefaultUuId(context);
+                        String categoryId = GroupHelper.getInstance(context).getDefaultUuId();
                         long due = item.getDtStart() + (repeat * AlarmManager.INTERVAL_DAY);
                         JRecurrence jRecurrence = new JRecurrence(0, repeat, -1, null, 0);
                         JModel jModel = new JModel(summary, Constants.TYPE_REMINDER, categoryId, uuID, due,

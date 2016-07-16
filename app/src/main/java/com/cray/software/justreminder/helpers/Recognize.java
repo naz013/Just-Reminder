@@ -125,7 +125,7 @@ public class Recognize {
             }
         }
 
-        String categoryId = GroupHelper.getDefaultUuId(mContext);
+        String categoryId = GroupHelper.getInstance(mContext).getDefaultUuId();
         JRecurrence jRecurrence = new JRecurrence(0, repeat, -1, weekdays, 0);
         JAction jAction = new JAction(type, number, -1, "", null);
 
@@ -175,7 +175,7 @@ public class Recognize {
 
         long remId = 0;
         if (prefs.getBoolean(Prefs.QUICK_NOTE_REMINDER)){
-            String categoryId = GroupHelper.getDefaultUuId(mContext);
+            String categoryId = GroupHelper.getInstance(mContext).getDefaultUuId();
             long after = prefs.getInt(Prefs.QUICK_NOTE_REMINDER_TIME) * 1000 * 60;
             long due = calendar1.getTimeInMillis() + after;
             JRecurrence jRecurrence = new JRecurrence(0, 0, -1, null, after);

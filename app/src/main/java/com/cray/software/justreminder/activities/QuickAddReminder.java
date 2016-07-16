@@ -211,7 +211,7 @@ public class QuickAddReminder extends AppCompatActivity {
         }
         String type = Constants.TYPE_REMINDER;
         int repeat = Integer.parseInt(repeatDays.getText().toString().trim());
-        String categoryId = GroupHelper.getDefaultUuId(QuickAddReminder.this);
+        String categoryId = GroupHelper.getInstance(this).getDefaultUuId();
         long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
         boolean isCalendar = SharedPrefs.getInstance(this).getBoolean(Prefs.EXPORT_TO_CALENDAR);
         boolean isStock = SharedPrefs.getInstance(this).getBoolean(Prefs.EXPORT_TO_STOCK);

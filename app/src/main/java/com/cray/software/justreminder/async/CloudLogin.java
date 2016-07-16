@@ -24,9 +24,9 @@ import android.os.AsyncTask;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.TasksConstants;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.databases.TasksData;
+import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.IOHelper;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -65,12 +65,7 @@ public class CloudLogin extends AsyncTask<Void, String, Void> {
     @Override
     protected void onProgressUpdate(final String... values) {
         super.onProgressUpdate(values);
-        new android.os.Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                dialog.setMessage(values[0]);
-            }
-        });
+        new android.os.Handler().post(() -> dialog.setMessage(values[0]));
     }
 
     @Override
@@ -221,15 +216,14 @@ public class CloudLogin extends AsyncTask<Void, String, Void> {
     }
 
     private void checkGroups() {
-        DataBase DB = new DataBase(mContext);
-        DB.open();
-        List<GroupItem> list = DB.getAllGroups();
-        if (list == null || list.size() == 0) {
+        GroupHelper helper = GroupHelper.getInstance(mContext);
+        List<GroupItem> list = helper.getAll();
+        if (list.size() == 0) {
             long time = System.currentTimeMillis();
             String defUiID = SyncHelper.generateID();
-            DB.setGroup(new GroupItem("General", defUiID, 5, 0, time));
-            DB.setGroup(new GroupItem("Work", SyncHelper.generateID(), 3, 0, time));
-            DB.setGroup(new GroupItem("Personal", SyncHelper.generateID(), 0, 0, time));
+            helper.saveGroup(new GroupItem("General", defUiID, 5, 0, time));
+            helper.saveGroup(new GroupItem("Work", SyncHelper.generateID(), 3, 0, time));
+            helper.saveGroup(new GroupItem("Personal", SyncHelper.generateID(), 0, 0, time));
             NextBase db = new NextBase(mContext);
             db.open();
             Cursor c = db.getReminders();
@@ -243,6 +237,5 @@ public class CloudLogin extends AsyncTask<Void, String, Void> {
             }
             db.close();
         }
-        DB.close();
     }
 }

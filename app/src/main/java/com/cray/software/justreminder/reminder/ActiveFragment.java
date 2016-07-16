@@ -43,7 +43,7 @@ import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.async.SyncTask;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
@@ -282,17 +282,12 @@ public class ActiveFragment extends Fragment implements
         mGroupsIds = new ArrayList<>();
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
                 mContext, android.R.layout.select_dialog_item);
-        DataBase db = new DataBase(mContext);
-        db.open();
         arrayAdapter.add(getString(R.string.all));
-        List<GroupItem> groups = db.getAllGroups();
-        if (groups.size() > 0){
-            for (GroupItem item : groups) {
-                arrayAdapter.add(item.getTitle());
-                mGroupsIds.add(item.getUuId());
-            }
+        List<GroupItem> groups = GroupHelper.getInstance(mContext).getAll();
+        for (GroupItem item : groups) {
+            arrayAdapter.add(item.getTitle());
+            mGroupsIds.add(item.getUuId());
         }
-        db.close();
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle(getString(R.string.choose_group));
         builder.setAdapter(arrayAdapter, (dialog, which) -> {
@@ -317,16 +312,11 @@ public class ActiveFragment extends Fragment implements
         mGroupsIds.clear();
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
                 mContext, android.R.layout.select_dialog_item);
-        DataBase db = new DataBase(mContext);
-        db.open();
-        List<GroupItem> groups = db.getAllGroups();
-        if (groups.size() > 0){
-            for (GroupItem item : groups) {
-                arrayAdapter.add(item.getTitle());
-                mGroupsIds.add(item.getUuId());
-            }
+        List<GroupItem> groups = GroupHelper.getInstance(mContext).getAll();
+        for (GroupItem item : groups) {
+            arrayAdapter.add(item.getTitle());
+            mGroupsIds.add(item.getUuId());
         }
-        db.close();
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle(getString(R.string.choose_group));
         builder.setAdapter(arrayAdapter, (dialog, which) -> {

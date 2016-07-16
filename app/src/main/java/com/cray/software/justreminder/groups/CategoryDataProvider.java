@@ -18,8 +18,6 @@ package com.cray.software.justreminder.groups;
 
 import android.content.Context;
 
-import com.cray.software.justreminder.databases.DataBase;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,9 +76,6 @@ public class CategoryDataProvider {
 
     public void load() {
         data.clear();
-        DataBase db = new DataBase(mContext);
-        db.open();
-        data = db.getAllGroups();
-        db.close();
+        data = GroupHelper.getInstance(mContext).getAll();
     }
 }

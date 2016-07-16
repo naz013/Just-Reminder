@@ -389,7 +389,7 @@ public class TaskManager extends AppCompatActivity {
     }
 
     private long saveReminder(String task){
-        String categoryId = GroupHelper.getDefaultUuId(this);
+        String categoryId = GroupHelper.getInstance(this).getDefaultUuId();
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(myYear, myMonth, myDay, myHour, myMinute);

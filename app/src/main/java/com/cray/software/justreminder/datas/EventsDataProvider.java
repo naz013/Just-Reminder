@@ -26,6 +26,7 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.EventsItem;
 import com.cray.software.justreminder.enums.EventType;
+import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.json.JModel;
@@ -140,17 +141,11 @@ public class EventsDataProvider {
     }
 
     public void loadReminders(){
-        DataBase DB = new DataBase(mContext);
-        DB.open();
-        List<GroupItem> allGroups = DB.getAllGroups();
+        List<GroupItem> allGroups = GroupHelper.getInstance(mContext).getAll();
         Map<String, Integer> map = new HashMap<>();
-        if (allGroups != null && allGroups.size() > 0){
-            for (GroupItem item : allGroups) {
-                map.put(item.getUuId(), item.getColor());
-            }
+        for (GroupItem item : allGroups) {
+            map.put(item.getUuId(), item.getColor());
         }
-        DB.close();
-
         NextBase db = new NextBase(mContext);
         db.open();
         Cursor c = db.getActiveReminders();

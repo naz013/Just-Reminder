@@ -520,7 +520,7 @@ public class NotesManager extends AppCompatActivity {
         }
 
         if (isReminderAttached()){
-            String categoryId = GroupHelper.getDefaultUuId(this);
+            String categoryId = GroupHelper.getInstance(this).getDefaultUuId();
             calendar1.set(myYear, myMonth, myDay, myHour, myMinute);
             long due = calendar1.getTimeInMillis();
             JModel jModel = new JModel(note, Constants.TYPE_REMINDER, categoryId,

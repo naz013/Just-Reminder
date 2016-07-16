@@ -26,8 +26,8 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.IOHelper;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -77,18 +77,17 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... params) {
-        DataBase db = new DataBase(mContext);
-        db.open();
         IOHelper ioHelper = new IOHelper(mContext);
         ioHelper.restoreGroup(true);
         ioHelper.backupGroup(true);
-        List<GroupItem> list = db.getAllGroups();
-        if (list == null || list.size() == 0) {
+        GroupHelper helper = GroupHelper.getInstance(mContext);
+        List<GroupItem> list = helper.getAll();
+        if (list.size() == 0) {
             long time = System.currentTimeMillis();
             String defUiID = SyncHelper.generateID();
-            db.setGroup(new GroupItem("General", defUiID, 5, 0, time));
-            db.setGroup(new GroupItem("Work", SyncHelper.generateID(), 3, 0, time));
-            db.setGroup(new GroupItem("Personal", SyncHelper.generateID(), 0, 0, time));
+            helper.saveGroup(new GroupItem("General", defUiID, 5, 0, time));
+            helper.saveGroup(new GroupItem("Work", SyncHelper.generateID(), 3, 0, time));
+            helper.saveGroup(new GroupItem("Personal", SyncHelper.generateID(), 0, 0, time));
             NextBase nextBase = new NextBase(mContext);
             nextBase.open();
             Cursor c = nextBase.getReminders();
@@ -100,8 +99,6 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
             if (c != null) c.close();
             nextBase.close();
         }
-        db.close();
-
         //export & import reminders
         publishProgress(mContext.getString(R.string.syncing_reminders));
 

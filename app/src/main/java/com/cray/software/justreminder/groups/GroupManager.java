@@ -31,7 +31,6 @@ import android.widget.LinearLayout;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -51,7 +50,6 @@ public class GroupManager extends AppCompatActivity {
             deepOrange;
     private Toolbar toolbar;
 
-    private long id;
     private int color = 0;
     private int prevId;
     private GroupItem mItem;
@@ -67,7 +65,7 @@ public class GroupManager extends AppCompatActivity {
         setRequestedOrientation(cs.getRequestOrientation());
 
         Intent intent = getIntent();
-        id = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
+        long id = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
         String filePath = intent.getStringExtra(Constants.EDIT_PATH);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -79,10 +77,7 @@ public class GroupManager extends AppCompatActivity {
 
         editField = (RoboEditText) findViewById(R.id.editField);
         if (id != 0) {
-            DataBase db = new DataBase(GroupManager.this);
-            db.open();
-            mItem = db.getGroup(id);
-            db.close();
+            mItem = GroupHelper.getInstance(this).getGroup(id);
         } else if (filePath != null) {
             try {
                 mItem = SyncHelper.getGroup(filePath);
@@ -143,8 +138,6 @@ public class GroupManager extends AppCompatActivity {
             editField.setError(getString(R.string.must_be_not_empty));
             return;
         }
-        DataBase db = new DataBase(GroupManager.this);
-        db.open();
         if (mItem == null) {
             mItem = new GroupItem(text, SyncHelper.generateID(), color, 0, System.currentTimeMillis());
         } else {
@@ -152,8 +145,7 @@ public class GroupManager extends AppCompatActivity {
             mItem.setDateTime(System.currentTimeMillis());
             mItem.setTitle(text);
         }
-        db.setGroup(mItem);
-        db.close();
+        GroupHelper.getInstance(this).saveGroup(mItem);
         SharedPrefs.getInstance(this).putBoolean(Prefs.GROUP_CHANGED, true);
         finish();
     }

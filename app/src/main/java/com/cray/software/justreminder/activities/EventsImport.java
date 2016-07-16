@@ -303,7 +303,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
                             String summary = item.getTitle();
 
                             String uuID = SyncHelper.generateID();
-                            String categoryId = GroupHelper.getDefaultUuId(mContext);
+                            String categoryId = GroupHelper.getInstance(mContext).getDefaultUuId();
                             Calendar calendar = Calendar.getInstance();
                             long dtStart = item.getDtStart();
                             calendar.setTimeInMillis(dtStart);

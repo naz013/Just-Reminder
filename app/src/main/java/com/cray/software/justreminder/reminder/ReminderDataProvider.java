@@ -24,6 +24,7 @@ import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.TimeCount;
@@ -324,15 +325,10 @@ public class ReminderDataProvider {
 
     public static Map<String, Integer> getCategories(Context context) {
         Map<String, Integer> map = new HashMap<>();
-        DataBase db = new DataBase(context);
-        db.open();
-        List<GroupItem> groups = db.getAllGroups();
-        if (groups.size() > 0) {
-            for (GroupItem item : groups) {
-                map.put(item.getUuId(), item.getColor());
-            }
+        List<GroupItem> groups = GroupHelper.getInstance(context).getAll();
+        for (GroupItem item : groups) {
+            map.put(item.getUuId(), item.getColor());
         }
-        db.close();
         return map;
     }
 

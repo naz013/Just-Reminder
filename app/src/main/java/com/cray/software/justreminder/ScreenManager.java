@@ -791,7 +791,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
             ViewUtils.hideReveal(noteReminderCard);
             Calendar calendar1 = Calendar.getInstance();
             calendar1.setTimeInMillis(System.currentTimeMillis());
-            String categoryId = GroupHelper.getDefaultUuId(this);
+            String categoryId = GroupHelper.getInstance(this).getDefaultUuId();
             long after = SharedPrefs.getInstance(this).getInt(Prefs.QUICK_NOTE_REMINDER_TIME) * 1000 * 60;
             long due = calendar1.getTimeInMillis() + after;
             JModel jModel = new JModel(note, Constants.TYPE_REMINDER, categoryId,

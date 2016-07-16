@@ -67,7 +67,6 @@ import com.cray.software.justreminder.creator.ShoppingFragment;
 import com.cray.software.justreminder.creator.SkypeFragment;
 import com.cray.software.justreminder.creator.TimerFragment;
 import com.cray.software.justreminder.creator.WeekFragment;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.dialogs.ExtraPickerDialog;
@@ -246,7 +245,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     }
 
     private void loadDefaultGroup() {
-        GroupItem groupItem = GroupHelper.getDefaultGroup(this);
+        GroupItem groupItem = GroupHelper.getInstance(this).getDefaultGroup();
         if (groupItem != null) {
             categoryId = groupItem.getUuId();
             category.setText(groupItem.getTitle());
@@ -393,14 +392,12 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             notificationRepeat = item.getNotificationRepeat();
             wake = item.getAwake();
             unlock = item.getUnlock();
-
             radius = item.getPlace().getRadius();
             ledColor = item.getLed().getColor();
             auto = item.getAction().getAuto();
             melody = item.getMelody().getMelodyPath();
             repeats = item.getRecurrence().getLimit();
             String catId = item.getCategory();
-
             long time = item.getEventTime();
             Calendar calendar = Calendar.getInstance();
             if (time > 0) calendar.setTimeInMillis(time);
@@ -410,20 +407,14 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             myYear = calendar.get(Calendar.YEAR);
             myHour = calendar.get(Calendar.HOUR_OF_DAY);
             myMinute = calendar.get(Calendar.MINUTE);
-
             if (radius == 0) radius = -1;
-
             if (catId != null && !catId.matches("")) categoryId = catId;
-
-            DataBase db = new DataBase(this);
-            db.open();
             if (categoryId != null && !categoryId.matches("")) {
-                GroupItem groupItem = db.getGroup(categoryId);
+                GroupItem groupItem = GroupHelper.getInstance(this).getGroup(categoryId);
                 if (groupItem != null) {
                     category.setText(groupItem.getTitle());
                 }
             }
-            db.close();
         } else {
             Messages.toast(this, getString(R.string.something_went_wrong));
             finish();

@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.cray.software.justreminder.databases.DataBase;
 
+import java.util.List;
+
 /**
  * Copyright 2016 Nazar Suhovich
  * <p>
@@ -21,40 +23,93 @@ import com.cray.software.justreminder.databases.DataBase;
  */
 public class GroupHelper {
 
+    private static GroupHelper groupHelper;
+    private Context mContext;
+
+    private GroupHelper(Context context) {
+        this.mContext = context;
+    }
+
+    public static GroupHelper getInstance(Context context) {
+        if (groupHelper == null) {
+            groupHelper = new GroupHelper(context);
+        }
+        return groupHelper;
+    }
+
     /**
      * Change group indicator color.
-     * @param context application context.
      * @param id group identifier.
      * @param code indicator color code.
      */
-    public static void setNewIndicator(Context context, long id, int code){
-        DataBase db = new DataBase(context);
+    public void setNewIndicator(long id, int code){
+        DataBase db = new DataBase(mContext);
         db.open();
         db.changeGroupColor(id, code);
         db.close();
     }
 
-    public static String getCategoryTitle(Context context, String id){
-        DataBase db = new DataBase(context);
+    public String getCategoryTitle(String id){
+        DataBase db = new DataBase(mContext);
         db.open();
         String title = db.getGroup(id).getTitle();
         db.close();
         return title;
     }
 
-    public static String getDefaultUuId(Context context){
-        DataBase db = new DataBase(context);
+    public String getDefaultUuId(){
+        DataBase db = new DataBase(mContext);
         db.open();
         String uuId = db.getAllGroups().get(0).getUuId();
         db.close();
         return uuId;
     }
 
-    public static GroupItem getDefaultGroup(Context context){
-        DataBase db = new DataBase(context);
+    public GroupItem getDefaultGroup(){
+        DataBase db = new DataBase(mContext);
         db.open();
         GroupItem groupItem = db.getAllGroups().get(0);
         db.close();
         return groupItem;
+    }
+
+    public GroupItem getGroup(long id) {
+        DataBase db = new DataBase(mContext);
+        db.open();
+        GroupItem item = db.getGroup(id);
+        db.close();
+        return item;
+    }
+
+    public GroupItem getGroup(String uuId) {
+        DataBase db = new DataBase(mContext);
+        db.open();
+        GroupItem item = db.getGroup(uuId);
+        db.close();
+        return item;
+    }
+
+    public boolean deleteGroup(long id){
+        DataBase db = new DataBase(mContext);
+        db.open();
+        boolean isDeleted = db.deleteGroup(id);
+        db.close();
+        return isDeleted;
+    }
+
+    public long saveGroup(GroupItem groupItem) {
+        DataBase db = new DataBase(mContext);
+        db.open();
+        long id = db.setGroup(groupItem);
+        db.close();
+        return id;
+    }
+
+    public List<GroupItem> getAll() {
+        DataBase db = new DataBase(mContext);
+        db.open();
+        List<GroupItem> list = db.getAllGroups();
+        db.close();
+        return list;
     }
 }

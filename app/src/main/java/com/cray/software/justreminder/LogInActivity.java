@@ -42,6 +42,7 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Permissions;
@@ -405,14 +406,13 @@ public class LogInActivity extends Activity implements LoginListener {
     }
 
     private void checkGroups() {
-        DataBase DB = new DataBase(this);
-        DB.open();
-        if (DB.getAllGroups().size() == 0){
+        GroupHelper helper = GroupHelper.getInstance(this);
+        if (helper.getAll().size() == 0){
             long time = System.currentTimeMillis();
             String defUiID = SyncHelper.generateID();
-            DB.setGroup(new GroupItem("General", defUiID, 5, 0, time));
-            DB.setGroup(new GroupItem("Work", SyncHelper.generateID(), 3, 0, time));
-            DB.setGroup(new GroupItem("Personal", SyncHelper.generateID(), 0, 0, time));
+            helper.saveGroup(new GroupItem("General", defUiID, 5, 0, time));
+            helper.saveGroup(new GroupItem("Work", SyncHelper.generateID(), 3, 0, time));
+            helper.saveGroup(new GroupItem("Personal", SyncHelper.generateID(), 0, 0, time));
             NextBase db = new NextBase(this);
             db.open();
             Cursor c = db.getReminders();
@@ -426,7 +426,6 @@ public class LogInActivity extends Activity implements LoginListener {
             }
             db.close();
         }
-        DB.close();
     }
 
     public class ImportBirthdays extends AsyncTask<Void, Void, Void>{
@@ -512,7 +511,6 @@ public class LogInActivity extends Activity implements LoginListener {
                 }
                 birthdayCur.close();
             }
-
             cur.close();
             return null;
         }

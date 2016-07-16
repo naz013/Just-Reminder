@@ -38,6 +38,7 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.datas.models.ShoppingList;
+import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -60,7 +61,6 @@ import com.cray.software.justreminder.tests.TestActivity;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import io.fabric.sdk.android.Fabric;
@@ -176,7 +176,7 @@ public class SplashScreen extends AppCompatActivity {
                 uiEd.putBoolean(Prefs.BIRTHDAY_VIBRATION_STATUS, false);
                 uiEd.putBoolean(Prefs.BIRTHDAY_WAKE_STATUS, false);
             }
-            uiEd.commit();
+            uiEd.apply();
         }
     }
 
@@ -237,15 +237,13 @@ public class SplashScreen extends AppCompatActivity {
     }
 
     private void checkGroups() {
-        DataBase DB = new DataBase(this);
-        DB.open();
-        List<GroupItem> list = DB.getAllGroups();
-        if (list == null || list.size() == 0) {
+        GroupHelper helper = GroupHelper.getInstance(this);
+        if (helper.getAll().size() == 0) {
             long time = System.currentTimeMillis();
             String defUiID = SyncHelper.generateID();
-            DB.setGroup(new GroupItem("General", defUiID, 5, 0, time));
-            DB.setGroup(new GroupItem("Work", SyncHelper.generateID(), 3, 0, time));
-            DB.setGroup(new GroupItem("Personal", SyncHelper.generateID(), 0, 0, time));
+            helper.saveGroup(new GroupItem("General", defUiID, 5, 0, time));
+            helper.saveGroup(new GroupItem("Work", SyncHelper.generateID(), 3, 0, time));
+            helper.saveGroup(new GroupItem("Personal", SyncHelper.generateID(), 0, 0, time));
             NextBase db = new NextBase(this);
             db.open();
             Cursor c = db.getReminders();
@@ -257,7 +255,6 @@ public class SplashScreen extends AppCompatActivity {
             if (c != null) c.close();
             db.close();
         }
-        DB.close();
     }
 
     private void migrateToNewDb() throws SQLiteException{
@@ -632,7 +629,7 @@ public class SplashScreen extends AppCompatActivity {
         if (!ranBefore) {
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean(Prefs.TECH_ONE, true);
-            editor.commit();
+            editor.apply();
         }
         return !ranBefore;
     }

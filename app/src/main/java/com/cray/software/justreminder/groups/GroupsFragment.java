@@ -34,7 +34,6 @@ import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.async.DeleteGroupAsync;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
@@ -135,15 +134,12 @@ public class GroupsFragment extends Fragment implements SimpleListener {
     private void removeGroup(int position){
         long itemId = provider.getItem(position).getId();
         if (itemId != 0) {
-            DataBase db = new DataBase(mContext);
-            db.open();
-            GroupItem group = db.getGroup(itemId);
+            GroupItem group = GroupHelper.getInstance(mContext).getGroup(itemId);
             if (group != null) {
                 String uuId = group.getUuId();
-                db.deleteGroup(itemId);
+                GroupHelper.getInstance(mContext).deleteGroup(itemId);
                 new DeleteGroupAsync(mContext, uuId).execute();
             }
-            db.close();
             if (mCallbacks != null) {
                 mCallbacks.showSnackbar(R.string.deleted);
             }
@@ -195,7 +191,7 @@ public class GroupsFragment extends Fragment implements SimpleListener {
                     getString(R.string.lime), getString(R.string.indigo)};
         }
         Dialogues.showLCAM(mContext, item -> {
-            GroupHelper.setNewIndicator(mContext, id, item);
+            GroupHelper.getInstance(mContext).setNewIndicator(id, item);
             loadCategories();
         }, items);
     }
