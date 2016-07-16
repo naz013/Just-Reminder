@@ -27,6 +27,7 @@ import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.databases.TasksData;
+import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.IOHelper;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.LoginListener;
@@ -222,14 +223,13 @@ public class CloudLogin extends AsyncTask<Void, String, Void> {
     private void checkGroups() {
         DataBase DB = new DataBase(mContext);
         DB.open();
-        Cursor cat = DB.queryCategories();
-        if (cat == null || cat.getCount() == 0){
+        List<GroupItem> list = DB.getAllGroups();
+        if (list == null || list.size() == 0) {
             long time = System.currentTimeMillis();
             String defUiID = SyncHelper.generateID();
-            DB.addCategory("General", time, defUiID, 5);
-            DB.addCategory("Work", time, SyncHelper.generateID(), 3);
-            DB.addCategory("Personal", time, SyncHelper.generateID(), 0);
-
+            DB.setGroup(new GroupItem("General", defUiID, 5, 0, time));
+            DB.setGroup(new GroupItem("Work", SyncHelper.generateID(), 3, 0, time));
+            DB.setGroup(new GroupItem("Personal", SyncHelper.generateID(), 0, 0, time));
             NextBase db = new NextBase(mContext);
             db.open();
             Cursor c = db.getReminders();
@@ -243,7 +243,6 @@ public class CloudLogin extends AsyncTask<Void, String, Void> {
             }
             db.close();
         }
-        if (cat != null) cat.close();
         DB.close();
     }
 }

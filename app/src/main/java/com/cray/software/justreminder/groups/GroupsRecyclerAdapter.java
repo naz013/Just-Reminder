@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.adapters;
+package com.cray.software.justreminder.groups;
 
 import android.content.Context;
 import android.support.v7.widget.CardView;
@@ -25,21 +25,22 @@ import android.view.ViewGroup;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
-import com.cray.software.justreminder.datas.CategoryDataProvider;
-import com.cray.software.justreminder.datas.models.CategoryModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 
-public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecyclerAdapter.ViewHolder> {
+import java.util.ArrayList;
+import java.util.List;
+
+public class GroupsRecyclerAdapter extends RecyclerView.Adapter<GroupsRecyclerAdapter.ViewHolder> {
 
     private ColorSetter cs;
-    private CategoryDataProvider provider;
+    private List<GroupItem> provider;
     private SimpleListener mEventListener;
 
-    public CategoryRecyclerAdapter(Context context, CategoryDataProvider provider) {
-        this.provider = provider;
+    public GroupsRecyclerAdapter(Context context, List<GroupItem> provider) {
+        this.provider = new ArrayList<>(provider);
         cs = new ColorSetter(context);
         setHasStableIds(true);
     }
@@ -82,18 +83,14 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // create a new view
         View itemLayoutView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_category_card, parent, false);
-
-        // create ViewHolder
-
         return new ViewHolder(itemLayoutView);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        final CategoryModel item = provider.getData().get(position);
+        final GroupItem item = provider.get(position);
         String title = item.getTitle();
         int indicator = item.getColor();
         holder.textView.setText(title);
@@ -107,12 +104,12 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryRecycl
 
     @Override
     public long getItemId(int position) {
-        return provider.getData().get(position).getId();
+        return provider.get(position).getId();
     }
 
     @Override
     public int getItemCount() {
-        return provider.getData().size();
+        return provider.size();
     }
 
     public void setEventListener(SimpleListener eventListener) {

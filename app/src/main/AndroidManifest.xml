@@ -155,7 +155,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CategoryManager"
+            android:name=".groups.GroupManager"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />

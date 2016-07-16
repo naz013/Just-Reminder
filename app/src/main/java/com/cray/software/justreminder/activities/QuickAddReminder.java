@@ -38,7 +38,7 @@ import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.datas.models.CategoryModel;
+import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -211,7 +211,7 @@ public class QuickAddReminder extends AppCompatActivity {
         }
         String type = Constants.TYPE_REMINDER;
         int repeat = Integer.parseInt(repeatDays.getText().toString().trim());
-        String categoryId = CategoryModel.getDefault(QuickAddReminder.this);
+        String categoryId = GroupHelper.getDefaultUuId(QuickAddReminder.this);
         long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
         boolean isCalendar = SharedPrefs.getInstance(this).getBoolean(Prefs.EXPORT_TO_CALENDAR);
         boolean isStock = SharedPrefs.getInstance(this).getBoolean(Prefs.EXPORT_TO_STOCK);

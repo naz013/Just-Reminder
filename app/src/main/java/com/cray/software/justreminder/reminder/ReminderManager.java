@@ -75,6 +75,8 @@ import com.cray.software.justreminder.dialogs.LedColor;
 import com.cray.software.justreminder.dialogs.SelectVolume;
 import com.cray.software.justreminder.dialogs.TargetRadius;
 import com.cray.software.justreminder.file_explorer.FileExploreActivity;
+import com.cray.software.justreminder.groups.GroupHelper;
+import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
@@ -217,7 +219,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         setUpNavigation();
         initFab();
         findViewById(R.id.windowBackground).setBackgroundColor(colorSetter.getBackgroundStyle());
-        loadData();
+        loadDefaultGroup();
 
         spinner.setSelection(selection);
         if (id != 0){
@@ -243,17 +245,12 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         new Handler().postDelayed(() -> ViewUtils.slideInDown(ReminderManager.this, toolbar), 500);
     }
 
-    private void loadData() {
-        DataBase db = new DataBase(this);
-        db.open();
-        Cursor c = db.queryCategories();
-        if (c != null && c.moveToFirst()) {
-            String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-            categoryId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-            category.setText(title);
+    private void loadDefaultGroup() {
+        GroupItem groupItem = GroupHelper.getDefaultGroup(this);
+        if (groupItem != null) {
+            categoryId = groupItem.getUuId();
+            category.setText(groupItem.getTitle());
         }
-        if (c != null) c.close();
-        db.close();
     }
 
     private void initFab() {
@@ -421,12 +418,10 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             DataBase db = new DataBase(this);
             db.open();
             if (categoryId != null && !categoryId.matches("")) {
-                Cursor c = db.getCategory(categoryId);
-                if (c != null && c.moveToFirst()) {
-                    String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                    category.setText(title);
+                GroupItem groupItem = db.getGroup(categoryId);
+                if (groupItem != null) {
+                    category.setText(groupItem.getTitle());
                 }
-                if (c != null) c.close();
             }
             db.close();
         } else {

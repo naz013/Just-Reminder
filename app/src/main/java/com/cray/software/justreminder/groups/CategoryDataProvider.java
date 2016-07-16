@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.datas;
+package com.cray.software.justreminder.groups;
 
 import android.content.Context;
-import android.database.Cursor;
 
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.datas.models.CategoryModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryDataProvider {
-    private List<CategoryModel> data;
+    private List<GroupItem> data;
     private Context mContext;
 
     public CategoryDataProvider(Context mContext){
@@ -36,7 +33,7 @@ public class CategoryDataProvider {
         load();
     }
 
-    public List<CategoryModel> getData(){
+    public List<GroupItem> getData(){
         return data;
     }
 
@@ -44,12 +41,12 @@ public class CategoryDataProvider {
         return data != null ? data.size() : 0;
     }
 
-    public int getPosition(CategoryModel item){
+    public int getPosition(GroupItem item){
         int res = -1;
         if (data.size() > 0) {
             for (int i = 0; i < data.size(); i++){
-                CategoryModel item1 = data.get(i);
-                if (item.getUuID().matches(item1.getUuID())) {
+                GroupItem item1 = data.get(i);
+                if (item.getUuId().matches(item1.getUuId())) {
                     res = i;
                     break;
                 }
@@ -62,8 +59,8 @@ public class CategoryDataProvider {
         int res = -1;
         if (data.size() > 0 && uuId != null) {
             for (int i = 0; i < data.size(); i++){
-                CategoryModel item = data.get(i);
-                if (item.getUuID().matches(uuId)) {
+                GroupItem item = data.get(i);
+                if (item.getUuId().matches(uuId)) {
                     res = i;
                     break;
                 }
@@ -72,7 +69,7 @@ public class CategoryDataProvider {
         return res;
     }
 
-    public CategoryModel getItem(int index) {
+    public GroupItem getItem(int index) {
         if (index < 0 || index >= getCount()) {
             return null;
         }
@@ -83,18 +80,7 @@ public class CategoryDataProvider {
         data.clear();
         DataBase db = new DataBase(mContext);
         db.open();
-        Cursor c = db.queryCategories();
-        if (c != null && c.moveToNext()) {
-            do {
-                String text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                int color = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
-                long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-
-                data.add(new CategoryModel(text, uuId, color, id));
-            } while (c.moveToNext());
-        }
-        if (c != null) c.close();
+        data = db.getAllGroups();
         db.close();
     }
 }

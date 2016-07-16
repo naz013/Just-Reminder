@@ -26,6 +26,7 @@ import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.EventsItem;
 import com.cray.software.justreminder.enums.EventType;
+import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JParser;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -140,16 +142,13 @@ public class EventsDataProvider {
     public void loadReminders(){
         DataBase DB = new DataBase(mContext);
         DB.open();
-        Cursor cat = DB.queryCategories();
+        List<GroupItem> allGroups = DB.getAllGroups();
         Map<String, Integer> map = new HashMap<>();
-        if (cat != null && cat.moveToFirst()){
-            do {
-                String uuid = cat.getString(cat.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                int color = cat.getInt(cat.getColumnIndex(Constants.COLUMN_COLOR));
-                map.put(uuid, color);
-            } while (cat.moveToNext());
+        if (allGroups != null && allGroups.size() > 0){
+            for (GroupItem item : allGroups) {
+                map.put(item.getUuId(), item.getColor());
+            }
         }
-        if (cat != null) cat.close();
         DB.close();
 
         NextBase db = new NextBase(mContext);

@@ -29,7 +29,7 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.BirthdayModel;
-import com.cray.software.justreminder.datas.models.CategoryModel;
+import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JParser;
 import com.cray.software.justreminder.json.JRecurrence;
@@ -101,22 +101,18 @@ public class SyncHelper {
     public void groupToJson() throws JSONException {
         DataBase dataBase = new DataBase(mContext);
         dataBase.open();
-        Cursor c = dataBase.queryCategories();
-        if (c != null && c.moveToFirst()){
-            do {
-                String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                int color  = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
-                long date = c.getLong(c.getColumnIndex(Constants.COLUMN_DATE_TIME));
-                String uuID = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+        List<GroupItem> groups = dataBase.getAllGroups();
+        if (groups != null && groups.size() > 0){
+            for (GroupItem item : groups) {
                 JSONObject jObjectData = new JSONObject();
-                jObjectData.put(Constants.COLUMN_COLOR, color);
-                jObjectData.put(Constants.COLUMN_TEXT, title);
-                jObjectData.put(Constants.COLUMN_DATE_TIME, date);
-                jObjectData.put(Constants.COLUMN_TECH_VAR, uuID);
+                jObjectData.put(Constants.COLUMN_COLOR, item.getColor());
+                jObjectData.put(Constants.COLUMN_TEXT, item.getTitle());
+                jObjectData.put(Constants.COLUMN_DATE_TIME, item.getDateTime());
+                jObjectData.put(Constants.COLUMN_TECH_VAR, item.getUuId());
 
                 File dir = MemoryUtil.getGroupsDir();
                 if (dir != null) {
-                    String exportFileName = uuID + FileConfig.FILE_NAME_GROUP;
+                    String exportFileName = item.getUuId() + FileConfig.FILE_NAME_GROUP;
 
                     File file = new File(dir, exportFileName);
                     try {
@@ -125,9 +121,8 @@ public class SyncHelper {
                         e.printStackTrace();
                     }
                 }
-            } while (c.moveToNext());
+            }
         }
-        if (c != null) c.close();
         dataBase.close();
     }
 
@@ -623,21 +618,18 @@ public class SyncHelper {
     public void groupFromJson(File file) throws JSONException {
         DataBase db = new DataBase(mContext);
         db.open();
-        List<String> namesPass = new ArrayList<>();
-        Cursor e = db.queryCategories();
-        while (e.moveToNext()) {
-            for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
-                namesPass.add(e.getString(e.getColumnIndex(Constants.COLUMN_TECH_VAR)));
-            }
+        List<String> uuIdList = new ArrayList<>();
+        List<GroupItem> groups = db.getAllGroups();
+        for (GroupItem groupItem : groups) {
+            uuIdList.add(groupItem.getUuId());
         }
-        e.close();
         db.close();
 
         if (file != null){
             String fileNameR = file.getName();
             int pos = fileNameR.lastIndexOf(".");
             String fileNameS = fileNameR.substring(0, pos);
-            if (!namesPass.contains(fileNameS)) {
+            if (!uuIdList.contains(fileNameS)) {
                 String jsonText = readFile(file.toString());
                 JSONObject jsonObj = new JSONObject(jsonText);
                 groupObject(jsonObj);
@@ -651,7 +643,7 @@ public class SyncHelper {
                     int pos = fileName.lastIndexOf(".");
                     String fileLoc = dir + "/" + fileName;
                     String fileNameS = fileName.substring(0, pos);
-                    if (!namesPass.contains(fileNameS)) {
+                    if (!uuIdList.contains(fileNameS)) {
                         String jsonText = readFile(fileLoc);
                         JSONObject jsonObj = new JSONObject(jsonText);
                         groupObject(jsonObj);
@@ -679,23 +671,20 @@ public class SyncHelper {
         }
         DataBase db = new DataBase(mContext);
         db.open();
-        Cursor cf = db.queryCategories();
-        if (cf != null && cf.moveToFirst()) {
-            List<String> namesPass = new ArrayList<>();
+        List<GroupItem> itemList = db.getAllGroups();
+        if (itemList != null && itemList.size() > 0) {
+            List<String> uuIdsList = new ArrayList<>();
             List<String> titles = new ArrayList<>();
-            while (cf.moveToNext()) {
-                for (cf.moveToFirst(); !cf.isAfterLast(); cf.moveToNext()) {
-                    namesPass.add(cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR)));
-                    titles.add(cf.getString(cf.getColumnIndex(Constants.COLUMN_TEXT)));
-                }
+            for (GroupItem item : itemList) {
+                uuIdsList.add(item.getUuId());
+                titles.add(item.getTitle());
             }
-            if (!namesPass.contains(uuID) && !titles.contains(title)) {
-                db.addCategory(title, date, uuID, color);
+            if (!uuIdsList.contains(uuID) && !titles.contains(title)) {
+                db.setGroup(new GroupItem(title, uuID, color, 0, date));
             }
         } else {
-            db.addCategory(title, date, uuID, color);
+            db.setGroup(new GroupItem(title, uuID, color, 0, date));
         }
-        if (cf != null) cf.close();
         db.close();
     }
 
@@ -705,7 +694,7 @@ public class SyncHelper {
      * @return group object
      * @throws JSONException
      */
-    public static CategoryModel getGroup(String filePath) throws JSONException {
+    public static GroupItem getGroup(String filePath) throws JSONException {
         if (filePath != null) {
             if (MemoryUtil.isSdPresent()) {
                 String jsonText = readFile(filePath);
@@ -715,13 +704,13 @@ public class SyncHelper {
                     title = jsonObj.getString(Constants.COLUMN_TEXT);
                 }
                 int color = jsonObj.getInt(Constants.COLUMN_COLOR);
-                //long date = jsonObj.getLong(Constants.COLUMN_DATE_TIME);
+                long date = jsonObj.getLong(Constants.COLUMN_DATE_TIME);
                 String uuID = null;
                 if (!jsonObj.isNull(Constants.COLUMN_TECH_VAR)) {
                     uuID = jsonObj.getString(Constants.COLUMN_TECH_VAR);
                 }
 
-                return new CategoryModel(title, uuID, color);
+                return new GroupItem(title, uuID, color, 0, date);
             } else return null;
         } else return null;
     }

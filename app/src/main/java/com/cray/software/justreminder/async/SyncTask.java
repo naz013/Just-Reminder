@@ -28,11 +28,14 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.IOHelper;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.Module;
+
+import java.util.List;
 
 public class SyncTask extends AsyncTask<Void, String, Boolean> {
 
@@ -77,17 +80,15 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
         DataBase db = new DataBase(mContext);
         db.open();
         IOHelper ioHelper = new IOHelper(mContext);
-
         ioHelper.restoreGroup(true);
         ioHelper.backupGroup(true);
-
-        Cursor cat = db.queryCategories();
-        if (cat == null || cat.getCount() == 0) {
+        List<GroupItem> list = db.getAllGroups();
+        if (list == null || list.size() == 0) {
             long time = System.currentTimeMillis();
             String defUiID = SyncHelper.generateID();
-            db.addCategory("General", time, defUiID, 5);
-            db.addCategory("Work", time, SyncHelper.generateID(), 3);
-            db.addCategory("Personal", time, SyncHelper.generateID(), 0);
+            db.setGroup(new GroupItem("General", defUiID, 5, 0, time));
+            db.setGroup(new GroupItem("Work", SyncHelper.generateID(), 3, 0, time));
+            db.setGroup(new GroupItem("Personal", SyncHelper.generateID(), 0, 0, time));
             NextBase nextBase = new NextBase(mContext);
             nextBase.open();
             Cursor c = nextBase.getReminders();
@@ -98,8 +99,6 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
             }
             if (c != null) c.close();
             nextBase.close();
-        } else {
-            cat.close();
         }
         db.close();
 

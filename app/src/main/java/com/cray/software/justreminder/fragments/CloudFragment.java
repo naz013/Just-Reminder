@@ -34,7 +34,7 @@ import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.cray.software.justreminder.CategoryManager;
+import com.cray.software.justreminder.groups.GroupManager;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.activities.AddBirthday;
 import com.cray.software.justreminder.adapters.FileRecyclerAdapter;
@@ -355,7 +355,7 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
                     provider.getItem(position).getFilePath()));
         } else if (fileName.endsWith(FileConfig.FILE_NAME_GROUP)) {
             startActivity(new Intent(mContext,
-                    CategoryManager.class).putExtra(Constants.EDIT_PATH,
+                    GroupManager.class).putExtra(Constants.EDIT_PATH,
                     provider.getItem(position).getFilePath()));
         }
     }

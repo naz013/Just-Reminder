@@ -25,6 +25,10 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.groups.GroupItem;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataBase {
     private static final String DB_NAME = "just_database";
@@ -419,52 +423,79 @@ public class DataBase {
 
     //Working with reminder categories table
 
-    public long addCategory (String name, long dateTime, String uuID, int color) {
+    public long setGroup(GroupItem groupItem) {
         openGuard();
         ContentValues cv = new ContentValues();
-        cv.put(Constants.COLUMN_TEXT, name);
-        cv.put(Constants.COLUMN_DATE_TIME, dateTime);
-        cv.put(Constants.COLUMN_TECH_VAR, uuID);
-        cv.put(Constants.COLUMN_COLOR, color);
-        //Log.d(LOG_TAG, "data is inserted " + cv);
-        return db.insert(CATEGORIES_TABLE_NAME, null, cv);
+        cv.put(Constants.COLUMN_TEXT, groupItem.getTitle());
+        cv.put(Constants.COLUMN_DATE_TIME, groupItem.getDateTime());
+        cv.put(Constants.COLUMN_TECH_VAR, groupItem.getUuId());
+        cv.put(Constants.COLUMN_COLOR, groupItem.getColor());
+        if (groupItem.getId() == 0) {
+            return db.insert(CATEGORIES_TABLE_NAME, null, cv);
+        } else {
+            return db.update(CATEGORIES_TABLE_NAME, cv, Constants.COLUMN_ID + "=" + groupItem.getId(), null);
+        }
     }
 
-    public boolean updateCategory(long rowId, String name, long dateTime, int color){
-        openGuard();
-        ContentValues args = new ContentValues();
-        args.put(Constants.COLUMN_TEXT, name);
-        args.put(Constants.COLUMN_DATE_TIME, dateTime);
-        args.put(Constants.COLUMN_COLOR, color);
-        return db.update(CATEGORIES_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
-    }
-
-    public boolean updateCategoryColor(long rowId, int color){
+    public boolean changeGroupColor(long rowId, int color){
         openGuard();
         ContentValues args = new ContentValues();
         args.put(Constants.COLUMN_COLOR, color);
         return db.update(CATEGORIES_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
-    public Cursor getCategory(long id) throws SQLException {
+    public GroupItem getGroup(long id) throws SQLException {
         openGuard();
-        return db.query(CATEGORIES_TABLE_NAME, null, Constants.COLUMN_ID  +
+        Cursor c = db.query(CATEGORIES_TABLE_NAME, null, Constants.COLUMN_ID  +
                 "=" + id, null, null, null, null, null);
+        GroupItem groupItem = null;
+        if (c != null && c.moveToFirst()) {
+            String text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+            String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+            int color = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
+            long date = c.getLong(c.getColumnIndex(Constants.COLUMN_DATE_TIME));
+            groupItem = new GroupItem(text, uuId, color, id, date);
+        }
+        if (c != null) c.close();
+        return groupItem;
     }
 
-    public Cursor getCategory(String uuId) throws SQLException {
+    public GroupItem getGroup(String uuId) throws SQLException {
         openGuard();
-        return db.query(CATEGORIES_TABLE_NAME, null,
+        Cursor c = db.query(CATEGORIES_TABLE_NAME, null,
                 Constants.COLUMN_TECH_VAR  +
                         "='" + uuId + "'", null, null, null, null, null);
+        GroupItem groupItem = null;
+        if (c != null && c.moveToFirst()) {
+            String text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+            int color = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
+            long date = c.getLong(c.getColumnIndex(Constants.COLUMN_DATE_TIME));
+            long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
+            groupItem = new GroupItem(text, uuId, color, id, date);
+        }
+        if (c != null) c.close();
+        return groupItem;
     }
 
-    public Cursor queryCategories() throws SQLException {
+    public List<GroupItem> getAllGroups() throws SQLException {
         openGuard();
-        return db.query(CATEGORIES_TABLE_NAME, null, null, null, null, null, null);
+        List<GroupItem> list = new ArrayList<>();
+        Cursor c = db.query(CATEGORIES_TABLE_NAME, null, null, null, null, null, null);
+        if (c != null && c.moveToFirst()) {
+            do {
+                String text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+                String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+                int color = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
+                long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
+                long date = c.getLong(c.getColumnIndex(Constants.COLUMN_DATE_TIME));
+                list.add(new GroupItem(text, uuId, color, id, date));
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+        return list;
     }
 
-    public boolean deleteCategory(long rowId) {
+    public boolean deleteGroup(long rowId) {
         openGuard();
         return db.delete(CATEGORIES_TABLE_NAME, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }

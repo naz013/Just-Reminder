@@ -58,9 +58,9 @@ import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.dialogs.ColorPicker;
 import com.cray.software.justreminder.dialogs.FontStyleDialog;
+import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Permissions;
@@ -520,15 +520,7 @@ public class NotesManager extends AppCompatActivity {
         }
 
         if (isReminderAttached()){
-            Cursor cf = new DataBase(NotesManager.this).open().queryCategories();
-            String categoryId = null;
-            if (cf != null && cf.moveToFirst()) {
-                categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
-            }
-            if (cf != null) {
-                cf.close();
-            }
-
+            String categoryId = GroupHelper.getDefaultUuId(this);
             calendar1.set(myYear, myMonth, myDay, myHour, myMinute);
             long due = calendar1.getTimeInMillis();
             JModel jModel = new JModel(note, Constants.TYPE_REMINDER, categoryId,

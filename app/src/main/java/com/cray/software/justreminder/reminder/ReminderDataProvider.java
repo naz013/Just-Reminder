@@ -24,6 +24,7 @@ import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.json.JModel;
@@ -39,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -324,15 +326,12 @@ public class ReminderDataProvider {
         Map<String, Integer> map = new HashMap<>();
         DataBase db = new DataBase(context);
         db.open();
-        Cursor cf = db.queryCategories();
-        if (cf != null && cf.moveToFirst()){
-            do {
-                String uuid = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                int color = cf.getInt(cf.getColumnIndex(Constants.COLUMN_COLOR));
-                map.put(uuid, color);
-            } while (cf.moveToNext());
+        List<GroupItem> groups = db.getAllGroups();
+        if (groups.size() > 0) {
+            for (GroupItem item : groups) {
+                map.put(item.getUuId(), item.getColor());
+            }
         }
-        if (cf != null) cf.close();
         db.close();
         return map;
     }

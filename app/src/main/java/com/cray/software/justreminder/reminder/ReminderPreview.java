@@ -50,7 +50,8 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.databases.TasksData;
-import com.cray.software.justreminder.datas.models.CategoryModel;
+import com.cray.software.justreminder.groups.GroupHelper;
+import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.datas.models.ReminderNote;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -287,7 +288,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
             }
             toolbar.setTitle(item.getTitle());
             type.setText(ReminderUtils.getTypeString(this, item.getType()));
-            group.setText(CategoryModel.getCategoryTitle(this, item.getGroupId()));
+            group.setText(GroupHelper.getCategoryTitle(this, item.getGroupId()));
 
             long due = item.getDue();
             if (due > 0) {

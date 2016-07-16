@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.fragments;
+package com.cray.software.justreminder.groups;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -30,16 +29,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.cray.software.justreminder.CategoryManager;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
-import com.cray.software.justreminder.adapters.CategoryRecyclerAdapter;
 import com.cray.software.justreminder.async.DeleteGroupAsync;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.CategoryDataProvider;
-import com.cray.software.justreminder.datas.models.CategoryModel;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
@@ -128,7 +123,7 @@ public class GroupsFragment extends Fragment implements SimpleListener {
     private void loadCategories(){
         SharedPrefs.getInstance(mContext).putBoolean(Prefs.GROUP_CHANGED, false);
         provider = new CategoryDataProvider(mContext);
-        CategoryRecyclerAdapter adapter = new CategoryRecyclerAdapter(mContext, provider);
+        GroupsRecyclerAdapter adapter = new GroupsRecyclerAdapter(mContext, provider.getData());
         adapter.setEventListener(this);
         listView.setAdapter(adapter);
         listView.setItemAnimator(new DefaultItemAnimator());
@@ -142,13 +137,12 @@ public class GroupsFragment extends Fragment implements SimpleListener {
         if (itemId != 0) {
             DataBase db = new DataBase(mContext);
             db.open();
-            Cursor s = db.getCategory(itemId);
-            if (s != null && s.moveToFirst()) {
-                String uuId = s.getString(s.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                db.deleteCategory(itemId);
+            GroupItem group = db.getGroup(itemId);
+            if (group != null) {
+                String uuId = group.getUuId();
+                db.deleteGroup(itemId);
                 new DeleteGroupAsync(mContext, uuId).execute();
             }
-            if (s != null) s.close();
             db.close();
             if (mCallbacks != null) {
                 mCallbacks.showSnackbar(R.string.deleted);
@@ -159,7 +153,7 @@ public class GroupsFragment extends Fragment implements SimpleListener {
 
     @Override
     public void onItemClicked(int position, View view) {
-        startActivity(new Intent(mContext, CategoryManager.class)
+        startActivity(new Intent(mContext, GroupManager.class)
                 .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
     }
 
@@ -173,7 +167,7 @@ public class GroupsFragment extends Fragment implements SimpleListener {
                     changeColor(provider.getItem(position).getId());
                     break;
                 case 1:
-                    startActivity(new Intent(mContext, CategoryManager.class)
+                    startActivity(new Intent(mContext, GroupManager.class)
                             .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
                     break;
                 case 2:
@@ -201,7 +195,7 @@ public class GroupsFragment extends Fragment implements SimpleListener {
                     getString(R.string.lime), getString(R.string.indigo)};
         }
         Dialogues.showLCAM(mContext, item -> {
-            CategoryModel.setNewIndicator(mContext, id, item);
+            GroupHelper.setNewIndicator(mContext, id, item);
             loadCategories();
         }, items);
     }

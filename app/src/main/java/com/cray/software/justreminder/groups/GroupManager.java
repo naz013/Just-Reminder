@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder;
+package com.cray.software.justreminder.groups;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -29,10 +28,10 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.models.CategoryModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -42,9 +41,9 @@ import com.cray.software.justreminder.utils.ViewUtils;
 
 import org.json.JSONException;
 
-public class CategoryManager extends AppCompatActivity {
+public class GroupManager extends AppCompatActivity {
 
-    private ColorSetter cs = new ColorSetter(CategoryManager.this);
+    private ColorSetter cs = new ColorSetter(GroupManager.this);
     private RoboEditText editField;
     private ImageButton red_checkbox, violet_checkbox, green_checkbox, light_green_checkbox,
             blue_checkbox, light_blue_checkbox, yellow_checkbox, orange_checkbox, grey_checkbox,
@@ -55,6 +54,7 @@ public class CategoryManager extends AppCompatActivity {
     private long id;
     private int color = 0;
     private int prevId;
+    private GroupItem mItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,29 +79,21 @@ public class CategoryManager extends AppCompatActivity {
 
         editField = (RoboEditText) findViewById(R.id.editField);
         if (id != 0) {
-            DataBase db = new DataBase(CategoryManager.this);
+            DataBase db = new DataBase(GroupManager.this);
             db.open();
-            Cursor c = db.getCategory(id);
-            if (c != null && c.moveToFirst()){
-                editField.setText(c.getString(c.getColumnIndex(Constants.COLUMN_TEXT)));
-                color = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
-            }
-            setColor(color);
-            if (c != null) c.close();
+            mItem = db.getGroup(id);
             db.close();
         } else if (filePath != null) {
             try {
-                CategoryModel model = SyncHelper.getGroup(filePath);
-                if (model != null) {
-                    editField.setText(model.getTitle());
-                    color = model.getColor();
-                    setColor(color);
-                } else finish();
+                mItem = SyncHelper.getGroup(filePath);
+                if (mItem == null) finish();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-
+        editField.setText(mItem.getTitle());
+        color = mItem.getColor();
+        setColor(color);
         initRadio();
     }
 
@@ -151,13 +143,16 @@ public class CategoryManager extends AppCompatActivity {
             editField.setError(getString(R.string.must_be_not_empty));
             return;
         }
-        DataBase db = new DataBase(CategoryManager.this);
+        DataBase db = new DataBase(GroupManager.this);
         db.open();
-        if (id != 0){
-            db.updateCategory(id, text, System.currentTimeMillis(), color);
+        if (mItem == null) {
+            mItem = new GroupItem(text, SyncHelper.generateID(), color, 0, System.currentTimeMillis());
         } else {
-            db.addCategory(text, System.currentTimeMillis(), SyncHelper.generateID(), color);
+            mItem.setColor(color);
+            mItem.setDateTime(System.currentTimeMillis());
+            mItem.setTitle(text);
         }
+        db.setGroup(mItem);
         db.close();
         SharedPrefs.getInstance(this).putBoolean(Prefs.GROUP_CHANGED, true);
         finish();

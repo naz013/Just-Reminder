@@ -28,10 +28,10 @@ import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.databases.TasksData;
-import com.cray.software.justreminder.datas.models.CategoryModel;
+import com.cray.software.justreminder.datas.models.TaskList;
+import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -73,7 +73,7 @@ public class TaskManager extends AppCompatActivity {
     private static final int MENU_ITEM_DELETE = 12;
     private static final int MENU_ITEM_MOVE = 14;
 
-    private ArrayList<CategoryModel> categories = new ArrayList<>();
+    private ArrayList<TaskList> categories = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -307,7 +307,7 @@ public class TaskManager extends AppCompatActivity {
             do {
                 String listTitle = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
                 String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
-                categories.add(new CategoryModel(listTitle, listId));
+                categories.add(new TaskList(listTitle, 0, listId, 0));
             } while (c.moveToNext());
         }
         if (c != null) c.close();
@@ -317,10 +317,10 @@ public class TaskManager extends AppCompatActivity {
         builder.setAdapter(new SimpleAdapter(TaskManager.this,
                 data.getTasksLists()), (dialog, which) -> {
                     dialog.dismiss();
-                    if (move) moveTask(categories.get(which).getUuID());
+                    if (move) moveTask(categories.get(which).getListId());
                     else {
                         listText.setText(categories.get(which).getTitle());
-                        listId = categories.get(which).getUuID();
+                        listId = categories.get(which).getListId();
                         reloadColor(listId);
                     }
                 });
@@ -389,16 +389,7 @@ public class TaskManager extends AppCompatActivity {
     }
 
     private long saveReminder(String task){
-        DataBase db = new DataBase(TaskManager.this);
-        db.open();
-        Cursor cf = db.queryCategories();
-        String categoryId = null;
-        if (cf != null && cf.moveToFirst()) {
-            categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
-        }
-        if (cf != null) cf.close();
-        db.close();
-
+        String categoryId = GroupHelper.getDefaultUuId(this);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(myYear, myMonth, myDay, myHour, myMinute);

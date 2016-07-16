@@ -37,8 +37,8 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.LED;
 import com.cray.software.justreminder.constants.Language;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.datas.CategoryDataProvider;
-import com.cray.software.justreminder.datas.models.CategoryModel;
+import com.cray.software.justreminder.groups.CategoryDataProvider;
+import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.file_explorer.FileExploreActivity;
 import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.modules.Module;
@@ -207,7 +207,7 @@ public class Dialogues {
     public static void selectCategory(Context context, String categoryId, final OnCategorySelectListener listener) {
         final CategoryDataProvider provider = new CategoryDataProvider(context);
         final ArrayList<String> categories = new ArrayList<>();
-        for (CategoryModel item : provider.getData()){
+        for (GroupItem item : provider.getData()){
             categories.add(item.getTitle());
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -215,7 +215,7 @@ public class Dialogues {
         builder.setSingleChoiceItems(new ArrayAdapter<>(context,
                 android.R.layout.simple_list_item_single_choice, categories), provider.getPosition(categoryId), (dialog, which) -> {
                     dialog.dismiss();
-                    if (listener != null) listener.onCategory(provider.getItem(which).getUuID(), provider.getItem(which).getTitle());
+                    if (listener != null) listener.onCategory(provider.getItem(which).getUuId(), provider.getItem(which).getTitle());
                 });
         AlertDialog alert = builder.create();
         alert.show();

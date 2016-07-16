@@ -20,7 +20,6 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -42,7 +41,7 @@ import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.contacts.Contacts;
-import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -317,16 +316,7 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         }
         String type = getType();
         setUpTimes();
-        DataBase db = new DataBase(FollowReminder.this);
-        db.open();
-        Cursor cf = db.queryCategories();
-        String categoryId = null;
-        if (cf != null && cf.moveToFirst()) {
-            categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
-        }
-        if (cf != null) cf.close();
-        db.close();
-
+        String categoryId = GroupHelper.getDefaultUuId(this);
         long due = ReminderUtils.getTime(mDay, mMonth, mYear, mHour, mMinute, 0);
         JAction jAction = new JAction(type, mNumber, -1, null, null);
 

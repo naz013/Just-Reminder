@@ -18,7 +18,6 @@ package com.cray.software.justreminder.helpers;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -34,12 +33,11 @@ import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Language;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.models.CategoryModel;
 import com.cray.software.justreminder.dialogs.SelectVolume;
 import com.cray.software.justreminder.dialogs.VoiceHelp;
 import com.cray.software.justreminder.dialogs.VoiceResult;
 import com.cray.software.justreminder.feedback.SendReportActivity;
+import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.json.JAction;
 import com.cray.software.justreminder.json.JExport;
 import com.cray.software.justreminder.json.JModel;
@@ -127,7 +125,7 @@ public class Recognize {
             }
         }
 
-        String categoryId = CategoryModel.getDefault(mContext);
+        String categoryId = GroupHelper.getDefaultUuId(mContext);
         JRecurrence jRecurrence = new JRecurrence(0, repeat, -1, weekdays, 0);
         JAction jAction = new JAction(type, number, -1, "", null);
 
@@ -177,16 +175,7 @@ public class Recognize {
 
         long remId = 0;
         if (prefs.getBoolean(Prefs.QUICK_NOTE_REMINDER)){
-            DataBase DB = new DataBase(mContext);
-            DB.open();
-            Cursor cf = DB.queryCategories();
-            String categoryId = null;
-            if (cf != null && cf.moveToFirst()) {
-                categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
-            }
-            if (cf != null) cf.close();
-            DB.close();
-
+            String categoryId = GroupHelper.getDefaultUuId(mContext);
             long after = prefs.getInt(Prefs.QUICK_NOTE_REMINDER_TIME) * 1000 * 60;
             long due = calendar1.getTimeInMillis() + after;
             JRecurrence jRecurrence = new JRecurrence(0, 0, -1, null, after);

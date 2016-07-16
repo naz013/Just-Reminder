@@ -42,6 +42,7 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -406,14 +407,12 @@ public class LogInActivity extends Activity implements LoginListener {
     private void checkGroups() {
         DataBase DB = new DataBase(this);
         DB.open();
-        Cursor cat = DB.queryCategories();
-        if (cat == null || cat.getCount() == 0){
+        if (DB.getAllGroups().size() == 0){
             long time = System.currentTimeMillis();
             String defUiID = SyncHelper.generateID();
-            DB.addCategory("General", time, defUiID, 5);
-            DB.addCategory("Work", time, SyncHelper.generateID(), 3);
-            DB.addCategory("Personal", time, SyncHelper.generateID(), 0);
-
+            DB.setGroup(new GroupItem("General", defUiID, 5, 0, time));
+            DB.setGroup(new GroupItem("Work", SyncHelper.generateID(), 3, 0, time));
+            DB.setGroup(new GroupItem("Personal", SyncHelper.generateID(), 0, 0, time));
             NextBase db = new NextBase(this);
             db.open();
             Cursor c = db.getReminders();
@@ -427,7 +426,6 @@ public class LogInActivity extends Activity implements LoginListener {
             }
             db.close();
         }
-        if (cat != null) cat.close();
         DB.close();
     }
 

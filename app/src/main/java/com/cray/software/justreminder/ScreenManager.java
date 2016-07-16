@@ -26,7 +26,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -57,7 +56,6 @@ import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.dialogs.ActionPickerDialog;
 import com.cray.software.justreminder.dialogs.ChangeDialog;
 import com.cray.software.justreminder.enums.QuickReturnViewType;
@@ -65,12 +63,14 @@ import com.cray.software.justreminder.feedback.SendReportActivity;
 import com.cray.software.justreminder.fragments.BackupsFragment;
 import com.cray.software.justreminder.fragments.EventsFragment;
 import com.cray.software.justreminder.fragments.GeolocationFragment;
-import com.cray.software.justreminder.fragments.GroupsFragment;
 import com.cray.software.justreminder.fragments.NavigationDrawerFragment;
 import com.cray.software.justreminder.fragments.NotesFragment;
 import com.cray.software.justreminder.fragments.PlacesFragment;
 import com.cray.software.justreminder.fragments.TasksFragment;
 import com.cray.software.justreminder.fragments.TemplatesFragment;
+import com.cray.software.justreminder.groups.GroupHelper;
+import com.cray.software.justreminder.groups.GroupManager;
+import com.cray.software.justreminder.groups.GroupsFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
@@ -127,6 +127,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
     private RoboTextView buttonReminderYes;
     private RoboTextView buttonReminderNo;
     private FloatingActionButton mFab;
+    private ReturnScrollListener listener;
 
     private ColorSetter cSetter = new ColorSetter(this);
 
@@ -204,8 +205,6 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
 
         NavigationDrawerFragment mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-
-        // Set up the drawer.
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
 
@@ -226,8 +225,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
             if (isNoteVisible()) {
                 ViewUtils.hideReveal(noteCard);
             }
-
-            new Handler().postDelayed(() -> startActivity(new Intent(ScreenManager.this, ReminderManager.class)), 150);
+            new Handler().postDelayed(this::performClick, 150);
         });
         mFab.setOnLongClickListener(v -> {
             if (!isNoteVisible()) {
@@ -235,73 +233,46 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
             } else {
                 quickNote.setText("");
                 quickNote.setError(null);
-
                 ViewUtils.hideReveal(noteCard);
             }
             return true;
         });
     }
 
+    private void performClick() {
+        if (mTag.matches(FRAGMENT_EVENTS) || mTag.matches(ACTION_CALENDAR)) {
+            if (dateMills == 0) dateMills = System.currentTimeMillis();
+            startActivity(new Intent(ScreenManager.this, ActionPickerDialog.class)
+                    .putExtra("date", dateMills));
+        } else if (mTag.matches(FRAGMENT_ARCHIVE) || mTag.matches(FRAGMENT_ACTIVE) ||
+                mTag.matches(FRAGMENT_LOCATIONS)) {
+            startActivity(new Intent(ScreenManager.this, ReminderManager.class));
+        } else if (mTag.matches(FRAGMENT_TASKS)){
+            if (new GTasksHelper(ScreenManager.this).isLinked()) {
+                startActivity(new Intent(ScreenManager.this, TaskManager.class)
+                        .putExtra(Constants.ITEM_ID_INTENT, listId)
+                        .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.CREATE));
+            } else {
+                showSnackbar(getString(R.string.can_not_connect));
+            }
+        } else if (mTag.matches(FRAGMENT_NOTE)){
+            startActivity(new Intent(ScreenManager.this, NotesManager.class));
+        } else if (mTag.matches(FRAGMENT_GROUPS)){
+            startActivity(new Intent(ScreenManager.this, GroupManager.class));
+        } else if (mTag.matches(FRAGMENT_PLACES)){
+            if (LocationUtil.checkGooglePlayServicesAvailability(ScreenManager.this)) {
+                startActivity(new Intent(ScreenManager.this, AddPlace.class));
+            }
+        } else if (mTag.matches(FRAGMENT_TEMPLATES)){
+            startActivity(new Intent(ScreenManager.this, NewTemplate.class));
+        }
+    }
+
     private void reloadButton(){
-        if (mTag.matches(FRAGMENT_EVENTS) || mTag.matches(ACTION_CALENDAR)){
-            mFab.setVisibility(View.VISIBLE);
-            mFab.setOnClickListener(v -> {
-                if (dateMills == 0) dateMills = System.currentTimeMillis();
-                startActivity(new Intent(ScreenManager.this, ActionPickerDialog.class)
-                        .putExtra("date", dateMills));
-            });
-        } else if (mTag.matches(FRAGMENT_BACKUPS)){
+        if (mTag.matches(FRAGMENT_BACKUPS)){
             mFab.setVisibility(View.GONE);
         } else {
-            mFab.setVisibility(View.GONE);
-            if (mTag.matches(FRAGMENT_ARCHIVE) || mTag.matches(FRAGMENT_ACTIVE) ||
-                    mTag.matches(FRAGMENT_LOCATIONS)){
-                mFab.setOnClickListener(v -> {
-                    collapseViews();
-                    new Handler().postDelayed(() -> startActivity(new Intent(ScreenManager.this, ReminderManager.class)), 150);
-                });
-                mFab.setVisibility(View.VISIBLE);
-            } else if (mTag.matches(FRAGMENT_TASKS)){
-                mFab.setOnClickListener(v -> {
-                    if (new GTasksHelper(ScreenManager.this).isLinked()) {
-                        collapseViews();
-                        new Handler().postDelayed(() -> startActivity(new Intent(ScreenManager.this, TaskManager.class)
-                                .putExtra(Constants.ITEM_ID_INTENT, listId)
-                                .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.CREATE)), 150);
-                    } else {
-                        showSnackbar(getString(R.string.can_not_connect));
-                    }
-                });
-                mFab.setVisibility(View.VISIBLE);
-            } else if (mTag.matches(FRAGMENT_NOTE)){
-                mFab.setOnClickListener(v -> {
-                    collapseViews();
-                    new Handler().postDelayed(() -> startActivity(new Intent(ScreenManager.this, NotesManager.class)), 150);
-                });
-                mFab.setVisibility(View.VISIBLE);
-            } else if (mTag.matches(FRAGMENT_GROUPS)){
-                mFab.setOnClickListener(v -> {
-                    collapseViews();
-                    new Handler().postDelayed(() -> startActivity(new Intent(ScreenManager.this, CategoryManager.class)), 150);
-                });
-                mFab.setVisibility(View.VISIBLE);
-            } else if (mTag.matches(FRAGMENT_PLACES)){
-                mFab.setOnClickListener(v -> {
-                    collapseViews();
-                    new Handler().postDelayed(() -> {
-                        if (LocationUtil.checkGooglePlayServicesAvailability(ScreenManager.this)) {
-                            startActivity(new Intent(ScreenManager.this, AddPlace.class));
-                        }
-                    }, 150);
-                });
-                mFab.setVisibility(View.VISIBLE);
-            } else if (mTag.matches(FRAGMENT_TEMPLATES)){
-                mFab.setOnClickListener(v -> {
-                    collapseViews();
-                    new Handler().postDelayed(() -> startActivity(new Intent(ScreenManager.this, NewTemplate.class)), 150);
-                });
-                mFab.setVisibility(View.VISIBLE);
-            }
+            mFab.setVisibility(View.VISIBLE);
         }
     }
 
@@ -323,8 +294,6 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
     public void onListIdChanged(long listId) {
         this.listId = listId;
     }
-
-    private ReturnScrollListener listener;
 
     @Override
     public void onListChanged(RecyclerView list) {
@@ -459,6 +428,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         } else {
             replace(ActiveFragment.newInstance(), FRAGMENT_ACTIVE);
         }
+        reloadButton();
     }
 
     @Override
@@ -819,21 +789,9 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         ViewUtils.showReveal(noteReminderCard);
         buttonReminderYes.setOnClickListener(v -> {
             ViewUtils.hideReveal(noteReminderCard);
-            DataBase db = new DataBase(ScreenManager.this);
-            if (!db.isOpen()) {
-                db.open();
-            }
             Calendar calendar1 = Calendar.getInstance();
             calendar1.setTimeInMillis(System.currentTimeMillis());
-            Cursor cf = new DataBase(ScreenManager.this).open().queryCategories();
-            String categoryId = null;
-            if (cf != null && cf.moveToFirst()) {
-                categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
-            }
-            if (cf != null) {
-                cf.close();
-            }
-            db.close();
+            String categoryId = GroupHelper.getDefaultUuId(this);
             long after = SharedPrefs.getInstance(this).getInt(Prefs.QUICK_NOTE_REMINDER_TIME) * 1000 * 60;
             long due = calendar1.getTimeInMillis() + after;
             JModel jModel = new JModel(note, Constants.TYPE_REMINDER, categoryId,
@@ -876,7 +834,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
     }
 
-    void getAndUseAuthTokenInAsyncTask(Account account) {
+    private void getAndUseAuthTokenInAsyncTask(Account account) {
         AsyncTask<Account, String, String> task = new AsyncTask<Account, String, String>() {
             ProgressDialog progressDlg;
             AsyncTask<Account, String, String> me = this;

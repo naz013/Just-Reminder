@@ -37,6 +37,7 @@ import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
@@ -241,17 +242,17 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
 
     public class Import extends AsyncTask<HashMap<String, Integer>, Void, Integer> {
 
-        private Context context;
+        private Context mContext;
         private ProgressDialog dialog;
 
         public Import(Context context) {
-            this.context = context;
+            this.mContext = context;
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            dialog = ProgressDialog.show(context, null, getString(R.string.please_wait), true, false);
+            dialog = ProgressDialog.show(mContext, null, getString(R.string.please_wait), true, false);
         }
 
         @SafeVarargs
@@ -260,7 +261,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
             if (params == null) {
                 return 0;
             }
-            CalendarManager cm = new CalendarManager(context);
+            CalendarManager cm = new CalendarManager(mContext);
             long currTime = System.currentTimeMillis();
 
             int eventsCount = 0;
@@ -268,7 +269,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
             if (map.containsKey(EVENT_KEY)) {
                 ArrayList<CalendarManager.EventItem> eventItems = cm.getEvents(map.get(EVENT_KEY));
                 if (eventItems != null && eventItems.size() > 0) {
-                    DataBase DB = new DataBase(context);
+                    DataBase DB = new DataBase(mContext);
                     DB.open();
                     Cursor c = DB.getCalendarEvents();
                     ArrayList<Long> ids = new ArrayList<>();
@@ -302,13 +303,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
                             String summary = item.getTitle();
 
                             String uuID = SyncHelper.generateID();
-                            Cursor cf = DB.queryCategories();
-                            String categoryId = null;
-                            if (cf != null && cf.moveToFirst()) {
-                                categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                            }
-                            if (cf != null) cf.close();
-
+                            String categoryId = GroupHelper.getDefaultUuId(mContext);
                             Calendar calendar = Calendar.getInstance();
                             long dtStart = item.getDtStart();
                             calendar.setTimeInMillis(dtStart);
@@ -317,7 +312,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
                                 JRecurrence jRecurrence = new JRecurrence(0, repeat, -1, null, 0);
                                 JModel jModel = new JModel(summary, Constants.TYPE_REMINDER, categoryId, uuID, dtStart,
                                         dtStart, jRecurrence, null, null);
-                                long id = new DateType(context, Constants.TYPE_REMINDER).save(jModel);
+                                long id = new DateType(mContext, Constants.TYPE_REMINDER).save(jModel);
                                 DB.addCalendarEvent(null, id, item.getId());
                             } else {
                                 if (repeat > 0) {
@@ -329,7 +324,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
                                     JRecurrence jRecurrence = new JRecurrence(0, repeat, -1, null, 0);
                                     JModel jModel = new JModel(summary, Constants.TYPE_REMINDER, categoryId, uuID, dtStart,
                                             dtStart, jRecurrence, null, null);
-                                    long id = new DateType(context, Constants.TYPE_REMINDER).save(jModel);
+                                    long id = new DateType(mContext, Constants.TYPE_REMINDER).save(jModel);
                                     DB.addCalendarEvent(null, id, item.getId());
                                 }
                             }
@@ -350,8 +345,8 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
 
             if (result > 0) {
                 Messages.toast(EventsImport.this, result + " " + getString(R.string.events_found));
-                new UpdatesHelper(context).updateWidget();
-                new Notifier(context).recreatePermanent();
+                new UpdatesHelper(mContext).updateWidget();
+                new Notifier(mContext).recreatePermanent();
                 finish();
             }
         }

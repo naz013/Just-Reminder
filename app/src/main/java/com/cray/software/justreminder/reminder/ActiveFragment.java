@@ -19,7 +19,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -45,6 +44,7 @@ import com.cray.software.justreminder.async.SyncTask;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
@@ -58,6 +58,7 @@ import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Show all active reminders.
@@ -284,16 +285,13 @@ public class ActiveFragment extends Fragment implements
         DataBase db = new DataBase(mContext);
         db.open();
         arrayAdapter.add(getString(R.string.all));
-        Cursor c = db.queryCategories();
-        if (c != null && c.moveToFirst()){
-            do {
-                String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                String catId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                arrayAdapter.add(title);
-                mGroupsIds.add(catId);
-            } while (c.moveToNext());
+        List<GroupItem> groups = db.getAllGroups();
+        if (groups.size() > 0){
+            for (GroupItem item : groups) {
+                arrayAdapter.add(item.getTitle());
+                mGroupsIds.add(item.getUuId());
+            }
         }
-        if (c != null) c.close();
         db.close();
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle(getString(R.string.choose_group));
@@ -321,16 +319,13 @@ public class ActiveFragment extends Fragment implements
                 mContext, android.R.layout.select_dialog_item);
         DataBase db = new DataBase(mContext);
         db.open();
-        Cursor c = db.queryCategories();
-        if (c != null && c.moveToFirst()){
-            do {
-                String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                String catId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                arrayAdapter.add(title);
-                mGroupsIds.add(catId);
-            } while (c.moveToNext());
+        List<GroupItem> groups = db.getAllGroups();
+        if (groups.size() > 0){
+            for (GroupItem item : groups) {
+                arrayAdapter.add(item.getTitle());
+                mGroupsIds.add(item.getUuId());
+            }
         }
-        if (c != null) c.close();
         db.close();
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle(getString(R.string.choose_group));

@@ -27,6 +27,7 @@ import android.support.v4.content.WakefulBroadcastReceiver;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -124,13 +125,7 @@ public class EventsCheckAlarm extends WakefulBroadcastReceiver {
                         }
                         String summary = item.getTitle();
                         String uuID = SyncHelper.generateID();
-                        Cursor cf = db.queryCategories();
-                        String categoryId = null;
-                        if (cf != null && cf.moveToFirst()) {
-                            categoryId = cf.getString(cf.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                        }
-                        if (cf != null) cf.close();
-
+                        String categoryId = GroupHelper.getDefaultUuId(context);
                         long due = item.getDtStart() + (repeat * AlarmManager.INTERVAL_DAY);
                         JRecurrence jRecurrence = new JRecurrence(0, repeat, -1, null, 0);
                         JModel jModel = new JModel(summary, Constants.TYPE_REMINDER, categoryId, uuID, due,
