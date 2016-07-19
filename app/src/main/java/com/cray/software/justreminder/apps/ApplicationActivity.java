@@ -25,6 +25,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 
 import com.cray.software.justreminder.R;
@@ -152,5 +153,15 @@ public class ApplicationActivity extends AppCompatActivity implements LoadListen
         intent.putExtra(Constants.SELECTED_APPLICATION, packageName);
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent();
+            setResult(RESULT_CANCELED, intent);
+            finish();
+        }
+        return true;
     }
 }
