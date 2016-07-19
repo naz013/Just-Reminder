@@ -30,7 +30,7 @@ import com.cray.software.justreminder.activities.AddPlace;
 import com.cray.software.justreminder.calls.FollowReminder;
 import com.cray.software.justreminder.calls.MissedCallDialog;
 import com.cray.software.justreminder.activities.QuickAddReminder;
-import com.cray.software.justreminder.activities.QuickSMS;
+import com.cray.software.justreminder.templates.QuickSMSActivity;
 import com.cray.software.justreminder.activities.ShowBirthday;
 import com.cray.software.justreminder.contacts.ContactsActivity;
 import com.cray.software.justreminder.feedback.SendReportActivity;
@@ -66,7 +66,7 @@ public class TestActivity extends AppCompatActivity implements SimpleListener {
         list.add(new ActionItem("File picker", FileExploreActivity.class));
         list.add(new ActionItem("Feedback screen", SendReportActivity.class));
         list.add(new ActionItem("After call screen", FollowReminder.class));
-        list.add(new ActionItem("Quick message", QuickSMS.class));
+        list.add(new ActionItem("Quick message", QuickSMSActivity.class));
         list.add(new ActionItem("Quick reminder", QuickAddReminder.class));
         list.add(new ActionItem("Add place", AddPlace.class));
         list.add(new ActionItem("Add birthday", AddBirthday.class));

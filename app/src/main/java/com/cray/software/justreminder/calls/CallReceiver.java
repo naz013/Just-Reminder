@@ -23,11 +23,12 @@ import android.database.Cursor;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
-import com.cray.software.justreminder.activities.QuickSMS;
+import com.cray.software.justreminder.templates.QuickSMSActivity;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.templates.TemplateHelper;
 
 public class CallReceiver extends BroadcastReceiver {
 
@@ -111,14 +112,9 @@ public class CallReceiver extends BroadcastReceiver {
                             //rejected call
                             //Show quick SMS sending window
                             if (mIncomingNumber != null && prefs.getBoolean(Prefs.QUICK_SMS)) {
-                                DataBase db = new DataBase(mContext);
-                                db.open();
-                                Cursor c = db.queryTemplates();
-                                int size = 0;
-                                if (c != null) size = c.getCount();
-                                db.close();
+                                int size = TemplateHelper.getInstance(mContext).getAll().size();
                                 if (size > 0) {
-                                    mContext.startActivity(new Intent(mContext, QuickSMS.class)
+                                    mContext.startActivity(new Intent(mContext, QuickSMSActivity.class)
                                             .putExtra(Constants.ITEM_ID_INTENT, mIncomingNumber)
                                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                                 }

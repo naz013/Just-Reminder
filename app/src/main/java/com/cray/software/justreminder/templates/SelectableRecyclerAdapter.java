@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.adapters;
+package com.cray.software.justreminder.templates;
 
 import android.content.Context;
 import android.support.v7.widget.CardView;
@@ -25,26 +25,26 @@ import android.view.ViewGroup;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
-import com.cray.software.justreminder.datas.TemplateDataProvider;
-import com.cray.software.justreminder.datas.models.TemplateModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 
-public class TemplateRecyclerAdapter extends RecyclerView.Adapter<TemplateRecyclerAdapter.ViewHolder> {
+import java.util.ArrayList;
+import java.util.List;
+
+public class SelectableRecyclerAdapter extends RecyclerView.Adapter<SelectableRecyclerAdapter.ViewHolder> {
 
     private ColorSetter cs;
-    private TemplateDataProvider provider;
-    private SimpleListener mEventListener;
+    private List<TemplateItem> mDataList;
+    private int selectedPosition = -1;
 
-    public TemplateRecyclerAdapter(Context context, TemplateDataProvider provider) {
-        this.provider = provider;
+    public SelectableRecyclerAdapter(Context context, List<TemplateItem> list) {
+        this.mDataList = new ArrayList<>(list);
         cs = new ColorSetter(context);
         setHasStableIds(true);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public RoboTextView textView;
         public CardView itemCard;
@@ -57,43 +57,53 @@ public class TemplateRecyclerAdapter extends RecyclerView.Adapter<TemplateRecycl
             if (Module.isLollipop()) {
                 itemCard.setCardElevation(Configs.CARD_ELEVATION);
             }
-
             v.setOnClickListener(this);
-            v.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            if (mEventListener != null) {
-                mEventListener.onItemClicked(getAdapterPosition(), textView);
-            }
+            selectItem(getAdapterPosition());
         }
+    }
 
-        @Override
-        public boolean onLongClick(View v) {
-            if (mEventListener != null) {
-                mEventListener.onItemLongClicked(getAdapterPosition(), textView);
-            }
-            return true;
+    public int getSelectedPosition() {
+        return selectedPosition;
+    }
+
+    public TemplateItem getItem(int position) {
+        return mDataList.get(position);
+    }
+
+    public void selectItem(int position) {
+        if (position == selectedPosition) return;
+        if (selectedPosition != -1 && selectedPosition < mDataList.size()) {
+            mDataList.get(selectedPosition).setSelected(false);
+            notifyItemChanged(selectedPosition);
+        }
+        this.selectedPosition = position;
+        if (position < mDataList.size()) {
+            mDataList.get(position).setSelected(true);
+            notifyItemChanged(position);
         }
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // create a new view
         View itemLayoutView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_simple_card, parent, false);
-
-        // create ViewHolder
-
         return new ViewHolder(itemLayoutView);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        final TemplateModel item = provider.getData().get(position);
+        final TemplateItem item = mDataList.get(position);
         String title = item.getTitle();
         holder.textView.setText(title);
+        if (item.getSelected()) {
+            holder.itemCard.setCardBackgroundColor(cs.getColor(cs.colorAccent()));
+        } else {
+            holder.itemCard.setCardBackgroundColor(cs.getCardStyle());
+        }
     }
 
     @Override
@@ -103,15 +113,11 @@ public class TemplateRecyclerAdapter extends RecyclerView.Adapter<TemplateRecycl
 
     @Override
     public long getItemId(int position) {
-        return provider.getData().get(position).getId();
+        return mDataList.get(position).getId();
     }
 
     @Override
     public int getItemCount() {
-        return provider.getData().size();
-    }
-
-    public void setEventListener(SimpleListener eventListener) {
-        mEventListener = eventListener;
+        return mDataList.size();
     }
 }

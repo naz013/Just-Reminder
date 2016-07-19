@@ -30,7 +30,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.activities.TemplatesList;
+import com.cray.software.justreminder.templates.TemplatesActivity;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Permissions;
@@ -162,7 +162,7 @@ public class ExtraSettingsFragment extends Fragment implements
                 break;
             case R.id.templates:
                 getActivity().getApplicationContext()
-                        .startActivity(new Intent(getActivity().getApplicationContext(), TemplatesList.class)
+                        .startActivity(new Intent(getActivity().getApplicationContext(), TemplatesActivity.class)
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
             case R.id.followReminderPrefs:

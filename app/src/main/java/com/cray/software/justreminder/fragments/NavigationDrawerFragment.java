@@ -46,6 +46,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
+import com.cray.software.justreminder.templates.TemplateHelper;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.squareup.picasso.Picasso;
@@ -204,14 +205,13 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         if (new GTasksHelper(mContext).isLinked()) {
             googleTasks.setVisibility(View.VISIBLE);
         }
-        DataBase db = new DataBase(mContext);
-        if (!db.isOpen()) db.open();
-        Cursor c = db.queryTemplates();
-        if (c != null && c.moveToFirst() && SharedPrefs.getInstance(mContext).getBoolean(Prefs.QUICK_SMS)){
+        int size = TemplateHelper.getInstance(mContext).getAll().size();
+        if (size > 0 && SharedPrefs.getInstance(mContext).getBoolean(Prefs.QUICK_SMS)){
             templates.setVisibility(View.VISIBLE);
         }
+        DataBase db = new DataBase(mContext);
         if (!db.isOpen()) db.open();
-        c = db.queryPlaces();
+        Cursor c = db.queryPlaces();
         if (c != null && c.moveToFirst()){
             places.setVisibility(View.VISIBLE);
         }

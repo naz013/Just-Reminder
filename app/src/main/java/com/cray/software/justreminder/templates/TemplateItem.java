@@ -14,33 +14,26 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.datas.models;
+package com.cray.software.justreminder.templates;
 
-public class IntroModel {
-
+public class TemplateItem {
     private String title;
-    private int color, drawable;
+    private long id;
+    private long date;
+    private boolean selected;
 
-    public IntroModel(String title, int drawable, int color) {
+    public TemplateItem(String title, long id, long date) {
         this.title = title;
-        this.color = color;
-        this.drawable = drawable;
+        this.id = id;
+        this.date = date;
     }
 
-    public int getColor() {
-        return color;
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 
-    public void setColor(int color) {
-        this.color = color;
-    }
-
-    public int getDrawable() {
-        return drawable;
-    }
-
-    public void setDrawable(int drawable) {
-        this.drawable = drawable;
+    public boolean getSelected() {
+        return selected;
     }
 
     public String getTitle() {
@@ -49,5 +42,21 @@ public class IntroModel {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getDate() {
+        return date;
+    }
+
+    public void setDate(long date) {
+        this.date = date;
     }
 }

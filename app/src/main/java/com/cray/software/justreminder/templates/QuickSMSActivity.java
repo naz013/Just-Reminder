@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.activities;
+package com.cray.software.justreminder.templates;
 
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.WindowManager;
-import android.widget.CursorAdapter;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.contacts.Contacts;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.roboto_views.RoboButton;
@@ -39,11 +37,14 @@ import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
-public class QuickSMS extends Activity {
+import java.util.List;
 
-    private ListView messagesList;
+public class QuickSMSActivity extends Activity {
+
+    private RecyclerView messagesList;
+    private SelectableRecyclerAdapter mAdapter;
     private String number;
-    private ColorSetter cs = new ColorSetter(QuickSMS.this);
+    private ColorSetter cs = new ColorSetter(QuickSMSActivity.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +53,7 @@ public class QuickSMS extends Activity {
         runOnUiThread(() -> getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD));
-
         setContentView(R.layout.quick_message_layout);
-
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
@@ -62,42 +61,38 @@ public class QuickSMS extends Activity {
 
         Intent i = getIntent();
         number = i.getStringExtra(Constants.ITEM_ID_INTENT);
-        messagesList = (ListView) findViewById(R.id.messagesList);
-
+        messagesList = (RecyclerView) findViewById(R.id.messagesList);
+        messagesList.setLayoutManager(new LinearLayoutManager(this));
         RoboButton buttonSend = (RoboButton) findViewById(R.id.buttonSend);
         buttonSend.setOnClickListener(v -> {
-            int position = messagesList.getCheckedItemPosition();
-            Cursor c = (Cursor) messagesList.getAdapter().getItem(position);
-            if (c != null) {
-                String message = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                sendSMS(number, message);
-            }
-            if (c != null) c.close();
-            removeFlags();
+            startSending();
         });
 
-        String name = Contacts.getNameFromNumber(number, QuickSMS.this);
+        String name = Contacts.getNameFromNumber(number, QuickSMSActivity.this);
 
         RoboTextView contactInfo = (RoboTextView) findViewById(R.id.contactInfo);
         contactInfo.setText(SuperUtil.appendString(name, "\n", number));
 
         loadTemplates();
-        if (messagesList.getAdapter().getCount() > 0) {
-            messagesList.setItemChecked(0, true);
+        if (mAdapter.getItemCount() > 0) {
+            mAdapter.selectItem(0);
         }
     }
 
+    private void startSending() {
+        int position = mAdapter.getSelectedPosition();
+        TemplateItem item = mAdapter.getItem(position);
+        if (item != null) {
+            Log.d("TAG", "startSending: " + item.getTitle());
+            sendSMS(number, item.getTitle());
+        }
+        removeFlags();
+    }
+
     private void loadTemplates(){
-        DataBase db = new DataBase(QuickSMS.this);
-        db.open();
-        SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(
-                QuickSMS.this,
-                android.R.layout.simple_list_item_single_choice,
-                db.queryTemplates(),
-                new String[] {Constants.COLUMN_TEXT},
-                new int[] { android.R.id.text1 }, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-        messagesList.setAdapter(simpleCursorAdapter);
-        db.close();
+        List<TemplateItem> list = TemplateHelper.getInstance(this).getAll();
+        mAdapter = new SelectableRecyclerAdapter(this, list);
+        messagesList.setAdapter(mAdapter);
     }
 
     public void removeFlags(){
@@ -112,10 +107,10 @@ public class QuickSMS extends Activity {
         String SENT = "SMS_SENT";
         String DELIVERED = "SMS_DELIVERED";
 
-        PendingIntent sentPI = PendingIntent.getBroadcast(QuickSMS.this, 0,
+        PendingIntent sentPI = PendingIntent.getBroadcast(QuickSMSActivity.this, 0,
                 new Intent(SENT), 0);
 
-        PendingIntent deliveredPI = PendingIntent.getBroadcast(QuickSMS.this,
+        PendingIntent deliveredPI = PendingIntent.getBroadcast(QuickSMSActivity.this,
                 0, new Intent(DELIVERED), 0);
 
         SmsManager sms = SmsManager.getDefault();

@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.activities;
+package com.cray.software.justreminder.templates;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -32,18 +31,17 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
 
-public class NewTemplate extends AppCompatActivity {
+public class TemplateManager extends AppCompatActivity {
 
-    private ColorSetter cs = new ColorSetter(NewTemplate.this);
+    private ColorSetter cs = new ColorSetter(TemplateManager.this);
     private EditText placeName;
     private TextView leftCharacters;
-    private long id;
+    private TemplateItem mItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +54,8 @@ public class NewTemplate extends AppCompatActivity {
         setRequestedOrientation(cs.getRequestOrientation());
 
         Intent intent = getIntent();
-        id = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
+        long id = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
+        mItem = TemplateHelper.getInstance(this).getTemplate(id);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -69,15 +68,8 @@ public class NewTemplate extends AppCompatActivity {
         leftCharacters.setText("");
 
         placeName = (EditText) findViewById(R.id.placeName);
-        if (id != 0) {
-            DataBase db = new DataBase(NewTemplate.this);
-            db.open();
-            Cursor c = db.getTemplate(id);
-            if (c != null && c.moveToFirst()){
-                placeName.setText(c.getString(c.getColumnIndex(Constants.COLUMN_TEXT)));
-            }
-            if (c != null) c.close();
-            db.close();
+        if (mItem != null) {
+            placeName.setText(mItem.getTitle());
         }
         placeName.addTextChangedListener(new TextWatcher() {
             @Override
@@ -103,14 +95,13 @@ public class NewTemplate extends AppCompatActivity {
             placeName.setError(getString(R.string.must_be_not_empty));
             return;
         }
-        DataBase db = new DataBase(NewTemplate.this);
-        db.open();
-        if (id != 0){
-            db.updateTemplate(id, text, System.currentTimeMillis());
+        if (mItem != null){
+            mItem.setDate(System.currentTimeMillis());
+            mItem.setTitle(text);
         } else {
-            db.addTemplate(text, System.currentTimeMillis());
+            mItem = new TemplateItem(text, 0, System.currentTimeMillis());
         }
-        db.close();
+        TemplateHelper.getInstance(this).saveTemplate(mItem);
         SharedPrefs.getInstance(this).putBoolean(Prefs.TEMPLATE_CHANGED, true);
         finish();
     }

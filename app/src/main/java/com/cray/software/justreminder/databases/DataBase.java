@@ -26,6 +26,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.groups.GroupItem;
+import com.cray.software.justreminder.templates.TemplateItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -388,32 +389,46 @@ public class DataBase {
 
     //Working with SMS templates table
 
-    public long addTemplate (String text, long dateTime) {
+    public long saveTemplate (TemplateItem templateItem) {
         openGuard();
         ContentValues cv = new ContentValues();
-        cv.put(Constants.COLUMN_TEXT, text);
-        cv.put(Constants.COLUMN_DATE_TIME, dateTime);
-        //Log.d(LOG_TAG, "data is inserted " + cv);
-        return db.insert(MESSAGES_TABLE_NAME, null, cv);
+        cv.put(Constants.COLUMN_TEXT, templateItem.getTitle());
+        cv.put(Constants.COLUMN_DATE_TIME, templateItem.getDate());
+        if (templateItem.getId() == 0) {
+            return db.insert(MESSAGES_TABLE_NAME, null, cv);
+        } else {
+            return db.update(MESSAGES_TABLE_NAME, cv, Constants.COLUMN_ID + "=" + templateItem.getId(), null);
+        }
     }
 
-    public boolean updateTemplate(long rowId, String text, long dateTime){
+    public TemplateItem getTemplate(long id) throws SQLException {
         openGuard();
-        ContentValues args = new ContentValues();
-        args.put(Constants.COLUMN_TEXT, text);
-        args.put(Constants.COLUMN_DATE_TIME, dateTime);
-        return db.update(MESSAGES_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
-    }
-
-    public Cursor getTemplate(long id) throws SQLException {
-        openGuard();
-        return db.query(MESSAGES_TABLE_NAME, null, Constants.COLUMN_ID  +
+        Cursor c = db.query(MESSAGES_TABLE_NAME, null, Constants.COLUMN_ID  +
                 "=" + id, null, null, null, null, null);
+        TemplateItem templateItem = null;
+        if (c != null && c.moveToFirst()) {
+            String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+            long date = c.getLong(c.getColumnIndex(Constants.COLUMN_DATE_TIME));
+            templateItem = new TemplateItem(title, id, date);
+        }
+        if (c != null) c.close();
+        return templateItem;
     }
 
-    public Cursor queryTemplates() throws SQLException {
+    public List<TemplateItem> queryTemplates() throws SQLException {
         openGuard();
-        return db.query(MESSAGES_TABLE_NAME, null, null, null, null, null, null);
+        List<TemplateItem> list = new ArrayList<>();
+        Cursor c = db.query(MESSAGES_TABLE_NAME, null, null, null, null, null, null);
+        if (c != null && c.moveToFirst()) {
+            do {
+                String title = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+                long date = c.getLong(c.getColumnIndex(Constants.COLUMN_DATE_TIME));
+                long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
+                list.add(new TemplateItem(title, id, date));
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+        return list;
     }
 
     public boolean deleteTemplate(long rowId) {

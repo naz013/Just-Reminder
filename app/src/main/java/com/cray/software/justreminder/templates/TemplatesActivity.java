@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.activities;
+package com.cray.software.justreminder.templates;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,10 +30,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.adapters.TemplateRecyclerAdapter;
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.TemplateDataProvider;
 import com.cray.software.justreminder.enums.QuickReturnViewType;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
@@ -45,13 +42,15 @@ import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.ReturnScrollListener;
 
-public class TemplatesList extends AppCompatActivity implements SimpleListener {
+import java.util.List;
+
+public class TemplatesActivity extends AppCompatActivity implements SimpleListener {
 
     private RecyclerView listView;
     private LinearLayout emptyItem;
-    private ColorSetter cs = new ColorSetter(TemplatesList.this);
+    private ColorSetter cs = new ColorSetter(TemplatesActivity.this);
     private FloatingActionButton mFab;
-    private TemplateDataProvider provider;
+    private List<TemplateItem> mDataList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,13 +84,13 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
         listView = (RecyclerView) findViewById(R.id.currentList);
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
-        mFab.setOnClickListener(v -> startActivity(new Intent(TemplatesList.this, NewTemplate.class)));
+        mFab.setOnClickListener(v -> startActivity(new Intent(TemplatesActivity.this, TemplateManager.class)));
     }
 
     private void loadTemplates(){
-        provider = new TemplateDataProvider(this);
+        mDataList = TemplateHelper.getInstance(this).getAll();
         reloadView();
-        TemplateRecyclerAdapter adapter = new TemplateRecyclerAdapter(this, provider);
+        TemplatesRecyclerAdapter adapter = new TemplatesRecyclerAdapter(this, mDataList);
         adapter.setEventListener(this);
         listView.setLayoutManager(new LinearLayoutManager(this));
         listView.setAdapter(adapter);  // requires *wrapped* adapter
@@ -106,7 +105,7 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
     }
 
     private void reloadView() {
-        int size = provider.getCount();
+        int size = mDataList.size();
         if (size > 0){
             listView.setVisibility(View.VISIBLE);
             emptyItem.setVisibility(View.GONE);
@@ -117,15 +116,12 @@ public class TemplatesList extends AppCompatActivity implements SimpleListener {
     }
 
     private void editTemplate(int position){
-        startActivity(new Intent(this, NewTemplate.class)
-                .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
+        startActivity(new Intent(this, TemplateManager.class)
+                .putExtra(Constants.ITEM_ID_INTENT, mDataList.get(position).getId()));
     }
 
     private void removeTemplate(int position){
-        DataBase db = new DataBase(this);
-        db.open();
-        db.deleteTemplate(provider.getItem(position).getId());
-        db.close();
+        TemplateHelper.getInstance(this).deleteTemplate(mDataList.get(position).getId());
         Messages.toast(this, getString(R.string.deleted));
         loadTemplates();
     }

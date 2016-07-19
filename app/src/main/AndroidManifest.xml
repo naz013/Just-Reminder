@@ -127,21 +127,21 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.QuickSMS"
+            android:name=".templates.QuickSMSActivity"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.NewTemplate"
+            android:name=".templates.TemplateManager"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.TemplatesList"
+            android:name=".templates.TemplatesActivity"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />

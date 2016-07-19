@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.fragments;
+package com.cray.software.justreminder.templates;
 
 import android.app.Activity;
 import android.content.Context;
@@ -32,12 +32,8 @@ import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
-import com.cray.software.justreminder.activities.NewTemplate;
-import com.cray.software.justreminder.adapters.TemplateRecyclerAdapter;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.TemplateDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -45,11 +41,13 @@ import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 
+import java.util.List;
+
 public class TemplatesFragment extends Fragment implements SimpleListener {
 
     private RecyclerView listView;
     private LinearLayout emptyItem;
-    private TemplateDataProvider provider;
+    private List<TemplateItem> mDataList;
     private NavigationCallbacks mCallbacks;
     private Activity mContext;
 
@@ -135,9 +133,9 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
 
     private void loadTemplates(){
         SharedPrefs.getInstance(mContext).putBoolean(Prefs.TEMPLATE_CHANGED, false);
-        provider = new TemplateDataProvider(mContext);
+        mDataList = TemplateHelper.getInstance(mContext).getAll();
         reloadView();
-        TemplateRecyclerAdapter adapter = new TemplateRecyclerAdapter(mContext, provider);
+        TemplatesRecyclerAdapter adapter = new TemplatesRecyclerAdapter(mContext, mDataList);
         adapter.setEventListener(this);
         listView.setLayoutManager(new LinearLayoutManager(mContext));
         listView.setAdapter(adapter);
@@ -148,7 +146,7 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
     }
 
     private void reloadView() {
-        int size = provider.getCount();
+        int size = mDataList.size();
         if (size > 0){
             listView.setVisibility(View.VISIBLE);
             emptyItem.setVisibility(View.GONE);
@@ -159,15 +157,12 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
     }
 
     private void editTemplate(int position){
-        startActivity(new Intent(mContext, NewTemplate.class)
-                .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
+        startActivity(new Intent(mContext, TemplateManager.class)
+                .putExtra(Constants.ITEM_ID_INTENT, mDataList.get(position).getId()));
     }
 
     private void removeTemplate(int position){
-        DataBase db = new DataBase(mContext);
-        db.open();
-        db.deleteTemplate(provider.getItem(position).getId());
-        db.close();
+        TemplateHelper.getInstance(mContext).deleteTemplate(mDataList.get(position).getId());
         if (mCallbacks != null) {
             mCallbacks.showSnackbar(R.string.deleted);
         }

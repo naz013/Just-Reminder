@@ -48,7 +48,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.cray.software.justreminder.activities.AddPlace;
 import com.cray.software.justreminder.activities.Help;
-import com.cray.software.justreminder.activities.NewTemplate;
+import com.cray.software.justreminder.templates.TemplateManager;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.async.DelayedAsync;
 import com.cray.software.justreminder.async.GetTasksListsAsync;
@@ -67,7 +67,7 @@ import com.cray.software.justreminder.fragments.NavigationDrawerFragment;
 import com.cray.software.justreminder.fragments.NotesFragment;
 import com.cray.software.justreminder.fragments.PlacesFragment;
 import com.cray.software.justreminder.fragments.TasksFragment;
-import com.cray.software.justreminder.fragments.TemplatesFragment;
+import com.cray.software.justreminder.templates.TemplatesFragment;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupManager;
 import com.cray.software.justreminder.groups.GroupsFragment;
@@ -264,7 +264,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
                 startActivity(new Intent(ScreenManager.this, AddPlace.class));
             }
         } else if (mTag.matches(FRAGMENT_TEMPLATES)){
-            startActivity(new Intent(ScreenManager.this, NewTemplate.class));
+            startActivity(new Intent(ScreenManager.this, TemplateManager.class));
         }
     }
 
