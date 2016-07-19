@@ -16,6 +16,8 @@
 
 package com.cray.software.justreminder.feedback;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -44,7 +46,6 @@ public class SendReportActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_send_report);
         setRequestedOrientation(cSetter.getRequestOrientation());
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
@@ -55,16 +56,24 @@ public class SendReportActivity extends AppCompatActivity {
         }
         toolbar.setTitle(getString(R.string.feedback));
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-
         mWeb = (WebView) findViewById(R.id.webView);
         mWeb.getSettings().setJavaScriptEnabled(true); // enable javascript
         mWeb.setWebViewClient(new WebViewClient() {
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
 
             }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                if (url != null && url.contains("https://bitbucket.org/nazar_suhovich/just-reminder/issues?status=new&status=open")) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         });
         mWeb.setWebChromeClient(new WebChromeClient());
-
         String url = "https://docs.google.com/forms/d/1vOCBU-izJBQ8VAsA1zYtfHFxe9Q1-Qm9rp_pYG13B1s/viewform";
         mWeb.loadUrl(url);
     }
