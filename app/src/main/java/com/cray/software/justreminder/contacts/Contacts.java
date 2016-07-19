@@ -20,6 +20,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.provider.ContactsContract;
 
@@ -183,11 +184,15 @@ public class Contacts {
         String number = "";
         String selection = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME+" like '%" + name +"%'";
         String[] projection = new String[] { ContactsContract.CommonDataKinds.Phone.NUMBER};
-        Cursor c = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                projection, selection, null, null);
-        if (c != null && c.moveToFirst()) {
-            number = c.getString(0);
-            c.close();
+        try {
+            Cursor c = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                    projection, selection, null, null);
+            if (c != null && c.moveToFirst()) {
+                number = c.getString(0);
+                c.close();
+            }
+        } catch (SQLiteException e) {
+            e.printStackTrace();
         }
         if (number == null){
             number = "noNumber";
