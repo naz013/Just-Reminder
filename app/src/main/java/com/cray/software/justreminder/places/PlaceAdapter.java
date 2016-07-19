@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.adapters;
+package com.cray.software.justreminder.places;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

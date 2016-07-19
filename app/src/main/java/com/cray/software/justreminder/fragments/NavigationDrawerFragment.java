@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -40,11 +39,11 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.places.PlacesHelper;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.templates.TemplateHelper;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
@@ -209,14 +208,10 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         if (size > 0 && SharedPrefs.getInstance(mContext).getBoolean(Prefs.QUICK_SMS)){
             templates.setVisibility(View.VISIBLE);
         }
-        DataBase db = new DataBase(mContext);
-        if (!db.isOpen()) db.open();
-        Cursor c = db.queryPlaces();
-        if (c != null && c.moveToFirst()){
+        int placesCount = PlacesHelper.getInstance(mContext).getAll().size();
+        if (placesCount > 0){
             places.setVisibility(View.VISIBLE);
         }
-        if (c != null) c.close();
-        db.close();
     }
 
     private boolean isAppInstalled(String packageName) {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.async;
+package com.cray.software.justreminder.groups;
 
 import android.content.Context;
 import android.database.Cursor;

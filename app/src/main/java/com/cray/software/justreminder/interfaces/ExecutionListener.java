@@ -16,10 +16,10 @@
 
 package com.cray.software.justreminder.interfaces;
 
-import com.cray.software.justreminder.datas.models.PlaceModel;
+import com.cray.software.justreminder.places.GooglePlaceItem;
 
 import java.util.ArrayList;
 
 public interface ExecutionListener {
-    void onFinish(ArrayList<PlaceModel> places);
+    void onFinish(ArrayList<GooglePlaceItem> places);
 }

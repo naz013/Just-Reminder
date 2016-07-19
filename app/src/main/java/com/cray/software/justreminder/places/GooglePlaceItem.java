@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.datas.models;
+package com.cray.software.justreminder.places;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
-public class PlaceModel {
+public class GooglePlaceItem {
     private String name, id, icon, address;
     private LatLng position;
     private int selected;
     private ArrayList<String> types;
 
-    public PlaceModel() {
+    public GooglePlaceItem() {
         selected = 0;
     }
 
-    public PlaceModel(String name, String id, String icon, String address,
-                      LatLng position, ArrayList<String> types, int selected){
+    public GooglePlaceItem(String name, String id, String icon, String address,
+                           LatLng position, ArrayList<String> types, int selected){
         this.name = name;
         this.id = id;
         this.icon = icon;

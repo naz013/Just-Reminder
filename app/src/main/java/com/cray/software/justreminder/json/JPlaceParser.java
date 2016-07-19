@@ -19,7 +19,7 @@ package com.cray.software.justreminder.json;
 import android.util.Log;
 
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.datas.models.PlaceModel;
+import com.cray.software.justreminder.places.GooglePlaceItem;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -43,8 +43,8 @@ public class JPlaceParser {
     private final static String ID = "id";
     private final static String TYPES = "types";
 
-    public PlaceModel getDetails(JSONObject jsonObject) {
-        PlaceModel model = new PlaceModel();
+    public GooglePlaceItem getDetails(JSONObject jsonObject) {
+        GooglePlaceItem model = new GooglePlaceItem();
         try {
             Log.d(Constants.LOG_TAG, "Details " + jsonObject.toString());
             if (jsonObject.has(NAME)) {

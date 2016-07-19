@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.fragments;
+package com.cray.software.justreminder.places;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -27,18 +27,18 @@ import android.view.ViewGroup;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
-import com.cray.software.justreminder.adapters.PlaceRecyclerAdapter;
-import com.cray.software.justreminder.datas.PlaceDataProvider;
 import com.cray.software.justreminder.fragments.helpers.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.reminder.Reminder;
 
+import java.util.List;
+
 public class GeolocationFragment extends Fragment implements SimpleListener {
 
-    private PlaceDataProvider provider;
     private MapFragment fragment;
     private Activity mContext;
+    private PlaceRecyclerAdapter mAdapter;
 
     public static GeolocationFragment newInstance() {
         return new GeolocationFragment();
@@ -79,18 +79,18 @@ public class GeolocationFragment extends Fragment implements SimpleListener {
     }
 
     private PlaceRecyclerAdapter loadPlaces(){
-        provider = new PlaceDataProvider(mContext, false);
-        PlaceRecyclerAdapter adapter = new PlaceRecyclerAdapter(mContext, provider, true);
-        adapter.setEventListener(this);
-        return adapter;
+        List<PlaceItem> list = PlacesHelper.getInstance(mContext).getAllReminders();
+        mAdapter = new PlaceRecyclerAdapter(mContext, list, true);
+        mAdapter.setEventListener(this);
+        return mAdapter;
     }
 
     private void editPlace(int position){
-        Reminder.edit(provider.getItem(position).getId(), mContext);
+        Reminder.edit(mAdapter.getItem(position).getId(), mContext);
     }
 
     private void moveToPlace(int position){
-        fragment.moveCamera(provider.getItem(position).getPosition());
+        fragment.moveCamera(mAdapter.getItem(position).getPosition());
     }
 
     @Override

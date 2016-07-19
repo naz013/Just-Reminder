@@ -25,6 +25,15 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.json.JParser;
+import com.cray.software.justreminder.json.JPlace;
+import com.cray.software.justreminder.places.PlaceItem;
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NextBase {
     private static final String DB_NAME = "reminder_base";
@@ -230,10 +239,40 @@ public class NextBase {
         return db.query(TABLE_NAME, null, null, null, null, null, null);
     }
 
-    public Cursor queryAllLocations() throws SQLException {
+    public Cursor getAllLocations() throws SQLException {
         openGuard();
         return db.query(TABLE_NAME, null, TYPE + " LIKE ?",
                 new String[] {"%"+ Constants.TYPE_LOCATION + "%" }, null, null, null);
+    }
+
+    public List<PlaceItem> queryAllLocations() throws SQLException {
+        openGuard();
+        Cursor c = db.query(TABLE_NAME, null, TYPE + " LIKE ?",
+                new String[] {"%"+ Constants.TYPE_LOCATION + "%" }, null, null, null);
+        List<PlaceItem> list = new ArrayList<>();
+        int mRadius = SharedPrefs.getInstance(mContext).getInt(Prefs.LOCATION_RADIUS);
+        if (c != null && c.moveToFirst()) {
+            do {
+                String text = c.getString(c.getColumnIndex(SUMMARY));
+                long id = c.getLong(c.getColumnIndex(_ID));
+                String json = c.getString(c.getColumnIndex(JSON));
+                int isDone = c.getInt(c.getColumnIndex(DB_STATUS));
+                int isArch = c.getInt(c.getColumnIndex(DB_LIST));
+                if (isArch == 0 && isDone == 0) {
+                    JPlace jPlace = new JParser(json).getPlace();
+                    double latitude = jPlace.getLatitude();
+                    double longitude = jPlace.getLongitude();
+                    int style = jPlace.getMarker();
+                    int radius = jPlace.getRadius();
+                    if (radius == -1) {
+                        radius = mRadius;
+                    }
+                    list.add(new PlaceItem(text, new LatLng(latitude, longitude), style, id, radius));
+                }
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+        return list;
     }
 
     public Cursor getByKey(String key) throws SQLException {

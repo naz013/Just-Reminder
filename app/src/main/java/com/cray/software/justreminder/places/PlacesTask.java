@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.async;
+package com.cray.software.justreminder.places;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.datas.models.PlaceModel;
 import com.cray.software.justreminder.interfaces.ExecutionListener;
 import com.cray.software.justreminder.json.JPlaceParser;
 import com.cray.software.justreminder.json.RequestBuilder;
@@ -36,7 +35,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class PlacesTask extends AsyncTask<Void, Void, ArrayList<PlaceModel>> {
+public class PlacesTask extends AsyncTask<Void, Void, ArrayList<GooglePlaceItem>> {
 
     private ExecutionListener listener;
     private String request;
@@ -50,7 +49,7 @@ public class PlacesTask extends AsyncTask<Void, Void, ArrayList<PlaceModel>> {
     }
 
     @Override
-    protected ArrayList<PlaceModel> doInBackground(Void... place) {
+    protected ArrayList<GooglePlaceItem> doInBackground(Void... place) {
         String result = "";
         String query = RequestBuilder.getSearch(request);
         if (lat != 0.0 && lng != 0.0) {
@@ -62,7 +61,7 @@ public class PlacesTask extends AsyncTask<Void, Void, ArrayList<PlaceModel>> {
         } catch(Exception e) {
             Log.d("Place Task", e.toString());
         }
-        ArrayList<PlaceModel> places = new ArrayList<>();
+        ArrayList<GooglePlaceItem> places = new ArrayList<>();
         if (result != null) {
             JPlaceParser parser = new JPlaceParser();
             try {
@@ -82,7 +81,7 @@ public class PlacesTask extends AsyncTask<Void, Void, ArrayList<PlaceModel>> {
     }
 
     @Override
-    protected void onPostExecute(ArrayList<PlaceModel> result) {
+    protected void onPostExecute(ArrayList<GooglePlaceItem> result) {
         super.onPostExecute(result);
         if (listener != null) {
             listener.onFinish(result);

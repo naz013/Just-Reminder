@@ -28,7 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.activities.PlacesList;
+import com.cray.software.justreminder.places.PlacesActivity;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.dialogs.MarkerStyle;
 import com.cray.software.justreminder.dialogs.TargetRadius;
@@ -122,7 +122,7 @@ public class LocationSettingsFragment extends Fragment implements View.OnClickLi
             case R.id.places:
                 getActivity().getApplicationContext()
                         .startActivity(new Intent(getActivity().getApplicationContext(),
-                                PlacesList.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                PlacesActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
             case R.id.tracker:
                 getActivity().getApplicationContext()

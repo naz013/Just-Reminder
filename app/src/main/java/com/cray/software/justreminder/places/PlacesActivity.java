@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.activities;
+package com.cray.software.justreminder.places;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -32,10 +32,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.adapters.PlaceRecyclerAdapter;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.PlaceDataProvider;
 import com.cray.software.justreminder.enums.QuickReturnViewType;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
@@ -49,14 +47,16 @@ import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.ReturnScrollListener;
 
-public class PlacesList extends AppCompatActivity implements SimpleListener {
+import java.util.List;
 
-    private RecyclerView listView;
-    private LinearLayout emptyItem;
-    private ColorSetter cs = new ColorSetter(PlacesList.this);
+public class PlacesActivity extends AppCompatActivity implements SimpleListener {
+
+    private RecyclerView mRecyclerView;
+    private LinearLayout mEmptyView;
+    private ColorSetter cs = new ColorSetter(PlacesActivity.this);
     private FloatingActionButton mFab;
 
-    private PlaceDataProvider provider;
+    private PlaceRecyclerAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +76,8 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
-        emptyItem = (LinearLayout) findViewById(R.id.emptyItem);
-        emptyItem.setVisibility(View.VISIBLE);
+        mEmptyView = (LinearLayout) findViewById(R.id.emptyItem);
+        mEmptyView.setVisibility(View.VISIBLE);
         RoboTextView emptyText = (RoboTextView) findViewById(R.id.emptyText);
         emptyText.setText(getString(R.string.no_places));
         ImageView emptyImage = (ImageView) findViewById(R.id.emptyImage);
@@ -87,16 +87,18 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
             emptyImage.setImageResource(R.drawable.ic_place_black_vector);
         }
 
-        listView = (RecyclerView) findViewById(R.id.currentList);
+        mRecyclerView = (RecyclerView) findViewById(R.id.currentList);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(v -> {
-            if (LocationUtil.checkGooglePlayServicesAvailability(PlacesList.this)) {
-                if (Permissions.checkPermission(PlacesList.this, Permissions.ACCESS_FINE_LOCATION)) {
-                    startActivity(new Intent(PlacesList.this, AddPlace.class)
+            if (LocationUtil.checkGooglePlayServicesAvailability(PlacesActivity.this)) {
+                if (Permissions.checkPermission(PlacesActivity.this, Permissions.ACCESS_FINE_LOCATION)) {
+                    startActivity(new Intent(PlacesActivity.this, AddPlaceActivity.class)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 } else {
-                    Permissions.requestPermission(PlacesList.this, 101,
+                    Permissions.requestPermission(PlacesActivity.this, 101,
                             Permissions.ACCESS_FINE_LOCATION);
                 }
             }
@@ -104,35 +106,33 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
     }
 
     private void loadPlaces(){
-        provider = new PlaceDataProvider(this, true);
+        List<PlaceItem> list = PlacesHelper.getInstance(this).getAll();
+        mAdapter = new PlaceRecyclerAdapter(this, list, false);
         reloadView();
-        PlaceRecyclerAdapter adapter = new PlaceRecyclerAdapter(this, provider, false);
-        adapter.setEventListener(this);
-        listView.setLayoutManager(new LinearLayoutManager(this));
-        listView.setAdapter(adapter);
-        listView.setItemAnimator(new DefaultItemAnimator());
+        mAdapter.setEventListener(this);
+        mRecyclerView.setAdapter(mAdapter);
         ReturnScrollListener scrollListener = new
                 ReturnScrollListener.Builder(QuickReturnViewType.FOOTER)
                 .footer(mFab)
                 .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
                 .isSnappable(true)
                 .build();
-        listView.setOnScrollListener(scrollListener);
+        mRecyclerView.setOnScrollListener(scrollListener);
     }
 
     private void reloadView() {
-        int size = provider.getCount();
+        int size = mAdapter.getItemCount();
         if (size > 0){
-            listView.setVisibility(View.VISIBLE);
-            emptyItem.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mEmptyView.setVisibility(View.GONE);
         } else {
-            listView.setVisibility(View.GONE);
-            emptyItem.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.GONE);
+            mEmptyView.setVisibility(View.VISIBLE);
         }
     }
 
     private void deletePlace(int position){
-        long id = provider.getItem(position).getId();
+        long id = mAdapter.getItem(position).getId();
         if (id != 0) {
             DataBase db = new DataBase(this);
             db.open();
@@ -144,8 +144,8 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
     }
 
     private void editPlace(int position){
-        startActivity(new Intent(this, AddPlace.class)
-                .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
+        startActivity(new Intent(this, AddPlaceActivity.class)
+                .putExtra(Constants.ITEM_ID_INTENT, mAdapter.getItem(position).getId()));
     }
 
     @Override
@@ -188,7 +188,7 @@ public class PlacesList extends AppCompatActivity implements SimpleListener {
         switch (requestCode){
             case 101:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    startActivity(new Intent(PlacesList.this, AddPlace.class));
+                    startActivity(new Intent(PlacesActivity.this, AddPlaceActivity.class));
                 }
                 break;
         }

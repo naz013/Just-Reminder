@@ -42,11 +42,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.adapters.GooglePlacesAdapter;
-import com.cray.software.justreminder.async.PlacesTask;
+import com.cray.software.justreminder.places.GooglePlacesAdapter;
+import com.cray.software.justreminder.places.PlacesTask;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.datas.models.PlaceModel;
+import com.cray.software.justreminder.places.GooglePlaceItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Permissions;
@@ -99,7 +99,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     /**
      * Array of user frequently used places;
      */
-    private ArrayList<PlaceModel> spinnerArray = new ArrayList<>();
+    private ArrayList<GooglePlaceItem> spinnerArray = new ArrayList<>();
 
     /**
      * init variables and flags;
@@ -636,7 +636,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     public ArrayList<JPlace> getPlaces() {
         ArrayList<JPlace> places = new ArrayList<>();
         if (spinnerArray != null && spinnerArray.size() > 0) {
-            for (PlaceModel model : spinnerArray) {
+            for (GooglePlaceItem model : spinnerArray) {
                 if (model.getSelected() == 1) {
                     if (model.getPosition() != null) {
                         places.add(new JPlace(model.getName(), model.getPosition().latitude,
@@ -653,7 +653,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         spinnerArray = new ArrayList<>();
         if (list != null && list.size() > 0) {
             for (JPlace model : list) {
-                spinnerArray.add(new PlaceModel(model.getName(), model.getId(),
+                spinnerArray.add(new GooglePlaceItem(model.getName(), model.getId(),
                         null, model.getAddress(), new LatLng(model.getLatitude(),
                         model.getLongitude()), model.getTypes(), select ? 1 : 0));
             }
@@ -663,7 +663,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     private void addMarkers() {
         mMap.clear();
         if (spinnerArray != null && spinnerArray.size() > 0) {
-            for (PlaceModel model : spinnerArray) {
+            for (GooglePlaceItem model : spinnerArray) {
                 addMarker(model.getPosition(), model.getName(), false, false, mRadius);
             }
         }
@@ -866,13 +866,13 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     }
 
     @Override
-    public void onFinish(ArrayList<PlaceModel> places) {
+    public void onFinish(ArrayList<GooglePlaceItem> places) {
         spinnerArray = places;
         if (spinnerArray.size() == 0)
             Messages.toast(mContext, mContext.getString(R.string.no_places_found));
 
         if (spinnerArray != null && spinnerArray.size() > 1) {
-            spinnerArray.add(new PlaceModel(mContext.getString(R.string.add_all), null, null, null, null, null, 0));
+            spinnerArray.add(new GooglePlaceItem(mContext.getString(R.string.add_all), null, null, null, null, null, 0));
         }
         refreshAdapter(true);
     }

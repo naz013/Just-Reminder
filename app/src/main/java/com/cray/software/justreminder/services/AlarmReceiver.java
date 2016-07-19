@@ -24,7 +24,7 @@ import android.database.Cursor;
 import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
 
-import com.cray.software.justreminder.activities.ReminderDialog;
+import com.cray.software.justreminder.reminder.ReminderDialog;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.enums.NewMethod;

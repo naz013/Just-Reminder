@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.activities;
+package com.cray.software.justreminder.reminder;
 
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
@@ -46,8 +46,6 @@ import com.cray.software.justreminder.json.JExport;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.reminder.DateType;
-import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
@@ -56,7 +54,7 @@ import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.Calendar;
 
-public class QuickAddReminder extends AppCompatActivity {
+public class AddReminderActivity extends AppCompatActivity {
 
     private RoboEditText task_text;
     private RoboEditText repeatDays;
@@ -69,13 +67,13 @@ public class QuickAddReminder extends AppCompatActivity {
     private int myMonth = 0;
     private int myDay = 1;
 
-    private GTasksHelper gtx = new GTasksHelper(QuickAddReminder.this);
+    private GTasksHelper gtx = new GTasksHelper(AddReminderActivity.this);
     private ColorSetter cs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(QuickAddReminder.this);
+        cs = new ColorSetter(AddReminderActivity.this);
         setTheme(cs.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
@@ -199,7 +197,7 @@ public class QuickAddReminder extends AppCompatActivity {
             c.set(Calendar.MINUTE, minute);
 
             timeField.setText(TimeUtil.getTime(c.getTime(),
-                    SharedPrefs.getInstance(QuickAddReminder.this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
+                    SharedPrefs.getInstance(AddReminderActivity.this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
         }
     };
 
@@ -221,7 +219,7 @@ public class QuickAddReminder extends AppCompatActivity {
         JRecurrence jRecurrence = new JRecurrence(0, repeat * AlarmManager.INTERVAL_DAY, -1, null, 0);
         JModel jModel = new JModel(text, type, categoryId,
                 SyncHelper.generateID(), startTime, startTime, jRecurrence, null, jExport);
-        long remId = new DateType(QuickAddReminder.this, Constants.TYPE_REMINDER).save(jModel);
+        long remId = new DateType(AddReminderActivity.this, Constants.TYPE_REMINDER).save(jModel);
         if (isCalendar || isStock) {
             ReminderUtils.exportToCalendar(this, text, startTime, remId, isCalendar, isStock);
         }

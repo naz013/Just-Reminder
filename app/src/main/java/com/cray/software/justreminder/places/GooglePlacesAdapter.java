@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.adapters;
+package com.cray.software.justreminder.places;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -25,7 +25,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.datas.models.PlaceModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
@@ -38,7 +37,7 @@ import java.util.ArrayList;
  */
 public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapter.ViewHolder> {
 
-    private ArrayList<PlaceModel> array = new ArrayList<>();
+    private ArrayList<GooglePlaceItem> array = new ArrayList<>();
 
     /**
      * Action listener for adapter.
@@ -51,7 +50,7 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
      * @param context application context.
      * @param array places data provider.
      */
-    public GooglePlacesAdapter(final Context context, ArrayList<PlaceModel> array) {
+    public GooglePlacesAdapter(final Context context, ArrayList<GooglePlaceItem> array) {
         this.array = array;
         isDark = new ColorSetter(context).isDark();
         setHasStableIds(true);
@@ -85,7 +84,7 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
 
             v.setOnClickListener(this);
             placeCheck.setOnClickListener(v1 -> {
-                PlaceModel item = array.get(getAdapterPosition());
+                GooglePlaceItem item = array.get(getAdapterPosition());
                 if (item.getSelected() == 0) item.setSelected(1);
                 else item.setSelected(0);
                 notifyDataSetChanged();
@@ -95,7 +94,7 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
         @Override
         public void onClick(final View v) {
             if (getAdapterPosition() == getLast() && getItemCount() > 1) {
-                for (PlaceModel item : array) item.setSelected(1);
+                for (GooglePlaceItem item : array) item.setSelected(1);
                 notifyDataSetChanged();
             } else {
                 if (mEventListener != null) {
@@ -119,7 +118,7 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        PlaceModel item = array.get(position);
+        GooglePlaceItem item = array.get(position);
         holder.textView.setText(item.getName());
         holder.text2.setText(item.getAddress());
         int icon = getIcon(item.getTypes());

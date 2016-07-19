@@ -25,7 +25,7 @@ import android.content.SharedPreferences;
 import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.activities.QuickAddReminder;
+import com.cray.software.justreminder.reminder.AddReminderActivity;
 
 public class QuickReminderWidget extends AppWidgetProvider{
 
@@ -45,7 +45,7 @@ public class QuickReminderWidget extends AppWidgetProvider{
                 R.layout.quick_reminder_widget_layout);
         int widgetColor = sp.getInt(QuickReminderWidgetConfig.QUICK_REMINDER_WIDGET_COLOR + widgetID, 0);
         rv.setInt(R.id.widgetBg, "setBackgroundResource", widgetColor);
-        Intent configIntent = new Intent(context, QuickAddReminder.class);
+        Intent configIntent = new Intent(context, AddReminderActivity.class);
         PendingIntent configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
         rv.setOnClickPendingIntent(R.id.imageView, configPendingIntent);
         appWidgetManager.updateAppWidget(widgetID, rv);

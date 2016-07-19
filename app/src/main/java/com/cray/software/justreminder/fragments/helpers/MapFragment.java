@@ -20,10 +20,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.location.Address;
 import android.location.Criteria;
-import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -45,15 +43,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.adapters.PlaceAdapter;
-import com.cray.software.justreminder.adapters.PlaceRecyclerAdapter;
 import com.cray.software.justreminder.async.GeocoderTask;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.PlaceDataProvider;
-import com.cray.software.justreminder.datas.models.MarkerModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Permissions;
@@ -61,6 +54,10 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.places.PlaceAdapter;
+import com.cray.software.justreminder.places.PlaceItem;
+import com.cray.software.justreminder.places.PlaceRecyclerAdapter;
+import com.cray.software.justreminder.places.PlacesHelper;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ViewUtils;
@@ -430,7 +427,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         if (mMap != null) {
             LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
             Criteria criteria = new Criteria();
-            Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+            android.location.Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
             if (location != null) {
                 LatLng pos = new LatLng(location.getLatitude(), location.getLongitude());
                 animate(pos);
@@ -791,25 +788,12 @@ public class MapFragment extends Fragment implements View.OnClickListener {
 
     private void loadPlaces(){
         if (placeRecyclerAdapter == null) {
-            DataBase DB = new DataBase(mContext);
-            DB.open();
-            Cursor c = DB.queryPlaces();
+            List<PlaceItem> list = PlacesHelper.getInstance(mContext).getAll();
             spinnerArray = new ArrayList<>();
             spinnerArray.clear();
-            if (c != null && c.moveToFirst()) {
-                do {
-                    String namePlace = c.getString(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_NAME));
-                    spinnerArray.add(namePlace);
-
-                } while (c.moveToNext());
-            } else {
-                spinnerArray.clear();
+            for (PlaceItem item : list) {
+                spinnerArray.add(item.getTitle());
             }
-            if (c != null) {
-                c.close();
-            }
-            DB.close();
-
             if (spinnerArray.isEmpty()) {
                 placesList.setVisibility(View.GONE);
                 emptyItem.setVisibility(View.VISIBLE);
@@ -823,19 +807,10 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                         hideLayers();
                         hidePlaces();
                         String placeName = spinnerArray.get(position);
-                        DataBase db = new DataBase(mContext);
-                        db.open();
-                        Cursor c = db.getPlace(placeName);
-                        if (c != null && c.moveToFirst()) {
-                            double latitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LATITUDE));
-                            double longitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE));
-                            LatLng latLng = new LatLng(latitude, longitude);
-                            addMarker(latLng, markerTitle, true, true, markerRadius);
+                        PlaceItem item = PlacesHelper.getInstance(mContext).getPlace(placeName);
+                        if (item != null) {
+                            addMarker(item.getPosition(), markerTitle, true, true, markerRadius);
                         }
-                        if (c != null) {
-                            c.close();
-                        }
-                        db.close();
                     }
 
                     @Override
@@ -852,7 +827,7 @@ public class MapFragment extends Fragment implements View.OnClickListener {
                 placesList.setVisibility(View.VISIBLE);
                 placesList.setLayoutManager(new LinearLayoutManager(mContext));
                 placesList.setAdapter(placeRecyclerAdapter);
-                addMarkers(placeRecyclerAdapter.getProvider());
+                addMarkers(placeRecyclerAdapter.getData());
             } else {
                 placesList.setVisibility(View.GONE);
                 emptyItem.setVisibility(View.VISIBLE);
@@ -860,10 +835,9 @@ public class MapFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void addMarkers(PlaceDataProvider provider) {
-        List<MarkerModel> list = provider.getData();
+    private void addMarkers(List<PlaceItem> list) {
         if (list != null && list.size() > 0) {
-            for (MarkerModel model : list) {
+            for (PlaceItem model : list) {
                 addMarker(model.getPosition(), model.getTitle(), false,
                         model.getIcon(), false, model.getRadius());
             }

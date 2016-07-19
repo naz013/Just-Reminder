@@ -46,7 +46,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import com.cray.software.justreminder.activities.AddPlace;
+import com.cray.software.justreminder.places.AddPlaceActivity;
 import com.cray.software.justreminder.activities.Help;
 import com.cray.software.justreminder.templates.TemplateManager;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
@@ -62,10 +62,10 @@ import com.cray.software.justreminder.enums.QuickReturnViewType;
 import com.cray.software.justreminder.feedback.SendReportActivity;
 import com.cray.software.justreminder.fragments.BackupsFragment;
 import com.cray.software.justreminder.fragments.EventsFragment;
-import com.cray.software.justreminder.fragments.GeolocationFragment;
+import com.cray.software.justreminder.places.GeolocationFragment;
 import com.cray.software.justreminder.fragments.NavigationDrawerFragment;
 import com.cray.software.justreminder.fragments.NotesFragment;
-import com.cray.software.justreminder.fragments.PlacesFragment;
+import com.cray.software.justreminder.places.PlacesFragment;
 import com.cray.software.justreminder.fragments.TasksFragment;
 import com.cray.software.justreminder.templates.TemplatesFragment;
 import com.cray.software.justreminder.groups.GroupHelper;
@@ -261,7 +261,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
             startActivity(new Intent(ScreenManager.this, GroupManager.class));
         } else if (mTag.matches(FRAGMENT_PLACES)){
             if (LocationUtil.checkGooglePlayServicesAvailability(ScreenManager.this)) {
-                startActivity(new Intent(ScreenManager.this, AddPlace.class));
+                startActivity(new Intent(ScreenManager.this, AddPlaceActivity.class));
             }
         } else if (mTag.matches(FRAGMENT_TEMPLATES)){
             startActivity(new Intent(ScreenManager.this, TemplateManager.class));

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.adapters;
+package com.cray.software.justreminder.places;
 
 import android.content.Context;
 import android.support.v7.widget.CardView;
@@ -26,12 +26,13 @@ import android.widget.ImageView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
-import com.cray.software.justreminder.datas.PlaceDataProvider;
-import com.cray.software.justreminder.datas.models.MarkerModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Recycler view adapter for frequently used places.
@@ -44,9 +45,9 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
     private ColorSetter cs;
 
     /**
-     * Data provider for markers.
+     * Data mDataList for markers.
      */
-    private PlaceDataProvider provider;
+    private List<PlaceItem> mDataList;
 
     /**
      * Action listener for adapter.
@@ -58,11 +59,11 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
     /**
      * Adapter constructor.
      * @param context application context.
-     * @param provider places data provider.
+     * @param provider places data mDataList.
      */
-    public PlaceRecyclerAdapter(final Context context, final PlaceDataProvider provider,
+    public PlaceRecyclerAdapter(final Context context, final List<PlaceItem> provider,
                                 boolean showMarker) {
-        this.provider = provider;
+        this.mDataList = new ArrayList<>(provider);
         this.showMarker = showMarker;
         cs = new ColorSetter(context);
         setHasStableIds(true);
@@ -126,7 +127,7 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        final MarkerModel item = provider.getData().get(position);
+        final PlaceItem item = mDataList.get(position);
         holder.textView.setText(item.getTitle());
         if (showMarker) {
             holder.markerImage.setVisibility(View.VISIBLE);
@@ -143,12 +144,20 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
 
     @Override
     public long getItemId(final int position) {
-        return provider.getData().get(position).getId();
+        return mDataList.get(position).getId();
     }
 
     @Override
     public int getItemCount() {
-        return provider.getData().size();
+        return mDataList.size();
+    }
+
+    public PlaceItem getItem(int position) {
+        return mDataList.get(position);
+    }
+
+    public List<PlaceItem> getData() {
+        return mDataList;
     }
 
     /**
@@ -157,9 +166,5 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
      */
     public void setEventListener(final SimpleListener eventListener) {
         mEventListener = eventListener;
-    }
-
-    public PlaceDataProvider getProvider() {
-        return provider;
     }
 }

@@ -192,7 +192,7 @@ public class Constants {
         public static final String COLUMN_CONTACT_MONTH = "month";
     }
 
-    public class LocationConstants {
+    public class Location {
         public static final String COLUMN_ID = "_id";
         public static final String COLUMN_LOCATION_NAME = "location_name";
         public static final String COLUMN_LOCATION_LATITUDE = "display_name";

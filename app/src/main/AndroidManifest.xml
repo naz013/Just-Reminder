@@ -148,7 +148,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.PlacesList"
+            android:name=".places.PlacesActivity"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -212,7 +212,7 @@
         <service android:name=".services.CheckPosition" />
 
         <activity
-            android:name=".activities.ReminderDialog"
+            android:name=".reminder.ReminderDialog"
             android:configChanges="keyboardHidden|orientation"
             android:noHistory="true"
             android:theme="@style/HomeWhiteTranslucent" >
@@ -355,14 +355,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.QuickAddReminder"
+            android:name=".reminder.AddReminderActivity"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.AddPlace"
+            android:name=".places.AddPlaceActivity"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />

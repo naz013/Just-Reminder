@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.fragments;
+package com.cray.software.justreminder.places;
 
 import android.app.Activity;
 import android.content.Context;
@@ -32,12 +32,9 @@ import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
-import com.cray.software.justreminder.activities.AddPlace;
-import com.cray.software.justreminder.adapters.PlaceRecyclerAdapter;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.PlaceDataProvider;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -45,11 +42,13 @@ import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 
+import java.util.List;
+
 public class PlacesFragment extends Fragment implements SimpleListener {
 
-    private RecyclerView listView;
+    private RecyclerView mRecyclerView;
     private LinearLayout emptyItem;
-    private PlaceDataProvider provider;
+    private PlaceRecyclerAdapter mAdapter;
     private NavigationCallbacks mCallbacks;
 
     private Activity mContext;
@@ -82,9 +81,9 @@ public class PlacesFragment extends Fragment implements SimpleListener {
         } else {
             emptyImage.setImageResource(R.drawable.ic_place_black_vector);
         }
-
-        listView = (RecyclerView) rootView.findViewById(R.id.currentList);
-
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.currentList);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         loadPlaces();
         return rootView;
     }
@@ -137,32 +136,29 @@ public class PlacesFragment extends Fragment implements SimpleListener {
 
     private void loadPlaces(){
         SharedPrefs.getInstance(mContext).putBoolean(Prefs.PLACE_CHANGED, false);
-        provider = new PlaceDataProvider(mContext, true);
+        List<PlaceItem> list = PlacesHelper.getInstance(mContext).getAll();
+        mAdapter = new PlaceRecyclerAdapter(mContext, list, false);
         reloadView();
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
-        PlaceRecyclerAdapter adapter = new PlaceRecyclerAdapter(mContext, provider, false);
-        adapter.setEventListener(this);
-        listView.setLayoutManager(mLayoutManager);
-        listView.setAdapter(adapter);
-        listView.setItemAnimator(new DefaultItemAnimator());
+        mAdapter.setEventListener(this);
+        mRecyclerView.setAdapter(mAdapter);
         if (mCallbacks != null) {
-            mCallbacks.onListChanged(listView);
+            mCallbacks.onListChanged(mRecyclerView);
         }
     }
 
     private void reloadView() {
-        int size = provider.getCount();
+        int size = mAdapter.getItemCount();
         if (size > 0){
-            listView.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.VISIBLE);
             emptyItem.setVisibility(View.GONE);
         } else {
-            listView.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.GONE);
             emptyItem.setVisibility(View.VISIBLE);
         }
     }
 
     private void deletePlace(int position){
-        long id = provider.getItem(position).getId();
+        long id = mAdapter.getItem(position).getId();
         if (id != 0) {
             DataBase db = new DataBase(mContext);
             db.open();
@@ -176,8 +172,8 @@ public class PlacesFragment extends Fragment implements SimpleListener {
     }
 
     private void editPlace(int position){
-        startActivity(new Intent(mContext, AddPlace.class)
-                .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
+        startActivity(new Intent(mContext, AddPlaceActivity.class)
+                .putExtra(Constants.ITEM_ID_INTENT, mAdapter.getItem(position).getId()));
     }
 
     @Override

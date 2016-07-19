@@ -26,7 +26,7 @@ import android.support.annotation.NonNull;
 import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.activities.QuickAddReminder;
+import com.cray.software.justreminder.reminder.AddReminderActivity;
 import com.cray.software.justreminder.dialogs.VoiceWidgetDialog;
 import com.cray.software.justreminder.reminder.ReminderManager;
 
@@ -81,7 +81,7 @@ public class EventsWidget extends AppWidgetProvider {
         rv.setInt(R.id.headerBg, "setBackgroundResource", headerColor);
         rv.setInt(R.id.widgetBg, "setBackgroundResource", backgroundColor);
 
-        Intent configIntent = new Intent(context, QuickAddReminder.class);
+        Intent configIntent = new Intent(context, AddReminderActivity.class);
         PendingIntent configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
         rv.setOnClickPendingIntent(R.id.tasksCount, configPendingIntent);
         rv.setInt(R.id.tasksCount, "setImageResource", plusIcon);

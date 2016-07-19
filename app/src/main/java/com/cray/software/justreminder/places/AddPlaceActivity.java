@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.activities;
+package com.cray.software.justreminder.places;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -30,6 +28,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.fragments.helpers.MapCallback;
 import com.cray.software.justreminder.fragments.helpers.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -39,15 +38,15 @@ import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.google.android.gms.maps.model.LatLng;
 
-public class AddPlace extends AppCompatActivity implements MapListener {
+public class AddPlaceActivity extends AppCompatActivity implements MapListener, MapCallback {
 
-    private ColorSetter cs = new ColorSetter(AddPlace.this);
+    private ColorSetter cs = new ColorSetter(AddPlaceActivity.this);
     private RoboEditText placeName;
-    private MapFragment googleMap;
+    private MapFragment mGoogleMap;
 
     private LatLng place;
     private String placeTitle;
-    private long id;
+    private PlaceItem mItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,69 +65,55 @@ public class AddPlace extends AppCompatActivity implements MapListener {
 
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
 
-        id = getIntent().getLongExtra(Constants.ITEM_ID_INTENT, 0);
+        long id = getIntent().getLongExtra(Constants.ITEM_ID_INTENT, 0);
+        mItem = PlacesHelper.getInstance(this).getPlace(id);
 
         placeName = (RoboEditText) findViewById(R.id.placeName);
-        googleMap = MapFragment.newInstance(false, false, false, false,
+        mGoogleMap = MapFragment.newInstance(false, false, false, false,
                 SharedPrefs.getInstance(this).getInt(Prefs.MARKER_STYLE), cs.isDark());
-        googleMap.setListener(this);
+        mGoogleMap.setListener(this);
+        mGoogleMap.setCallback(this);
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, googleMap)
+                .replace(R.id.fragment_container, mGoogleMap)
                 .addToBackStack(null)
                 .commit();
     }
 
     private void loadPlace() {
-        if (id != 0){
-            DataBase db = new DataBase(AddPlace.this);
-            db.open();
-            Cursor c = db.getPlace(id);
-            if (c != null && c.moveToFirst()){
-                String text = c.getString(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_NAME));
-                double latitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LATITUDE));
-                double longitude = c.getDouble(c.getColumnIndex(Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE));
-                googleMap.addMarker(new LatLng(latitude, longitude), text, true, true, -1);
-                placeName.setText(text);
-            }
-            if (c != null) c.close();
-            db.close();
+        if (mItem != null){
+            mGoogleMap.addMarker(mItem.getPosition(), mItem.getTitle(), true, true, -1);
+            placeName.setText(mItem.getTitle());
         }
     }
 
     private void addPlace(){
         if (place != null){
-            String task = placeName.getText().toString().trim();
-            if (task.matches("")){
-                task = placeTitle;
+            String name = placeName.getText().toString().trim();
+            if (name.matches("")){
+                name = placeTitle;
             }
-            if (task == null || task.matches("")) {
+            if (name == null || name.matches("")) {
                 placeName.setError(getString(R.string.must_be_not_empty));
                 return;
             }
             Double latitude = place.latitude;
             Double longitude = place.longitude;
 
-            DataBase db = new DataBase(AddPlace.this);
+            DataBase db = new DataBase(AddPlaceActivity.this);
             db.open();
-            if (id != 0){
-                db.updatePlace(id, task, latitude, longitude);
+            if (mItem != null){
+                mItem.setTitle(name);
+                mItem.setPosition(new LatLng(latitude, longitude));
             } else {
-                db.insertPlace(task, latitude, longitude);
+                mItem = new PlaceItem(name, new LatLng(latitude, longitude), 0);
             }
-            db.close();
+            PlacesHelper.getInstance(this).savePlace(mItem);
             SharedPrefs.getInstance(this).putBoolean(Prefs.PLACE_CHANGED, true);
             finish();
         } else {
-            Toast.makeText(AddPlace.this, getString(R.string.you_dont_select_place), Toast.LENGTH_SHORT).show();
+            Toast.makeText(AddPlaceActivity.this, getString(R.string.you_dont_select_place), Toast.LENGTH_SHORT).show();
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(Constants.LOG_TAG, "Map is ready");
-        loadPlace();
     }
 
     @Override
@@ -171,5 +156,10 @@ public class AddPlace extends AppCompatActivity implements MapListener {
     @Override
     public void onZoomClick(boolean isFull) {
 
+    }
+
+    @Override
+    public void onMapReady() {
+        loadPlace();
     }
 }

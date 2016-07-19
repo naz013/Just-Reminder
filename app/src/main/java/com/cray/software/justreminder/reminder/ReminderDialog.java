@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.activities;
+package com.cray.software.justreminder.reminder;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -77,8 +77,6 @@ import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.json.JShopping;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.reminder.Reminder;
-import com.cray.software.justreminder.reminder.Type;
 import com.cray.software.justreminder.services.DeliveredReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.services.SendReceiver;

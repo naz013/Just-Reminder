@@ -26,7 +26,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.groups.GroupItem;
+import com.cray.software.justreminder.places.PlaceItem;
 import com.cray.software.justreminder.templates.TemplateItem;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,16 +66,16 @@ public class DataBase {
 
     private static final String LOCATION_TABLE_CREATE =
             "create table " + LOCATION_TABLE_NAME + "(" +
-                    Constants.LocationConstants.COLUMN_ID + " integer primary key autoincrement, " +
-                    Constants.LocationConstants.COLUMN_LOCATION_NAME + " VARCHAR(255), " +
-                    Constants.LocationConstants.COLUMN_LOCATION_LATITUDE + " REAL, " +
-                    Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE + " REAL, " +
-                    Constants.LocationConstants.COLUMN_LOCATION_TECH + " VARCHAR(255), " +
-                    Constants.LocationConstants.COLUMN_LOCATION_TECH1+ " VARCHAR(255), " +
-                    Constants.LocationConstants.COLUMN_LOCATION_TECH2 + " INTEGER, " +
-                    Constants.LocationConstants.COLUMN_LOCATION_VAR + " INTEGER, " +
-                    Constants.LocationConstants.COLUMN_LOCATION_VAR1 + " REAL, " +
-                    Constants.LocationConstants.COLUMN_LOCATION_VAR2 + " REAL " +
+                    Constants.Location.COLUMN_ID + " integer primary key autoincrement, " +
+                    Constants.Location.COLUMN_LOCATION_NAME + " VARCHAR(255), " +
+                    Constants.Location.COLUMN_LOCATION_LATITUDE + " REAL, " +
+                    Constants.Location.COLUMN_LOCATION_LONGITUDE + " REAL, " +
+                    Constants.Location.COLUMN_LOCATION_TECH + " VARCHAR(255), " +
+                    Constants.Location.COLUMN_LOCATION_TECH1+ " VARCHAR(255), " +
+                    Constants.Location.COLUMN_LOCATION_TECH2 + " INTEGER, " +
+                    Constants.Location.COLUMN_LOCATION_VAR + " INTEGER, " +
+                    Constants.Location.COLUMN_LOCATION_VAR1 + " REAL, " +
+                    Constants.Location.COLUMN_LOCATION_VAR2 + " REAL " +
                     ");";
 
     private static final String EVENTS_TABLE_CREATE =
@@ -297,42 +299,67 @@ public class DataBase {
 
     public boolean deletePlace(long rowId) {
         openGuard();
-        return db.delete(LOCATION_TABLE_NAME, Constants.LocationConstants.COLUMN_ID + "=" + rowId, null) > 0;
+        return db.delete(LOCATION_TABLE_NAME, Constants.Location.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
-    public Cursor getPlace(String name) throws SQLException {
+    public PlaceItem getPlace(String name) throws SQLException {
         openGuard();
-        return db.query(LOCATION_TABLE_NAME, null, Constants.LocationConstants.COLUMN_LOCATION_NAME  +
+        Cursor c = db.query(LOCATION_TABLE_NAME, null, Constants.Location.COLUMN_LOCATION_NAME  +
                         "='" + name + "'", null, null, null, null, null);
+        PlaceItem item = null;
+        if (c != null && c.moveToFirst()) {
+            long id = c.getLong(c.getColumnIndex(Constants.Location.COLUMN_ID));
+            double lat = c.getDouble(c.getColumnIndex(Constants.Location.COLUMN_LOCATION_LATITUDE));
+            double lng = c.getDouble(c.getColumnIndex(Constants.Location.COLUMN_LOCATION_LONGITUDE));
+            item = new PlaceItem(name, new LatLng(lat, lng), id);
+        }
+        if (c != null) c.close();
+        return item;
     }
 
-    public Cursor getPlace(long id) throws SQLException {
+    public PlaceItem getPlace(long id) throws SQLException {
         openGuard();
-        return db.query(LOCATION_TABLE_NAME, null, Constants.LocationConstants.COLUMN_ID  +
+        Cursor c = db.query(LOCATION_TABLE_NAME, null, Constants.Location.COLUMN_ID  +
                         "=" + id, null, null, null, null, null);
+        PlaceItem item = null;
+        if (c != null && c.moveToFirst()) {
+            String name = c.getString(c.getColumnIndex(Constants.Location.COLUMN_LOCATION_NAME));
+            double lat = c.getDouble(c.getColumnIndex(Constants.Location.COLUMN_LOCATION_LATITUDE));
+            double lng = c.getDouble(c.getColumnIndex(Constants.Location.COLUMN_LOCATION_LONGITUDE));
+            item = new PlaceItem(name, new LatLng(lat, lng), id);
+        }
+        if (c != null) c.close();
+        return item;
     }
 
-    public Cursor queryPlaces() throws SQLException {
+    public List<PlaceItem> queryPlaces() throws SQLException {
         openGuard();
-        return db.query(LOCATION_TABLE_NAME, null, null, null, null, null, null);
+        Cursor c = db.query(LOCATION_TABLE_NAME, null, null, null, null, null, null);
+        List<PlaceItem> list = new ArrayList<>();
+        if (c != null && c.moveToFirst()) {
+            do {
+                long id = c.getLong(c.getColumnIndex(Constants.Location.COLUMN_ID));
+                String name = c.getString(c.getColumnIndex(Constants.Location.COLUMN_LOCATION_NAME));
+                double lat = c.getDouble(c.getColumnIndex(Constants.Location.COLUMN_LOCATION_LATITUDE));
+                double lng = c.getDouble(c.getColumnIndex(Constants.Location.COLUMN_LOCATION_LONGITUDE));
+                list.add(new PlaceItem(name, new LatLng(lat, lng), id));
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+        return list;
     }
 
-    public long insertPlace (String name, double latitude, double longitude) {
+    public long savePlace (PlaceItem placeItem) {
         openGuard();
         ContentValues cv = new ContentValues();
-        cv.put(Constants.LocationConstants.COLUMN_LOCATION_NAME, name);
-        cv.put(Constants.LocationConstants.COLUMN_LOCATION_LATITUDE, latitude);
-        cv.put(Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE, longitude);
-        return db.insert(LOCATION_TABLE_NAME, null, cv);
-    }
-
-    public boolean updatePlace(long rowId, String name, double latitude, double longitude){
-        openGuard();
-        ContentValues args = new ContentValues();
-        args.put(Constants.LocationConstants.COLUMN_LOCATION_NAME, name);
-        args.put(Constants.LocationConstants.COLUMN_LOCATION_LATITUDE, latitude);
-        args.put(Constants.LocationConstants.COLUMN_LOCATION_LONGITUDE, longitude);
-        return db.update(LOCATION_TABLE_NAME, args, Constants.LocationConstants.COLUMN_ID + "=" + rowId, null) > 0;
+        cv.put(Constants.Location.COLUMN_LOCATION_NAME, placeItem.getTitle());
+        cv.put(Constants.Location.COLUMN_LOCATION_LATITUDE, placeItem.getPosition().latitude);
+        cv.put(Constants.Location.COLUMN_LOCATION_LONGITUDE, placeItem.getPosition().longitude);
+        if (placeItem.getId() == 0) {
+            return db.insert(LOCATION_TABLE_NAME, null, cv);
+        } else {
+            return db.update(LOCATION_TABLE_NAME, cv, Constants.Location.COLUMN_ID + "=" + placeItem.getId(), null);
+        }
     }
 
     //Events table

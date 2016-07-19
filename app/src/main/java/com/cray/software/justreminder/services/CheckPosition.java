@@ -26,7 +26,6 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.activities.ReminderDialog;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.NextBase;
@@ -34,6 +33,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.json.JParser;
 import com.cray.software.justreminder.json.JPlace;
+import com.cray.software.justreminder.reminder.ReminderDialog;
 import com.cray.software.justreminder.utils.LocationUtil;
 
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public class CheckPosition extends IntentService {
         TimeCount timeCount = new TimeCount(getApplicationContext());
         boolean isEnabled = SharedPrefs.getInstance(getApplicationContext()).getBoolean(Prefs.TRACKING_NOTIFICATION);
         db.open();
-        Cursor c = db.queryAllLocations();
+        Cursor c = db.getAllLocations();
         if (c != null && c.moveToFirst()) {
             do {
                 long id = c.getLong(c.getColumnIndex(NextBase._ID));
