@@ -266,6 +266,7 @@ public class DropboxHelper {
                     } catch (DropboxException e) {
                         Log.e("DbLog", "Something went wrong while uploading.");
                     }
+                    if (file.exists()) file.delete();
                 }
             }
         }
@@ -281,7 +282,6 @@ public class DropboxHelper {
             if (fileName != null) {
                 File dir = MemoryUtil.getRDir();
                 if (dir == null) return;
-
                 File tmpFile = new File(dir.toString(), fileName);
                 FileInputStream fis = null;
                 try {
@@ -296,6 +296,7 @@ public class DropboxHelper {
                 } catch (DropboxException e) {
                     Log.e("DbLog", "Something went wrong while uploading.");
                 }
+                if (tmpFile.exists()) tmpFile.delete();
             } else {
                 upload(Constants.DIR_SD);
             }
@@ -440,14 +441,17 @@ public class DropboxHelper {
                         String fileName = e.fileName();
                         File dir = MemoryUtil.getDRDir();
                         if (dir == null) return;
-
                         File localFile = new File(dir + "/" + fileName);
                         String cloudFile = "/" + dbxFolder + fileName;
                         downloadFile(localFile, cloudFile);
-
                         try {
                             new SyncHelper(mContext).reminderFromJson(localFile.toString());
                         } catch (JSONException e1) {
+                            e1.printStackTrace();
+                        }
+                        try {
+                            mDBApi.delete(e.path);
+                        } catch (DropboxException e1) {
                             e1.printStackTrace();
                         }
                     }
@@ -494,14 +498,17 @@ public class DropboxHelper {
                         String fileName = e.fileName();
                         File dir = MemoryUtil.getDNDir();
                         if (dir == null) return;
-
                         File localFile = new File(dir + "/" + fileName);
                         String cloudFile = "/" + dbxNoteFolder + fileName;
                         downloadFile(localFile, cloudFile);
-
                         try {
                             new SyncHelper(mContext).noteFromJson(localFile.toString(), fileName);
                         } catch (JSONException e1) {
+                            e1.printStackTrace();
+                        }
+                        try {
+                            mDBApi.delete(e.path);
+                        } catch (DropboxException e1) {
                             e1.printStackTrace();
                         }
                     }
@@ -527,14 +534,17 @@ public class DropboxHelper {
                         String fileName = e.fileName();
                         File dir = MemoryUtil.getDGroupsDir();
                         if (dir == null) return;
-
                         File localFile = new File(dir + "/" + fileName);
                         String cloudFile = "/" + dbxGroupFolder + fileName;
                         downloadFile(localFile, cloudFile);
-
                         try {
                             new SyncHelper(mContext).groupFromJson(localFile);
                         } catch (JSONException e1) {
+                            e1.printStackTrace();
+                        }
+                        try {
+                            mDBApi.delete(e.path);
+                        } catch (DropboxException e1) {
                             e1.printStackTrace();
                         }
                     }
@@ -546,7 +556,7 @@ public class DropboxHelper {
     /**
      * Download on SD Card all birthday backup files found on Dropbox.
      */
-    public void downloadBirthday(boolean deleteFile) {
+    public void downloadBirthday() {
         startSession();
         if (isLinked()) {
             try {
@@ -560,16 +570,17 @@ public class DropboxHelper {
                         String fileName = e.fileName();
                         File dir = MemoryUtil.getDBDir();
                         if (dir == null) return;
-
                         File localFile = new File(dir + "/" + fileName);
                         String cloudFile = "/" + dbxBirthFolder + fileName;
                         downloadFile(localFile, cloudFile);
-
-                        if (deleteFile) deleteBirthday(fileName);
-
                         try {
                             new SyncHelper(mContext).birthdayFromJson(localFile);
                         } catch (JSONException e1) {
+                            e1.printStackTrace();
+                        }
+                        try {
+                            mDBApi.delete(e.path);
+                        } catch (DropboxException e1) {
                             e1.printStackTrace();
                         }
                     }

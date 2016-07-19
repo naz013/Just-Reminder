@@ -65,7 +65,7 @@ public class IOHelper {
         }
         if (isConnected){
             new DropboxHelper(mContext).deleteReminder(name);
-            new GDriveHelper(mContext).deleteReminder(name);
+            new GDriveHelper(mContext).deleteReminderFileByName(name);
         }
     }
 
@@ -234,16 +234,16 @@ public class IOHelper {
      * Restore all birthdays from backup files.
      * @param isCloud restore from cloud.
      */
-    public void restoreBirthday(boolean isCloud, boolean deleteFile){
+    public void restoreBirthday(boolean isCloud){
         try {
             new SyncHelper(mContext).birthdayFromJson(null);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         if (isConnected && isCloud) {
-            new DropboxHelper(mContext).downloadBirthday(deleteFile);
+            new DropboxHelper(mContext).downloadBirthday();
             try {
-                new GDriveHelper(mContext).downloadBirthday(deleteFile);
+                new GDriveHelper(mContext).downloadBirthday();
             } catch (IOException e) {
                 e.printStackTrace();
             }

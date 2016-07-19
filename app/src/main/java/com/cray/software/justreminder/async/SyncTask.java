@@ -101,7 +101,6 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
         }
         //export & import reminders
         publishProgress(mContext.getString(R.string.syncing_reminders));
-
         ioHelper.restoreReminder(true);
         ioHelper.backupReminder(true);
 
@@ -116,7 +115,7 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
         //export & import birthdays
         if (prefs.getBoolean(Prefs.SYNC_BIRTHDAYS)) {
             publishProgress(mContext.getString(R.string.syncing_birthdays));
-            ioHelper.restoreBirthday(true, true);
+            ioHelper.restoreBirthday(true);
             ioHelper.backupBirthday(true);
         }
         return true;

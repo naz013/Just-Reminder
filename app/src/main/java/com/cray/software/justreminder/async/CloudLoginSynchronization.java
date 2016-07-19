@@ -41,15 +41,15 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
-public class CloudLogin extends AsyncTask<Void, String, Void> {
+public class CloudLoginSynchronization extends AsyncTask<Void, String, Void> {
 
     private Context mContext;
     private boolean isChecked = false;
     private LoginListener listener;
     private ProgressDialog dialog;
 
-    public CloudLogin(Context context, boolean isChecked,
-                    LoginListener listener){
+    public CloudLoginSynchronization(Context context, boolean isChecked,
+                                     LoginListener listener){
         this.mContext = context;
         this.isChecked = isChecked;
         this.listener = listener;
@@ -89,7 +89,7 @@ public class CloudLogin extends AsyncTask<Void, String, Void> {
             //import birthdays
             if (isChecked) {
                 publishProgress(mContext.getString(R.string.syncing_birthdays));
-                ioHelper.restoreBirthday(true, false);
+                ioHelper.restoreBirthday(true);
             }
         }
 

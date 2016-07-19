@@ -64,7 +64,7 @@ public class DeleteGroupAsync extends AsyncTask<Void, Void, Void> {
             dbx.deleteGroup(uuId);
         }
         if (gdx.isLinked() && isInternet) {
-            gdx.deleteGroup(uuId);
+            gdx.deleteGroupFileByName(uuId);
         }
         NextBase db = new NextBase(mContext);
         db.open();
@@ -93,7 +93,7 @@ public class DeleteGroupAsync extends AsyncTask<Void, Void, Void> {
                     dbx.deleteReminder(remUUId);
                 }
                 if (gdx.isLinked() && isInternet) {
-                    gdx.deleteReminder(uuId);
+                    gdx.deleteReminderFileByName(uuId);
                 }
             } while (c.moveToNext());
         }

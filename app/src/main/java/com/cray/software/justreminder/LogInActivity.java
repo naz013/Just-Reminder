@@ -34,8 +34,8 @@ import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 
-import com.cray.software.justreminder.async.CloudLogin;
-import com.cray.software.justreminder.async.LocalLogin;
+import com.cray.software.justreminder.async.CloudLoginSynchronization;
+import com.cray.software.justreminder.async.LocalLoginSynchronization;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
@@ -150,7 +150,7 @@ public class LogInActivity extends Activity implements LoginListener {
             if (enabled) {
                 if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL,
                         Permissions.ACCESS_FINE_LOCATION)) {
-                    new LocalLogin(LogInActivity.this, checkBox.isChecked(), LogInActivity.this).execute();
+                    new LocalLoginSynchronization(LogInActivity.this, checkBox.isChecked(), LogInActivity.this).execute();
                     enabled = false;
                 } else {
                     Permissions.requestPermission(LogInActivity.this, 101,
@@ -167,7 +167,7 @@ public class LogInActivity extends Activity implements LoginListener {
         switch (requestCode){
             case 101:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    new LocalLogin(LogInActivity.this, checkBox.isChecked(), LogInActivity.this).execute();
+                    new LocalLoginSynchronization(LogInActivity.this, checkBox.isChecked(), LogInActivity.this).execute();
                     enabled = false;
                 } else {
                     checkGroups();
@@ -199,7 +199,7 @@ public class LogInActivity extends Activity implements LoginListener {
                 break;
             case 104:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    new CloudLogin(LogInActivity.this, checkBox.isChecked(), this).execute();
+                    new CloudLoginSynchronization(LogInActivity.this, checkBox.isChecked(), this).execute();
                     enabled = false;
                 } else {
                     checkGroups();
@@ -229,7 +229,7 @@ public class LogInActivity extends Activity implements LoginListener {
                 SharedPrefs.getInstance(this).putBoolean(Prefs.AUTO_BACKUP, true);
                 if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL,
                         Permissions.WRITE_EXTERNAL, Permissions.ACCESS_FINE_LOCATION)) {
-                    new CloudLogin(LogInActivity.this, checkBox.isChecked(), this).execute();
+                    new CloudLoginSynchronization(LogInActivity.this, checkBox.isChecked(), this).execute();
                     enabled = false;
                 } else {
                     Permissions.requestPermission(LogInActivity.this, 104,
@@ -330,7 +330,7 @@ public class LogInActivity extends Activity implements LoginListener {
             if (Permissions.checkPermission(LogInActivity.this,
                     Permissions.READ_EXTERNAL,
                     Permissions.WRITE_EXTERNAL)) {
-                new CloudLogin(LogInActivity.this, checkBox.isChecked(), this).execute();
+                new CloudLoginSynchronization(LogInActivity.this, checkBox.isChecked(), this).execute();
             } else {
                 Permissions.requestPermission(LogInActivity.this, 104,
                         Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);
@@ -345,7 +345,7 @@ public class LogInActivity extends Activity implements LoginListener {
             if (Permissions.checkPermission(LogInActivity.this,
                     Permissions.READ_EXTERNAL,
                     Permissions.WRITE_EXTERNAL)) {
-                new CloudLogin(LogInActivity.this, checkBox.isChecked(), this).execute();
+                new CloudLoginSynchronization(LogInActivity.this, checkBox.isChecked(), this).execute();
             } else {
                 Permissions.requestPermission(LogInActivity.this, 104,
                         Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);

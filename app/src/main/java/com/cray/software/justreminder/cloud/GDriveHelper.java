@@ -18,6 +18,7 @@ package com.cray.software.justreminder.cloud;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
@@ -51,6 +52,8 @@ import java.util.Collections;
  */
 public class GDriveHelper {
 
+    private static final String TAG = "GDriveHelper";
+
     private Context mContext;
 
     private final HttpTransport mTransport = AndroidHttp.newCompatibleTransport();
@@ -66,10 +69,10 @@ public class GDriveHelper {
      * Authorization method.
      */
     public void authorize(){
-        GoogleAccountCredential m_credential = GoogleAccountCredential.usingOAuth2(mContext, Collections.singleton(DriveScopes.DRIVE));
-        m_credential.setSelectedAccountName(SyncHelper.decrypt(SharedPrefs.getInstance(mContext).getString(Prefs.DRIVE_USER)));
+        GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(mContext, Collections.singleton(DriveScopes.DRIVE));
+        credential.setSelectedAccountName(SyncHelper.decrypt(SharedPrefs.getInstance(mContext).getString(Prefs.DRIVE_USER)));
         driveService = new Drive.Builder(
-                mTransport, mJsonFactory, m_credential).setApplicationName(APPLICATION_NAME)
+                mTransport, mJsonFactory, credential).setApplicationName(APPLICATION_NAME)
                 .build();
     }
 
@@ -142,6 +145,7 @@ public class GDriveHelper {
      * @throws IOException
      */
     public void saveReminderToDrive() throws IOException {
+        Log.d(TAG, "saveReminderToDrive: ");
         if (isLinked()) {
             authorize();
             String folderId = getFolderId();
@@ -159,8 +163,7 @@ public class GDriveHelper {
                     fileMetadata.setName(file.getName());
                     fileMetadata.setDescription("Reminder Backup");
                     fileMetadata.setParents(Collections.singletonList(folderId));
-                    FileContent mediaContent = new FileContent("text/plain", file);
-                    deleteReminder(file.getName());
+                    FileContent mediaContent = new FileContent("application/json", file);
                     driveService.files().create(fileMetadata, mediaContent)
                             .setFields("id")
                             .execute();
@@ -192,7 +195,6 @@ public class GDriveHelper {
                     fileMetadata.setDescription("Note Backup");
                     fileMetadata.setParents(Collections.singletonList(folderId));
                     FileContent mediaContent = new FileContent("text/plain", file);
-                    deleteNote(file.getName());
                     driveService.files().create(fileMetadata, mediaContent)
                             .setFields("id")
                             .execute();
@@ -224,7 +226,6 @@ public class GDriveHelper {
                     fileMetadata.setDescription("Group Backup");
                     fileMetadata.setParents(Collections.singletonList(folderId));
                     FileContent mediaContent = new FileContent("text/plain", file);
-                    deleteGroup(file.getName());
                     driveService.files().create(fileMetadata, mediaContent)
                             .setFields("id")
                             .execute();
@@ -251,13 +252,14 @@ public class GDriveHelper {
             File[] files = sdPathDr.listFiles();
             if (files != null) {
                 for (File file : files) {
+                    if (file.getName().contains("null")) continue;
                     com.google.api.services.drive.model.File fileMetadata = new com.google.api.services.drive.model.File();
                     fileMetadata.setName(file.getName());
                     fileMetadata.setDescription("Birthday Backup");
                     fileMetadata.setParents(Collections.singletonList(folderId));
                     FileContent mediaContent = new FileContent("text/plain", file);
-                    deleteBirthday(file.getName());
-                    driveService.files().create(fileMetadata, mediaContent)
+                    driveService.files()
+                            .create(fileMetadata, mediaContent)
                             .setFields("id")
                             .execute();
                 }
@@ -270,14 +272,14 @@ public class GDriveHelper {
      * @throws IOException
      */
     public void downloadReminder() throws IOException {
+        Log.d(TAG, "downloadReminder: ");
         if (isLinked()) {
             authorize();
             File sdPath = Environment.getExternalStorageDirectory();
             File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_GDRIVE_TMP);
-            //deleteFolders();
             Drive.Files.List request;
             try {
-                request = driveService.files().list().setQ("mimeType = 'application/json'"); // .setQ("mimeType=\"text/plain\"");
+                request = driveService.files().list().setQ("mimeType = 'application/json'").setFields("nextPageToken, files"); // .setQ("mimeType=\"text/plain\"");
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
@@ -313,6 +315,10 @@ public class GDriveHelper {
                         } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
+                        if (file.exists()) {
+                            file.delete();
+                        }
+                        deleteReminderFile(f.getId());
                     }
                 }
                 request.setPageToken(files.getNextPageToken());
@@ -329,10 +335,9 @@ public class GDriveHelper {
             authorize();
             File sdPath = Environment.getExternalStorageDirectory();
             File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_NOTES_SD_GDRIVE_TMP);
-            //deleteFolders();
             Drive.Files.List request;
             try {
-                request = driveService.files().list().setQ("mimeType = 'text/plain'"); // .setQ("mimeType=\"text/plain\"");
+                request = driveService.files().list().setQ("mimeType = 'text/plain'").setFields("nextPageToken, files"); // .setQ("mimeType=\"text/plain\"");
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
@@ -351,7 +356,6 @@ public class GDriveHelper {
                     if (!sdPathDr.exists() && !sdPathDr.mkdirs()) {
                         throw new IOException("Unable to create parent directory");
                     }
-
                     if (title.endsWith(FileConfig.FILE_NAME_NOTE)) {
                         File file = new File(sdPathDr, title);
                         if (!file.exists()) {
@@ -368,6 +372,10 @@ public class GDriveHelper {
                         } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
+                        if (file.exists()) {
+                            file.delete();
+                        }
+                        deleteNoteFile(f.getId());
                     }
                 }
                 request.setPageToken(files.getNextPageToken());
@@ -384,10 +392,9 @@ public class GDriveHelper {
             authorize();
             File sdPath = Environment.getExternalStorageDirectory();
             File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_GROUP_SD_GDRIVE_TMP);
-            //deleteFolders();
             Drive.Files.List request;
             try {
-                request = driveService.files().list().setQ("mimeType = 'text/plain'"); // .setQ("mimeType=\"text/plain\"");
+                request = driveService.files().list().setQ("mimeType = 'text/plain'").setFields("nextPageToken, files"); // .setQ("mimeType=\"text/plain\"");
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
@@ -406,7 +413,6 @@ public class GDriveHelper {
                     if (!sdPathDr.exists() && !sdPathDr.mkdirs()) {
                         throw new IOException("Unable to create parent directory");
                     }
-
                     if (title.endsWith(FileConfig.FILE_NAME_GROUP)) {
                         File file = new File(sdPathDr, title);
                         if (!file.exists()) {
@@ -423,6 +429,10 @@ public class GDriveHelper {
                         } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
+                        if (file.exists()) {
+                            file.delete();
+                        }
+                        deleteGroupFile(f.getId());
                     }
                 }
                 request.setPageToken(files.getNextPageToken());
@@ -434,15 +444,14 @@ public class GDriveHelper {
      * Download on SD Card all birthday backup files stored on Google Drive.
      * @throws IOException
      */
-    public void downloadBirthday(boolean deleteFile) throws IOException {
+    public void downloadBirthday() throws IOException {
         if (isLinked()) {
             authorize();
             File sdPath = Environment.getExternalStorageDirectory();
             File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_BIRTHDAY_SD_GDRIVE_TMP);
-
             Drive.Files.List request;
             try {
-                request = driveService.files().list().setQ("mimeType = 'text/plain'"); // .setQ("mimeType=\"text/plain\"");
+                request = driveService.files().list().setQ("mimeType = 'text/plain'").setFields("nextPageToken, files"); // .setQ("mimeType=\"text/plain\"");
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
@@ -461,7 +470,6 @@ public class GDriveHelper {
                     if (!sdPathDr.exists() && !sdPathDr.mkdirs()) {
                         throw new IOException("Unable to create parent directory");
                     }
-
                     if (title.endsWith(FileConfig.FILE_NAME_BIRTHDAY)) {
                         File file = new File(sdPathDr, title);
                         if (!file.exists()) {
@@ -473,13 +481,15 @@ public class GDriveHelper {
                         }
                         OutputStream out = new FileOutputStream(file);
                         driveService.files().get(f.getId()).executeMediaAndDownloadTo(out);
-
-                        if (deleteFile) deleteBirthday(title);
                         try {
                             new SyncHelper(mContext).birthdayFromJson(file);
                         } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
+                        if (file.exists()) {
+                            file.delete();
+                        }
+                        deleteBirthdayFile(f.getId());
                     }
                 }
                 request.setPageToken(files.getNextPageToken());
@@ -487,11 +497,22 @@ public class GDriveHelper {
         }
     }
 
+    public void deleteReminderFile(String id){
+        if (isLinked()) {
+            authorize();
+            try {
+                driveService.files().delete(id).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * Delete reminder backup file from Google Drive by file name.
      * @param title file name.
      */
-    public void deleteReminder(String title){
+    public void deleteReminderFileByName(String title){
         if (title != null) {
             String[] strs = title.split(".");
             if (strs.length != 0) {
@@ -532,11 +553,22 @@ public class GDriveHelper {
         }
     }
 
+    public void deleteNoteFile(String id){
+        if (isLinked()) {
+            authorize();
+            try {
+                driveService.files().delete(id).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * Delete note backup file from Google Drive by file name.
      * @param title file name.
      */
-    public void deleteNote (String title){
+    public void deleteNoteFileByName(String title){
         if (title != null) {
             String[] strs = title.split(".");
             if (strs.length != 0) {
@@ -577,11 +609,22 @@ public class GDriveHelper {
         }
     }
 
+    public void deleteGroupFile(String id){
+        if (isLinked()) {
+            authorize();
+            try {
+                driveService.files().delete(id).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * Delete group backup file from Google Drive by file name.
      * @param title file name.
      */
-    public void deleteGroup (String title){
+    public void deleteGroupFileByName(String title){
         if (title != null) {
             String[] strs = title.split(".");
             if (strs.length != 0) {
@@ -622,11 +665,22 @@ public class GDriveHelper {
         }
     }
 
+    public void deleteBirthdayFile(String id){
+        if (isLinked()) {
+            authorize();
+            try {
+                driveService.files().delete(id).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * Delete birthday backup file from Google Drive by file name.
      * @param title file name.
      */
-    public void deleteBirthday(String title){
+    public void deleteBirthdayFileByName(String title){
         if (title != null) {
             String[] strs = title.split(".");
             if (strs.length != 0) {
@@ -669,13 +723,13 @@ public class GDriveHelper {
 
     public void deleteFile(String fileName) {
         if (fileName.endsWith(FileConfig.FILE_NAME_REMINDER))
-            deleteReminder(fileName);
+            deleteReminderFileByName(fileName);
         else if (fileName.endsWith(FileConfig.FILE_NAME_NOTE))
-            deleteNote(fileName);
+            deleteNoteFileByName(fileName);
         else if (fileName.endsWith(FileConfig.FILE_NAME_GROUP))
-            deleteGroup(fileName);
+            deleteGroupFileByName(fileName);
         else if (fileName.endsWith(FileConfig.FILE_NAME_BIRTHDAY))
-            deleteBirthday(fileName);
+            deleteBirthdayFileByName(fileName);
     }
 
     /**
@@ -702,8 +756,7 @@ public class GDriveHelper {
                     ArrayList<com.google.api.services.drive.model.File> fileList = (ArrayList<com.google.api.services.drive.model.File>) files.getFiles();
                     for (com.google.api.services.drive.model.File f : fileList) {
                         String fileMIME = f.getMimeType();
-
-                        if (fileMIME.matches("application/vnd.google-apps.folder") && f.getName().matches("Just Reminder")) {
+                        if (fileMIME.contains("application/vnd.google-apps.folder") && f.getName().contains("Reminder")) {
                             try {
                                 driveService.files().delete(f.getId()).execute();
                             } catch (IOException e) {
@@ -744,9 +797,8 @@ public class GDriveHelper {
                             (ArrayList<com.google.api.services.drive.model.File>) files.getFiles();
                     for (com.google.api.services.drive.model.File f : fileList) {
                         String fileMIME = f.getMimeType();
-
-                        if (fileMIME.trim().matches("application/vnd.google-apps.folder") &&
-                                f.getName().contains("Just Reminder")) {
+                        if (fileMIME.trim().contains("application/vnd.google-apps.folder") &&
+                                f.getName().contains("Reminder")) {
                             id = f.getId();
                         }
                     }
@@ -764,7 +816,7 @@ public class GDriveHelper {
      */
     private com.google.api.services.drive.model.File createFolder() throws IOException {
         com.google.api.services.drive.model.File folder = new com.google.api.services.drive.model.File();
-        folder.setName("Just Reminder");
+        folder.setName("Reminder");
         folder.setMimeType("application/vnd.google-apps.folder");
         Drive.Files.Create folderInsert = null;
         try {

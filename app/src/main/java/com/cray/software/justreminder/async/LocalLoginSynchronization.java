@@ -31,14 +31,14 @@ import com.cray.software.justreminder.interfaces.LoginListener;
 
 import java.util.List;
 
-public class LocalLogin extends AsyncTask<Void, String, Void> {
+public class LocalLoginSynchronization extends AsyncTask<Void, String, Void> {
 
     private Context mContext;
     private boolean isChecked = false;
     private LoginListener listener;
     private ProgressDialog dialog;
 
-    public LocalLogin(Context context, boolean isChecked, LoginListener listener){
+    public LocalLoginSynchronization(Context context, boolean isChecked, LoginListener listener){
         this.mContext = context;
         this.isChecked = isChecked;
         this.listener = listener;
@@ -72,7 +72,7 @@ public class LocalLogin extends AsyncTask<Void, String, Void> {
         //import birthdays
         if (isChecked) {
             publishProgress(mContext.getString(R.string.syncing_birthdays));
-            ioHelper.restoreBirthday(false, false);
+            ioHelper.restoreBirthday(false);
         }
         return null;
     }
