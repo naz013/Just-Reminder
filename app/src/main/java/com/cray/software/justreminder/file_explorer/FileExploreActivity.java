@@ -70,12 +70,7 @@ public class FileExploreActivity extends AppCompatActivity {
     private LinearLayout mPlayerLayout;
     private RoboTextView mMelodyTitle;
     private RoboEditText mSearchView;
-    private RecyclerClickListener recyclerClick = new RecyclerClickListener() {
-        @Override
-        public void onItemClick(int position) {
-            selectFile(position);
-        }
-    };
+    private RecyclerClickListener recyclerClick = position -> selectFile(position);
 
     private void selectFile(int position) {
         FileDataItem item = mAdapter.getItem(position);
@@ -134,11 +129,9 @@ public class FileExploreActivity extends AppCompatActivity {
         }
 		setContentView(R.layout.activity_file_chooser);
         setRequestedOrientation(cs.getRequestOrientation());
-
         filType = getIntent().getStringExtra(Constants.FILE_TYPE);
         if (filType == null) filType = "music";
         isDark = cs.isDark();
-
         initActionBar();
         initRecyclerView();
         initPlayer();
@@ -302,7 +295,12 @@ public class FileExploreActivity extends AppCompatActivity {
                     && !sel.isHidden();
         };
 
-        List<String> list = Arrays.asList(path.list(filter));
+        List<String> list;
+        try {
+            list = Arrays.asList(path.list(filter));
+        } catch (NullPointerException e) {
+            list = new ArrayList<>();
+        }
         Collections.sort(list);
         mDataList = new ArrayList<>(list.size());
         for (int i = 0; i < list.size(); i++) {
