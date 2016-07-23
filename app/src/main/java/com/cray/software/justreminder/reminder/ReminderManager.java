@@ -1716,9 +1716,9 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     }
 
     @Override
-    public void onCategory(String catId, String title) {
-        category.setText(title);
-        categoryId = catId;
+    public void onCategory(GroupItem item) {
+        category.setText(item.getTitle());
+        categoryId = item.getUuId();
     }
 
     @Override

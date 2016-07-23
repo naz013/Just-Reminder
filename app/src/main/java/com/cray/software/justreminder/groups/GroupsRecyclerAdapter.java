@@ -36,11 +36,11 @@ import java.util.List;
 public class GroupsRecyclerAdapter extends RecyclerView.Adapter<GroupsRecyclerAdapter.ViewHolder> {
 
     private ColorSetter cs;
-    private List<GroupItem> provider;
+    private List<GroupItem> mDataList;
     private SimpleListener mEventListener;
 
-    public GroupsRecyclerAdapter(Context context, List<GroupItem> provider) {
-        this.provider = new ArrayList<>(provider);
+    public GroupsRecyclerAdapter(Context context, List<GroupItem> list) {
+        this.mDataList = new ArrayList<>(list);
         cs = new ColorSetter(context);
         setHasStableIds(true);
     }
@@ -90,11 +90,15 @@ public class GroupsRecyclerAdapter extends RecyclerView.Adapter<GroupsRecyclerAd
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        final GroupItem item = provider.get(position);
+        final GroupItem item = mDataList.get(position);
         String title = item.getTitle();
         int indicator = item.getColor();
         holder.textView.setText(title);
         holder.indicator.setBackgroundResource(cs.getCategoryIndicator(indicator));
+    }
+
+    public GroupItem getItem(int position) {
+        return mDataList.get(position);
     }
 
     @Override
@@ -104,12 +108,12 @@ public class GroupsRecyclerAdapter extends RecyclerView.Adapter<GroupsRecyclerAd
 
     @Override
     public long getItemId(int position) {
-        return provider.get(position).getId();
+        return mDataList.get(position).getId();
     }
 
     @Override
     public int getItemCount() {
-        return provider.size();
+        return mDataList.size();
     }
 
     public void setEventListener(SimpleListener eventListener) {

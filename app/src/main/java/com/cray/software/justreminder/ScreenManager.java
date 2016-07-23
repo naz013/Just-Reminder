@@ -61,7 +61,7 @@ import com.cray.software.justreminder.feedback.SendReportActivity;
 import com.cray.software.justreminder.fragments.BackupsFragment;
 import com.cray.software.justreminder.fragments.EventsFragment;
 import com.cray.software.justreminder.fragments.NavigationDrawerFragment;
-import com.cray.software.justreminder.fragments.NotesFragment;
+import com.cray.software.justreminder.notes.NotesFragment;
 import com.cray.software.justreminder.fragments.TasksFragment;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupManager;

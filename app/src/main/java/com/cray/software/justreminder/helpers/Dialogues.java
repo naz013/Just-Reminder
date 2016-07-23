@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -37,9 +38,10 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.LED;
 import com.cray.software.justreminder.constants.Language;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.groups.CategoryDataProvider;
-import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.file_explorer.FileExploreActivity;
+import com.cray.software.justreminder.groups.GroupHelper;
+import com.cray.software.justreminder.groups.GroupItem;
+import com.cray.software.justreminder.groups.Position;
 import com.cray.software.justreminder.interfaces.LCAMListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.AutoSyncAlarm;
@@ -48,6 +50,7 @@ import com.cray.software.justreminder.utils.MemoryUtil;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Dialogues {
 
@@ -205,17 +208,18 @@ public class Dialogues {
      * @param listener dialog callback listener.
      */
     public static void selectCategory(Context context, String categoryId, final OnCategorySelectListener listener) {
-        final CategoryDataProvider provider = new CategoryDataProvider(context);
-        final ArrayList<String> categories = new ArrayList<>();
-        for (GroupItem item : provider.getData()){
-            categories.add(item.getTitle());
-        }
+        Position position = new Position();
+        List<GroupItem> list = new ArrayList<>();
+        final List<String> categories = GroupHelper.getInstance(context).getAllNames(position, list, categoryId);
+        Log.d(Constants.LOG_TAG, "selectCategory: " + position);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.choose_group);
         builder.setSingleChoiceItems(new ArrayAdapter<>(context,
-                android.R.layout.simple_list_item_single_choice, categories), provider.getPosition(categoryId), (dialog, which) -> {
+                android.R.layout.simple_list_item_single_choice, categories), position.i, (dialog, which) -> {
                     dialog.dismiss();
-                    if (listener != null) listener.onCategory(provider.getItem(which).getUuId(), provider.getItem(which).getTitle());
+                    if (listener != null) {
+                        listener.onCategory(list.get(which));
+                    }
                 });
         AlertDialog alert = builder.create();
         alert.show();
@@ -671,6 +675,6 @@ public class Dialogues {
     }
 
     public interface OnCategorySelectListener{
-        void onCategory(String catId, String title);
+        void onCategory(GroupItem item);
     }
 }

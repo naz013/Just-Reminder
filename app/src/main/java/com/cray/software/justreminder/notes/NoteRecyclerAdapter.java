@@ -36,16 +36,18 @@ import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.modules.Module;
 
+import java.util.List;
+
 public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapter.ViewHolder> {
 
     private ColorSetter cs;
-    private NoteDataProvider provider;
+    private List<NoteItem> mDataList;
     private SimpleListener mEventListener;
     private int mTextSize;
     private boolean mEncrypt;
 
-    public NoteRecyclerAdapter(Context context, NoteDataProvider provider) {
-        this.provider = provider;
+    public NoteRecyclerAdapter(Context context, List<NoteItem> list) {
+        this.mDataList = list;
         mEncrypt = SharedPrefs.getInstance(context).getBoolean(Prefs.NOTE_ENCRYPT);
         mTextSize = SharedPrefs.getInstance(context).getInt(Prefs.TEXT_SIZE) + 12;
         cs = new ColorSetter(context);
@@ -96,7 +98,7 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        final NoteItem item = provider.getData().get(position);
+        final NoteItem item = mDataList.get(position);
         String title = item.getNote();
         int color = item.getColor();
         int style = item.getStyle();
@@ -127,6 +129,10 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
         holder.textView.setTextSize(mTextSize);
     }
 
+    public NoteItem getItem(int position) {
+        return mDataList.get(position);
+    }
+
     @Override
     public int getItemViewType(int position) {
         return 0;
@@ -134,12 +140,12 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
 
     @Override
     public long getItemId(int position) {
-        return provider.getData().get(position).getId();
+        return mDataList.get(position).getId();
     }
 
     @Override
     public int getItemCount() {
-        return provider.getData().size();
+        return mDataList.size();
     }
 
     public void setEventListener(SimpleListener eventListener) {

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.cray.software.justreminder.databases.DataBase;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -111,6 +112,19 @@ public class GroupHelper {
         db.open();
         List<GroupItem> list = db.getAllGroups();
         db.close();
+        return list;
+    }
+
+    public List<String> getAllNames(Position p, List<GroupItem> resList, String uuId) {
+        List<String> list = new ArrayList<>();
+        resList.addAll(getAll());
+        for (int i = 0; i < resList.size(); i++) {
+            GroupItem item = resList.get(i);
+            list.add(item.getTitle());
+            if (item.getUuId().matches(uuId)) {
+                p.i = i;
+            }
+        }
         return list;
     }
 }

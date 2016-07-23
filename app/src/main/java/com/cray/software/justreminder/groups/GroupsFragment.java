@@ -42,7 +42,7 @@ import com.cray.software.justreminder.modules.Module;
 public class GroupsFragment extends Fragment implements SimpleListener {
 
     private RecyclerView listView;
-    private CategoryDataProvider provider;
+    private GroupsRecyclerAdapter mAdapter;
     private NavigationCallbacks mCallbacks;
     private Activity mContext;
 
@@ -120,10 +120,9 @@ public class GroupsFragment extends Fragment implements SimpleListener {
 
     private void loadCategories(){
         SharedPrefs.getInstance(mContext).putBoolean(Prefs.GROUP_CHANGED, false);
-        provider = new CategoryDataProvider(mContext);
-        GroupsRecyclerAdapter adapter = new GroupsRecyclerAdapter(mContext, provider.getData());
-        adapter.setEventListener(this);
-        listView.setAdapter(adapter);
+        mAdapter = new GroupsRecyclerAdapter(mContext, GroupHelper.getInstance(mContext).getAll());
+        mAdapter.setEventListener(this);
+        listView.setAdapter(mAdapter);
         listView.setItemAnimator(new DefaultItemAnimator());
         if (mCallbacks != null) {
             mCallbacks.onListChanged(listView);
@@ -131,7 +130,7 @@ public class GroupsFragment extends Fragment implements SimpleListener {
     }
 
     private void removeGroup(int position){
-        long itemId = provider.getItem(position).getId();
+        long itemId = mAdapter.getItem(position).getId();
         if (itemId != 0) {
             GroupItem group = GroupHelper.getInstance(mContext).getGroup(itemId);
             if (group != null) {
@@ -149,21 +148,21 @@ public class GroupsFragment extends Fragment implements SimpleListener {
     @Override
     public void onItemClicked(int position, View view) {
         startActivity(new Intent(mContext, GroupManager.class)
-                .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
+                .putExtra(Constants.ITEM_ID_INTENT, mAdapter.getItem(position).getId()));
     }
 
     @Override
     public void onItemLongClicked(final int position, View view) {
         String[] items = {getString(R.string.change_color), getString(R.string.edit), getString(R.string.delete)};
-        if (provider.getCount() == 1) items = new String[]{getString(R.string.change_color), getString(R.string.edit)};
+        if (mAdapter.getItemCount() == 1) items = new String[]{getString(R.string.change_color), getString(R.string.edit)};
         Dialogues.showLCAM(mContext, item -> {
             switch (item){
                 case 0:
-                    changeColor(provider.getItem(position).getId());
+                    changeColor(mAdapter.getItem(position).getId());
                     break;
                 case 1:
                     startActivity(new Intent(mContext, GroupManager.class)
-                            .putExtra(Constants.ITEM_ID_INTENT, provider.getItem(position).getId()));
+                            .putExtra(Constants.ITEM_ID_INTENT, mAdapter.getItem(position).getId()));
                     break;
                 case 2:
                     removeGroup(position);

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.fragments;
+package com.cray.software.justreminder.notes;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -49,13 +49,6 @@ import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.notes.NoteDataProvider;
-import com.cray.software.justreminder.notes.NoteHelper;
-import com.cray.software.justreminder.notes.NoteItem;
-import com.cray.software.justreminder.notes.NotePreview;
-import com.cray.software.justreminder.notes.NoteRecyclerAdapter;
-import com.cray.software.justreminder.notes.NotesManager;
-import com.cray.software.justreminder.notes.SyncNotesAsync;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 import java.util.List;
@@ -64,7 +57,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
 
     private RecyclerView currentList;
     private LinearLayout emptyItem;
-    private NoteDataProvider provider;
+    private NoteRecyclerAdapter mAdapter;
 
     private boolean enableGrid = false;
 
@@ -233,16 +226,15 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
 
     public void loaderAdapter(){
         SharedPrefs.getInstance(mContext).putBoolean(Prefs.NOTE_CHANGED, false);
-        provider = new NoteDataProvider(mContext);
-        reloadView();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(mContext);
         if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.REMINDER_CHANGED)){
             layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         }
         currentList.setLayoutManager(layoutManager);
-        NoteRecyclerAdapter adapter = new NoteRecyclerAdapter(mContext, provider);
-        adapter.setEventListener(this);
-        currentList.setAdapter(adapter);
+        mAdapter = new NoteRecyclerAdapter(mContext, NoteHelper.getInstance(mContext).getAll());
+        mAdapter.setEventListener(this);
+        reloadView();
+        currentList.setAdapter(mAdapter);
         currentList.setItemAnimator(new DefaultItemAnimator());
         if (mCallbacks != null) {
             mCallbacks.onListChanged(currentList);
@@ -250,7 +242,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     }
 
     private void reloadView() {
-        int size = provider.getCount();
+        int size = mAdapter.getItemCount();
         if (size > 0){
             currentList.setVisibility(View.VISIBLE);
             emptyItem.setVisibility(View.GONE);
@@ -309,7 +301,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
 
     @Override
     public void onItemClicked(int position, View view) {
-        long id = provider.getItem(position).getId();
+        long id = mAdapter.getItem(position).getId();
         if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.ITEM_PREVIEW)) {
             previewNote(id, view);
         } else {
@@ -323,7 +315,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         final String[] items = {getString(R.string.open), getString(R.string.share),
                 getString(R.string.change_color), getString(R.string.edit), getString(R.string.delete)};
         Dialogues.showLCAM(mContext, item -> {
-            long id = provider.getItem(position).getId();
+            long id = mAdapter.getItem(position).getId();
             switch (item){
                 case 0:
                     previewNote(id, view);
