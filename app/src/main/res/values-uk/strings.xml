@@ -530,4 +530,5 @@
     <string name="no_calls_found">Історія порожня</string>
     <string name="no_contacts_found">Не знайдено жодного контакту</string>
     <string name="sending_message">Надсилаю повідомлення</string>
+    <string name="all_permissions_are_enabled">All permissions are enabled</string>
 </resources>

@@ -22,7 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
-import com.cray.software.justreminder.async.CheckBirthdaysAsync;
+import com.cray.software.justreminder.birthdays.CheckBirthdaysAsync;
 import com.cray.software.justreminder.modules.Module;
 
 import java.util.Calendar;

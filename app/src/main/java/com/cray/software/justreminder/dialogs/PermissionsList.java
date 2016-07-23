@@ -28,6 +28,7 @@ import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -52,56 +53,56 @@ public class PermissionsList extends Activity{
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
         RoboTextView dialogTitle = (RoboTextView) findViewById(R.id.dialogTitle);
         dialogTitle.setText(getString(R.string.allow_permission));
-
         musicList = (ListView) findViewById(R.id.musicList);
         musicList.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-
         musicList.setOnItemClickListener((parent, view, position, id) -> Permissions.requestPermission(PermissionsList.this, position, list.get(position).getPermission()));
-
         RoboButton musicDialogOk = (RoboButton) findViewById(R.id.musicDialogOk);
         musicDialogOk.setVisibility(View.INVISIBLE);
-
         load();
     }
 
     private void load(){
         list.clear();
-        if (!Permissions.checkPermission(PermissionsList.this, Permissions.ACCESS_COARSE_LOCATION))
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.ACCESS_COARSE_LOCATION)) {
             list.add(new Item(getString(R.string.course_location), Permissions.ACCESS_COARSE_LOCATION));
-
-        if (!Permissions.checkPermission(PermissionsList.this, Permissions.ACCESS_FINE_LOCATION))
+        }
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.ACCESS_FINE_LOCATION)) {
             list.add(new Item(getString(R.string.fine_location), Permissions.ACCESS_FINE_LOCATION));
-
-        if (!Permissions.checkPermission(PermissionsList.this, Permissions.CALL_PHONE))
+        }
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.CALL_PHONE)) {
             list.add(new Item(getString(R.string.call_phone), Permissions.CALL_PHONE));
-
-        if (!Permissions.checkPermission(PermissionsList.this, Permissions.GET_ACCOUNTS))
+        }
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.GET_ACCOUNTS)) {
             list.add(new Item(getString(R.string.get_accounts), Permissions.GET_ACCOUNTS));
-
-        if (!Permissions.checkPermission(PermissionsList.this, Permissions.READ_PHONE_STATE))
+        }
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.READ_PHONE_STATE)) {
             list.add(new Item(getString(R.string.read_phone_state), Permissions.READ_PHONE_STATE));
-
-        if (!Permissions.checkPermission(PermissionsList.this, Permissions.READ_CALENDAR))
+        }
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.READ_CALENDAR)) {
             list.add(new Item(getString(R.string.read_calendar), Permissions.READ_CALENDAR));
-
-        if (!Permissions.checkPermission(PermissionsList.this, Permissions.WRITE_CALENDAR))
+        }
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.WRITE_CALENDAR)) {
             list.add(new Item(getString(R.string.write_calendar), Permissions.WRITE_CALENDAR));
-
-        if (!Permissions.checkPermission(PermissionsList.this, Permissions.READ_CONTACTS))
+        }
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.READ_CONTACTS)) {
             list.add(new Item(getString(R.string.read_contacts), Permissions.READ_CONTACTS));
-
-        if (!Permissions.checkPermission(PermissionsList.this, Permissions.READ_CALLS))
+        }
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.READ_CALLS)) {
             list.add(new Item(getString(R.string.call_history), Permissions.READ_CALLS));
-
-        if (!Permissions.checkPermission(PermissionsList.this, Permissions.READ_EXTERNAL))
+        }
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.READ_EXTERNAL)) {
             list.add(new Item(getString(R.string.read_external_storage), Permissions.READ_EXTERNAL));
-
-        if (!Permissions.checkPermission(PermissionsList.this, Permissions.WRITE_EXTERNAL))
+        }
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.WRITE_EXTERNAL)) {
             list.add(new Item(getString(R.string.write_external_storage), Permissions.WRITE_EXTERNAL));
-
-        if (!Permissions.checkPermission(PermissionsList.this, Permissions.SEND_SMS))
+        }
+        if (!Permissions.checkPermission(PermissionsList.this, Permissions.SEND_SMS)) {
             list.add(new Item(getString(R.string.send_sms), Permissions.SEND_SMS));
-
+        }
+        if (list.size() == 0) {
+            Toast.makeText(PermissionsList.this, R.string.all_permissions_are_enabled, Toast.LENGTH_SHORT).show();
+            finish();
+        }
         Adapter adapter = new Adapter(list, this);
         musicList.setAdapter(adapter);
     }

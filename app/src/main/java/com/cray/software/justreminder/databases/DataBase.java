@@ -396,13 +396,12 @@ public class DataBase {
 
     //Events table
 
-    public long addCalendarEvent (String uri, long reminderId, long eventId) {
+    public long addCalendarEvent(String uri, long reminderId, long eventId) {
         openGuard();
         ContentValues cv = new ContentValues();
         cv.put(Constants.COLUMN_DELETE_URI, uri);
         cv.put(Constants.COLUMN_REMINDER_ID, reminderId);
         cv.put(Constants.COLUMN_EVENT_ID, eventId);
-        //Log.d(LOG_TAG, "data is inserted " + cv);
         return db.insert(EVENTS_TABLE_NAME, null, cv);
     }
 

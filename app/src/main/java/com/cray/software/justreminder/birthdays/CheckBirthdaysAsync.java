@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.async;
+package com.cray.software.justreminder.birthdays;
 
 import android.app.ProgressDialog;
 import android.content.ContentResolver;

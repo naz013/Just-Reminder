@@ -28,7 +28,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.async.CheckBirthdaysAsync;
+import com.cray.software.justreminder.birthdays.CheckBirthdaysAsync;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.fragments.helpers.TimePickerFragment;

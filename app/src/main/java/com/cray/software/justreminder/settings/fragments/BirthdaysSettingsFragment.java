@@ -33,7 +33,7 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
-import com.cray.software.justreminder.async.CheckBirthdaysAsync;
+import com.cray.software.justreminder.birthdays.CheckBirthdaysAsync;
 import com.cray.software.justreminder.birthdays.BirthdayHelper;
 import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Prefs;
