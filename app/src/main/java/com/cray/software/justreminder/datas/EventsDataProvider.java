@@ -20,9 +20,10 @@ import android.app.AlarmManager;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.cray.software.justreminder.birthdays.BirthdayHelper;
+import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.EventsItem;
 import com.cray.software.justreminder.enums.EventType;
@@ -105,39 +106,32 @@ public class EventsDataProvider {
     }
 
     public void loadBirthdays(){
-        DataBase db = new DataBase(mContext);
-        db.open();
-        Cursor c = db.getBirthdays();
-        if (c != null && c.moveToFirst()){
-            do {
-                String birthday = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
-                String name = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
-                long id = c.getLong(c.getColumnIndex(Constants.ContactConstants.COLUMN_ID));
-                String number = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NUMBER));
-                Date date1 = null;
-                try {
-                    date1 = format.parse(birthday);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                if (date1 != null) {
-                    Calendar calendar1 = Calendar.getInstance();
-                    calendar1.setTime(date1);
-                    int bDay = calendar1.get(Calendar.DAY_OF_MONTH);
-                    int bMonth = calendar1.get(Calendar.MONTH);
-                    int bYear = calendar1.get(Calendar.YEAR);
-                    calendar1.setTimeInMillis(System.currentTimeMillis());
-                    calendar1.set(Calendar.MONTH, bMonth);
-                    calendar1.set(Calendar.DAY_OF_MONTH, bDay);
-                    calendar1.set(Calendar.HOUR_OF_DAY, hour);
-                    calendar1.set(Calendar.MINUTE, minute);
-                    data.add(new EventsItem("birthday", name, number, id, calendar1.getTimeInMillis(),
-                            bDay, bMonth, bYear, EventType.birthday, 0));
-                }
-            } while (c.moveToNext());
+        List<BirthdayItem> list = BirthdayHelper.getInstance(mContext).getAll();
+        for (BirthdayItem item : list) {
+            String name = item.getName();
+            long id = item.getId();
+            String number = item.getNumber();
+            Date date = null;
+            try {
+                date = format.parse(item.getDate());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            if (date != null) {
+                Calendar calendar1 = Calendar.getInstance();
+                calendar1.setTime(date);
+                int bDay = calendar1.get(Calendar.DAY_OF_MONTH);
+                int bMonth = calendar1.get(Calendar.MONTH);
+                int bYear = calendar1.get(Calendar.YEAR);
+                calendar1.setTimeInMillis(System.currentTimeMillis());
+                calendar1.set(Calendar.MONTH, bMonth);
+                calendar1.set(Calendar.DAY_OF_MONTH, bDay);
+                calendar1.set(Calendar.HOUR_OF_DAY, hour);
+                calendar1.set(Calendar.MINUTE, minute);
+                data.add(new EventsItem("birthday", name, number, id, calendar1.getTimeInMillis(),
+                        bDay, bMonth, bYear, EventType.birthday, 0));
+            }
         }
-        if (c != null) c.close();
-        db.close();
     }
 
     public void loadReminders(){

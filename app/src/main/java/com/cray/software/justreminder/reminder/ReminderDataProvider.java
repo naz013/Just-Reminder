@@ -20,9 +20,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.cray.software.justreminder.birthdays.BirthdayHelper;
+import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
@@ -31,7 +32,6 @@ import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JParser;
 import com.cray.software.justreminder.json.JRecurrence;
-import com.cray.software.justreminder.utils.TimeUtil;
 import com.hexrain.flextcal.Events;
 import com.hexrain.flextcal.FlextHelper;
 
@@ -240,86 +240,33 @@ public class ReminderDataProvider {
             if (c != null) c.close();
             db.close();
         }
-
-        DataBase db = new DataBase(mContext);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        db.open();
-        Cursor c = db.getBirthdays();
-        if (c != null && c.moveToFirst()){
-            Log.d(Constants.LOG_TAG, "Count BD" + c.getCount());
-            do {
-                String birthday = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
-                String name = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
-                Date date = null;
+        List<BirthdayItem> list = BirthdayHelper.getInstance(mContext).getAll();
+        Log.d(Constants.LOG_TAG, "Count BD" + list.size());
+        for (BirthdayItem item : list) {
+            Date date = null;
+            try {
+                date = format.parse(item.getDate());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            int year = calendar.get(Calendar.YEAR);
+            if (date != null) {
                 try {
-                    date = format.parse(birthday);
-                } catch (ParseException e) {
+                    calendar.setTime(date);
+                } catch (NullPointerException e){
                     e.printStackTrace();
                 }
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(System.currentTimeMillis());
-                int year = calendar.get(Calendar.YEAR);
-                if (date != null) {
-                    try {
-                        calendar.setTime(date);
-                    } catch (NullPointerException e){
-                        e.printStackTrace();
-                    }
-                    int i = -1;
-                    while (i < 2) {
-                        calendar.set(Calendar.YEAR, year + i);
-                        setEvent(calendar.getTimeInMillis(), name, bColor);
-                        i++;
-                    }
+                int i = -1;
+                while (i < 2) {
+                    calendar.set(Calendar.YEAR, year + i);
+                    setEvent(calendar.getTimeInMillis(), item.getName(), bColor);
+                    i++;
                 }
-            } while (c.moveToNext());
+            }
         }
-        if (c != null) c.close();
-        db.close();
-
-        return map;
-    }
-
-    public static HashMap<DateTime, String> getBirthdays(Context context) {
-        DataBase db = new DataBase(context);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        db.open();
-        HashMap<DateTime, String> map = new HashMap<>();
-        Cursor c = db.getBirthdays();
-        if (c != null && c.moveToFirst()){
-            do {
-                String birthday = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
-                String name = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
-                Date date = null;
-                try {
-                    date = format.parse(birthday);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(System.currentTimeMillis());
-                int year = calendar.get(Calendar.YEAR);
-                if (date != null) {
-                    try {
-                        calendar.setTime(date);
-                    } catch (NullPointerException e){
-                        e.printStackTrace();
-                    }
-                    int day = calendar.get(Calendar.DAY_OF_MONTH);
-                    int month = calendar.get(Calendar.MONTH);
-                    Date bdDate = TimeUtil.getDate(year, month, day);
-                    Date prevDate = TimeUtil.getDate(year - 1, month, day);
-                    Date nextDate = TimeUtil.getDate(year + 1, month, day);
-                    Date nextTwoDate = TimeUtil.getDate(year + 2, month, day);
-                    map.put(FlextHelper.convertDateToDateTime(bdDate), name);
-                    map.put(FlextHelper.convertDateToDateTime(prevDate), name);
-                    map.put(FlextHelper.convertDateToDateTime(nextDate), name);
-                    map.put(FlextHelper.convertDateToDateTime(nextTwoDate), name);
-                }
-            } while (c.moveToNext());
-        }
-        if (c != null) c.close();
-        db.close();
         return map;
     }
 

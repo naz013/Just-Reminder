@@ -23,12 +23,12 @@ import android.net.NetworkInfo;
 import android.util.Base64;
 import android.util.Log;
 
+import com.cray.software.justreminder.birthdays.BirthdayHelper;
+import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
-import com.cray.software.justreminder.datas.models.BirthdayModel;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.json.JModel;
@@ -72,6 +72,11 @@ import java.util.UUID;
 public class SyncHelper {
 
     private Context mContext;
+
+    /**
+     * SimpleDateFormat variable for date parsing.
+     */
+    private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
     public SyncHelper(Context context){
         this.mContext = context;
@@ -129,44 +134,29 @@ public class SyncHelper {
      * @throws JSONException
      */
     public void birthdayToJson() throws JSONException {
-        DataBase dataBase = new DataBase(mContext);
-        dataBase.open();
-        Cursor c = dataBase.getBirthdays();
-        if (c != null && c.moveToFirst()){
-            do {
-                String title = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
-                String date = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
-                String number = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NUMBER));
-                String uuID = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_UUID));
-                String mail = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_MAIL));
-                int conId = c.getInt(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_ID));
-                JSONObject jObjectData = new JSONObject();
-                if (title != null) title = encrypt(title);
-                else title = encrypt(" ");
-                jObjectData.put(encrypt(Constants.ContactConstants.COLUMN_CONTACT_NAME), title);
-                jObjectData.put(encrypt(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY), encrypt(date));
-                jObjectData.put(encrypt(Constants.ContactConstants.COLUMN_CONTACT_NUMBER),
-                        number != null ? encrypt(number) : encrypt(" "));
-                jObjectData.put(encrypt(Constants.ContactConstants.COLUMN_CONTACT_MAIL),
-                        mail != null ? encrypt(mail) : encrypt(" "));
-                jObjectData.put(encrypt(Constants.ContactConstants.COLUMN_CONTACT_ID),
-                        encrypt(String.valueOf(conId)));
+        List<BirthdayItem> list = BirthdayHelper.getInstance(mContext).getAll();
+        for (BirthdayItem item : list) {
+            JSONObject jObjectData = new JSONObject();
+            String name = item.getName();
+            if (name != null) name = encrypt(name);
+            else name = encrypt(" ");
+            String number = item.getNumber();
+            jObjectData.put(encrypt(Constants.Contacts.COLUMN_NAME), name);
+            jObjectData.put(encrypt(Constants.Contacts.COLUMN_BIRTHDATE), encrypt(item.getDate()));
+            jObjectData.put(encrypt(Constants.Contacts.COLUMN_NUMBER), number != null ? encrypt(number) : encrypt(" "));
+            jObjectData.put(encrypt(Constants.Contacts.COLUMN_CONTACT_ID), encrypt(String.valueOf(item.getUuId())));
 
-                File dir = MemoryUtil.getBDir();
-                if (dir != null) {
-                    String exportFileName = uuID + FileConfig.FILE_NAME_BIRTHDAY;
-
-                    File file = new File(dir, exportFileName);
-                    try {
-                        writeFile(file, jObjectData.toString());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else Log.i("reminder-info", "Couldn't find external storage!");
-            } while (c.moveToNext());
+            File dir = MemoryUtil.getBDir();
+            if (dir != null) {
+                String exportFileName = item.getUuId() + FileConfig.FILE_NAME_BIRTHDAY;
+                File file = new File(dir, exportFileName);
+                try {
+                    writeFile(file, jObjectData.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else Log.i("reminder-info", "Couldn't find external storage!");
         }
-        if (c != null) c.close();
-        dataBase.close();
     }
 
     /**
@@ -713,18 +703,7 @@ public class SyncHelper {
      * @throws JSONException
      */
     public void birthdayFromJson(File file) throws JSONException {
-        DataBase db = new DataBase(mContext);
-        db.open();
-        List<String> namesPass = new ArrayList<>();
-        Cursor e = db.getBirthdays();
-        while (e.moveToNext()) {
-            for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
-                namesPass.add(e.getString(e.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_UUID)));
-            }
-        }
-        e.close();
-        db.close();
-
+        List<String> namesPass = BirthdayHelper.getInstance(mContext).getNames();
         if (file != null){
             String fileNameR = file.getName();
             int pos = fileNameR.lastIndexOf(".");
@@ -754,49 +733,39 @@ public class SyncHelper {
     }
 
     /**
-     * SimpleDateFormat variable for date parsing.
-     */
-    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-
-    /**
      * Insert birthdays from JSON object to database.
      * @param jsonObj JSON object.
      * @throws JSONException
      */
     private void birthdayObject(JSONObject jsonObj) throws JSONException {
         String name = null;
-        String key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_NAME);
+        String key = encrypt(Constants.Contacts.COLUMN_NAME);
         if (!jsonObj.isNull(key)) {
             name = decrypt(jsonObj.getString(key));
         }
         String date = null;
-        key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY);
+        key = encrypt(Constants.Contacts.COLUMN_BIRTHDATE);
         if (!jsonObj.isNull(key)) {
             date = decrypt(jsonObj.getString(key));
         }
         String number = null;
-        key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_NUMBER);
+        key = encrypt(Constants.Contacts.COLUMN_NUMBER);
         if (!jsonObj.isNull(key)) {
             number = decrypt(jsonObj.getString(key));
         }
-        /*String mail = null;
-        key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_MAIL);
+        String uuId = null;
+        key = encrypt(Constants.Contacts.COLUMN_UUID);
         if (!jsonObj.isNull(key)) {
-            mail = decrypt(jsonObj.getString(key));
-        }*/
-        String uuID = null;
-        key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_UUID);
-        if (!jsonObj.isNull(key)) {
-            uuID = decrypt(jsonObj.getString(key));
+            uuId = decrypt(jsonObj.getString(key));
         }
         String id = null;
-        key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_ID);
+        key = encrypt(Constants.Contacts.COLUMN_CONTACT_ID);
         if (!jsonObj.isNull(key)) {
             id = decrypt(jsonObj.getString(key));
         }
-        int conId = 0;
+        int contactId = 0;
         if (id != null) {
-            conId = Integer.parseInt(id);
+            contactId = Integer.parseInt(id);
         }
         int day = 0;
         int month = 0;
@@ -809,25 +778,12 @@ public class SyncHelper {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        DataBase db = new DataBase(mContext);
-        db.open();
-        Cursor cf = db.getBirthdays();
-        if (cf != null && cf.moveToFirst()) {
-            List<String> namesPass = new ArrayList<>();
-            List<String> numbers = new ArrayList<>();
-            while (cf.moveToNext()) {
-                for (cf.moveToFirst(); !cf.isAfterLast(); cf.moveToNext()) {
-                    namesPass.add(cf.getString(cf.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME)));
-                    numbers.add(cf.getString(cf.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NUMBER)));
-                }
-            }
-            if (!namesPass.contains(name) && !numbers.contains(number)) {
-                db.addBirthday(name, conId, date, day, month, number, uuID);
-            }
-        } else {
-            db.addBirthday(name, conId, date, day, month, number, uuID);
+        List<String> names = BirthdayHelper.getInstance(mContext).getNames();
+        List<String> numbers = BirthdayHelper.getInstance(mContext).getNumbers();
+        if (!names.contains(name) && !numbers.contains(number)) {
+            BirthdayItem item = new BirthdayItem(0, name, date, number, uuId, null, contactId, day, month);
+            BirthdayHelper.getInstance(mContext).saveBirthday(item);
         }
-        db.close();
     }
 
     /**
@@ -836,37 +792,51 @@ public class SyncHelper {
      * @return birthday object
      * @throws JSONException
      */
-    public static BirthdayModel getBirthday(String file) throws JSONException {
+    public static BirthdayItem getBirthday(String file) {
         if (MemoryUtil.isSdPresent()){
             if (file != null) {
-                String jsonText = readFile(file);
-                JSONObject jsonObj = new JSONObject(jsonText);
-                String name = null;
-                String key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_NAME);
-                if (!jsonObj.isNull(key)) {
-                    name = decrypt(jsonObj.getString(key));
+                try {
+                    String jsonText = readFile(file);
+                    JSONObject jsonObj = new JSONObject(jsonText);
+                    String name = null;
+                    String key = encrypt(Constants.Contacts.COLUMN_NAME);
+                    if (!jsonObj.isNull(key)) {
+                        name = decrypt(jsonObj.getString(key));
+                    }
+                    String date = null;
+                    key = encrypt(Constants.Contacts.COLUMN_BIRTHDATE);
+                    if (!jsonObj.isNull(key)) {
+                        date = decrypt(jsonObj.getString(key));
+                    }
+                    String number = null;
+                    key = encrypt(Constants.Contacts.COLUMN_NUMBER);
+                    if (!jsonObj.isNull(key)) {
+                        number = decrypt(jsonObj.getString(key));
+                    }
+                    String id = null;
+                    key = encrypt(Constants.Contacts.COLUMN_CONTACT_ID);
+                    if (!jsonObj.isNull(key)) {
+                        id = decrypt(jsonObj.getString(key));
+                    }
+                    int conId = 0;
+                    if (id != null) {
+                        conId = Integer.parseInt(id);
+                    }
+                    int day = 0;
+                    int month = 0;
+                    try {
+                        Date d = format.parse(date);
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(d);
+                        day = calendar.get(Calendar.DAY_OF_MONTH);
+                        month = calendar.get(Calendar.MONTH);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    return new BirthdayItem(0, name, date, number, null, null, conId, day, month);
+                } catch (JSONException e) {
+                    return null;
                 }
-                String date = null;
-                key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY);
-                if (!jsonObj.isNull(key)) {
-                    date = decrypt(jsonObj.getString(key));
-                }
-                String number = null;
-                key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_NUMBER);
-                if (!jsonObj.isNull(key)) {
-                    number = decrypt(jsonObj.getString(key));
-                }
-                String id = null;
-                key = encrypt(Constants.ContactConstants.COLUMN_CONTACT_ID);
-                if (!jsonObj.isNull(key)) {
-                    id = decrypt(jsonObj.getString(key));
-                }
-                int conId = 0;
-                if (id != null) {
-                    conId = Integer.parseInt(id);
-                }
-
-                return new BirthdayModel(name, conId, date, number);
             } else return null;
         } else return null;
     }

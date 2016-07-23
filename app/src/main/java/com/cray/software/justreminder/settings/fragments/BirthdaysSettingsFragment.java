@@ -17,7 +17,6 @@
 package com.cray.software.justreminder.settings.fragments;
 
 import android.content.DialogInterface;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.app.DialogFragment;
@@ -35,9 +34,9 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.async.CheckBirthdaysAsync;
-import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.birthdays.BirthdayHelper;
+import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.fragments.helpers.TimePickerFragment;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Notifier;
@@ -215,17 +214,9 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
     private void cleanBirthdays(){
         new Thread(() -> {
             Looper.prepare();
-            DataBase db = new DataBase(getActivity());
-            db.open();
-            Cursor c = db.getBirthdays();
-            if (c != null && c.moveToFirst()){
-                do {
-                    long id = c.getLong(c.getColumnIndex(Constants.ContactConstants.COLUMN_ID));
-                    db.deleteBirthday(id);
-                } while (c.moveToNext());
-                c.close();
+            for (BirthdayItem item : BirthdayHelper.getInstance(getActivity()).getAll()) {
+                BirthdayHelper.getInstance(getActivity()).deleteBirthday(item.getId());
             }
-            db.close();
         }).start();
     }
 

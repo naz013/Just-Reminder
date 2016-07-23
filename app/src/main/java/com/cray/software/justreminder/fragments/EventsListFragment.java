@@ -34,7 +34,7 @@ import android.widget.LinearLayout;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.activities.AddBirthday;
 import com.cray.software.justreminder.adapters.CalendarEventsAdapter;
-import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.birthdays.BirthdayHelper;
 import com.cray.software.justreminder.datas.models.EventsItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
@@ -142,10 +142,7 @@ public class EventsListFragment extends Fragment implements SimpleListener {
     @Override
     public void onItemLongClicked(int position, View view) {
         if (mDataList.get(position).getType().matches("birthday")) {
-            DataBase db = new DataBase(mContext);
-            db.open();
-            db.deleteBirthday(mDataList.get(position).getId());
-            db.close();
+            BirthdayHelper.getInstance(mContext).deleteBirthday(mDataList.get(position).getId());
             mDataList.remove(position);
             loaderAdapter();
             Messages.toast(mContext, getString(R.string.deleted));

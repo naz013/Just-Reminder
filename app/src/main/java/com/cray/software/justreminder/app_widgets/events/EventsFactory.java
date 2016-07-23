@@ -28,10 +28,10 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.birthdays.BirthdayHelper;
+import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.contacts.Contacts;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.datas.models.CalendarModel;
@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -141,8 +142,6 @@ public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
         if(c != null) c.close();
         db.close();
 
-        DataBase DB = new DataBase(mContext);
-        DB.open();
         SharedPrefs prefs = SharedPrefs.getInstance(mContext);
         if (prefs.getBoolean(Prefs.WIDGET_BIRTHDAYS)) {
             int mDay;
@@ -154,39 +153,33 @@ public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
             do {
                 mDay = calendar.get(Calendar.DAY_OF_MONTH);
                 mMonth = calendar.get(Calendar.MONTH);
-                Cursor cursor = DB.getBirthdays(mDay, mMonth);
-                if (cursor != null && cursor.moveToFirst()) {
-                    do {
-                        String birthday = cursor.getString(cursor.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
-                        String name = cursor.getString(cursor.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
-                        long i = 0;
-                        long eventTime = 0;
-                        try {
-                            Date date = format.parse(birthday);
-                            Calendar calendar1 = Calendar.getInstance();
-                            calendar1.setTimeInMillis(System.currentTimeMillis());
-                            int year = calendar1.get(Calendar.YEAR);
-                            if (date != null) {
-                                calendar1.setTime(date);
-                                calendar1.set(Calendar.YEAR, year);
-                                calendar1.set(Calendar.HOUR_OF_DAY, hour);
-                                calendar1.set(Calendar.MINUTE, minute);
-                                eventTime = calendar1.getTimeInMillis();
-                            }
-                        } catch (ParseException e) {
-                            e.printStackTrace();
+                List<BirthdayItem> list = BirthdayHelper.getInstance(mContext).getBirthdays(mDay, mMonth);
+                for (BirthdayItem item : list) {
+                    String birthday = item.getDate();
+                    String name = item.getName();
+                    long i = 0;
+                    long eventTime = 0;
+                    try {
+                        Date date = format.parse(birthday);
+                        Calendar calendar1 = Calendar.getInstance();
+                        calendar1.setTimeInMillis(System.currentTimeMillis());
+                        int year = calendar1.get(Calendar.YEAR);
+                        if (date != null) {
+                            calendar1.setTime(date);
+                            calendar1.set(Calendar.YEAR, year);
+                            calendar1.set(Calendar.HOUR_OF_DAY, hour);
+                            calendar1.set(Calendar.MINUTE, minute);
+                            eventTime = calendar1.getTimeInMillis();
                         }
-                        data.add(new CalendarModel(mContext.getString(R.string.birthday), name, i, birthday, "", eventTime, 1));
-                    } while (cursor.moveToNext());
-                }
-                if (cursor != null) {
-                    cursor.close();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    data.add(new CalendarModel(mContext.getString(R.string.birthday), name, i, birthday, "", eventTime, 1));
                 }
                 calendar.setTimeInMillis(calendar.getTimeInMillis() + (1000 * 60 * 60 * 24));
                 n++;
             } while (n <= 7);
         }
-        DB.close();
     }
 
     @Override
@@ -220,7 +213,7 @@ public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
                 rView.setInt(R.id.itemBg, "setBackgroundResource", itemBackground);
 
                 String task = item.getName();
-                if (task == null || task.matches("")) task = Contacts.getNameFromNumber(
+                if (task == null || task.matches("")) task = com.cray.software.justreminder.contacts.Contacts.getNameFromNumber(
                         item.getNumber(), mContext);
                 rView.setTextViewText(R.id.taskText, task);
                 rView.setTextColor(R.id.taskText, itemTextColor);

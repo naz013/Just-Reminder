@@ -54,6 +54,7 @@ public class TemplateHelper {
     }
 
     public long saveTemplate(TemplateItem templateItem) {
+        if (templateItem == null) return 0;
         DataBase db = new DataBase(mContext);
         db.open();
         long id = db.saveTemplate(templateItem);

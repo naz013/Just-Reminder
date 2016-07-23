@@ -19,7 +19,6 @@ package com.cray.software.justreminder.activities;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -34,11 +33,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.birthdays.BirthdayHelper;
+import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.contacts.Contacts;
-import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.datas.models.BirthdayModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -49,8 +47,6 @@ import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
-
-import org.json.JSONException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -94,9 +90,9 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
     private int myYear = 0, myMonth = 0, myDay = 0;
 
     /**
-     * Edited birthday identifier.
+     * Edited birthday item.
      */
-    private long id = 0;
+    private BirthdayItem mItem;
 
     /**
      * Simple date format field.
@@ -146,80 +142,53 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         calendar.setTimeInMillis(System.currentTimeMillis());
 
         Intent intent = getIntent();
-        id = intent.getLongExtra("BDid", 0);
+        long id = intent.getLongExtra("BDid", 0);
         String filePath = intent.getStringExtra(Constants.EDIT_PATH);
         long receivedDate = intent.getLongExtra("date", 0);
-        if (id != 0) {
-            DataBase db = new DataBase(AddBirthday.this);
-            db.open();
-            Cursor c = db.getBirthday(id);
-            String dateStr = null;
-            String name = null;
-            if (c != null && c.moveToFirst()) {
-                dateStr = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
-                name = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
-                number = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NUMBER));
-            }
-            if (c != null) c.close();
-            db.close();
-
-            Date date = null;
+        mItem = BirthdayHelper.getInstance(this).getBirthday(id);
+        if (mItem != null) {
+            String name = mItem.getName();
             try {
-                date = format.parse(dateStr);
+                Date date = format.parse(mItem.getDate());
+                if (date != null) calendar.setTime(date);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            if (date != null) {
-                try {
-                    calendar.setTime(date);
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
-            }
-
             birthName.setText(name);
             if (number != null) phone.setText(number);
-
             toolbar.setTitle(R.string.edit_birthday);
             if (number != null) contactCheck.setChecked(true);
         } else if (receivedDate != 0) {
             calendar.setTimeInMillis(receivedDate);
         } else if (filePath != null) {
-            try {
-                BirthdayModel model = SyncHelper.getBirthday(filePath);
-                if (model != null) {
-                    number = model.getNumber();
-                    Date date = null;
+            mItem = SyncHelper.getBirthday(filePath);
+            if (mItem != null) {
+                number = mItem.getNumber();
+                Date date = null;
+                try {
+                    date = format.parse(mItem.getDate());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                if (date != null) {
                     try {
-                        date = format.parse(model.getDate());
-                    } catch (ParseException e) {
+                        calendar.setTime(date);
+                    } catch (NullPointerException e) {
                         e.printStackTrace();
                     }
-                    if (date != null) {
-                        try {
-                            calendar.setTime(date);
-                        } catch (NullPointerException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                }
 
-                    birthName.setText(model.getName());
-                    if (number != null) phone.setText(number);
-
-                    toolbar.setTitle(R.string.edit_birthday);
-                    if (number != null) contactCheck.setChecked(true);
-                } else finish();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+                birthName.setText(mItem.getName());
+                if (number != null) phone.setText(number);
+                toolbar.setTitle(R.string.edit_birthday);
+                if (number != null) contactCheck.setChecked(true);
+            } else finish();
         }
 
         myYear = calendar.get(Calendar.YEAR);
         myMonth = calendar.get(Calendar.MONTH);
         myDay = calendar.get(Calendar.DAY_OF_MONTH);
-
         birthDate.setText(format.format(calendar.getTime()));
-
         ImageButton pickContact = (ImageButton) findViewById(R.id.pickContact);
         ViewUtils.setImage(pickContact, cs.isDark());
         pickContact.setOnClickListener(this);
@@ -247,50 +216,29 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
      * Save birthday to database.
      */
     private void saveBirthday() {
-        DataBase db = new DataBase(AddBirthday.this);
-        db.open();
-        if (id != 0) {
-            String contact = birthName.getText().toString();
-            if (contact.matches("")) {
-                birthName.setError(getString(R.string.must_be_not_empty));
-            } else {
-                int contactId = Contacts.getIdFromNumber(number, AddBirthday.this);
-                if (number != null) {
-                    db.updateFullEvent(id, contact, contactId, birthDate.getText().toString(), myDay, myMonth, number);
-                } else
-                    db.updateFullEvent(id, contact, contactId, birthDate.getText().toString(), myDay, myMonth, null);
-
-                db.close();
-                finish();
+        String contact = birthName.getText().toString();
+        if (contact.matches("")) {
+            birthName.setError(getString(R.string.must_be_not_empty));
+            return;
+        }
+        int contactId = com.cray.software.justreminder.contacts.Contacts.getIdFromNumber(number, AddBirthday.this);
+        if (mItem != null) {
+            if (mItem.getUuId() == null) {
+                String uuId = SyncHelper.generateID();
+                mItem.setUuId(uuId);
             }
+            mItem.setName(contact);
+            mItem.setContactId(contactId);
+            mItem.setDate(birthDate.getText().toString());
+            mItem.setNumber(number);
+            mItem.setDay(myDay);
+            mItem.setMonth(myMonth);
         } else {
             String uuId = SyncHelper.generateID();
-            if (contactCheck.isChecked()) {
-                String contact = birthName.getText().toString();
-                if (contact.matches("")) {
-                    birthName.setError(getString(R.string.must_be_not_empty));
-                } else {
-                    int id = Contacts.getIdFromNumber(number, AddBirthday.this);
-                    if (number != null) {
-                        db.addBirthday(contact, id, birthDate.getText().toString(), myDay, myMonth, number, uuId);
-                    } else
-                        db.addBirthday(contact, id, birthDate.getText().toString(), myDay, myMonth, null, uuId);
-
-                    db.close();
-                    finish();
-                }
-            } else {
-                String contact = birthName.getText().toString();
-                if (!contact.matches("")) {
-                    db.addBirthday(contact, 0, birthDate.getText().toString(), myDay, myMonth, null, uuId);
-                    db.close();
-                    finish();
-                } else {
-                    birthName.setError(getString(R.string.must_be_not_empty));
-                }
-            }
+            mItem = new BirthdayItem(0, contact, birthDate.getText().toString(), number, null, uuId, contactId, myDay, myMonth);
         }
-        db.close();
+        BirthdayHelper.getInstance(this).saveBirthday(mItem);
+        finish();
         SharedPrefs.getInstance(this).putBoolean(Prefs.REMINDER_CHANGED, true);
     }
 

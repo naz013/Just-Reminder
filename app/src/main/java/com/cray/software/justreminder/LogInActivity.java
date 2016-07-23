@@ -36,11 +36,10 @@ import android.support.annotation.NonNull;
 
 import com.cray.software.justreminder.async.CloudLoginSynchronization;
 import com.cray.software.justreminder.async.LocalLoginSynchronization;
+import com.cray.software.justreminder.birthdays.BirthdayHelper;
+import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.cloud.DropboxHelper;
-import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.contacts.Contacts;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
@@ -64,9 +63,9 @@ import com.google.api.services.tasks.TasksScopes;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class LogInActivity extends Activity implements LoginListener {
@@ -446,22 +445,8 @@ public class LogInActivity extends Activity implements LoginListener {
         @Override
         protected Void doInBackground(Void... params) {
             ContentResolver cr = getContentResolver();
-            DataBase db = new DataBase(mContext);
-            db.open();
-            ArrayList<String> names = new ArrayList<>();
-            ArrayList<Integer> ids = new ArrayList<>();
-            Cursor c = db.getBirthdays();
-            if (c != null && c.moveToFirst()){
-                do {
-                    int id = c.getInt(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_ID));
-                    String name = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
-                    ids.add(id);
-                    names.add(name);
-                } while (c.moveToNext());
-            }
-            if (c != null) c.close();
-            db.close();
-
+            List<String> names = BirthdayHelper.getInstance(mContext).getNames();
+            List<Integer> ids = BirthdayHelper.getInstance(mContext).getContacts();
             String[] projection = new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME};
             Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI, projection, null, null,
                     ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC");
@@ -484,12 +469,11 @@ public class LogInActivity extends Activity implements LoginListener {
                 Cursor birthdayCur = cr.query(ContactsContract.Data.CONTENT_URI, columns, where, null, sortOrder);
                 if (birthdayCur.getCount() > 0) {
                     while (birthdayCur.moveToNext()) {
-                        // fix error;
                         Date date;
                         String birthday = birthdayCur.getString(birthdayCur.getColumnIndex(ContactsContract.CommonDataKinds.Event.START_DATE));
                         String name = birthdayCur.getString(birthdayCur.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
                         int id = birthdayCur.getInt(birthdayCur.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
-                        String number = Contacts.getNumber(name, mContext);
+                        String number = com.cray.software.justreminder.contacts.Contacts.getNumber(name, mContext);
                         if (!names.contains(name) && !ids.contains(id)) {
                             Calendar calendar = Calendar.getInstance();
                             for (SimpleDateFormat f : birthdayFormats) {
@@ -499,8 +483,8 @@ public class LogInActivity extends Activity implements LoginListener {
                                         calendar.setTime(date);
                                         int day = calendar.get(Calendar.DAY_OF_MONTH);
                                         int month = calendar.get(Calendar.MONTH);
-                                        db.addBirthday(name, id, birthday, day, month, number,
-                                                SyncHelper.generateID());
+                                        BirthdayItem item = new BirthdayItem(0, name, birthday, number, SyncHelper.generateID(), null, id, day, month);
+                                        BirthdayHelper.getInstance(mContext).saveBirthday(item);
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();

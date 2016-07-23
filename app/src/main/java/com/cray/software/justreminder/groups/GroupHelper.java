@@ -98,6 +98,7 @@ public class GroupHelper {
     }
 
     public long saveGroup(GroupItem groupItem) {
+        if (groupItem == null) return 0;
         DataBase db = new DataBase(mContext);
         db.open();
         long id = db.setGroup(groupItem);

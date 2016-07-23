@@ -25,15 +25,14 @@ import android.provider.ContactsContract;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.contacts.Contacts;
+import com.cray.software.justreminder.birthdays.BirthdayHelper;
+import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.constants.Constants;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Integer> {
@@ -73,18 +72,12 @@ public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Integer> {
     @Override
     protected Integer doInBackground(Void... params) {
         ContentResolver cr = mContext.getContentResolver();
-        DataBase db = new DataBase(mContext);
-        db.open();
         int i = 0;
         String[] projection = new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME};
-
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI, projection, null, null,
                 ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC");
-
         while (cur.moveToNext()) {
             String contactId = cur.getString(cur.getColumnIndex(ContactsContract.Data._ID));
-
-
             String columns[] = {
                     ContactsContract.CommonDataKinds.Event.START_DATE,
                     ContactsContract.CommonDataKinds.Event.TYPE,
@@ -92,22 +85,12 @@ public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Integer> {
                     ContactsContract.PhoneLookup.DISPLAY_NAME,
                     ContactsContract.Contacts._ID,
             };
-
             String where = ContactsContract.CommonDataKinds.Event.TYPE + "=" + ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY +
                     " and " + ContactsContract.CommonDataKinds.Event.MIMETYPE + " = '" + ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE +
                     "' and "                  + ContactsContract.Data.CONTACT_ID + " = " + contactId;
-
             String[] selectionArgs = null;
             String sortOrder = ContactsContract.Contacts.DISPLAY_NAME;
-            Contacts mContacts = new Contacts(mContext);
-            Cursor cursor = db.getBirthdays();
-            ArrayList<Integer> types = new ArrayList<>();
-            if (cursor != null && cursor.moveToFirst()){
-                do{
-                    int tp = cursor.getInt(cursor.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_ID));
-                    types.add(tp);
-                } while (cursor.moveToNext());
-            }
+            List<Integer> contacts = BirthdayHelper.getInstance(mContext).getContacts();
             Cursor birthdayCur = cr.query(ContactsContract.Data.CONTENT_URI, columns, where, selectionArgs, sortOrder);
             if (birthdayCur != null && birthdayCur.getCount() > 0) {
                 while (birthdayCur.moveToNext()) {
@@ -115,8 +98,7 @@ public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Integer> {
                     String birthday = birthdayCur.getString(birthdayCur.getColumnIndex(ContactsContract.CommonDataKinds.Event.START_DATE));
                     String name = birthdayCur.getString(birthdayCur.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
                     int id = birthdayCur.getInt(birthdayCur.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
-                    String number = Contacts.getNumber(name, mContext);
-                    String email = mContacts.getMail(id);
+                    String number = com.cray.software.justreminder.contacts.Contacts.getNumber(name, mContext);
                     Calendar calendar = Calendar.getInstance();
                     for (SimpleDateFormat f : birthdayFormats) {
                         try {
@@ -125,10 +107,10 @@ public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Integer> {
                                 calendar.setTime(date);
                                 int day = calendar.get(Calendar.DAY_OF_MONTH);
                                 int month = calendar.get(Calendar.MONTH);
-                                if (!types.contains(id)) {
+                                if (!contacts.contains(id)) {
                                     i = i + 1;
-                                    db.addBirthday(name, id, birthday, day, month, number,
-                                            SyncHelper.generateID());
+                                    BirthdayItem item = new BirthdayItem(0, name, birthday, number, SyncHelper.generateID(), null, id, day, month);
+                                    BirthdayHelper.getInstance(mContext).saveBirthday(item);
                                 }
                             }
                         } catch (Exception e) {
@@ -139,9 +121,7 @@ public class CheckBirthdaysAsync extends AsyncTask<Void, Void, Integer> {
             }
             if (birthdayCur != null) birthdayCur.close();
         }
-
         cur.close();
-        db.close();
         return i;
     }
 

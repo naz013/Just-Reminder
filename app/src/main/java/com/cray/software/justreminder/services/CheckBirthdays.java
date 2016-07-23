@@ -19,7 +19,7 @@ package com.cray.software.justreminder.services;
 import android.app.IntentService;
 import android.content.Intent;
 
-import com.cray.software.justreminder.datas.Birthday;
+import com.cray.software.justreminder.birthdays.Birthday;
 import com.cray.software.justreminder.activities.ShowBirthday;
 
 import java.util.ArrayList;

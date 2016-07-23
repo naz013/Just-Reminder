@@ -109,9 +109,8 @@ public class TimeUtil {
      * @param dateOfBirth date of birth.
      * @return Integer
      */
-    public static int getYears(String dateOfBirth){
+    public static int getAge(String dateOfBirth){
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        int years;
         Date date = null;
         try {
             date = format.parse(dateOfBirth);
@@ -126,8 +125,7 @@ public class TimeUtil {
         Calendar calendar1 = Calendar.getInstance();
         calendar1.getTimeInMillis();
         int currentYear = calendar1.get(Calendar.YEAR);
-        years = currentYear - yearOfBirth;
-        return years;
+        return currentYear - yearOfBirth;
     }
 
     /**
@@ -214,7 +212,7 @@ public class TimeUtil {
      * @return String
      */
     public static String getAgeFormatted(Context mContext, String date) {
-        int years = getYears(date);
+        int years = getAge(date);
         StringBuilder result = new StringBuilder();
         String lang = Locale.getDefault().getLanguage().toLowerCase();
         if (lang.startsWith("uk") || lang.startsWith("ru")) {

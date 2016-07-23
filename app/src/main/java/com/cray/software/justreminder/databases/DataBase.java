@@ -24,6 +24,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.places.PlaceItem;
@@ -52,16 +53,16 @@ public class DataBase {
 
     private static final String CONTACTS_TABLE_CREATE =
             "create table " + CONTACTS_TABLE_NAME + "(" +
-                    Constants.ContactConstants.COLUMN_ID + " integer primary key autoincrement, " +
-                    Constants.ContactConstants.COLUMN_CONTACT_NAME + " VARCHAR(255), " +
-                    Constants.ContactConstants.COLUMN_CONTACT_ID + " INTEGER, " +
-                    Constants.ContactConstants.COLUMN_CONTACT_NUMBER + " VARCHAR(255), " +
-                    Constants.ContactConstants.COLUMN_CONTACT_MAIL + " VARCHAR(255), " +
-                    Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY + " VARCHAR(255), " +
-                    Constants.ContactConstants.COLUMN_CONTACT_DAY + " INTEGER, " +
-                    Constants.ContactConstants.COLUMN_CONTACT_MONTH + " INTEGER, " +
-                    Constants.ContactConstants.COLUMN_CONTACT_UUID + " VARCHAR(255), " +
-                    Constants.ContactConstants.COLUMN_CONTACT_VAR + " VARCHAR(255) " +
+                    Constants.Contacts.COLUMN_ID + " integer primary key autoincrement, " +
+                    Constants.Contacts.COLUMN_NAME + " VARCHAR(255), " +
+                    Constants.Contacts.COLUMN_CONTACT_ID + " INTEGER, " +
+                    Constants.Contacts.COLUMN_NUMBER + " VARCHAR(255), " +
+                    Constants.Contacts.COLUMN_CONTACT_MAIL + " VARCHAR(255), " +
+                    Constants.Contacts.COLUMN_BIRTHDATE + " VARCHAR(255), " +
+                    Constants.Contacts.COLUMN_DAY + " INTEGER, " +
+                    Constants.Contacts.COLUMN_MONTH + " INTEGER, " +
+                    Constants.Contacts.COLUMN_UUID + " VARCHAR(255), " +
+                    Constants.Contacts.COLUMN_VAR + " VARCHAR(255) " +
                     ");";
 
     private static final String LOCATION_TABLE_CREATE =
@@ -230,69 +231,103 @@ public class DataBase {
 
     public boolean deleteBirthday(long rowId) {
         openGuard();
-        return db.delete(CONTACTS_TABLE_NAME, Constants.ContactConstants.COLUMN_ID + "=" + rowId, null) > 0;
+        return db.delete(CONTACTS_TABLE_NAME, Constants.Contacts.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
-    public Cursor getBirthdays(int day, int month) throws SQLException {
+    public List<BirthdayItem> getBirthdays(int day, int month) throws SQLException {
         openGuard();
-        return db.query(CONTACTS_TABLE_NAME, null,
-                Constants.ContactConstants.COLUMN_CONTACT_DAY  + "='" + day + "'" +
-                        " AND "+ Constants.ContactConstants.COLUMN_CONTACT_MONTH + "='"
-                + month + "'", null, null, null, null, null);
+        Cursor c = db.query(CONTACTS_TABLE_NAME, null, Constants.Contacts.COLUMN_DAY + "='" + day + "'" +
+                        " AND "+ Constants.Contacts.COLUMN_MONTH + "='" + month + "'", null, null, null, null, null);
+        List<BirthdayItem> list = new ArrayList<>();
+        if (c != null && c.moveToFirst()) {
+            do {
+                String name = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_NAME));
+                String date = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_BIRTHDATE));
+                String number = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_NUMBER));
+                String uuID = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_UUID));
+                String shownYear = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_VAR));
+                int conId = c.getInt(c.getColumnIndex(Constants.Contacts.COLUMN_CONTACT_ID));
+                long id = c.getLong(c.getColumnIndex(Constants.Contacts.COLUMN_ID));
+                list.add(new BirthdayItem(id, name, date, number, uuID, shownYear, conId, day, month));
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+        return list;
     }
 
-    public Cursor getBirthday(long rowId) throws SQLException {
+    public BirthdayItem getBirthday(long rowId) throws SQLException {
         openGuard();
-        return db.query(CONTACTS_TABLE_NAME, null, Constants.ContactConstants.COLUMN_ID  +
+        Cursor c = db.query(CONTACTS_TABLE_NAME, null, Constants.Contacts.COLUMN_ID  +
                 "=" + rowId, null, null, null, null, null);
+        BirthdayItem item = null;
+        if (c != null && c.moveToFirst()) {
+            String name = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_NAME));
+            String date = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_BIRTHDATE));
+            String number = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_NUMBER));
+            String uuID = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_UUID));
+            String shownYear = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_VAR));
+            int conId = c.getInt(c.getColumnIndex(Constants.Contacts.COLUMN_CONTACT_ID));
+            int day = c.getInt(c.getColumnIndex(Constants.Contacts.COLUMN_DAY));
+            int month = c.getInt(c.getColumnIndex(Constants.Contacts.COLUMN_MONTH));
+            long id = c.getLong(c.getColumnIndex(Constants.Contacts.COLUMN_ID));
+            item = new BirthdayItem(id, name, date, number, uuID, shownYear, conId, day, month);
+        }
+        if (c != null) c.close();
+        return item;
     }
 
-    public Cursor getBirthdays() throws SQLException {
+    public List<BirthdayItem> getBirthdays() throws SQLException {
         openGuard();
-        return db.query(CONTACTS_TABLE_NAME, null, null, null, null, null, null);
+        Cursor c = db.query(CONTACTS_TABLE_NAME, null, null, null, null, null, null);
+        List<BirthdayItem> list = new ArrayList<>();
+        if (c != null && c.moveToFirst()) {
+            do {
+                String name = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_NAME));
+                String date = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_BIRTHDATE));
+                String number = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_NUMBER));
+                String uuID = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_UUID));
+                String shownYear = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_VAR));
+                int conId = c.getInt(c.getColumnIndex(Constants.Contacts.COLUMN_CONTACT_ID));
+                int day = c.getInt(c.getColumnIndex(Constants.Contacts.COLUMN_DAY));
+                int month = c.getInt(c.getColumnIndex(Constants.Contacts.COLUMN_MONTH));
+                long id = c.getLong(c.getColumnIndex(Constants.Contacts.COLUMN_ID));
+                list.add(new BirthdayItem(id, name, date, number, uuID, shownYear, conId, day, month));
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+        return list;
     }
 
-    public long addBirthday(String name, int contact_id, String birthday, int day, int month,
-                            String number, String uuId) {
+    public long saveBirthday(BirthdayItem item) {
         openGuard();
         ContentValues cv = new ContentValues();
-        cv.put(Constants.ContactConstants.COLUMN_CONTACT_NAME, name);
-        cv.put(Constants.ContactConstants.COLUMN_CONTACT_ID, contact_id);
-        cv.put(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY, birthday);
-        cv.put(Constants.ContactConstants.COLUMN_CONTACT_DAY, day);
-        cv.put(Constants.ContactConstants.COLUMN_CONTACT_MONTH, month);
-        cv.put(Constants.ContactConstants.COLUMN_CONTACT_NUMBER, number);
-        cv.put(Constants.ContactConstants.COLUMN_CONTACT_UUID, uuId);
-        //Log.d(LOG_TAG, "data is inserted " + cv);
-        return db.insert(CONTACTS_TABLE_NAME, null, cv);
-    }
-
-    public boolean updateFullEvent(long rowId, String name, int contact_id, String birthday, int day,
-                                   int month, String number){
-        openGuard();
-        ContentValues args = new ContentValues();
-        args.put(Constants.ContactConstants.COLUMN_CONTACT_NAME, name);
-        args.put(Constants.ContactConstants.COLUMN_CONTACT_ID, contact_id);
-        args.put(Constants.ContactConstants.COLUMN_CONTACT_NUMBER, number);
-        args.put(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY, birthday);
-        args.put(Constants.ContactConstants.COLUMN_CONTACT_DAY, day);
-        args.put(Constants.ContactConstants.COLUMN_CONTACT_MONTH, month);
-        args.put(Constants.ContactConstants.COLUMN_CONTACT_VAR, "");
-        return db.update(CONTACTS_TABLE_NAME, args, Constants.ContactConstants.COLUMN_ID + "=" + rowId, null) > 0;
+        cv.put(Constants.Contacts.COLUMN_NAME, item.getName());
+        cv.put(Constants.Contacts.COLUMN_CONTACT_ID, item.getContactId());
+        cv.put(Constants.Contacts.COLUMN_BIRTHDATE, item.getDate());
+        cv.put(Constants.Contacts.COLUMN_DAY, item.getDay());
+        cv.put(Constants.Contacts.COLUMN_MONTH, item.getMonth());
+        cv.put(Constants.Contacts.COLUMN_NUMBER, item.getNumber());
+        cv.put(Constants.Contacts.COLUMN_UUID, item.getUuId());
+        cv.put(Constants.Contacts.COLUMN_VAR, "");
+        if (item.getId() != 0) {
+            return db.update(CONTACTS_TABLE_NAME, cv, Constants.Contacts.COLUMN_ID + "=" + item.getId(), null);
+        } else {
+            return db.insert(CONTACTS_TABLE_NAME, null, cv);
+        }
     }
 
     public boolean setShown(long rowId, String year){
         openGuard();
         ContentValues args = new ContentValues();
-        args.put(Constants.ContactConstants.COLUMN_CONTACT_VAR, year);
-        return db.update(CONTACTS_TABLE_NAME, args, Constants.ContactConstants.COLUMN_ID + "=" + rowId, null) > 0;
+        args.put(Constants.Contacts.COLUMN_VAR, year);
+        return db.update(CONTACTS_TABLE_NAME, args, Constants.Contacts.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
     public boolean updateOtherInformationEvent(long rowId, String uuId){
         openGuard();
         ContentValues args = new ContentValues();
-        args.put(Constants.ContactConstants.COLUMN_CONTACT_UUID, uuId);
-        return db.update(CONTACTS_TABLE_NAME, args, Constants.ContactConstants.COLUMN_ID + "=" + rowId, null) > 0;
+        args.put(Constants.Contacts.COLUMN_UUID, uuId);
+        return db.update(CONTACTS_TABLE_NAME, args, Constants.Contacts.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
     //Frequently used places database

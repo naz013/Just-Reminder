@@ -63,6 +63,7 @@ public class PlacesHelper {
     }
 
     public long savePlace(PlaceItem placeItem) {
+        if (placeItem == null) return 0;
         DataBase db = new DataBase(mContext);
         db.open();
         long id = db.savePlace(placeItem);

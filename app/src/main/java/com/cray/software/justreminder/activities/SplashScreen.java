@@ -24,11 +24,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
 import com.cray.software.justreminder.BuildConfig;
 import com.cray.software.justreminder.LogInActivity;
 import com.cray.software.justreminder.ScreenManager;
+import com.cray.software.justreminder.birthdays.BirthdayHelper;
+import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.LED;
@@ -190,25 +193,13 @@ public class SplashScreen extends AppCompatActivity {
         initPrefs();
 
         if (!prefs.getBoolean("isGenB")){
-            DataBase db = new DataBase(this);
-            db.open();
-            Cursor c = db.getBirthdays();
-            if (c != null && c.moveToFirst()){
-                do {
-                    String id = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_UUID));
-                    if (id == null || id.matches("")){
-                        String uuId = SyncHelper.generateID();
-                        db.updateOtherInformationEvent(
-                                c.getLong(c.getColumnIndex(Constants.ContactConstants.COLUMN_ID)),
-                                uuId);
-                    }
-                } while (c.moveToNext());
+            for (BirthdayItem item : BirthdayHelper.getInstance(this).getAll()) {
+                if (TextUtils.isEmpty(item.getUuId())) {
+                    BirthdayHelper.getInstance(this).setUuid(item.getId(), SyncHelper.generateID());
+                }
             }
-            if (c != null) c.close();
-            db.close();
             prefs.putBoolean("isGenB", true);
         }
-
         if (!prefs.getBoolean(Prefs.IS_MIGRATION)) {
             try {
                 migrateToNewDb();
@@ -218,9 +209,7 @@ public class SplashScreen extends AppCompatActivity {
             checkGroups();
             prefs.putBoolean(Prefs.IS_MIGRATION, true);
         }
-
         checkPrefs();
-
         if (BuildConfig.DEBUG) {
             startActivity(new Intent(SplashScreen.this, TestActivity.class));
         } else if (Module.isCloud()) {
@@ -232,7 +221,6 @@ public class SplashScreen extends AppCompatActivity {
                 startActivity(new Intent(SplashScreen.this, ScreenManager.class));
             }
         }
-
         finish();
     }
 

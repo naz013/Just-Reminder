@@ -179,17 +179,17 @@ public class Constants {
     public static final String SELECTED_VOLUME = "selected_volume";
     public static final String FILE_TYPE = "file_type";
 
-    public class ContactConstants{
+    public class Contacts {
         public static final String COLUMN_ID = "_id";
         public static final String COLUMN_CONTACT_ID = "contact_id";
-        public static final String COLUMN_CONTACT_NAME = "display_name";
-        public static final String COLUMN_CONTACT_NUMBER = "phone_number";
+        public static final String COLUMN_NAME = "display_name";
+        public static final String COLUMN_NUMBER = "phone_number";
         public static final String COLUMN_CONTACT_MAIL = "e_mail";
-        public static final String COLUMN_CONTACT_BIRTHDAY = "birthday";
-        public static final String COLUMN_CONTACT_UUID = "photo_id";
-        public static final String COLUMN_CONTACT_DAY = "day";
-        public static final String COLUMN_CONTACT_VAR = "var";
-        public static final String COLUMN_CONTACT_MONTH = "month";
+        public static final String COLUMN_BIRTHDATE = "birthday";
+        public static final String COLUMN_UUID = "photo_id";
+        public static final String COLUMN_DAY = "day";
+        public static final String COLUMN_VAR = "var";
+        public static final String COLUMN_MONTH = "month";
     }
 
     public class Location {

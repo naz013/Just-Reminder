@@ -34,14 +34,14 @@ import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
-import com.cray.software.justreminder.reminder.ReminderDialog;
+import com.cray.software.justreminder.birthdays.BirthdayHelper;
+import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.databases.NextBase;
-import com.cray.software.justreminder.datas.models.BirthdayModel;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.notes.NotesManager;
+import com.cray.software.justreminder.reminder.ReminderDialog;
 import com.cray.software.justreminder.reminder.ReminderManager;
 import com.cray.software.justreminder.services.BirthdayPermanentService;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -51,6 +51,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Helper class for status bar notifications.
@@ -708,20 +709,7 @@ public class Notifier {
         calendar.setTimeInMillis(System.currentTimeMillis());
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int month = calendar.get(Calendar.MONTH);
-        DataBase db = new DataBase(mContext);
-        db.open();
-        ArrayList<BirthdayModel> list = new ArrayList<>();
-        Cursor c = db.getBirthdays(day, month);
-        if (c != null && c.moveToFirst()){
-            do {
-                String name = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
-                String birthDate = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
-                String years = TimeUtil.getAgeFormatted(mContext, birthDate);
-                list.add(new BirthdayModel(name, years, birthDate));
-            } while (c.moveToNext());
-        }
-        if (c != null) c.close();
-        db.close();
+        List<BirthdayItem> list = BirthdayHelper.getInstance(mContext).getBirthdays(day, month);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
         builder.setSmallIcon(R.drawable.ic_cake_white_24dp);
         builder.setAutoCancel(false);
@@ -729,19 +717,19 @@ public class Notifier {
         builder.setPriority(NotificationCompat.PRIORITY_HIGH);
         builder.setContentTitle(mContext.getString(R.string.events));
         if (list.size() > 0) {
-            builder.setContentText(list.get(0).getDate() + " | " + list.get(0).getName() + " | " + list.get(0).getAge());
+            BirthdayItem item = list.get(0);
+            builder.setContentText(item.getDate() + " | " + item.getName() + " | " + TimeUtil.getAgeFormatted(mContext, item.getDate()));
             if (list.size() > 1) {
                 StringBuilder stringBuilder = new StringBuilder();
-                for (BirthdayModel birthdayModel : list){
-                    stringBuilder.append(birthdayModel.getDate()).append(" | ").
-                            append(birthdayModel.getName()).append(" | ")
-                            .append(birthdayModel.getAge());
+                for (BirthdayItem birthdayItem : list){
+                    stringBuilder.append(birthdayItem.getDate()).append(" | ").
+                            append(birthdayItem.getName()).append(" | ")
+                            .append(TimeUtil.getAgeFormatted(mContext, birthdayItem.getDate()));
                     stringBuilder.append("\n");
                 }
                 builder.setStyle(new NotificationCompat.BigTextStyle().bigText(stringBuilder.toString()));
             }
             builder.addAction(R.drawable.ic_clear_white_vector, mContext.getString(R.string.ok), piDismiss);
-
             NotificationManagerCompat notifier = NotificationManagerCompat.from(mContext);
             notifier.notify(1115, builder.build());
         } else hideBirthdayPermanent();

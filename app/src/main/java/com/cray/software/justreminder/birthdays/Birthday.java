@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.datas;
+package com.cray.software.justreminder.birthdays;
 
 import android.app.AlarmManager;
 import android.content.Context;
-import android.database.Cursor;
 
-import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 public class Birthday {
@@ -41,29 +39,20 @@ public class Birthday {
         cal.setTimeInMillis(System.currentTimeMillis());
         int mYear = cal.get(Calendar.YEAR);
         String mDate = birthFormat.format(cal.getTime());
-        DataBase db = new DataBase(context);
-        db.open();
-        Cursor c = db.getBirthdays();
-        if (c != null && c.moveToFirst()){
-            do {
-                long id = c.getLong(c.getColumnIndex(Constants.ContactConstants.COLUMN_ID));
-                int month = c.getInt(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_MONTH));
-                int day = c.getInt(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_DAY));
-                String year = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_VAR));
-                String birthValue = getBirthdayValue(month, day, mDays);
-                if (year != null) {
-                    if (birthValue.equals(mDate) && !year.matches(String.valueOf(mYear))) {
-                        list.add(id);
-                    }
-                } else {
-                    if (birthValue.equals(mDate)) {
-                        list.add(id);
-                    }
+        List<BirthdayItem> birthdayItemList = BirthdayHelper.getInstance(context).getAll();
+        for (BirthdayItem item : birthdayItemList) {
+            String year = item.getShowedYear();
+            String birthValue = getBirthdayValue(item.getMonth(), item.getDay(), mDays);
+            if (year != null) {
+                if (birthValue.equals(mDate) && !year.matches(String.valueOf(mYear))) {
+                    list.add(item.getId());
                 }
-            } while (c.moveToNext());
+            } else {
+                if (birthValue.equals(mDate)) {
+                    list.add(item.getId());
+                }
+            }
         }
-        if (c != null) c.close();
-        db.close();
         return list;
     }
 

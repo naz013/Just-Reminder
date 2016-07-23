@@ -22,7 +22,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,6 +31,7 @@ import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -40,12 +40,12 @@ import android.widget.ImageView;
 
 import com.backdoor.shared.SharedConst;
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.birthdays.BirthdayHelper;
+import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Language;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.contacts.Contacts;
-import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
@@ -77,9 +77,7 @@ import jp.wasabeef.picasso.transformations.BlurTransformation;
 public class ShowBirthday extends Activity implements View.OnClickListener,
         TextToSpeech.OnInitListener, GoogleApiClient.ConnectionCallbacks, DataApi.DataListener {
 
-    private long id;
-    private int contactId;
-    private String name, number, birthDate;
+    private BirthdayItem mItem;
     private ColorSetter cs = new ColorSetter(ShowBirthday.this);
     private Notifier notifier = new Notifier(ShowBirthday.this);
 
@@ -177,7 +175,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
         }
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        id = getIntent().getLongExtra("id", 0);
+        long id = getIntent().getLongExtra("id", 0);
 
         findViewById(R.id.single_container).setVisibility(View.VISIBLE);
 
@@ -198,51 +196,32 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
         buttonCall.setImageResource(R.drawable.ic_call_black_24dp);
         buttonSend.setImageResource(R.drawable.ic_send_black_24dp);
 
-        DataBase db = new DataBase(ShowBirthday.this);
-        db.open();
-        Cursor c = db.getBirthday(id);
-        if (c != null && c.moveToFirst()) {
-            contactId = c.getInt(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_ID));
-            name = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NAME));
-            number = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_NUMBER));
-            birthDate = c.getString(c.getColumnIndex(Constants.ContactConstants.COLUMN_CONTACT_BIRTHDAY));
-        }
-        if (c != null) {
-            c.close();
-        }
-        db.close();
-        if (number == null || number.matches("")) {
-            number = Contacts.getNumber(name, ShowBirthday.this);
+        mItem = BirthdayHelper.getInstance(this).getBirthday(id);
+        if (TextUtils.isEmpty(mItem.getNumber())) {
+            mItem.setNumber(com.cray.software.justreminder.contacts.Contacts.getNumber(mItem.getName(), ShowBirthday.this));
         }
         CircleImageView contactPhoto = (CircleImageView) findViewById(R.id.contactPhoto);
-        if (contactId == 0 && number != null) {
-            contactId = Contacts.getIdFromNumber(number, ShowBirthday.this);
+        if (mItem.getContactId() == 0) {
+            mItem.setContactId(com.cray.software.justreminder.contacts.Contacts.getIdFromNumber(mItem.getNumber(), ShowBirthday.this));
         }
-        Uri photo = Contacts.getPhoto(contactId);
+        Uri photo = com.cray.software.justreminder.contacts.Contacts.getPhoto(mItem.getContactId());
         if (photo != null) contactPhoto.setImageURI(photo);
         else contactPhoto.setVisibility(View.GONE);
-
-        String years =  TimeUtil.getAgeFormatted(this, birthDate);
-
+        String years =  TimeUtil.getAgeFormatted(this, mItem.getDate());
         RoboTextView userName = (RoboTextView) findViewById(R.id.userName);
-        userName.setText(name);
+        userName.setText(mItem.getName());
         RoboTextView userNumber = (RoboTextView) findViewById(R.id.userNumber);
-
         RoboTextView userYears = (RoboTextView) findViewById(R.id.userYears);
         userYears.setText(years);
-
-        wearMessage = name + "\n" + years;
-
-        if (number == null || number.matches("noNumber")) {
+        wearMessage = mItem.getName() + "\n" + years;
+        if (mItem.getNumber() == null || mItem.getNumber().matches("noNumber")) {
             buttonCall.setVisibility(View.GONE);
             buttonSend.setVisibility(View.GONE);
             userNumber.setVisibility(View.GONE);
         } else {
-            userNumber.setText(number);
+            userNumber.setText(mItem.getNumber());
         }
-
-        notifier.showNotification(TimeUtil.getYears(birthDate), name);
-
+        notifier.showNotification(TimeUtil.getAge(mItem.getDate()), mItem.getName());
         boolean isGlobal = prefs.getBoolean(Prefs.BIRTHDAY_USE_GLOBAL);
         if (!isGlobal && prefs.getBoolean(Prefs.BIRTHDAY_TTS)) {
             Intent checkTTSIntent = new Intent();
@@ -349,7 +328,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
 
     private void sendSMS() {
         if (Permissions.checkPermission(ShowBirthday.this, Permissions.SEND_SMS)) {
-            Telephony.sendSms(number, ShowBirthday.this);
+            Telephony.sendSms(mItem.getNumber(), ShowBirthday.this);
             updateBirthday();
         } else {
             Permissions.requestPermission(ShowBirthday.this, 103, Permissions.SEND_SMS);
@@ -358,7 +337,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
 
     private void call() {
         if (Permissions.checkPermission(ShowBirthday.this, Permissions.CALL_PHONE)) {
-            Telephony.makeCall(number, ShowBirthday.this);
+            Telephony.makeCall(mItem.getNumber(), ShowBirthday.this);
             updateBirthday();
         } else {
             Permissions.requestPermission(ShowBirthday.this, 104, Permissions.CALL_PHONE);
@@ -369,10 +348,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         int year = calendar.get(Calendar.YEAR);
-        DataBase db = new DataBase(ShowBirthday.this);
-        db.open();
-        db.setShown(id, String.valueOf(year));
-        db.close();
+        BirthdayHelper.getInstance(this).setShown(mItem.getId(), String.valueOf(year));
         removeFlags();
         handler.removeCallbacks(increaseVolume);
         notifier.recreatePermanent();
@@ -385,7 +361,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
         switch (requestCode){
             case 103:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    Telephony.sendSms(number, ShowBirthday.this);
+                    Telephony.sendSms(mItem.getNumber(), ShowBirthday.this);
                     updateBirthday();
                 } else {
                     Permissions.showInfo(ShowBirthday.this, Permissions.SEND_SMS);
@@ -393,7 +369,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
                 break;
             case 104:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    Telephony.makeCall(number, ShowBirthday.this);
+                    Telephony.makeCall(mItem.getNumber(), ShowBirthday.this);
                     updateBirthday();
                 } else {
                     Permissions.showInfo(ShowBirthday.this, Permissions.CALL_PHONE);
@@ -408,7 +384,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
         SharedPrefs prefs = SharedPrefs.getInstance(this);
         if (prefs.getBoolean(Prefs.SMART_FOLD)){
             moveTaskToBack(true);
-            new RepeatNotificationReceiver().cancelAlarm(ShowBirthday.this, id);
+            new RepeatNotificationReceiver().cancelAlarm(ShowBirthday.this, mItem.getId());
             new RepeatNotificationReceiver().cancelAlarm(ShowBirthday.this, 0);
             removeFlags();
         } else {
@@ -466,16 +442,14 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
                     result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("error", "This Language is not supported");
             } else {
-                if (name != null && !name.matches("")) {
+                if (TextUtils.isEmpty(mItem.getName())) {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-
-                    if (Module.isLollipop())
-                        tts.speak(name, TextToSpeech.QUEUE_FLUSH, null, null);
-                    else tts.speak(name, TextToSpeech.QUEUE_FLUSH, null);
+                    if (Module.isLollipop()) tts.speak(mItem.getName(), TextToSpeech.QUEUE_FLUSH, null, null);
+                    else tts.speak(mItem.getName(), TextToSpeech.QUEUE_FLUSH, null);
                 }
             }
         } else Log.e("error", "Initialization Failed!");
@@ -485,7 +459,6 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
     public void onConnected(Bundle bundle) {
         Wearable.DataApi.addListener(mGoogleApiClient, this);
         Log.d(Constants.LOG_TAG, "Connected");
-
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create(SharedConst.WEAR_BIRTHDAY);
         DataMap map = putDataMapReq.getDataMap();
         map.putString(SharedConst.KEY_TASK, wearMessage);
@@ -509,7 +482,6 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
                 DataItem item = event.getDataItem();
                 if (item.getUri().getPath().compareTo(SharedConst.PHONE_BIRTHDAY) == 0) {
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-
                     int keyCode = dataMap.getInt(SharedConst.REQUEST_KEY);
                     if (keyCode == SharedConst.KEYCODE_OK) {
                         updateBirthday();
