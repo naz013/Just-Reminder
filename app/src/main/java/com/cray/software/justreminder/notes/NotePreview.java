@@ -283,6 +283,7 @@ public class NotePreview extends AppCompatActivity {
     private void loadData(){
         img = null;
         if (mItem != null){
+            mItem = NoteHelper.getInstance(this).getNote(mItem.getId());
             String note = mItem.getNote();
             if (SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT)){
                 note = SyncHelper.decrypt(note);
