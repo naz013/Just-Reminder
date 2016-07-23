@@ -120,7 +120,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.AddBirthday"
+            android:name=".birthdays.AddBirthdayActivity"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -229,7 +229,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.ShowBirthday"
+            android:name=".birthdays.ShowBirthdayActivity"
             android:configChanges="keyboardHidden|orientation"
             android:noHistory="true"
             android:theme="@style/HomeWhiteFullscreen" >

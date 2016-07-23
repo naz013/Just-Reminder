@@ -25,7 +25,7 @@ import android.content.SharedPreferences;
 import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.activities.AddBirthday;
+import com.cray.software.justreminder.birthdays.AddBirthdayActivity;
 
 public class AddBirthdayWidget extends AppWidgetProvider{
 
@@ -45,7 +45,7 @@ public class AddBirthdayWidget extends AppWidgetProvider{
                 R.layout.add_birthday_widget_layout);
         int widgetColor = sp.getInt(AddBirthdayWidgetConfig.ADD_BIRTHDAY_WIDGET_COLOR + widgetID, 0);
         rv.setInt(R.id.widgetBg, "setBackgroundResource", widgetColor);
-        Intent configIntent = new Intent(context, AddBirthday.class);
+        Intent configIntent = new Intent(context, AddBirthdayActivity.class);
         PendingIntent configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
         rv.setOnClickPendingIntent(R.id.imageView, configPendingIntent);
         appWidgetManager.updateAppWidget(widgetID, rv);

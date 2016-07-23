@@ -19,8 +19,8 @@ package com.cray.software.justreminder.services;
 import android.app.IntentService;
 import android.content.Intent;
 
-import com.cray.software.justreminder.birthdays.Birthday;
-import com.cray.software.justreminder.activities.ShowBirthday;
+import com.cray.software.justreminder.birthdays.ShowBirthdayActivity;
+import com.cray.software.justreminder.birthdays.BirthdayHelper;
 
 import java.util.ArrayList;
 
@@ -32,10 +32,10 @@ public class CheckBirthdays extends IntentService{
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        ArrayList<Long> list = Birthday.getTodayBirthdays(getApplicationContext());
+        ArrayList<Long> list = BirthdayHelper.getInstance(getApplicationContext()).getTodayBirthdays();
         if (list != null && list.size() > 0) {
             for (long id : list){
-                Intent resultIntent = new Intent(getApplicationContext(), ShowBirthday.class);
+                Intent resultIntent = new Intent(getApplicationContext(), ShowBirthdayActivity.class);
                 resultIntent.putExtra("id", id);
                 resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                         Intent.FLAG_ACTIVITY_MULTIPLE_TASK);

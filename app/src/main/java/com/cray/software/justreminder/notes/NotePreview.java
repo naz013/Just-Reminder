@@ -346,7 +346,7 @@ public class NotePreview extends AppCompatActivity {
     }
 
     private void shareNote(){
-        if (!Note.shareNote(mItem.getId(), this)) {
+        if (!NoteHelper.getInstance(this).shareNote(mItem.getId())) {
             Messages.toast(this, getString(R.string.error_sending));
             closeWindow();
         }

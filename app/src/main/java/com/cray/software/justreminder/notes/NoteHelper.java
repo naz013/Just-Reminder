@@ -2,6 +2,19 @@ package com.cray.software.justreminder.notes;
 
 import android.content.Context;
 
+import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.app_widgets.UpdatesHelper;
+import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.helpers.Messages;
+import com.cray.software.justreminder.helpers.Notifier;
+import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.helpers.Telephony;
+import com.cray.software.justreminder.interfaces.NavigationCallbacks;
+
+import org.json.JSONException;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,5 +119,53 @@ public class NoteHelper {
             ids.add(item.getUuId());
         }
         return ids;
+    }
+
+    /**
+     * Create note file and send it to other users.
+     * @param id note identifier.
+     * @return Boolean
+     */
+    public boolean shareNote(long id) {
+        SyncHelper sHelp = new SyncHelper(mContext);
+        boolean res = false;
+        NoteItem item = getNote(id);
+        if (item != null) {
+            String note = item.getNote();
+            if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.NOTE_ENCRYPT)) {
+                note = SyncHelper.decrypt(note);
+            }
+            item.setNote(note);
+            String uuID = item.getUuId();
+            if (uuID == null || uuID.matches("")) {
+                item.setUuId(SyncHelper.generateID());
+            }
+            try {
+                File file = sHelp.createNote(item);
+                if (!file.exists() || !file.canRead()) {
+                    return false;
+                } else {
+                    res = true;
+                    Telephony.sendNote(file, mContext, note);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return res;
+    }
+
+    /**
+     * Delete note from database and file from SDCard or Cloud.
+     * @param id note identifier.
+     * @param callbacks callback for toast or snackbar message.
+     */
+    public void deleteNote(long id, NavigationCallbacks callbacks) {
+        String uuId = deleteNote(id).getUuId();
+        new DeleteNoteFilesAsync(mContext).execute(uuId);
+        new UpdatesHelper(mContext).updateNotesWidget();
+        new Notifier(mContext).discardStatusNotification(id);
+        if (callbacks != null) callbacks.showSnackbar(mContext.getString(R.string.note_deleted));
+        else Messages.toast(mContext, R.string.note_deleted);
     }
 }

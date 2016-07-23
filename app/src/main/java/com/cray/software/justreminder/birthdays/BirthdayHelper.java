@@ -1,11 +1,17 @@
 package com.cray.software.justreminder.birthdays;
 
+import android.app.AlarmManager;
 import android.content.Context;
 
+import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
+import com.cray.software.justreminder.helpers.SharedPrefs;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Copyright 2016 Nazar Suhovich
@@ -27,8 +33,43 @@ public class BirthdayHelper {
     private static BirthdayHelper groupHelper;
     private Context mContext;
 
+    private static SimpleDateFormat birthFormat = new SimpleDateFormat("dd MM", Locale.getDefault());
+
     private BirthdayHelper(Context context) {
         this.mContext = context;
+    }
+
+    public ArrayList<Long> getTodayBirthdays(){
+        ArrayList<Long> list = new ArrayList<>();
+        int mDays = SharedPrefs.getInstance(mContext).getInt(Prefs.DAYS_TO_BIRTHDAY);
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(System.currentTimeMillis());
+        int mYear = cal.get(Calendar.YEAR);
+        String mDate = birthFormat.format(cal.getTime());
+        List<BirthdayItem> birthdayItemList = getAll();
+        for (BirthdayItem item : birthdayItemList) {
+            String year = item.getShowedYear();
+            String birthValue = getBirthdayValue(item.getMonth(), item.getDay(), mDays);
+            if (year != null) {
+                if (birthValue.equals(mDate) && !year.matches(String.valueOf(mYear))) {
+                    list.add(item.getId());
+                }
+            } else {
+                if (birthValue.equals(mDate)) {
+                    list.add(item.getId());
+                }
+            }
+        }
+        return list;
+    }
+
+    public String getBirthdayValue(int month, int day, int daysBefore) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, day);
+        calendar.setTimeInMillis(calendar.getTimeInMillis() - (AlarmManager.INTERVAL_DAY * daysBefore));
+        return birthFormat.format(calendar.getTime());
     }
 
     public static BirthdayHelper getInstance(Context context) {

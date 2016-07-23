@@ -473,7 +473,7 @@ public class NotesManager extends AppCompatActivity {
         builder.setMessage(getString(R.string.delete_this_note));
         builder.setPositiveButton(getString(R.string.yes), (dialog, which) -> {
             dialog.dismiss();
-            Note.deleteNote(mItem.getId(), NotesManager.this, null);
+            NoteHelper.getInstance(this).deleteNote(mItem.getId(), null);
             SharedPrefs.getInstance(this).putBoolean("isNew", true);
             finish();
         });

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.activities;
+package com.cray.software.justreminder.birthdays;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -33,8 +33,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.birthdays.BirthdayHelper;
-import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -57,7 +55,7 @@ import java.util.Locale;
 /**
  * Add new or edit birthday activity.
  */
-public class AddBirthday extends AppCompatActivity implements View.OnClickListener {
+public class AddBirthdayActivity extends AppCompatActivity implements View.OnClickListener {
 
     /**
      * Edit text fields.
@@ -102,7 +100,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(AddBirthday.this);
+        ColorSetter cs = new ColorSetter(AddBirthdayActivity.this);
         setTheme(cs.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
@@ -201,10 +199,10 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
                 dateDialog();
                 break;
             case R.id.pickContact:
-                if (Permissions.checkPermission(AddBirthday.this, Permissions.READ_CONTACTS, Permissions.READ_CALLS)) {
-                    SuperUtil.selectContact(AddBirthday.this, Constants.REQUEST_CODE_CONTACTS);
+                if (Permissions.checkPermission(AddBirthdayActivity.this, Permissions.READ_CONTACTS, Permissions.READ_CALLS)) {
+                    SuperUtil.selectContact(AddBirthdayActivity.this, Constants.REQUEST_CODE_CONTACTS);
                 } else {
-                    Permissions.requestPermission(AddBirthday.this, 101, Permissions.READ_CONTACTS, Permissions.READ_CALLS);
+                    Permissions.requestPermission(AddBirthdayActivity.this, 101, Permissions.READ_CONTACTS, Permissions.READ_CALLS);
                 }
                 break;
             default:
@@ -221,7 +219,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
             birthName.setError(getString(R.string.must_be_not_empty));
             return;
         }
-        int contactId = com.cray.software.justreminder.contacts.Contacts.getIdFromNumber(number, AddBirthday.this);
+        int contactId = com.cray.software.justreminder.contacts.Contacts.getIdFromNumber(number, AddBirthdayActivity.this);
         if (mItem != null) {
             if (mItem.getUuId() == null) {
                 String uuId = SyncHelper.generateID();
@@ -262,7 +260,7 @@ public class AddBirthday extends AppCompatActivity implements View.OnClickListen
         switch (requestCode) {
             case 101:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    SuperUtil.selectContact(AddBirthday.this, Constants.REQUEST_CODE_CONTACTS);
+                    SuperUtil.selectContact(AddBirthdayActivity.this, Constants.REQUEST_CODE_CONTACTS);
                 }
                 break;
         }

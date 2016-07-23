@@ -49,7 +49,6 @@ import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.notes.Note;
 import com.cray.software.justreminder.notes.NoteDataProvider;
 import com.cray.software.justreminder.notes.NoteHelper;
 import com.cray.software.justreminder.notes.NoteItem;
@@ -281,7 +280,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     private void deleteAll(){
         List<NoteItem> list = NoteHelper.getInstance(mContext).getAll();
         for (NoteItem item : list) {
-            Note.deleteNote(item.getId(), mContext, mCallbacks);
+            NoteHelper.getInstance(mContext).deleteNote(item.getId(), mCallbacks);
         }
     }
 
@@ -330,7 +329,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                     previewNote(id, view);
                     break;
                 case 1:
-                    if (Note.shareNote(id, mContext)){
+                    if (NoteHelper.getInstance(mContext).shareNote(id)){
                         Messages.toast(mContext, mContext.getString(R.string.sent));
                     } else {
                         if (mCallbacks != null) {
@@ -348,7 +347,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                             .putExtra(Constants.EDIT_ID, id));
                     break;
                 case 4:
-                    Note.deleteNote(id, mContext, mCallbacks);
+                    NoteHelper.getInstance(mContext).deleteNote(id, mCallbacks);
                     loaderAdapter();
                     break;
             }

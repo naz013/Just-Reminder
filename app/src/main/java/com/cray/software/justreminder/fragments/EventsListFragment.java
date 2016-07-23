@@ -32,7 +32,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.activities.AddBirthday;
+import com.cray.software.justreminder.birthdays.AddBirthdayActivity;
 import com.cray.software.justreminder.adapters.CalendarEventsAdapter;
 import com.cray.software.justreminder.birthdays.BirthdayHelper;
 import com.cray.software.justreminder.datas.models.EventsItem;
@@ -131,7 +131,7 @@ public class EventsListFragment extends Fragment implements SimpleListener {
     @Override
     public void onItemClicked(int position, View view) {
         if (mDataList.get(position).getType().matches("birthday")) {
-            startActivity(new Intent(mContext, AddBirthday.class)
+            startActivity(new Intent(mContext, AddBirthdayActivity.class)
                     .putExtra("BDid", mDataList.get(position).getId())
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         } else {

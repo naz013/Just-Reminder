@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.activities;
+package com.cray.software.justreminder.birthdays;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -40,8 +40,6 @@ import android.widget.ImageView;
 
 import com.backdoor.shared.SharedConst;
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.birthdays.BirthdayHelper;
-import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Language;
@@ -74,12 +72,12 @@ import java.util.Calendar;
 import de.hdodenhof.circleimageview.CircleImageView;
 import jp.wasabeef.picasso.transformations.BlurTransformation;
 
-public class ShowBirthday extends Activity implements View.OnClickListener,
+public class ShowBirthdayActivity extends Activity implements View.OnClickListener,
         TextToSpeech.OnInitListener, GoogleApiClient.ConnectionCallbacks, DataApi.DataListener {
 
     private BirthdayItem mItem;
-    private ColorSetter cs = new ColorSetter(ShowBirthday.this);
-    private Notifier notifier = new Notifier(ShowBirthday.this);
+    private ColorSetter cs = new ColorSetter(ShowBirthdayActivity.this);
+    private Notifier notifier = new Notifier(ShowBirthdayActivity.this);
 
     private int currVolume;
     private int streamVol;
@@ -198,11 +196,11 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
 
         mItem = BirthdayHelper.getInstance(this).getBirthday(id);
         if (TextUtils.isEmpty(mItem.getNumber())) {
-            mItem.setNumber(com.cray.software.justreminder.contacts.Contacts.getNumber(mItem.getName(), ShowBirthday.this));
+            mItem.setNumber(com.cray.software.justreminder.contacts.Contacts.getNumber(mItem.getName(), ShowBirthdayActivity.this));
         }
         CircleImageView contactPhoto = (CircleImageView) findViewById(R.id.contactPhoto);
         if (mItem.getContactId() == 0) {
-            mItem.setContactId(com.cray.software.justreminder.contacts.Contacts.getIdFromNumber(mItem.getNumber(), ShowBirthday.this));
+            mItem.setContactId(com.cray.software.justreminder.contacts.Contacts.getIdFromNumber(mItem.getNumber(), ShowBirthdayActivity.this));
         }
         Uri photo = com.cray.software.justreminder.contacts.Contacts.getPhoto(mItem.getContactId());
         if (photo != null) contactPhoto.setImageURI(photo);
@@ -327,20 +325,20 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
     }
 
     private void sendSMS() {
-        if (Permissions.checkPermission(ShowBirthday.this, Permissions.SEND_SMS)) {
-            Telephony.sendSms(mItem.getNumber(), ShowBirthday.this);
+        if (Permissions.checkPermission(ShowBirthdayActivity.this, Permissions.SEND_SMS)) {
+            Telephony.sendSms(mItem.getNumber(), ShowBirthdayActivity.this);
             updateBirthday();
         } else {
-            Permissions.requestPermission(ShowBirthday.this, 103, Permissions.SEND_SMS);
+            Permissions.requestPermission(ShowBirthdayActivity.this, 103, Permissions.SEND_SMS);
         }
     }
 
     private void call() {
-        if (Permissions.checkPermission(ShowBirthday.this, Permissions.CALL_PHONE)) {
-            Telephony.makeCall(mItem.getNumber(), ShowBirthday.this);
+        if (Permissions.checkPermission(ShowBirthdayActivity.this, Permissions.CALL_PHONE)) {
+            Telephony.makeCall(mItem.getNumber(), ShowBirthdayActivity.this);
             updateBirthday();
         } else {
-            Permissions.requestPermission(ShowBirthday.this, 104, Permissions.CALL_PHONE);
+            Permissions.requestPermission(ShowBirthdayActivity.this, 104, Permissions.CALL_PHONE);
         }
     }
 
@@ -361,18 +359,18 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
         switch (requestCode){
             case 103:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    Telephony.sendSms(mItem.getNumber(), ShowBirthday.this);
+                    Telephony.sendSms(mItem.getNumber(), ShowBirthdayActivity.this);
                     updateBirthday();
                 } else {
-                    Permissions.showInfo(ShowBirthday.this, Permissions.SEND_SMS);
+                    Permissions.showInfo(ShowBirthdayActivity.this, Permissions.SEND_SMS);
                 }
                 break;
             case 104:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    Telephony.makeCall(mItem.getNumber(), ShowBirthday.this);
+                    Telephony.makeCall(mItem.getNumber(), ShowBirthdayActivity.this);
                     updateBirthday();
                 } else {
-                    Permissions.showInfo(ShowBirthday.this, Permissions.CALL_PHONE);
+                    Permissions.showInfo(ShowBirthdayActivity.this, Permissions.CALL_PHONE);
                 }
                 break;
         }
@@ -384,8 +382,8 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
         SharedPrefs prefs = SharedPrefs.getInstance(this);
         if (prefs.getBoolean(Prefs.SMART_FOLD)){
             moveTaskToBack(true);
-            new RepeatNotificationReceiver().cancelAlarm(ShowBirthday.this, mItem.getId());
-            new RepeatNotificationReceiver().cancelAlarm(ShowBirthday.this, 0);
+            new RepeatNotificationReceiver().cancelAlarm(ShowBirthdayActivity.this, mItem.getId());
+            new RepeatNotificationReceiver().cancelAlarm(ShowBirthdayActivity.this, 0);
             removeFlags();
         } else {
             Messages.toast(getApplicationContext(), getString(R.string.select_one_of_item));
@@ -437,7 +435,7 @@ public class ShowBirthday extends Activity implements View.OnClickListener,
     @Override
     public void onInit(int status) {
         if (status == TextToSpeech.SUCCESS) {
-            int result = tts.setLanguage(new Language().getLocale(ShowBirthday.this, true));
+            int result = tts.setLanguage(new Language().getLocale(ShowBirthdayActivity.this, true));
             if (result == TextToSpeech.LANG_MISSING_DATA ||
                     result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("error", "This Language is not supported");

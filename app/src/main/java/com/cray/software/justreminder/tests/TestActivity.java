@@ -25,13 +25,13 @@ import android.view.View;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
-import com.cray.software.justreminder.activities.AddBirthday;
+import com.cray.software.justreminder.birthdays.AddBirthdayActivity;
 import com.cray.software.justreminder.places.AddPlaceActivity;
 import com.cray.software.justreminder.calls.FollowReminder;
 import com.cray.software.justreminder.calls.MissedCallDialog;
 import com.cray.software.justreminder.reminder.AddReminderActivity;
 import com.cray.software.justreminder.templates.QuickSMSActivity;
-import com.cray.software.justreminder.activities.ShowBirthday;
+import com.cray.software.justreminder.birthdays.ShowBirthdayActivity;
 import com.cray.software.justreminder.contacts.ContactsActivity;
 import com.cray.software.justreminder.feedback.SendReportActivity;
 import com.cray.software.justreminder.file_explorer.FileExploreActivity;
@@ -69,9 +69,9 @@ public class TestActivity extends AppCompatActivity implements SimpleListener {
         list.add(new ActionItem("Quick message", QuickSMSActivity.class));
         list.add(new ActionItem("Quick reminder", AddReminderActivity.class));
         list.add(new ActionItem("Add place", AddPlaceActivity.class));
-        list.add(new ActionItem("Add birthday", AddBirthday.class));
+        list.add(new ActionItem("Add birthday", AddBirthdayActivity.class));
         list.add(new ActionItem("Missed call screen", MissedCallDialog.class));
-        list.add(new ActionItem("Birthday dialog", ShowBirthday.class));
+        list.add(new ActionItem("Birthday dialog", ShowBirthdayActivity.class));
         return list;
     }
 

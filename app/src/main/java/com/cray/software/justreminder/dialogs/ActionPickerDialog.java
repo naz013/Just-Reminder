@@ -22,7 +22,7 @@ import android.os.Bundle;
 import android.widget.ImageButton;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.activities.AddBirthday;
+import com.cray.software.justreminder.birthdays.AddBirthdayActivity;
 import com.cray.software.justreminder.reminder.AddReminderActivity;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -57,7 +57,7 @@ public class ActionPickerDialog extends Activity {
         ImageButton addBirth = (ImageButton) findViewById(R.id.addBirth);
         addBirth.setOnClickListener(v -> {
             SharedPrefs.getInstance(this).putBoolean(Prefs.BIRTHDAY_REMINDER, true);
-            startActivity(new Intent(ActionPickerDialog.this, AddBirthday.class)
+            startActivity(new Intent(ActionPickerDialog.this, AddBirthdayActivity.class)
                     .putExtra("date", receivedDate));
             finish();
         });

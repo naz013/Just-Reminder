@@ -26,7 +26,7 @@ import com.backdoor.simpleai.RecUtils;
 import com.backdoor.simpleai.Recognizer;
 import com.backdoor.simpleai.Types;
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.activities.AddBirthday;
+import com.cray.software.justreminder.birthdays.AddBirthdayActivity;
 import com.cray.software.justreminder.activities.SplashScreen;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.constants.Constants;
@@ -93,7 +93,7 @@ public class Recognize {
                         mContext.startActivity(new Intent(mContext, VoiceHelp.class)
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT));
                     else if (action == RecUtils.BIRTHDAY)
-                        mContext.startActivity(new Intent(mContext, AddBirthday.class));
+                        mContext.startActivity(new Intent(mContext, AddBirthdayActivity.class));
                     else if (action == RecUtils.REMINDER)
                         mContext.startActivity(new Intent(mContext, AddReminderActivity.class));
                     else mContext.startActivity(new Intent(mContext, SelectVolume.class)

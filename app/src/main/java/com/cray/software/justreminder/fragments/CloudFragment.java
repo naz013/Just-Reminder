@@ -36,7 +36,7 @@ import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.groups.GroupManager;
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.activities.AddBirthday;
+import com.cray.software.justreminder.birthdays.AddBirthdayActivity;
 import com.cray.software.justreminder.adapters.FileRecyclerAdapter;
 import com.cray.software.justreminder.async.DeleteAsync;
 import com.cray.software.justreminder.async.UserInfoAsync;
@@ -351,7 +351,7 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
                     provider.getItem(position).getFilePath()));
         } else if (fileName.endsWith(FileConfig.FILE_NAME_BIRTHDAY)) {
             startActivity(new Intent(mContext,
-                    AddBirthday.class).putExtra(Constants.EDIT_PATH,
+                    AddBirthdayActivity.class).putExtra(Constants.EDIT_PATH,
                     provider.getItem(position).getFilePath()));
         } else if (fileName.endsWith(FileConfig.FILE_NAME_GROUP)) {
             startActivity(new Intent(mContext,
