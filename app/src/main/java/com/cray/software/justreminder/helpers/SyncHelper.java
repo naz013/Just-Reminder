@@ -35,8 +35,8 @@ import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JParser;
 import com.cray.software.justreminder.json.JRecurrence;
 import com.cray.software.justreminder.json.JShopping;
-import com.cray.software.justreminder.notes.NoteModel;
-import com.cray.software.justreminder.notes.NotesBase;
+import com.cray.software.justreminder.notes.NoteHelper;
+import com.cray.software.justreminder.notes.NoteItem;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.LocationType;
 import com.cray.software.justreminder.reminder.Reminder;
@@ -193,27 +193,21 @@ public class SyncHelper {
 
     /**
      * Creates note file on SD Card.
-     * @param note note content.
-     * @param date date of note creating.
-     * @param uuID unique note identifier.
-     * @param color note color.
-     * @param image image attached to note.
-     * @param style typeface style.
      * @return Note file
      * @throws JSONException
      */
-    public File createNote(String note, String date, String uuID, int color, byte[] image,
-                           int style) throws JSONException {
+    public File createNote(NoteItem item) throws JSONException {
         JSONObject jObjectData = new JSONObject();
-        jObjectData.put(Constants.COLUMN_COLOR, style);
-        jObjectData.put(Constants.COLUMN_FONT_STYLE, color);
-        jObjectData.put(Constants.COLUMN_DATE, date);
-        jObjectData.put(Constants.COLUMN_UUID, uuID);
-        jObjectData.put(Constants.COLUMN_NOTE, encrypt(note));
+        jObjectData.put(Constants.COLUMN_COLOR, item.getStyle());
+        jObjectData.put(Constants.COLUMN_FONT_STYLE, item.getColor());
+        jObjectData.put(Constants.COLUMN_DATE, item.getDate());
+        jObjectData.put(Constants.COLUMN_UUID, item.getUuId());
+        jObjectData.put(Constants.COLUMN_NOTE, encrypt(item.getNote()));
+        byte[] image = item.getImage();
         if (image != null) {
             jObjectData.put(Constants.COLUMN_IMAGE, Base64.encodeToString(image, Base64.DEFAULT));
         } else {
-            jObjectData.put(Constants.COLUMN_IMAGE, image);
+            jObjectData.put(Constants.COLUMN_IMAGE, null);
         }
         if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.NOTE_ENCRYPT)){
             jObjectData.put(Constants.COLUMN_ENCRYPTED, 1);
@@ -223,8 +217,7 @@ public class SyncHelper {
         File file = null;
         File dir = MemoryUtil.getMailDir();
         if (dir != null) {
-            String exportFileName = uuID + FileConfig.FILE_NAME_NOTE;
-
+            String exportFileName = item.getUuId() + FileConfig.FILE_NAME_NOTE;
             file = new File(dir, exportFileName);
             try {
                 writeFile(file, jObjectData.toString());
@@ -240,50 +233,37 @@ public class SyncHelper {
      * @throws JSONException
      */
     public void noteToJson() throws JSONException {
-        NotesBase db = new NotesBase(mContext);
-        db.open();
-        Cursor c = db.getNotes();
-        if (c != null && c.moveToFirst()){
-            do {
-                String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
-                int color  = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
-                int style  = c.getInt(c.getColumnIndex(Constants.COLUMN_FONT_STYLE));
-                String date = c.getString(c.getColumnIndex(Constants.COLUMN_DATE));
-                String uuID = c.getString(c.getColumnIndex(Constants.COLUMN_UUID));
-                byte[] image = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
-                long linkId = c.getLong(c.getColumnIndex(Constants.COLUMN_LINK_ID));
-                JSONObject jObjectData = new JSONObject();
-                jObjectData.put(Constants.COLUMN_COLOR, color);
-                jObjectData.put(Constants.COLUMN_FONT_STYLE, style);
-                jObjectData.put(Constants.COLUMN_DATE, date);
-                jObjectData.put(Constants.COLUMN_UUID, uuID);
-                jObjectData.put(Constants.COLUMN_LINK_ID, linkId);
-                if (image != null) {
-                    jObjectData.put(Constants.COLUMN_IMAGE, Base64.encodeToString(image, Base64.DEFAULT));
-                } else jObjectData.put(Constants.COLUMN_IMAGE, image);
-                if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.NOTE_ENCRYPT)){
-                    jObjectData.put(Constants.COLUMN_ENCRYPTED, 1);
-                    jObjectData.put(Constants.COLUMN_NOTE, note);
-                } else {
-                    jObjectData.put(Constants.COLUMN_ENCRYPTED, 0);
-                    jObjectData.put(Constants.COLUMN_NOTE, encrypt(note));
+        List<NoteItem> list = NoteHelper.getInstance(mContext).getAll();
+        for (NoteItem item : list) {
+            JSONObject jObjectData = new JSONObject();
+            jObjectData.put(Constants.COLUMN_COLOR, item.getColor());
+            jObjectData.put(Constants.COLUMN_FONT_STYLE, item.getStyle());
+            jObjectData.put(Constants.COLUMN_DATE, item.getDate());
+            jObjectData.put(Constants.COLUMN_UUID, item.getUuId());
+            jObjectData.put(Constants.COLUMN_LINK_ID, item.getLinkId());
+            if (item.getImage() != null) {
+                jObjectData.put(Constants.COLUMN_IMAGE, Base64.encodeToString(item.getImage(), Base64.DEFAULT));
+            } else jObjectData.put(Constants.COLUMN_IMAGE, item.getImage());
+            if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.NOTE_ENCRYPT)){
+                jObjectData.put(Constants.COLUMN_ENCRYPTED, 1);
+                jObjectData.put(Constants.COLUMN_NOTE, item.getNote());
+            } else {
+                jObjectData.put(Constants.COLUMN_ENCRYPTED, 0);
+                jObjectData.put(Constants.COLUMN_NOTE, encrypt(item.getNote()));
+            }
+
+            File dir = MemoryUtil.getNDir();
+            if (dir != null) {
+                String exportFileName = item.getUuId() + FileConfig.FILE_NAME_NOTE;
+
+                File file = new File(dir, exportFileName);
+                try {
+                    writeFile(file, jObjectData.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-
-                File dir = MemoryUtil.getNDir();
-                if (dir != null) {
-                    String exportFileName = uuID + FileConfig.FILE_NAME_NOTE;
-
-                    File file = new File(dir, exportFileName);
-                    try {
-                        writeFile(file, jObjectData.toString());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else Log.i("reminder-info", "Couldn't find external storage!");
-            } while (c.moveToNext());
+            } else Log.i("reminder-info", "Couldn't find external storage!");
         }
-        if (c != null) c.close();
-        db.close();
     }
 
     /**
@@ -295,24 +275,11 @@ public class SyncHelper {
     public void noteFromJson(String file, String fileNameR) throws JSONException {
         File dir = MemoryUtil.getNDir();
         if (dir != null) {
-            NotesBase db = new NotesBase(mContext);
-            db.open();
-            List<String> namesPass = new ArrayList<>();
-            Cursor e = db.getNotes();
-            if (e != null) {
-                while (e.moveToNext()) {
-                    for (e.moveToFirst(); !e.isAfterLast(); e.moveToNext()) {
-                        namesPass.add(e.getString(e.getColumnIndex(Constants.COLUMN_UUID)));
-                    }
-                }
-                e.close();
-            }
-            db.close();
-
+            List<String> allUuId = NoteHelper.getInstance(mContext).getAllUuId();
             if (file != null){
                 int pos = fileNameR.lastIndexOf(".");
                 String fileNameS = fileNameR.substring(0, pos);
-                if (!namesPass.contains(fileNameS)) {
+                if (!allUuId.contains(fileNameS)) {
                     String jsonText = readFile(file);
                     JSONObject jsonObj = new JSONObject(jsonText);
                     noteObject(jsonObj);
@@ -325,7 +292,7 @@ public class SyncHelper {
                         int pos = fileName.lastIndexOf(".");
                         String fileLoc = dir + "/" + fileName;
                         String fileNameS = fileName.substring(0, pos);
-                        if (!namesPass.contains(fileNameS)) {
+                        if (!allUuId.contains(fileNameS)) {
                             String jsonText = readFile(fileLoc);
                             JSONObject jsonObj = new JSONObject(jsonText);
                             noteObject(jsonObj);
@@ -405,12 +372,8 @@ public class SyncHelper {
             note = decrypt(note);
         }
         long linkId = jsonObj.getLong(Constants.COLUMN_LINK_ID);
-
-        NotesBase db = new NotesBase(mContext);
-        db.open();
-        long id = db.saveNote(note, date, color, uuID, image, style);
-        db.linkToReminder(id, linkId);
-        db.close();
+        NoteItem item = new NoteItem(note, uuID, date, color, style, image, 0, linkId);
+        NoteHelper.getInstance(mContext).saveNote(item);
     }
 
     /**
@@ -420,7 +383,7 @@ public class SyncHelper {
      * @return note object
      * @throws JSONException
      */
-    public static NoteModel getNote(String filePath, String json) throws JSONException {
+    public static NoteItem getNote(String filePath, String json) throws JSONException {
         if (filePath != null) {
             if (MemoryUtil.isSdPresent()){
                 String jsonText = readFile(filePath);
@@ -438,12 +401,16 @@ public class SyncHelper {
                 if (!jsonObj.isNull(Constants.COLUMN_FONT_STYLE)) {
                     style = jsonObj.getInt(Constants.COLUMN_FONT_STYLE);
                 }
+                String date = null;
+                if (!jsonObj.isNull(Constants.COLUMN_DATE)) {
+                    date = jsonObj.getString(Constants.COLUMN_DATE);
+                }
                 byte[] image = null;
                 if (!jsonObj.isNull(Constants.COLUMN_IMAGE)) {
                     image = Base64.decode(jsonObj.getString(Constants.COLUMN_IMAGE), Base64.DEFAULT);
                 }
-
-                return new NoteModel(note, color, style, image, uuID);
+                long linkId = jsonObj.getLong(Constants.COLUMN_LINK_ID);
+                return new NoteItem(note, uuID, date, color, style, image, 0, linkId);
             } else return null;
         } else {
             JSONObject jsonObj = new JSONObject(json);
@@ -460,12 +427,16 @@ public class SyncHelper {
             if (!jsonObj.isNull(Constants.COLUMN_FONT_STYLE)) {
                 style = jsonObj.getInt(Constants.COLUMN_FONT_STYLE);
             }
+            String date = null;
+            if (!jsonObj.isNull(Constants.COLUMN_DATE)) {
+                date = jsonObj.getString(Constants.COLUMN_DATE);
+            }
             byte[] image = null;
             if (!jsonObj.isNull(Constants.COLUMN_IMAGE)) {
                 image = Base64.decode(jsonObj.getString(Constants.COLUMN_IMAGE), Base64.DEFAULT);
             }
-
-            return new NoteModel(note, color, style, image, uuID);
+            long linkId = jsonObj.getLong(Constants.COLUMN_LINK_ID);
+            return new NoteItem(note, uuID, date, color, style, image, 0, linkId);
         }
     }
 

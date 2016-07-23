@@ -74,11 +74,9 @@ import java.util.Calendar;
 public class NotePreview extends AppCompatActivity {
 
     private static final int REQUEST_SD_CARD = 1122;
-    private long remId;
+    private NoteItem mItem;
     private ColorSetter cSetter;
-    private long mParam1;
     private Bitmap img;
-    private byte[] imageByte;
     private float prevPercent;
 
     private Toolbar toolbar;
@@ -128,16 +126,17 @@ public class NotePreview extends AppCompatActivity {
                 });
 
         toolbar.inflateMenu(R.menu.preview_note_menu);
-        mParam1 = getIntent().getLongExtra(Constants.EDIT_ID, 0);
-        findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
+        long id = getIntent().getLongExtra(Constants.EDIT_ID, 0);
+        mItem = NoteHelper.getInstance(this).getNote(id);
 
+        findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
         scrollContent = (ScrollView) findViewById(R.id.scrollContent);
         scrollContent.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
             public void onScrollChanged() {
                 int scrollY = scrollContent.getScrollY();
-                if (imageByte != null) {
-                    toolbar.getBackground().setAlpha(getAlphaforActionBar(scrollY));
+                if (mItem.getImage() != null) {
+                    toolbar.getBackground().setAlpha(getAlphaForActionBar(scrollY));
                 } else {
                     toolbar.getBackground().setAlpha(255);
                 }
@@ -156,7 +155,7 @@ public class NotePreview extends AppCompatActivity {
                 return (((float)scrollY / (float)maxDist) * 100.0f);
             }
 
-            private int getAlphaforActionBar(int scrollY) {
+            private int getAlphaForActionBar(int scrollY) {
                 int minDist = 0, maxDist = QuickReturnUtils.dp2px(NotePreview.this, 200);
                 if (scrollY > maxDist) {
                     return 255;
@@ -197,18 +196,18 @@ public class NotePreview extends AppCompatActivity {
         mFab.setVisibility(View.GONE);
 
         mFab.setOnClickListener(v -> startActivity(new Intent(NotePreview.this, NotesManager.class)
-                .putExtra(Constants.EDIT_ID, mParam1)));
+                .putExtra(Constants.EDIT_ID, mItem.getId())));
 
         RoboButton editReminder = (RoboButton) findViewById(R.id.editReminder);
         editReminder.setOnClickListener(v -> {
-            if (remId != 0) {
-                Reminder.edit(remId, NotePreview.this);
+            if (mItem.getLinkId() != 0) {
+                Reminder.edit(mItem.getLinkId(), NotePreview.this);
             }
         });
         RoboButton deleteReminder = (RoboButton) findViewById(R.id.deleteReminder);
         deleteReminder.setOnClickListener(v -> {
-            if (remId != 0) {
-                Reminder.delete(remId, NotePreview.this);
+            if (mItem.getLinkId() != 0) {
+                Reminder.delete(mItem.getLinkId(), NotePreview.this);
                 reminderContainer.setVisibility(View.GONE);
             }
         });
@@ -217,7 +216,7 @@ public class NotePreview extends AppCompatActivity {
     }
 
     private void openImage() {
-        if (imageByte != null) {
+        if (mItem.getImage() != null) {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             img.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
             byte[] image = bytes.toByteArray();
@@ -241,7 +240,6 @@ public class NotePreview extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
                 if (isFile) {
                     FileOutputStream fo = null;
                     try {
@@ -252,10 +250,6 @@ public class NotePreview extends AppCompatActivity {
                     if (fo != null) {
                         try {
                             fo.write(image);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        try {
                             fo.close();
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -269,21 +263,10 @@ public class NotePreview extends AppCompatActivity {
     }
 
     private void moveToStatus() {
-        NotesBase base = new NotesBase(this);
-        if (!base.isOpen()) {
-            base.open();
+        if (mItem != null){
+            new Notifier(this).showNoteNotification((SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT) ?
+                            SyncHelper.decrypt(mItem.getNote()): mItem.getNote()), mItem.getId());
         }
-        Cursor c = base.getNote(mParam1);
-        if (c != null && c.moveToFirst()){
-            new Notifier(this)
-                    .showNoteNotification((SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT) ?
-                            SyncHelper.decrypt(c.getString(c.getColumnIndex(Constants.COLUMN_NOTE))):
-                            c.getString(c.getColumnIndex(Constants.COLUMN_NOTE))), mParam1);
-        }
-        if (c != null) {
-            c.close();
-        }
-        base.close();
     }
 
     @Override
@@ -298,21 +281,15 @@ public class NotePreview extends AppCompatActivity {
     }
 
     private void loadData(){
-        NotesBase base = new NotesBase(NotePreview.this);
-        base.open();
-        imageByte = null;
         img = null;
-        Cursor c = base.getNote(mParam1);
-        if (c != null && c.moveToFirst()){
-            String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
+        if (mItem != null){
+            String note = mItem.getNote();
             if (SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT)){
                 note = SyncHelper.decrypt(note);
             }
             noteText.setText(note);
-            int color = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
-            int style = c.getInt(c.getColumnIndex(Constants.COLUMN_FONT_STYLE));
-            remId = c.getLong(c.getColumnIndex(Constants.COLUMN_LINK_ID));
-            imageByte = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
+            int color = mItem.getColor();
+            int style = mItem.getStyle();
             noteText.setTypeface(cSetter.getTypeface(style));
             if (Module.isLollipop()) {
                 getWindow().setStatusBarColor(cSetter.getNoteDarkColor(color));
@@ -323,11 +300,11 @@ public class NotePreview extends AppCompatActivity {
             paramsR.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             paramsR.setMargins(0, -(QuickReturnUtils.dp2px(NotePreview.this, 28)), QuickReturnUtils.dp2px(NotePreview.this, 16), 0);
 
+            byte[] imageByte = mItem.getImage();
             if (imageByte != null){
-                Bitmap imgB = BitmapFactory.decodeByteArray(imageByte, 0,
+                img = BitmapFactory.decodeByteArray(imageByte, 0,
                         imageByte.length);
-                img = imgB;
-                imageView.setImageBitmap(imgB);
+                imageView.setImageBitmap(img);
                 RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) imageView.getLayoutParams();
                 params.height = QuickReturnUtils.dp2px(this, 256);
                 imageView.setLayoutParams(params);
@@ -345,10 +322,10 @@ public class NotePreview extends AppCompatActivity {
                 toolbar.getBackground().setAlpha(255);
             }
 
-            if (remId != 0){
+            if (mItem.getLinkId() != 0){
                 NextBase dataBase = new NextBase(NotePreview.this);
                 dataBase.open();
-                Cursor r = dataBase.getReminder(remId);
+                Cursor r = dataBase.getReminder(mItem.getLinkId());
                 if (r != null && r.moveToFirst()){
                     long feature = r.getLong(r.getColumnIndex(NextBase.EVENT_TIME));
                     Calendar calendar = Calendar.getInstance();
@@ -365,12 +342,10 @@ public class NotePreview extends AppCompatActivity {
                 dataBase.close();
             }
         }
-        if (c != null) c.close();
-        base.close();
     }
 
     private void shareNote(){
-        if (!Note.shareNote(mParam1, this)) {
+        if (!Note.shareNote(mItem.getId(), this)) {
             Messages.toast(this, getString(R.string.error_sending));
             closeWindow();
         }
@@ -425,7 +400,7 @@ public class NotePreview extends AppCompatActivity {
     }
 
     private void deleteNote() {
-        Note.deleteNote(mParam1, this, null);
+        NoteHelper.getInstance(this).deleteNote(mItem.getId());
         SharedPrefs.getInstance(this).putBoolean("isNew", true);
     }
 

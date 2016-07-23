@@ -17,11 +17,9 @@
 package com.cray.software.justreminder.notes;
 
 import android.content.Context;
-import android.database.Cursor;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
-import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
@@ -33,7 +31,6 @@ import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import org.json.JSONException;
 
 import java.io.File;
-import java.util.Calendar;
 
 public class Note {
 
@@ -45,31 +42,20 @@ public class Note {
      */
     public static boolean shareNote(long id, Context context) {
         SyncHelper sHelp = new SyncHelper(context);
-        NotesBase db = new NotesBase(context);
-        db.open();
         boolean res = false;
-        Cursor c = db.getNote(id);
-        if (c != null && c.moveToFirst()) {
-            String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
+        NoteItem item = NoteHelper.getInstance(context).getNote(id);
+        if (item != null) {
+            String note = item.getNote();
             if (SharedPrefs.getInstance(context).getBoolean(Prefs.NOTE_ENCRYPT)) {
                 note = SyncHelper.decrypt(note);
             }
-            Calendar calendar1 = Calendar.getInstance();
-            int day = calendar1.get(Calendar.DAY_OF_MONTH);
-            int month = calendar1.get(Calendar.MONTH);
-            int year = calendar1.get(Calendar.YEAR);
-            String date = year + "/" + month + "/" + day;
-
-            int color = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
-            int style = c.getInt(c.getColumnIndex(Constants.COLUMN_FONT_STYLE));
-            byte[] imageByte = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
-            String uuID = c.getString(c.getColumnIndex(Constants.COLUMN_UUID));
+            item.setNote(note);
+            String uuID = item.getUuId();
             if (uuID == null || uuID.matches("")) {
-                uuID = SyncHelper.generateID();
+                item.setUuId(SyncHelper.generateID());
             }
-
             try {
-                File file = sHelp.createNote(note, date, uuID, color, imageByte, style);
+                File file = sHelp.createNote(item);
                 if (!file.exists() || !file.canRead()) {
                     return false;
                 } else {
@@ -90,33 +76,11 @@ public class Note {
      * @param callbacks callback for toast or snackbar message.
      */
     public static void deleteNote(long id, Context context, NavigationCallbacks callbacks) {
-        NotesBase db = new NotesBase(context);
-        db.open();
-        String uuId = null;
-        Cursor c = db.getNote(id);
-        if (c != null && c.moveToFirst()){
-            uuId = c.getString(c.getColumnIndex(Constants.COLUMN_UUID));
-        }
-        if (c != null) c.close();
-        db.deleteNote(id);
-        db.close();
+        String uuId = NoteHelper.getInstance(context).deleteNote(id).getUuId();
         new DeleteNoteFilesAsync(context).execute(uuId);
         new UpdatesHelper(context).updateNotesWidget();
         new Notifier(context).discardStatusNotification(id);
         if (callbacks != null) callbacks.showSnackbar(context.getString(R.string.note_deleted));
         else Messages.toast(context, R.string.note_deleted);
-    }
-
-    /**
-     * Change note color.
-     * @param context application context.
-     * @param id note identifier.
-     * @param newColor new color code for note.
-     */
-    public static void setNewColor(Context context, long id, int newColor){
-        NotesBase db = new NotesBase(context);
-        db.open();
-        db.updateNoteColor(id, newColor);
-        db.close();
     }
 }

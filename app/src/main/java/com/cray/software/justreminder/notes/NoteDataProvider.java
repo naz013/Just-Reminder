@@ -17,15 +17,12 @@
 package com.cray.software.justreminder.notes;
 
 import android.content.Context;
-import android.database.Cursor;
-
-import com.cray.software.justreminder.constants.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class NoteDataProvider {
-    private List<NoteModel> data;
+    private List<NoteItem> data;
     private Context mContext;
 
     public NoteDataProvider(Context mContext){
@@ -34,7 +31,7 @@ public class NoteDataProvider {
         load();
     }
 
-    public List<NoteModel> getData(){
+    public List<NoteItem> getData(){
         return data;
     }
 
@@ -42,11 +39,11 @@ public class NoteDataProvider {
         return data != null ? data.size() : 0;
     }
 
-    public int getPosition(NoteModel item){
+    public int getPosition(NoteItem item){
         int res = -1;
         if (data.size() > 0) {
             for (int i = 0; i < data.size(); i++){
-                NoteModel item1 = data.get(i);
+                NoteItem item1 = data.get(i);
                 if (item.getId() == item1.getId()) {
                     res = i;
                     break;
@@ -56,7 +53,7 @@ public class NoteDataProvider {
         return res;
     }
 
-    public NoteModel getItem(int index) {
+    public NoteItem getItem(int index) {
         if (index < 0 || index >= getCount()) {
             return null;
         }
@@ -66,20 +63,9 @@ public class NoteDataProvider {
 
     public void load() {
         data.clear();
-        NotesBase db = new NotesBase(mContext);
-        db.open();
-        Cursor c = db.getNotes();
-        if (c != null && c.moveToNext()) {
-            do {
-                String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
-                int color = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
-                int style = c.getInt(c.getColumnIndex(Constants.COLUMN_FONT_STYLE));
-                byte[] image = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
-                long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                data.add(new NoteModel(note, color, style, image, id));
-            } while (c.moveToNext());
+        List<NoteItem> list = NoteHelper.getInstance(mContext).getAll();
+        for (NoteItem item : list) {
+            data.add(item);
         }
-        if (c != null) c.close();
-        db.close();
     }
 }

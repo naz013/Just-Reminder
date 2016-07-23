@@ -24,9 +24,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.helpers.SharedPrefs;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NotesBase {
     private static final String DB_NAME = "notes_base";
@@ -80,8 +83,6 @@ public class NotesBase {
                     break;
             }
         }
-
-
     }
 
     public NotesBase(Context c) {
@@ -90,14 +91,12 @@ public class NotesBase {
 
     public NotesBase open() throws SQLiteException {
         dbHelper = new DBHelper(mContext);
-
         db = dbHelper.getWritableDatabase();
-
         System.gc();
         return this;
     }
 
-    public boolean isOpen () {
+    public boolean isOpen() {
         return db != null && db.isOpen();
     }
 
@@ -106,41 +105,24 @@ public class NotesBase {
     }
 
     public void close() {
-        if( dbHelper != null )
-            dbHelper.close();
+        if (dbHelper != null) dbHelper.close();
     }
 
-    public long saveNote (String note, String date, int color, String uuId, byte[] image, int style) {
+    public long saveNote(NoteItem item) {
         openGuard();
         ContentValues cv = new ContentValues();
-        cv.put(Constants.COLUMN_NOTE, note);
-        cv.put(Constants.COLUMN_DATE, date);
-        cv.put(Constants.COLUMN_COLOR, color);
-        cv.put(Constants.COLUMN_UUID, uuId);
-        cv.put(Constants.COLUMN_IMAGE, image);
-        cv.put(Constants.COLUMN_FONT_STYLE, style);
-        //Log.d(LOG_TAG, "data is inserted " + cv);
-        return db.insert(NOTE_TABLE_NAME, null, cv);
-    }
-
-    public boolean updateNote(long rowId, String note, String date, int color, String uuId, byte[] image,
-                              int style) {
-        openGuard();
-        ContentValues args = new ContentValues();
-        args.put(Constants.COLUMN_NOTE, note);
-        args.put(Constants.COLUMN_DATE, date);
-        args.put(Constants.COLUMN_COLOR, color);
-        args.put(Constants.COLUMN_UUID, uuId);
-        args.put(Constants.COLUMN_IMAGE, image);
-        args.put(Constants.COLUMN_FONT_STYLE, style);
-        return db.update(NOTE_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
-    }
-
-    public boolean updateNote(long rowId, String note) {
-        openGuard();
-        ContentValues args = new ContentValues();
-        args.put(Constants.COLUMN_NOTE, note);
-        return db.update(NOTE_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
+        cv.put(Constants.COLUMN_NOTE, item.getNote());
+        cv.put(Constants.COLUMN_DATE, item.getDate());
+        cv.put(Constants.COLUMN_COLOR, item.getColor());
+        cv.put(Constants.COLUMN_UUID, item.getUuId());
+        cv.put(Constants.COLUMN_IMAGE, item.getImage());
+        cv.put(Constants.COLUMN_FONT_STYLE, item.getStyle());
+        cv.put(Constants.COLUMN_LINK_ID, item.getLinkId());
+        if (item.getId() == 0) {
+            return db.insert(NOTE_TABLE_NAME, null, cv);
+        } else {
+            return db.update(NOTE_TABLE_NAME, cv, Constants.COLUMN_ID + "=" + item.getId(), null);
+        }
     }
 
     public boolean updateNoteColor(long rowId, int color) {
@@ -157,7 +139,7 @@ public class NotesBase {
         return db.update(NOTE_TABLE_NAME, args, Constants.COLUMN_ID + "=" + rowId, null) > 0;
     }
 
-    public Cursor getNotes() throws SQLException {
+    public List<NoteItem> getNotes() throws SQLException {
         openGuard();
         String orderPrefs = SharedPrefs.getInstance(mContext).getString(Prefs.NOTES_ORDER);
         String order = null;
@@ -170,20 +152,59 @@ public class NotesBase {
         } else if (orderPrefs.matches(Constants.ORDER_NAME_Z_A)){
             order = Constants.COLUMN_NOTE + " DESC";
         }
-        return db.query(NOTE_TABLE_NAME, null, null, null, null, null, order);
+        Cursor c = db.query(NOTE_TABLE_NAME, null, null, null, null, null, order);
+        List<NoteItem> list = new ArrayList<>();
+        if (c != null && c.moveToFirst()) {
+            do {
+                String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
+                int color  = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
+                int style  = c.getInt(c.getColumnIndex(Constants.COLUMN_FONT_STYLE));
+                String date = c.getString(c.getColumnIndex(Constants.COLUMN_DATE));
+                String uuID = c.getString(c.getColumnIndex(Constants.COLUMN_UUID));
+                byte[] image = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
+                long linkId = c.getLong(c.getColumnIndex(Constants.COLUMN_LINK_ID));
+                long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
+                list.add(new NoteItem(note, uuID, date, color, style, image, id, linkId));
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+        return list;
     }
 
-    public Cursor getNote(long rowId) throws SQLException {
+    public NoteItem getNote(long id) throws SQLException {
         openGuard();
-        return db.query(NOTE_TABLE_NAME, null,
-                Constants.COLUMN_ID  + "=" + rowId, null, null, null, null, null);
+        Cursor c = db.query(NOTE_TABLE_NAME, null, Constants.COLUMN_ID  + "=" + id, null, null, null, null, null);
+        NoteItem item = null;
+        if (c != null && c.moveToFirst()) {
+            String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
+            int color  = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
+            int style  = c.getInt(c.getColumnIndex(Constants.COLUMN_FONT_STYLE));
+            String date = c.getString(c.getColumnIndex(Constants.COLUMN_DATE));
+            String uuID = c.getString(c.getColumnIndex(Constants.COLUMN_UUID));
+            byte[] image = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
+            long linkId = c.getLong(c.getColumnIndex(Constants.COLUMN_LINK_ID));
+            item = new NoteItem(note, uuID, date, color, style, image, id, linkId);
+        }
+        if (c != null) c.close();
+        return item;
     }
 
-    public Cursor getNoteByReminder(long remId) throws SQLException {
+    public NoteItem getNoteByReminder(long remId) throws SQLException {
         openGuard();
-        return db.query(NOTE_TABLE_NAME, null,
-                Constants.COLUMN_LINK_ID  +
-                        "='" + remId + "'", null, null, null, null, null);
+        Cursor c = db.query(NOTE_TABLE_NAME, null, Constants.COLUMN_LINK_ID  + "='" + remId + "'", null, null, null, null, null);
+        NoteItem item = null;
+        if (c != null && c.moveToFirst()) {
+            String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
+            int color  = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
+            int style  = c.getInt(c.getColumnIndex(Constants.COLUMN_FONT_STYLE));
+            String date = c.getString(c.getColumnIndex(Constants.COLUMN_DATE));
+            String uuID = c.getString(c.getColumnIndex(Constants.COLUMN_UUID));
+            byte[] image = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
+            long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
+            item = new NoteItem(note, uuID, date, color, style, image, id, remId);
+        }
+        if (c != null) c.close();
+        return item;
     }
 
     public boolean deleteNote(long rowId) {

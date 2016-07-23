@@ -33,14 +33,14 @@ import org.json.JSONException;
 
 import java.io.IOException;
 
-public class SyncNotes extends AsyncTask<Void, Void, Boolean> {
+public class SyncNotesAsync extends AsyncTask<Void, Void, Boolean> {
 
     private Context mContext;
     private NotificationManagerCompat mNotifyMgr;
     private NotificationCompat.Builder builder;
     private SyncListener mListener;
 
-    public SyncNotes(Context context, SyncListener mListener){
+    public SyncNotesAsync(Context context, SyncListener mListener){
         this.mContext = context;
         builder = new NotificationCompat.Builder(context);
         this.mListener = mListener;

@@ -58,8 +58,9 @@ import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.ActionCallbacks;
 import com.cray.software.justreminder.json.JPlace;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.notes.NoteHelper;
+import com.cray.software.justreminder.notes.NoteItem;
 import com.cray.software.justreminder.notes.NotePreview;
-import com.cray.software.justreminder.notes.NotesBase;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.roboto_views.RoboSwitchCompat;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
@@ -479,26 +480,16 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
 
         @Override
         protected ReminderNote doInBackground(Void... params) {
-            NotesBase notesBase = new NotesBase(mContext);
-            notesBase.open();
             ReminderNote reminderNote = new ReminderNote();
-            Cursor c = notesBase.getNoteByReminder(mId);
-            if (c != null && c.moveToFirst()) {
-                String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
-                byte[] image = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
-                long noteId = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                reminderNote.setNoteText(note);
-                reminderNote.setImage(image);
-                reminderNote.setNoteId(noteId);
+            NoteItem noteItem = NoteHelper.getInstance(mContext).getNoteByReminder(id);
+            if (noteItem != null) {
+                reminderNote.setNoteText(noteItem.getNote());
+                reminderNote.setImage(noteItem.getImage());
+                reminderNote.setNoteId(noteItem.getId());
             }
-            if (c != null) {
-                c.close();
-            }
-            notesBase.close();
-
             TasksData data = new TasksData(mContext);
             data.open();
-            c = data.getTaskByReminder(mId);
+            Cursor c = data.getTaskByReminder(mId);
             if (c != null && c.moveToFirst()) {
                 String task = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
                 String taskNote = c.getString(c.getColumnIndex(TasksConstants.COLUMN_NOTES));
@@ -516,7 +507,6 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                 reminderNote.setTaskIdentifier(taskId);
             }
             if (c != null) c.close();
-
             c = data.getTasksList(reminderNote.getTaskListId());
             if (c != null && c.moveToFirst()) {
                 reminderNote.setColor(c.getInt(c.getColumnIndex(TasksConstants.COLUMN_COLOR)));
@@ -537,9 +527,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                     tasksContainer.setVisibility(View.VISIBLE);
                     taskText.setText(reminderNote.getTaskTitle());
                     String mNote = reminderNote.getTaskNote();
-                    listColor.setBackgroundColor(new ColorSetter(mContext)
-                            .getNoteColor(reminderNote.getColor()));
-
+                    listColor.setBackgroundColor(new ColorSetter(mContext).getNoteColor(reminderNote.getColor()));
                     if (mNote != null && !mNote.matches("")) {
                         taskNote.setText(mNote);
                     } else {
@@ -576,7 +564,6 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                             .putExtra(Constants.ITEM_ID_INTENT, reminderNote.getTaskId())
                             .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.EDIT)));
                 }
-
                 if (reminderNote.getNoteId() > 0) {
                     notesContainer.setVisibility(View.VISIBLE);
                     String note = reminderNote.getNoteText();

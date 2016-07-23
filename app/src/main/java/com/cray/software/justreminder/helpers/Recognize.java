@@ -27,7 +27,6 @@ import com.backdoor.simpleai.Recognizer;
 import com.backdoor.simpleai.Types;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.activities.AddBirthday;
-import com.cray.software.justreminder.reminder.AddReminderActivity;
 import com.cray.software.justreminder.activities.SplashScreen;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.constants.Constants;
@@ -42,7 +41,9 @@ import com.cray.software.justreminder.json.JAction;
 import com.cray.software.justreminder.json.JExport;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.json.JRecurrence;
-import com.cray.software.justreminder.notes.NotesBase;
+import com.cray.software.justreminder.notes.NoteHelper;
+import com.cray.software.justreminder.notes.NoteItem;
+import com.cray.software.justreminder.reminder.AddReminderActivity;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.settings.SettingsActivity;
@@ -161,18 +162,12 @@ public class Recognize {
         int month = calendar1.get(Calendar.MONTH);
         int year = calendar1.get(Calendar.YEAR);
         String date = day + "-" + month + "-" + year;
-
         String uuID = SyncHelper.generateID();
-        NotesBase db = new NotesBase(mContext);
         int color = new Random().nextInt(15);
-        db.open();
-        long id;
         if (prefs.getBoolean(Prefs.NOTE_ENCRYPT)){
-            id = db.saveNote(SyncHelper.encrypt(note), date, color, uuID, null, 5);
-        } else {
-            id = db.saveNote(note, date, color, uuID, null, 5);
+            note = SyncHelper.encrypt(note);
         }
-
+        NoteItem item = new NoteItem(note, uuID, date, color, 5, null, 0, 0);
         long remId = 0;
         if (prefs.getBoolean(Prefs.QUICK_NOTE_REMINDER)){
             String categoryId = GroupHelper.getInstance(mContext).getDefaultUuId();
@@ -183,8 +178,8 @@ public class Recognize {
                     SyncHelper.generateID(), due, due, jRecurrence, null, null);
             remId = new DateType(mContext, Constants.TYPE_REMINDER).save(jModel);
         }
-        db.linkToReminder(id, remId);
-        db.close();
+        item.setLinkId(remId);
+        NoteHelper.getInstance(mContext).saveNote(item);
         new UpdatesHelper(mContext).updateNotesWidget();
         if (!isWear) Toast.makeText(mContext, mContext.getString(R.string.saved), Toast.LENGTH_SHORT).show();
     }

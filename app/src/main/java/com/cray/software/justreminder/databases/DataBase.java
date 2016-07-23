@@ -193,9 +193,7 @@ public class DataBase {
 
     public DataBase open() throws SQLiteException {
         dbHelper = new DBHelper(mContext);
-
         db = dbHelper.getWritableDatabase();
-
         System.gc();
         return this;
     }
@@ -209,8 +207,7 @@ public class DataBase {
     }
 
     public void close() {
-        if( dbHelper != null )
-            dbHelper.close();
+        if (dbHelper != null) dbHelper.close();
     }
 
     // Reminders database
@@ -428,7 +425,7 @@ public class DataBase {
 
     //Working with missed calls table
 
-    public long addMissedCall (String number, long dateTime) {
+    public long addMissedCall(String number, long dateTime) {
         openGuard();
         ContentValues cv = new ContentValues();
         cv.put(Constants.COLUMN_NUMBER, number);
@@ -451,7 +448,7 @@ public class DataBase {
 
     //Working with SMS templates table
 
-    public long saveTemplate (TemplateItem templateItem) {
+    public long saveTemplate(TemplateItem templateItem) {
         openGuard();
         ContentValues cv = new ContentValues();
         cv.put(Constants.COLUMN_TEXT, templateItem.getTitle());

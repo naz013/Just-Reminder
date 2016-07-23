@@ -19,7 +19,6 @@ package com.cray.software.justreminder.settings.fragments;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -31,13 +30,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.notes.NotesBase;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.notes.NoteHelper;
+import com.cray.software.justreminder.notes.NoteItem;
 import com.cray.software.justreminder.views.PrefsView;
+
+import java.util.List;
 
 public class NotesSettingsFragment extends Fragment implements View.OnClickListener, DialogInterface.OnDismissListener {
 
@@ -177,12 +178,12 @@ public class NotesSettingsFragment extends Fragment implements View.OnClickListe
 
     class EncryptNotes extends AsyncTask<Void, Void, Integer> {
         private ProgressDialog pd;
-        private Context tContext;
-        private boolean encrypt;
+        private Context mContext;
+        private boolean mEncrypt;
 
         public EncryptNotes(Context context, boolean encrypt) {
-            this.tContext = context;
-            this.encrypt = encrypt;
+            this.mContext = context;
+            this.mEncrypt = encrypt;
             pd = new ProgressDialog(context);
             pd.setCancelable(false);
             if (encrypt) pd.setMessage(context.getString(R.string.encrypting));
@@ -198,18 +199,13 @@ public class NotesSettingsFragment extends Fragment implements View.OnClickListe
         @Override
         protected Integer doInBackground(Void... params) {
             int i = 0;
-            NotesBase db = new NotesBase(tContext);
-            db.open();
-            Cursor c = db.getNotes();
-            if (c != null && c.moveToFirst()){
-                do {
-                    String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
-                    long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                    String converted = encrypt ? SyncHelper.encrypt(note) : SyncHelper.decrypt(note);
-                    db.updateNote(id, converted);
-                } while (c.moveToNext());
+            List<NoteItem> list = NoteHelper.getInstance(mContext).getAll();
+            for (NoteItem item : list) {
+                String note = item.getNote();
+                String converted = mEncrypt ? SyncHelper.encrypt(note) : SyncHelper.decrypt(note);
+                item.setNote(converted);
+                NoteHelper.getInstance(mContext).saveNote(item);
             }
-            db.close();
             return i;
         }
 

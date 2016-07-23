@@ -20,7 +20,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -52,13 +51,15 @@ import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.notes.Note;
 import com.cray.software.justreminder.notes.NoteDataProvider;
-import com.cray.software.justreminder.notes.NoteModel;
+import com.cray.software.justreminder.notes.NoteHelper;
+import com.cray.software.justreminder.notes.NoteItem;
 import com.cray.software.justreminder.notes.NotePreview;
 import com.cray.software.justreminder.notes.NoteRecyclerAdapter;
-import com.cray.software.justreminder.notes.NotesBase;
 import com.cray.software.justreminder.notes.NotesManager;
-import com.cray.software.justreminder.notes.SyncNotes;
+import com.cray.software.justreminder.notes.SyncNotesAsync;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
+
+import java.util.List;
 
 public class NotesFragment extends Fragment implements SyncListener, SimpleListener {
 
@@ -99,14 +100,9 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
             item.setIcon(!enableGrid ? R.drawable.ic_view_quilt_white_24dp : R.drawable.ic_view_list_white_24dp);
             item.setTitle(!enableGrid ? mContext.getString(R.string.grid_view) : mContext.getString(R.string.list_view));
         }
-        NotesBase db = new NotesBase(mContext);
-        if (!db.isOpen()) {
-            db.open();
-        }
-        if (db.getCount() != 0) {
+        if (NoteHelper.getInstance(mContext).getCount() != 0) {
             menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.delete_all));
         }
-        db.close();
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -114,7 +110,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_sync:
-                new SyncNotes(mContext, this).execute();
+                new SyncNotesAsync(mContext, this).execute();
                 break;
             case R.id.action_order:
                 showDialog();
@@ -283,18 +279,10 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     }
 
     private void deleteAll(){
-        NotesBase db = new NotesBase(mContext);
-        if (!db.isOpen()) db.open();
-        Cursor c = db.getNotes();
-        if (c != null && c.moveToFirst()) {
-            do {
-                long rowId = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                Note.deleteNote(rowId, mContext, mCallbacks);
-
-            } while (c.moveToNext());
+        List<NoteItem> list = NoteHelper.getInstance(mContext).getAll();
+        for (NoteItem item : list) {
+            Note.deleteNote(item.getId(), mContext, mCallbacks);
         }
-        if (c != null) c.close();
-        db.close();
     }
 
     private void previewNote(long id, View view){
@@ -385,7 +373,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                     getString(R.string.lime), getString(R.string.indigo)};
         }
         Dialogues.showLCAM(mContext, item -> {
-            Note.setNewColor(mContext, id, item);
+            NoteHelper.getInstance(mContext).changeColor(id, item);
             loaderAdapter();
         }, items);
     }

@@ -96,7 +96,7 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        final NoteModel item = provider.getData().get(position);
+        final NoteItem item = provider.getData().get(position);
         String title = item.getNote();
         int color = item.getColor();
         int style = item.getStyle();

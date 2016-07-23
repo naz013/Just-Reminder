@@ -89,14 +89,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Calendar;
-import java.util.Random;
 
 public class NotesManager extends AppCompatActivity {
 
     public static final int MENU_ITEM_DELETE = 12;
-    private static final String KEY_COLOR = "key_color";
-    private static final String KEY_STYLE = "key_style";
-    private static final String KEY_IMAGE = "key_image";
+    private static final String KEY_NOTE = "key_note";
     private static final int REQUEST_SD_CARD = 1112;
 
     private int myHour = 0;
@@ -104,10 +101,6 @@ public class NotesManager extends AppCompatActivity {
     private int myYear = 0;
     private int myMonth = 0;
     private int myDay = 1;
-    private int color = 0;
-    private int style = 5;
-    private String uuID = "";
-    private byte[] image = null;
     private Bitmap img;
     private Uri mImageUri;
     private RelativeLayout layoutContainer, imageContainer;
@@ -118,7 +111,7 @@ public class NotesManager extends AppCompatActivity {
 
     private ColorSetter cSetter = new ColorSetter(NotesManager.this);
 
-    private long id;
+    private NoteItem mItem;
     private Toolbar toolbar;
     private EditText taskField;
     private FloatingActionButton mFab;
@@ -188,7 +181,6 @@ public class NotesManager extends AppCompatActivity {
 
         layoutContainer = (RelativeLayout) findViewById(R.id.layoutContainer);
         imageContainer = (RelativeLayout) findViewById(R.id.imageContainer);
-        color = new Random().nextInt(15 + 1);
         remindContainer = (LinearLayout) findViewById(R.id.remindContainer);
 
         ViewUtils.fadeInAnimation(layoutContainer);
@@ -200,11 +192,6 @@ public class NotesManager extends AppCompatActivity {
         remindTime.setOnClickListener(v -> timeDialog().show());
 
         noteImage = (ImageView) findViewById(R.id.noteImage);
-        if (image != null){
-            imageContainer.setVisibility(View.VISIBLE);
-        } else {
-            imageContainer.setVisibility(View.GONE);
-        }
         noteImage.setOnClickListener(v -> {
             try {
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -243,7 +230,6 @@ public class NotesManager extends AppCompatActivity {
         deleteButton.setOnClickListener(v -> {
             if (isImageAttached()) {
                 ViewUtils.collapse(imageContainer);
-                image = null;
                 img = null;
             }
         });
@@ -269,36 +255,10 @@ public class NotesManager extends AppCompatActivity {
         } catch (NullPointerException e){
             e.printStackTrace();
         } finally {
-            id = intent.getLongExtra(Constants.EDIT_ID, 0);
+            long id = intent.getLongExtra(Constants.EDIT_ID, 0);
+            mItem = NoteHelper.getInstance(this).getNote(id);
         }
-        if (id != 0){
-            NotesBase db = new NotesBase(NotesManager.this);
-            db.open();
-            Cursor c = db.getNote(id);
-            if (c != null && c.moveToFirst()){
-                String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
-                if (SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT)){
-                    note = SyncHelper.decrypt(note);
-                }
-                uuID = c.getString(c.getColumnIndex(Constants.COLUMN_UUID));
-                taskField.setText(note);
-                taskField.setSelection(taskField.getText().length());
-                color = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
-                style = c.getInt(c.getColumnIndex(Constants.COLUMN_FONT_STYLE));
-                byte[] imageByte = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
-				image = imageByte;
-                if (imageByte != null){
-                    img = BitmapFactory.decodeByteArray(imageByte, 0,
-                            imageByte.length);
-                    noteImage.setImageBitmap(img);
-                    ViewUtils.expand(imageContainer);
-                }
-            }
-            if (c != null) {
-                c.close();
-            }
-            db.close();
-        } else if (name != null){
+        if (name != null){
             String scheme = name.getScheme();
             if (ContentResolver.SCHEME_CONTENT.equals(scheme)) {
                 ContentResolver cr = getApplicationContext().getContentResolver();
@@ -323,80 +283,59 @@ public class NotesManager extends AppCompatActivity {
                 }
                 String file = total.toString();
                 try {
-                    NoteModel model = SyncHelper.getNote(null, file);
-                    if (model != null) {
-                        taskField.setText(SyncHelper.decrypt(model.getNote()));
-                        taskField.setSelection(taskField.getText().length());
-                        color = model.getColor();
-                        style = model.getStyle();
-                        byte[] imageByte = model.getImage();
-                        image = imageByte;
-                        if (imageByte != null) {
-                            img = BitmapFactory.decodeByteArray(imageByte, 0, imageByte.length);
-                            noteImage.setImageBitmap(img);
-                            ViewUtils.expand(imageContainer);
-                        }
-                    }
+                    mItem = SyncHelper.getNote(null, file);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             } else {
                 try {
-                    NoteModel model = SyncHelper.getNote(name.getPath(), null);
-                    if (model != null) {
-                        taskField.setText(SyncHelper.decrypt(model.getNote()));
-                        taskField.setSelection(taskField.getText().length());
-                        color = model.getColor();
-                        style = model.getStyle();
-                        byte[] imageByte = model.getImage();
-                        image = imageByte;
-                        if (imageByte != null) {
-                            img = BitmapFactory.decodeByteArray(imageByte, 0, imageByte.length);
-                            noteImage.setImageBitmap(img);
-                            ViewUtils.expand(imageContainer);
-                        }
-                    }
+                    mItem = SyncHelper.getNote(name.getPath(), null);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         } else if (filePath != null) {
             try {
-                NoteModel model = SyncHelper.getNote(filePath, null);
-                if (model != null) {
-                    taskField.setText(SyncHelper.decrypt(model.getNote()));
-                    taskField.setSelection(taskField.getText().length());
-                    color = model.getColor();
-                    style = model.getStyle();
-                    byte[] imageByte = model.getImage();
-                    image = imageByte;
-                    if (imageByte != null) {
-                        img = BitmapFactory.decodeByteArray(imageByte, 0, imageByte.length);
-                        noteImage.setImageBitmap(img);
-                        ViewUtils.expand(imageContainer);
-                    }
-                }
+                mItem = SyncHelper.getNote(filePath, null);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
+        if (mItem != null){
+            String note = mItem.getNote();
+            if (SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT)){
+                note = SyncHelper.decrypt(note);
+            }
+            taskField.setText(note);
+            taskField.setSelection(taskField.getText().length());
+            byte[] imageByte = mItem.getImage();
+            if (imageByte != null){
+                img = BitmapFactory.decodeByteArray(imageByte, 0, imageByte.length);
+                noteImage.setImageBitmap(img);
+                ViewUtils.expand(imageContainer);
+            }
+            if (imageByte != null){
+                imageContainer.setVisibility(View.VISIBLE);
+            } else {
+                imageContainer.setVisibility(View.GONE);
+            }
+        } else {
+            mItem = new NoteItem();
+        }
+
         if (savedInstanceState != null) {
-            color = savedInstanceState.getInt(KEY_COLOR);
-            style = savedInstanceState.getInt(KEY_STYLE);
-            image = savedInstanceState.getByteArray(KEY_IMAGE);
-            if (image != null) {
-                img = BitmapFactory.decodeByteArray(image, 0, image.length);
+            mItem = savedInstanceState.getParcelable(KEY_NOTE);
+            if (mItem != null && mItem.getImage() != null) {
+                img = BitmapFactory.decodeByteArray(mItem.getImage(), 0, mItem.getImage().length);
                 noteImage.setImageBitmap(img);
                 if (!isImageAttached()) {
                     ViewUtils.expand(imageContainer);
                 }
             }
         }
-
         updateBackground();
         updateTextStyle();
-
         if (LocationUtil.isGooglePlayServicesAvailable(this)) {
             ReminderApp application = (ReminderApp) getApplication();
             mTracker = application.getDefaultTracker();
@@ -405,9 +344,8 @@ public class NotesManager extends AppCompatActivity {
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        outState.putInt(KEY_COLOR, color);
-        outState.putInt(KEY_STYLE, style);
-        outState.putByteArray(KEY_IMAGE, image);
+        mItem.setNote(taskField.getText().toString());
+        outState.putParcelable(KEY_NOTE, mItem);
         super.onSaveInstanceState(outState, outPersistentState);
     }
 
@@ -418,19 +356,20 @@ public class NotesManager extends AppCompatActivity {
             taskField.setError(getString(R.string.must_be_not_empty));
             return;
         }
-
         Calendar calendar1 = Calendar.getInstance();
         int day = calendar1.get(Calendar.DAY_OF_MONTH);
         int month = calendar1.get(Calendar.MONTH);
         int year = calendar1.get(Calendar.YEAR);
         String date = year + "/" + month + "/" + day;
-
+        String uuID = mItem.getUuId();
         if (uuID == null || uuID.matches("")) {
             uuID = SyncHelper.generateID();
         }
-
+        mItem.setNote(note);
+        mItem.setDate(date);
+        mItem.setUuId(uuID);
         try {
-            File file = sHelp.createNote(note, date, uuID, color, image, style);
+            File file = sHelp.createNote(mItem);
             sendMail(file, note);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -453,24 +392,19 @@ public class NotesManager extends AppCompatActivity {
         myYear = calendar.get(Calendar.YEAR);
         myHour = calendar.get(Calendar.HOUR_OF_DAY);
         myMinute = calendar.get(Calendar.MINUTE);
-
         String dayStr;
         String monthStr;
-
         if (myDay < 10) {
             dayStr = "0" + myDay;
         } else {
             dayStr = String.valueOf(myDay);
         }
-
         if (myMonth < 9) {
             monthStr = "0" + (myMonth + 1);
         } else {
             monthStr = String.valueOf(myMonth + 1);
         }
-
         remindDate.setText(dayStr + "/" + monthStr + "/" + String.valueOf(myYear));
-
         remindTime.setText(TimeUtil.getTime(calendar.getTime(),
                 SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
     }
@@ -484,12 +418,14 @@ public class NotesManager extends AppCompatActivity {
     }
 
     private void saveNote() {
-        String note = taskField.getText().toString();
-        if (note.matches("") && image == null) {
+        String note = taskField.getText().toString().trim();
+        if (note.matches("") && mItem.getImage() == null) {
             taskField.setError(getString(R.string.must_be_not_empty));
             return;
         }
-
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT)){
+            note = SyncHelper.encrypt(note);
+        }
         Calendar calendar1 = Calendar.getInstance();
         int day = calendar1.get(Calendar.DAY_OF_MONTH);
         int month = calendar1.get(Calendar.MONTH);
@@ -497,28 +433,15 @@ public class NotesManager extends AppCompatActivity {
         int hour = calendar1.get(Calendar.HOUR_OF_DAY);
         int minute = calendar1.get(Calendar.MINUTE);
         int seconds = calendar1.get(Calendar.SECOND);
-        String date = year + "/" + month + "/" + day + " "
-                + hour + ":" + minute + ":" + seconds;
-
+        String date = year + "/" + month + "/" + day + " " + hour + ":" + minute + ":" + seconds;
+        String uuID = mItem.getUuId();
         if (uuID == null || uuID.matches("")) {
             uuID = SyncHelper.generateID();
         }
-        NotesBase db = new NotesBase(NotesManager.this);
-        db.open();
-        if (id != 0){
-            if (SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT)){
-                db.updateNote(id, SyncHelper.encrypt(note), date, color, uuID, image, style);
-            } else {
-                db.updateNote(id, note, date, color, uuID, image, style);
-            }
-        } else {
-            if (SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT)){
-                id = db.saveNote(SyncHelper.encrypt(note), date, color, uuID, image, style);
-            } else {
-                id = db.saveNote(note, date, color, uuID, image, style);
-            }
-        }
-
+        mItem.setNote(note);
+        mItem.setUuId(uuID);
+        mItem.setDate(date);
+        long id = NoteHelper.getInstance(this).saveNote(mItem);
         if (isReminderAttached()){
             String categoryId = GroupHelper.getInstance(this).getDefaultUuId();
             calendar1.set(myYear, myMonth, myDay, myHour, myMinute);
@@ -526,9 +449,8 @@ public class NotesManager extends AppCompatActivity {
             JModel jModel = new JModel(note, Constants.TYPE_REMINDER, categoryId,
                     SyncHelper.generateID(), due, due, null, null, null);
             long remId = new DateType(NotesManager.this, Constants.TYPE_REMINDER).save(jModel);
-            db.linkToReminder(id, remId);
+            NoteHelper.getInstance(this).linkReminder(id, remId);
         }
-        db.close();
         SharedPrefs.getInstance(this).putBoolean(Prefs.NOTE_CHANGED, true);
         new UpdatesHelper(NotesManager.this).updateNotesWidget();
         finish();
@@ -550,7 +472,7 @@ public class NotesManager extends AppCompatActivity {
         builder.setMessage(getString(R.string.delete_this_note));
         builder.setPositiveButton(getString(R.string.yes), (dialog, which) -> {
             dialog.dismiss();
-            Note.deleteNote(id, NotesManager.this, null);
+            Note.deleteNote(mItem.getId(), NotesManager.this, null);
             SharedPrefs.getInstance(this).putBoolean("isNew", true);
             finish();
         });
@@ -573,7 +495,7 @@ public class NotesManager extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.create_note, menu);
-        if (id != 0) {
+        if (mItem.getId() != 0) {
             menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.delete));
         }
         return true;
@@ -632,11 +554,11 @@ public class NotesManager extends AppCompatActivity {
                     getImageFromCamera();
                     break;
                 case Constants.REQUEST_CODE_THEME:
-                    color = data.getIntExtra(Constants.SELECTED_COLOR, 12);
+                    mItem.setColor(data.getIntExtra(Constants.SELECTED_COLOR, 12));
                     updateBackground();
                     break;
                 case Constants.REQUEST_CODE_FONT_STYLE:
-                    style = data.getIntExtra(Constants.SELECTED_FONT_STYLE, 5);
+                    mItem.setStyle(data.getIntExtra(Constants.SELECTED_FONT_STYLE, 5));
                     updateTextStyle();
                     break;
             }
@@ -654,7 +576,7 @@ public class NotesManager extends AppCompatActivity {
         if (bitmapImage != null) {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-            image = outputStream.toByteArray();
+            mItem.setImage(outputStream.toByteArray());
             noteImage.setImageBitmap(bitmapImage);
             if (!isImageAttached()) {
                 ViewUtils.expand(imageContainer);
@@ -673,7 +595,7 @@ public class NotesManager extends AppCompatActivity {
         if (bitmapImage != null) {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-            image = outputStream.toByteArray();
+            mItem.setImage(outputStream.toByteArray());
             noteImage.setImageBitmap(bitmapImage);
             if (!isImageAttached()) {
                 ViewUtils.expand(imageContainer);
@@ -688,11 +610,12 @@ public class NotesManager extends AppCompatActivity {
 
 
     private void updateTextStyle() {
-        Typeface typeface = cSetter.getTypeface(style);
+        Typeface typeface = cSetter.getTypeface(mItem.getStyle());
         taskField.setTypeface(typeface);
     }
 
     private void updateBackground() {
+        int color = mItem.getColor();
         layoutContainer.setBackgroundColor(cSetter.getNoteLightColor(color));
         toolbar.setBackgroundColor(cSetter.getNoteLightColor(color));
         if (Module.isLollipop()) {
@@ -717,8 +640,6 @@ public class NotesManager extends AppCompatActivity {
             height_tmp /= 2;
             scale *= 2;
         }
-
-        // Decode with inSampleSize
         BitmapFactory.Options o2 = new BitmapFactory.Options();
         o2.inSampleSize = scale;
         return BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage), null, o2);
@@ -729,22 +650,18 @@ public class NotesManager extends AppCompatActivity {
     }
 
     DatePickerDialog.OnDateSetListener myDateCallBack = new DatePickerDialog.OnDateSetListener() {
-
         public void onDateSet(DatePicker view, int year, int monthOfYear,
                               int dayOfMonth) {
             myYear = year;
             myMonth = monthOfYear;
             myDay = dayOfMonth;
-
             String dayStr;
             String monthStr;
-
             if (myDay < 10) {
                 dayStr = "0" + myDay;
             } else {
                 dayStr = String.valueOf(myDay);
             }
-
             if (myMonth < 9) {
                 monthStr = "0" + (myMonth + 1);
             } else {
@@ -763,11 +680,9 @@ public class NotesManager extends AppCompatActivity {
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             myHour = hourOfDay;
             myMinute = minute;
-
             Calendar c = Calendar.getInstance();
             c.set(Calendar.HOUR_OF_DAY, hourOfDay);
             c.set(Calendar.MINUTE, minute);
-
             remindTime.setText(TimeUtil.getTime(c.getTime(),
                     SharedPrefs.getInstance(NotesManager.this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
         }

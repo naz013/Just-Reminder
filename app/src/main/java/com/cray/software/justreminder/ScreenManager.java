@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Nazar Suhovich
- * <p/>
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,9 +46,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import com.cray.software.justreminder.places.AddPlaceActivity;
 import com.cray.software.justreminder.activities.Help;
-import com.cray.software.justreminder.templates.TemplateManager;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.async.DelayedAsync;
 import com.cray.software.justreminder.async.GetTasksListsAsync;
@@ -62,12 +60,9 @@ import com.cray.software.justreminder.enums.QuickReturnViewType;
 import com.cray.software.justreminder.feedback.SendReportActivity;
 import com.cray.software.justreminder.fragments.BackupsFragment;
 import com.cray.software.justreminder.fragments.EventsFragment;
-import com.cray.software.justreminder.places.GeolocationFragment;
 import com.cray.software.justreminder.fragments.NavigationDrawerFragment;
 import com.cray.software.justreminder.fragments.NotesFragment;
-import com.cray.software.justreminder.places.PlacesFragment;
 import com.cray.software.justreminder.fragments.TasksFragment;
-import com.cray.software.justreminder.templates.TemplatesFragment;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupManager;
 import com.cray.software.justreminder.groups.GroupsFragment;
@@ -82,8 +77,12 @@ import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.json.JModel;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.notes.NotesBase;
+import com.cray.software.justreminder.notes.NoteHelper;
+import com.cray.software.justreminder.notes.NoteItem;
 import com.cray.software.justreminder.notes.NotesManager;
+import com.cray.software.justreminder.places.AddPlaceActivity;
+import com.cray.software.justreminder.places.GeolocationFragment;
+import com.cray.software.justreminder.places.PlacesFragment;
 import com.cray.software.justreminder.reminder.ActiveFragment;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
@@ -92,6 +91,8 @@ import com.cray.software.justreminder.reminder.TrashFragment;
 import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.settings.SettingsActivity;
+import com.cray.software.justreminder.templates.TemplateManager;
+import com.cray.software.justreminder.templates.TemplatesFragment;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.SuperUtil;
@@ -247,7 +248,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         } else if (mTag.matches(FRAGMENT_ARCHIVE) || mTag.matches(FRAGMENT_ACTIVE) ||
                 mTag.matches(FRAGMENT_LOCATIONS)) {
             startActivity(new Intent(ScreenManager.this, ReminderManager.class));
-        } else if (mTag.matches(FRAGMENT_TASKS)){
+        } else if (mTag.matches(FRAGMENT_TASKS)) {
             if (new GTasksHelper(ScreenManager.this).isLinked()) {
                 startActivity(new Intent(ScreenManager.this, TaskManager.class)
                         .putExtra(Constants.ITEM_ID_INTENT, listId)
@@ -255,21 +256,21 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
             } else {
                 showSnackbar(getString(R.string.can_not_connect));
             }
-        } else if (mTag.matches(FRAGMENT_NOTE)){
+        } else if (mTag.matches(FRAGMENT_NOTE)) {
             startActivity(new Intent(ScreenManager.this, NotesManager.class));
-        } else if (mTag.matches(FRAGMENT_GROUPS)){
+        } else if (mTag.matches(FRAGMENT_GROUPS)) {
             startActivity(new Intent(ScreenManager.this, GroupManager.class));
-        } else if (mTag.matches(FRAGMENT_PLACES)){
+        } else if (mTag.matches(FRAGMENT_PLACES)) {
             if (LocationUtil.checkGooglePlayServicesAvailability(ScreenManager.this)) {
                 startActivity(new Intent(ScreenManager.this, AddPlaceActivity.class));
             }
-        } else if (mTag.matches(FRAGMENT_TEMPLATES)){
+        } else if (mTag.matches(FRAGMENT_TEMPLATES)) {
             startActivity(new Intent(ScreenManager.this, TemplateManager.class));
         }
     }
 
-    private void reloadButton(){
-        if (mTag.matches(FRAGMENT_BACKUPS)){
+    private void reloadButton() {
+        if (mTag.matches(FRAGMENT_BACKUPS)) {
             mFab.setVisibility(View.GONE);
         } else {
             mFab.setVisibility(View.VISIBLE);
@@ -297,8 +298,8 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
 
     @Override
     public void onListChanged(RecyclerView list) {
-        if (list != null){
-            if (listener != null){
+        if (list != null) {
+            if (listener != null) {
                 list.removeOnScrollListener(listener);
             }
             listener = new ReturnScrollListener.Builder(QuickReturnViewType.FOOTER)
@@ -306,7 +307,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
                     .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
                     .isSnappable(true)
                     .build();
-            if (Module.isLollipop()){
+            if (Module.isLollipop()) {
                 list.addOnScrollListener(listener);
             } else {
                 list.setOnScrollListener(listener);
@@ -329,10 +330,10 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
 
     @Override
     public void onUiChanged(int colorPrimary, int colorPrimaryDark, int colorAccent) {
-        if (colorPrimary != 0){
+        if (colorPrimary != 0) {
             toolbar.setBackgroundColor(colorPrimary);
         }
-        if (colorPrimaryDark != 0){
+        if (colorPrimaryDark != 0) {
             if (Module.isLollipop()) {
                 getWindow().setStatusBarColor(colorPrimaryDark);
             }
@@ -342,7 +343,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         }
     }
 
-    private void replace(Fragment fragment, String tag){
+    private void replace(Fragment fragment, String tag) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.container, fragment, tag);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -457,7 +458,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
     }
 
     public void onSectionAttached(String tag) {
-        if(tag != null) {
+        if (tag != null) {
             if (tag.matches(FRAGMENT_ACTIVE)) {
                 mTitle = getString(R.string.tasks);
             } else if (tag.matches(FRAGMENT_ARCHIVE)) {
@@ -484,7 +485,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         }
     }
 
-    private void restoreUi(){
+    private void restoreUi() {
         int colorPrimary = cSetter.getColor(cSetter.colorPrimary());
         int colorAccent = cSetter.getColor(cSetter.colorAccent());
         int colorDark = cSetter.getColor(cSetter.colorPrimaryDark());
@@ -497,7 +498,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         }
     }
 
-    private void showMonth(){
+    private void showMonth() {
         FlextCal calendarView = new FlextCal();
         Bundle args = new Bundle();
         Calendar cal = Calendar.getInstance();
@@ -608,7 +609,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_day:
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(System.currentTimeMillis());
@@ -693,7 +694,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         return sPrefs.getVersion(version);
     }
 
-    private void showRate(){
+    private void showRate() {
         SharedPrefs sPrefs = SharedPrefs.getInstance(this);
         if (sPrefs.hasKey(Prefs.RATE_SHOW)) {
             if (!sPrefs.getBoolean(Prefs.RATE_SHOW)) {
@@ -723,7 +724,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
     }
 
     private void saveNote() {
-        final String note = quickNote.getText().toString();
+        String note = quickNote.getText().toString();
         if (note.matches("")) {
             quickNote.setError(getString(R.string.must_be_not_empty));
             return;
@@ -732,27 +733,19 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         calendar1.setTimeInMillis(System.currentTimeMillis());
         SimpleDateFormat full24Format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
         String date = full24Format.format(calendar1.getTime());
-
         String uuID = SyncHelper.generateID();
-        NotesBase db = new NotesBase(ScreenManager.this);
-        db.open();
         int color = new Random().nextInt(15);
-        final long id;
-        if (SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT)){
-            id = db.saveNote(SyncHelper.encrypt(note), date, color, uuID, null, 5);
-        } else {
-            id = db.saveNote(note, date, color, uuID, null, 5);
+        String encrypted = note;
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT)) {
+            encrypted = SyncHelper.encrypt(note);
         }
-        db.close();
-
+        NoteItem item = new NoteItem(encrypted, uuID, date, color, 5, null, 0, 0);
+        long id = NoteHelper.getInstance(this).saveNote(item);
         new UpdatesHelper(ScreenManager.this).updateNotesWidget();
-
         quickNote.setText("");
         quickNote.setError(null);
-
         ViewUtils.hideReveal(noteCard);
-
-        InputMethodManager imm = (InputMethodManager)getSystemService(
+        InputMethodManager imm = (InputMethodManager) getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(quickNote.getWindowToken(), 0);
 
@@ -767,25 +760,25 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         }
     }
 
-    private void askNotification(final String note, final long id){
+    private void askNotification(final String note, final long id) {
         ViewUtils.showReveal(noteStatusCard);
         buttonYes.setOnClickListener(v -> {
             new Notifier(ScreenManager.this).showNoteNotification(note, id);
             ViewUtils.hideReveal(noteStatusCard);
-            if (SharedPrefs.getInstance(this).getBoolean(Prefs.QUICK_NOTE_REMINDER)){
+            if (SharedPrefs.getInstance(this).getBoolean(Prefs.QUICK_NOTE_REMINDER)) {
                 new Handler().postDelayed(() -> askReminder(note, id), 300);
             }
         });
 
         buttonNo.setOnClickListener(v -> {
             ViewUtils.hideReveal(noteStatusCard);
-            if (SharedPrefs.getInstance(this).getBoolean(Prefs.QUICK_NOTE_REMINDER)){
+            if (SharedPrefs.getInstance(this).getBoolean(Prefs.QUICK_NOTE_REMINDER)) {
                 new Handler().postDelayed(() -> askReminder(note, id), 300);
             }
         });
     }
 
-    private void askReminder(final String note, final long noteId){
+    private void askReminder(final String note, final long noteId) {
         ViewUtils.showReveal(noteReminderCard);
         buttonReminderYes.setOnClickListener(v -> {
             ViewUtils.hideReveal(noteReminderCard);
@@ -797,10 +790,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
             JModel jModel = new JModel(note, Constants.TYPE_REMINDER, categoryId,
                     SyncHelper.generateID(), due, due, null, null, null);
             long remId = new DateType(ScreenManager.this, Constants.TYPE_REMINDER).save(jModel);
-            NotesBase base = new NotesBase(ScreenManager.this);
-            base.open();
-            base.linkToReminder(noteId, remId);
-            base.close();
+            NoteHelper.getInstance(ScreenManager.this).linkReminder(noteId, remId);
             if (mTag.matches(FRAGMENT_NOTE) || mTag.matches(FRAGMENT_ACTIVE)) {
                 onItemSelected(mTag);
             }
@@ -809,18 +799,18 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         buttonReminderNo.setOnClickListener(v -> ViewUtils.hideReveal(noteReminderCard));
     }
 
-    private boolean isNoteVisible(){
+    private boolean isNoteVisible() {
         return noteCard.getVisibility() == View.VISIBLE;
     }
 
     @Override
     public void onBackPressed() {
-        if (isNoteVisible()){
+        if (isNoteVisible()) {
             quickNote.setText("");
             quickNote.setError(null);
             ViewUtils.hideReveal(noteCard);
 
-            InputMethodManager imm = (InputMethodManager)getSystemService(
+            InputMethodManager imm = (InputMethodManager) getSystemService(
                     Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(quickNote.getWindowToken(), 0);
             return;
@@ -909,9 +899,9 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch(requestCode){
+        switch (requestCode) {
             case 103:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Intent intent = AccountPicker.newChooseAccountIntent(null, null,
                             new String[]{"com.google"}, false, null, null, null, null);
                     startActivityForResult(intent, REQUEST_AUTHORIZATION);
@@ -923,7 +913,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
     @Override
     protected void onStop() {
         super.onStop();
-        if (SharedPrefs.getInstance(this).getBoolean(Prefs.EXPORT_SETTINGS)){
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.EXPORT_SETTINGS)) {
             SharedPrefs.getInstance(this).savePrefsBackup();
         }
     }

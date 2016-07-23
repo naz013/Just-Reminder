@@ -125,9 +125,7 @@ public class TasksData {
 
     public TasksData open() throws SQLiteException {
         dbHelper = new DBHelper(mContext);
-
         db = dbHelper.getWritableDatabase();
-
         System.gc();
         return this;
     }
@@ -141,8 +139,7 @@ public class TasksData {
     }
 
     public void close() {
-        if( dbHelper != null )
-            dbHelper.close();
+        if (dbHelper != null) dbHelper.close();
     }
 
     public long addTasksList (String title, String listId, int def, String eTag, String kind,

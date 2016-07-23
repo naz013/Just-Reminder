@@ -19,7 +19,6 @@ package com.cray.software.justreminder.app_widgets.notes;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.View;
@@ -32,13 +31,15 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.notes.NotesBase;
+import com.cray.software.justreminder.notes.NoteHelper;
+import com.cray.software.justreminder.notes.NoteItem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class NotesFactory implements RemoteViewsService.RemoteViewsFactory {
 
-    private ArrayList<Note> notes;
+    private List<NoteItem> notes;
     private Context mContext;
 
     NotesFactory(Context ctx, Intent intent) {
@@ -56,23 +57,8 @@ public class NotesFactory implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public void onDataSetChanged() {
         notes.clear();
-        NotesBase db = new NotesBase(mContext);
-        String title;
-        int col;
-        long id;
-        byte[] img;
-        Cursor c = db.getNotes();
-        if (c != null && c.moveToFirst()) {
-            do {
-                col = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
-                id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                title = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
-                img = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
-                notes.add(new Note(title, col, id, img));
-            } while (c.moveToNext());
-        }
-        if(c != null) c.close();
-        db.close();
+        List<NoteItem> list = NoteHelper.getInstance(mContext).getAll();
+        notes.addAll(list);
     }
 
     @Override
@@ -90,7 +76,7 @@ public class NotesFactory implements RemoteViewsService.RemoteViewsFactory {
         RemoteViews rView = new RemoteViews(mContext.getPackageName(),
                 R.layout.list_item_note_widget);
         ColorSetter cs = new ColorSetter(mContext);
-        Note note = notes.get(i);
+        NoteItem note = notes.get(i);
         rView.setInt(R.id.noteBackground, "setBackgroundColor", cs.getNoteLightColor(note.getColor()));
         byte[] byteImage = note.getImage();
         if (byteImage != null){
@@ -100,13 +86,11 @@ public class NotesFactory implements RemoteViewsService.RemoteViewsFactory {
                 rView.setViewVisibility(R.id.noteImage, View.VISIBLE);
             } else rView.setViewVisibility(R.id.noteImage, View.GONE);
         } else rView.setViewVisibility(R.id.noteImage, View.GONE);
-        String title = note.getText();
+        String title = note.getNote();
         if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.NOTE_ENCRYPT)){
                 title = SyncHelper.decrypt(title);
         }
-
         rView.setTextViewText(R.id.note, title);
-
         Intent fillInIntent = new Intent();
         fillInIntent.putExtra(Constants.EDIT_ID, note.getId());
         rView.setOnClickFillInIntent(R.id.note, fillInIntent);
@@ -133,51 +117,5 @@ public class NotesFactory implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public boolean hasStableIds() {
         return true;
-    }
-
-    public class Note{
-        private String text;
-        private int color;
-        private long id;
-        private byte[] image;
-
-        public Note(String text, int color, long id, byte[] image){
-            this.text = text;
-            this.color = color;
-            this.id = id;
-            this.image = image;
-        }
-
-        public byte[] getImage() {
-            return image;
-        }
-
-        public void setImage(byte[] image) {
-            this.image = image;
-        }
-
-        public int getColor() {
-            return color;
-        }
-
-        public void setColor(int color) {
-            this.color = color;
-        }
-
-        public long getId() {
-            return id;
-        }
-
-        public void setId(long id) {
-            this.id = id;
-        }
-
-        public String getText() {
-            return text;
-        }
-
-        public void setText(String text) {
-            this.text = text;
-        }
     }
 }
