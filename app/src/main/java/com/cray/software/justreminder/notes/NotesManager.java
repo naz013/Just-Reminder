@@ -231,6 +231,7 @@ public class NotesManager extends AppCompatActivity {
             if (isImageAttached()) {
                 ViewUtils.collapse(imageContainer);
                 img = null;
+                mItem.setImage(null);
             }
         });
 
