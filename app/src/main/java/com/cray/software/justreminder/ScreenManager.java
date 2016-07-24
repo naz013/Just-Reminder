@@ -22,6 +22,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -576,15 +577,23 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
                         getString(R.string.additional_app_themes))
                 .setPositiveButton(R.string.buy, (dialog, which) -> {
                     dialog.dismiss();
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse("market://details?id=" + "com.cray.software.justreminderpro"));
-                    startActivity(intent);
+                    try {
+                        openMarket();
+                    } catch (ActivityNotFoundException e) {
+                        e.printStackTrace();
+                    }
                 })
                 .setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
                     dialog.dismiss();
                 })
                 .setCancelable(true)
                 .create();
+    }
+
+    private void openMarket() throws ActivityNotFoundException {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("market://details?id=" + "com.cray.software.justreminderpro"));
+        startActivity(intent);
     }
 
     @Override
