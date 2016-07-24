@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.fragments;
+package com.cray.software.justreminder.google_tasks;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -33,17 +32,10 @@ import android.view.ViewGroup;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
-import com.cray.software.justreminder.TaskListManager;
-import com.cray.software.justreminder.adapters.TasksPagerAdapter;
-import com.cray.software.justreminder.async.DelayedAsync;
-import com.cray.software.justreminder.async.TaskListAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
-import com.cray.software.justreminder.databases.TasksData;
-import com.cray.software.justreminder.datas.models.Task;
-import com.cray.software.justreminder.datas.models.TaskList;
 import com.cray.software.justreminder.datas.models.TaskListData;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -52,13 +44,13 @@ import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TasksFragment extends Fragment {
 
     private ViewPager pager;
     private ArrayList<TaskListData> taskListDatum;
-    private Map<String, Integer> map = new HashMap<>();
     private int currentPos;
     private boolean onCreate = false;
     private NavigationCallbacks mCallbacks;
@@ -84,23 +76,17 @@ public class TasksFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.tasks_menu, menu);
-        TasksData db = new TasksData(mContext);
-        db.open();
         if (currentPos != 0) {
             menu.add(Menu.NONE, MENU_ITEM_EDIT, 100, R.string.edit_list);
-            Cursor c = db.getTasksList(taskListDatum.get(currentPos).getTaskList().getListId());
-            if (c != null && c.moveToFirst()) {
-                int def = c.getInt(c.getColumnIndex(TasksConstants.SYSTEM_DEFAULT));
-                if (def != 1) {
+            String listId = taskListDatum.get(currentPos).getTaskList().getListId();
+            TaskListItem listItem = TasksHelper.getInstance(getActivity()).getTaskList(listId);
+            if (listItem != null) {
+                if (listItem.getDef() != 1) {
                     menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.delete_list));
                 }
             }
-            if (c != null) {
-                c.close();
-            }
             menu.add(Menu.NONE, MENU_ITEM_CLEAR, 100, R.string.delete_completed_tasks);
         }
-        db.close();
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -243,47 +229,32 @@ public class TasksFragment extends Fragment {
     }
 
     private void deleteList() {
-        TasksData db = new TasksData(mContext);
-        db.open();
-        long id = taskListDatum.get(currentPos).getTaskList().getId();
-        Cursor c = db.getTasksList(id);
-        if (c != null && c.moveToFirst()){
-            String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
-            int def = c.getInt(c.getColumnIndex(TasksConstants.COLUMN_DEFAULT));
-            db.deleteTasksList(id);
+        TaskListItem taskListItem = taskListDatum.get(currentPos).getTaskList();
+        if (taskListItem != null){
+            String listId = taskListItem.getListId();
+            int def = taskListItem.getDef();
+            TasksHelper.getInstance(getActivity()).deleteTaskList(taskListItem.getId());
+            TasksHelper.getInstance(getActivity()).deleteTasks(listId);
             new TaskListAsync(mContext, null, 0, 0, listId, TasksConstants.DELETE_TASK_LIST).execute();
-            Cursor x = db.getTasks(listId);
-            if (x != null && x.moveToFirst()){
-                do {
-                    db.deleteTask(x.getLong(x.getColumnIndex(TasksConstants.COLUMN_ID)));
-                } while (x.moveToNext());
-            }
-            if (x != null) x.close();
-            if (def == 1){
-                Cursor cc = db.getTasksLists();
-                if (cc != null && cc.moveToFirst()){
-                    db.setDefault(cc.getLong(cc.getColumnIndex(TasksConstants.COLUMN_ID)));
-                }
-                if (cc != null) cc.close();
+            if (def == 1) {
+                TaskListItem listItem = TasksHelper.getInstance(getActivity()).getTaskLists().get(0);
+                TasksHelper.getInstance(getActivity()).setDefault(listItem.getId());
             }
         }
-        if (c != null) c.close();
-        db.close();
     }
 
     private void loadData() {
         taskListDatum = new ArrayList<>();
-        taskListDatum.clear();
-
-        ArrayList<TaskList> taskLists = getTaskLists();
+        List<TaskListItem> taskLists = getTaskLists();
         if (taskLists == null || taskLists.size() == 0) return;
-        taskListDatum.add(new TaskListData(taskLists.get(0), getList(null), 0));
-        for (int position = 1; position < taskLists.size(); position++){
-            taskListDatum.add(new TaskListData(taskLists.get(position), getList(taskLists.get(position)), position));
+        Map<String, Integer> colors = new HashMap<>();
+        for (int i = 0; i < taskLists.size(); i++){
+            TaskListItem item = taskLists.get(i);
+            taskListDatum.add(new TaskListData(item, getList(item), i));
+            if (i > 0) colors.put(item.getListId(), item.getColor());
         }
         int pos = SharedPrefs.getInstance(mContext).getInt(Prefs.LAST_LIST);
-        final TasksPagerAdapter pagerAdapter =
-                new TasksPagerAdapter(getChildFragmentManager(), taskListDatum);
+        final TasksPagerAdapter pagerAdapter = new TasksPagerAdapter(getChildFragmentManager(), taskListDatum, colors);
         pagerAdapter.setCallbacks(mCallbacks);
         pager.setAdapter(pagerAdapter);
         pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -303,7 +274,7 @@ public class TasksFragment extends Fragment {
                                 ViewUtils.getColor(mContext, mColor.colorAccent()));
                         mCallbacks.onListIdChanged(0);
                     } else {
-                        TaskList taskList = taskListDatum.get(i).getTaskList();
+                        TaskListItem taskList = taskListDatum.get(i).getTaskList();
                         mCallbacks.onTitleChanged(taskList.getTitle());
                         int tmp = taskList.getColor();
                         mCallbacks.onUiChanged(mColor.getNoteColor(tmp), mColor.getNoteDarkColor(tmp),
@@ -322,7 +293,6 @@ public class TasksFragment extends Fragment {
 
             }
         });
-
         pager.setCurrentItem(pos < taskListDatum.size() ? pos : 0);
         if (mCallbacks != null) {
             ColorSetter mColor = new ColorSetter(mContext);
@@ -333,7 +303,7 @@ public class TasksFragment extends Fragment {
                         ViewUtils.getColor(mContext, mColor.colorAccent()));
                 mCallbacks.onListIdChanged(0);
             } else {
-                TaskList taskList = taskListDatum.get(pos).getTaskList();
+                TaskListItem taskList = taskListDatum.get(pos).getTaskList();
                 mCallbacks.onTitleChanged(taskList.getTitle());
                 int tmp = taskList.getColor();
                 mCallbacks.onUiChanged(ViewUtils.getColor(mContext, mColor.colorPrimary(tmp)),
@@ -345,95 +315,33 @@ public class TasksFragment extends Fragment {
         }
     }
 
-    private ArrayList<TaskList> getTaskLists() {
-        ArrayList<TaskList> lists = new ArrayList<>();
-        lists.clear();
-        map = new HashMap<>();
-        map.clear();
-        lists.add(new TaskList(getString(R.string.all), 0, GTasksHelper.TASKS_ALL, 25));
-        TasksData db = new TasksData(mContext);
-        db.open();
-        Cursor c = db.getTasksLists();
-        if (c != null && c.moveToFirst()){
-            do {
-                String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
-                String title = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
-                long id = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID));
-                int color = c.getInt(c.getColumnIndex(TasksConstants.COLUMN_COLOR));
-                lists.add(new TaskList(title, id, listId, color));
-                map.put(listId, color);
-            } while (c.moveToNext());
-        }
-        if (c != null) c.close();
-        db.close();
+    private ArrayList<TaskListItem> getTaskLists() {
+        ArrayList<TaskListItem> lists = new ArrayList<>();
+        TaskListItem zeroItem = new TaskListItem();
+        zeroItem.setTitle(getString(R.string.all));
+        zeroItem.setListId(GTasksHelper.TASKS_ALL);
+        zeroItem.setColor(25);
+        lists.add(zeroItem);
+        for (TaskListItem item : TasksHelper.getInstance(getActivity()).getTaskLists()) lists.add(item);
         return lists;
     }
 
-    private ArrayList<Task> getList(TaskList taskList) {
-        TasksData db = new TasksData(mContext);
-        db.open();
-        ArrayList<Task> mData = new ArrayList<>();
-        mData.clear();
-        if (taskList == null) {
-            Cursor c = db.getTasks();
-            if (c != null && c.moveToFirst()) {
-                do {
-                    String title = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
-                    if (title != null && !title.matches("")) {
-                        long date = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_DUE));
-                        String taskId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TASK_ID));
-                        String listID = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
-                        String checks = c.getString(c.getColumnIndex(TasksConstants.COLUMN_STATUS));
-                        String note = c.getString(c.getColumnIndex(TasksConstants.COLUMN_NOTES));
-                        long mId = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID));
-                        int color = 0;
-                        if (map.containsKey(listID)) color = map.get(listID);
-                        mData.add(new Task(title, mId, checks, taskId, date, listID, note, color));
-                    }
-                } while (c.moveToNext());
-            }
-            if (c != null) c.close();
+    private List<TaskItem> getList(TaskListItem taskList) {
+        List<TaskItem> mData = new ArrayList<>();
+        if (taskList.getListId() == null) {
+            List<TaskItem> list = TasksHelper.getInstance(getActivity()).getTasks();
+            mData.addAll(list);
         } else {
-            Cursor c = db.getTasks(taskList.getListId());
-            if (c != null && c.moveToFirst()){
-                do {
-                    String title = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
-                    if (title != null && !title.matches("")) {
-                        long date = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_DUE));
-                        String taskId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TASK_ID));
-                        String checks = c.getString(c.getColumnIndex(TasksConstants.COLUMN_STATUS));
-                        String note = c.getString(c.getColumnIndex(TasksConstants.COLUMN_NOTES));
-                        long mId = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID));
-                        mData.add(new Task(title, mId, checks, taskId, date, taskList.getListId(),
-                                note, taskList.getColor()));
-                    }
-                } while (c.moveToNext());
-            }
-            if (c != null) c.close();
+            List<TaskItem> list = TasksHelper.getInstance(getActivity()).getTasks(taskList.getListId());
+            mData.addAll(list);
         }
-        db.close();
         return mData;
     }
 
     private void clearList() {
-        TasksData db = new TasksData(mContext);
-        db.open();
         String listId = taskListDatum.get(currentPos).getTaskList().getListId();
-        Cursor c = db.getTasks(listId);
-        if (c != null && c.moveToFirst()){
-            do {
-                long ids = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID));
-                String status = c.getString(c.getColumnIndex(TasksConstants.COLUMN_STATUS));
-                if (status.matches(GTasksHelper.TASKS_COMPLETE)){
-                    db.deleteTask(ids);
-                }
-            } while (c.moveToNext());
-        }
-
-        if (c != null) c.close();
-        db.close();
+        TasksHelper.getInstance(getActivity()).deleteCompletedTasks(listId);
         new TaskListAsync(mContext, null, 0, 0, listId, TasksConstants.CLEAR_TASK_LIST).execute();
-
         if (mCallbacks != null) mCallbacks.onItemSelected(ScreenManager.FRAGMENT_TASKS);
     }
 }

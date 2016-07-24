@@ -46,8 +46,8 @@ public class CalendarUpdateMinusService extends IntentService {
             editor.putInt(CalendarWidgetConfig.CALENDAR_WIDGET_MONTH + widgetId, month);
             if (month == 11) year -= 1;
             editor.putInt(CalendarWidgetConfig.CALENDAR_WIDGET_YEAR + widgetId, year);
-            editor.commit();
-            new UpdatesHelper(CalendarUpdateMinusService.this).updateCalendarWidget();
+            editor.apply();
+            UpdatesHelper.getInstance(getApplicationContext()).updateCalendarWidget();
             stopSelf();
         } else stopSelf();
     }

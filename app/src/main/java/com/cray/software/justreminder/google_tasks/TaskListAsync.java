@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.async;
+package com.cray.software.justreminder.google_tasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.cray.software.justreminder.cloud.GTasksHelper;
-import com.cray.software.justreminder.databases.TasksData;
-import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
+import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.constants.TasksConstants;
+import com.cray.software.justreminder.helpers.SyncHelper;
 
 import java.io.IOException;
 
@@ -46,7 +45,7 @@ public class TaskListAsync extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... params) {
         GTasksHelper helper = new GTasksHelper(mContext);
         boolean isConnected = SyncHelper.isConnected(mContext);
-        TasksData data = new TasksData(mContext);
+        TasksDataBase data = new TasksDataBase(mContext);
         data.open();
         if (taskType.matches(TasksConstants.UPDATE_TASK_LIST)){
             if (isConnected) {
@@ -87,6 +86,6 @@ public class TaskListAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        new UpdatesHelper(mContext).updateTasksWidget();
+        UpdatesHelper.getInstance(mContext).updateTasksWidget();
     }
 }

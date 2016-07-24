@@ -239,7 +239,7 @@ public class Reminder {
         }
         db.close();
         new Notifier(context).recreatePermanent();
-        new UpdatesHelper(context).updateWidget();
+        UpdatesHelper.getInstance(context).updateWidget();
         return res;
     }
 
@@ -314,7 +314,7 @@ public class Reminder {
         }
         if (c != null) c.close();
         db.close();
-        new UpdatesHelper(context).updateWidget();
+        UpdatesHelper.getInstance(context).updateWidget();
         new Notifier(context).recreatePermanent();
         if (callbacks != null) callbacks.showSnackbar(R.string.reminder_created);
         else Messages.toast(context, R.string.reminder_created);
@@ -346,7 +346,7 @@ public class Reminder {
         new DelayReceiver().cancelAlarm(context, id);
         new RepeatNotificationReceiver().cancelAlarm(context, i);
         new PositionDelayReceiver().cancelDelay(context, i);
-        new UpdatesHelper(context).updateWidget();
+        UpdatesHelper.getInstance(context).updateWidget();
         new Notifier(context).recreatePermanent();
         new DisableAsync(context).execute();
     }

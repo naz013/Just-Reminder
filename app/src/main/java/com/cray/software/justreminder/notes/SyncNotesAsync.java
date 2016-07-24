@@ -99,6 +99,6 @@ public class SyncNotesAsync extends AsyncTask<Void, Void, Boolean> {
         builder.setWhen(System.currentTimeMillis());
         mNotifyMgr.notify(2, builder.build());
         mListener.endExecution(aVoid);
-        new UpdatesHelper(mContext).updateNotesWidget();
+        UpdatesHelper.getInstance(mContext).updateNotesWidget();
     }
 }

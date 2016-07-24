@@ -1,36 +1,29 @@
-package com.cray.software.justreminder;
+package com.cray.software.justreminder.google_tasks;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CursorAdapter;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TimePicker;
 
+import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
-import com.cray.software.justreminder.async.TaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.NextBase;
-import com.cray.software.justreminder.databases.TasksData;
-import com.cray.software.justreminder.datas.models.TaskList;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
@@ -46,34 +39,32 @@ import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class TaskManager extends AppCompatActivity {
     private ColorSetter cSetter = new ColorSetter(TaskManager.this);
 
-    private long id;
     private Toolbar toolbar;
     private RoboEditText editField, noteField;
     private RoboTextView dateField;
     private RoboTextView timeField;
     private RoboTextView listText;
 
-    private int color;
     private int myHour = 0;
     private int myMinute = 0;
     private int myYear = 0;
     private int myMonth = 0;
     private int myDay = 1;
     private String listId = null;
-    private String initListId = null;
     private String taskId;
     private String action;
     private boolean isReminder = false;
     private boolean isDate = false;
 
+    private TaskItem mItem;
+
     private static final int MENU_ITEM_DELETE = 12;
     private static final int MENU_ITEM_MOVE = 14;
-
-    private ArrayList<TaskList> categories = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,16 +79,17 @@ public class TaskManager extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
 
         editField = (RoboEditText) findViewById(R.id.editField);
         noteField = (RoboEditText) findViewById(R.id.noteField);
         listText = (RoboTextView) findViewById(R.id.listText);
         listText.setOnClickListener(v -> selectList(false));
-
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
 
         Calendar calendar = Calendar.getInstance();
@@ -133,94 +125,68 @@ public class TaskManager extends AppCompatActivity {
         Intent intent = getIntent();
         long tmp = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
         action = intent.getStringExtra(TasksConstants.INTENT_ACTION);
-
         if (action == null) action = TasksConstants.CREATE;
-
         if (action.matches(TasksConstants.CREATE)){
             toolbar.setTitle(R.string.new_task);
             if (tmp == 0) {
-                TasksData data = new TasksData(TaskManager.this);
-                data.open();
-                Cursor c = data.getDefaultTasksList();
-                if (c != null && c.moveToFirst()) {
-                    initListId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
-                    color = c.getInt(c.getColumnIndex(TasksConstants.COLUMN_COLOR));
-                    String listTitle = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
-                    listText.setText(listTitle);
-                    setColor(color);
+                TaskListItem listItem = TasksHelper.getInstance(this).getDefaultTaskList();
+                if (listItem != null) {
+                    listId = listItem.getListId();
+                    listText.setText(listItem.getTitle());
+                    setColor(listItem.getColor());
                 }
-                if (c != null) c.close();
-                data.close();
             } else {
-                TasksData data = new TasksData(TaskManager.this);
-                data.open();
-                Cursor c = data.getTasksList(tmp);
-                if (c != null && c.moveToFirst()) {
-                    initListId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
-                    color = c.getInt(c.getColumnIndex(TasksConstants.COLUMN_COLOR));
-                    String listTitle = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
-                    listText.setText(listTitle);
-                    setColor(color);
+                TaskListItem listItem = TasksHelper.getInstance(this).getTaskList(tmp);
+                if (listItem != null) {
+                    listId = listItem.getListId();
+                    listText.setText(listItem.getTitle());
+                    setColor(listItem.getColor());
                 }
-                if (c != null) c.close();
-                data.close();
             }
         } else {
             toolbar.setTitle(R.string.edit_task);
-            id = tmp;
-            if (id != 0) {
-                TasksData data = new TasksData(TaskManager.this);
-                data.open();
-                Cursor c = data.getTask(id);
-                if (c != null && c.moveToFirst()) {
-                    editField.setText(c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE)));
-                    taskId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TASK_ID));
-                    String note = c.getString(c.getColumnIndex(TasksConstants.COLUMN_NOTES));
-                    long remId = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_REMINDER_ID));
-                    if (note != null) {
-                        noteField.setText(note);
-                        noteField.setSelection(noteField.getText().length());
-                    }
-
-                    long time = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_DUE));
-                    if (time != 0) {
-                        calendar.setTimeInMillis(time);
-                        myHour = calendar.get(Calendar.HOUR_OF_DAY);
-                        myMinute = calendar.get(Calendar.MINUTE);
-                        myYear = calendar.get(Calendar.YEAR);
-                        myMonth = calendar.get(Calendar.MONTH);
-                        myDay = calendar.get(Calendar.DAY_OF_MONTH);
-                        isDate = true;
-                        dateField.setText(TimeUtil.getDate(calendar.getTime()));
-                    }
-
-                    initListId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
-                    Cursor x = data.getTasksList(initListId);
-                    if (x != null && x.moveToFirst()) {
-                        color = x.getInt(x.getColumnIndex(TasksConstants.COLUMN_COLOR));
-                        String listTitle = x.getString(x.getColumnIndex(TasksConstants.COLUMN_TITLE));
-                        listText.setText(listTitle);
-                        setColor(color);
-                    }
-                    if (x != null) x.close();
-
-                    if (remId > 0) {
-                        NextBase db = new NextBase(this);
-                        db.open();
-                        Cursor r = db.getReminder(remId);
-                        if (r != null && r.moveToFirst()){
-                            long eventTime = r.getLong(r.getColumnIndex(NextBase.EVENT_TIME));
-                            calendar.setTimeInMillis(eventTime);
-                            timeField.setText(TimeUtil.getTime(calendar.getTime(),
-                                    SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
-                            isReminder = true;
-                        }
-                        if (r != null) r.close();
-                        db.close();
-                    }
+            mItem = TasksHelper.getInstance(this).getTask(tmp);
+            if (mItem != null) {
+                editField.setText(mItem.getTitle());
+                taskId = mItem.getTaskId();
+                listId = mItem.getListId();
+                String note = mItem.getNotes();
+                long remId = mItem.getReminderId();
+                if (note != null) {
+                    noteField.setText(note);
+                    noteField.setSelection(noteField.getText().length());
                 }
-                if (c != null) c.close();
-                data.close();
+
+                long time = mItem.getDueDate();
+                if (time != 0) {
+                    calendar.setTimeInMillis(time);
+                    myHour = calendar.get(Calendar.HOUR_OF_DAY);
+                    myMinute = calendar.get(Calendar.MINUTE);
+                    myYear = calendar.get(Calendar.YEAR);
+                    myMonth = calendar.get(Calendar.MONTH);
+                    myDay = calendar.get(Calendar.DAY_OF_MONTH);
+                    isDate = true;
+                    dateField.setText(TimeUtil.getDate(calendar.getTime()));
+                }
+                TaskListItem listItem = TasksHelper.getInstance(this).getTaskList(mItem.getListId());
+                if (listItem != null) {
+                    listText.setText(listItem.getTitle());
+                    setColor(listItem.getColor());
+                }
+                if (remId > 0) {
+                    NextBase db = new NextBase(this);
+                    db.open();
+                    Cursor r = db.getReminder(remId);
+                    if (r != null && r.moveToFirst()){
+                        long eventTime = r.getLong(r.getColumnIndex(NextBase.EVENT_TIME));
+                        calendar.setTimeInMillis(eventTime);
+                        timeField.setText(TimeUtil.getTime(calendar.getTime(),
+                                SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
+                        isReminder = true;
+                    }
+                    if (r != null) r.close();
+                    db.close();
+                }
             }
         }
         switchDate();
@@ -232,10 +198,8 @@ public class TaskManager extends AppCompatActivity {
         if (type == 2){
             types = new String[]{getString(R.string.no_reminder), getString(R.string.select_time)};
         }
-
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_single_choice, types);
-
         int selection = 0;
         if (type == 1){
             if (isDate) selection = 1;
@@ -245,7 +209,6 @@ public class TaskManager extends AppCompatActivity {
             if (isReminder) selection = 1;
             else selection = 0;
         }
-
         builder.setSingleChoiceItems(adapter, selection, (dialog, which) -> {
             if (which != -1) {
                 dialog.dismiss();
@@ -261,7 +224,6 @@ public class TaskManager extends AppCompatActivity {
                             break;
                     }
                 }
-
                 if (type == 2){
                     switch (which){
                         case 0:
@@ -286,13 +248,12 @@ public class TaskManager extends AppCompatActivity {
     }
 
     private void moveTask(String listId) {
+        String initListId = mItem.getListId();
         if (!listId.matches(initListId)) {
-            TasksData data = new TasksData(TaskManager.this);
-            data.open();
-            data.updateTask(id, listId);
+            mItem.setListId(listId);
+            TasksHelper.getInstance(this).saveTask(mItem);
             new TaskAsync(TaskManager.this, null, listId, taskId, TasksConstants.MOVE_TASK,
-                    0, null, id, initListId).execute();
-            data.close();
+                    0, null, mItem.getId(), initListId).execute();
             finish();
         } else {
             Messages.toast(this, getString(R.string.this_is_same_list));
@@ -300,77 +261,67 @@ public class TaskManager extends AppCompatActivity {
     }
 
     private void selectList(final boolean move) {
-        TasksData data = new TasksData(TaskManager.this);
-        data.open();
-        Cursor c = data.getTasksLists();
-        if (c != null && c.moveToFirst()){
-            do {
-                String listTitle = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
-                String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
-                categories.add(new TaskList(listTitle, 0, listId, 0));
-            } while (c.moveToNext());
+        List<TaskListItem> list = TasksHelper.getInstance(this).getTaskLists();
+        List<String> names = new ArrayList<>();
+        int position = 0;
+        for (int i = 0; i < list.size(); i++) {
+            TaskListItem item = list.get(i);
+            names.add(item.getTitle());
+            if (item.getListId().matches(listId)) position = i;
         }
-        if (c != null) c.close();
-        data.close();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.choose_list);
-        builder.setAdapter(new SimpleAdapter(TaskManager.this,
-                data.getTasksLists()), (dialog, which) -> {
-                    dialog.dismiss();
-                    if (move) moveTask(categories.get(which).getListId());
-                    else {
-                        listText.setText(categories.get(which).getTitle());
-                        listId = categories.get(which).getListId();
-                        reloadColor(listId);
-                    }
-                });
+        builder.setSingleChoiceItems(new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice, names), position, (dialog, which) -> {
+            dialog.dismiss();
+            if (move) moveTask(list.get(which).getListId());
+            else {
+                listId = list.get(which).getListId();
+                listText.setText(list.get(which).getTitle());
+                reloadColor(list.get(which).getListId());
+            }
+        });
         AlertDialog alert = builder.create();
         alert.show();
     }
 
     private void reloadColor(String listId) {
-        TasksData db = new TasksData(this);
-        db.open();
-        Cursor x = db.getTasksList(listId);
-        if (x != null && x.moveToFirst()) {
-            color = x.getInt(x.getColumnIndex(TasksConstants.COLUMN_COLOR));
-            setColor(color);
+        TaskListItem item = TasksHelper.getInstance(this).getTaskList(listId);
+        if (item != null) {
+            setColor(item.getColor());
         }
-        if (x != null) x.close();
-        db.close();
     }
 
     private void saveTask() {
+        String initListId = mItem.getListId();
         SharedPrefs.getInstance(this).putBoolean(Prefs.TASK_CHANGED, true);
         String taskName = editField.getText().toString().trim();
         if (taskName.matches("")) {
             editField.setError(getString(R.string.must_be_not_empty));
             return;
         }
-
         String note = noteField.getText().toString().trim();
-
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(myYear, myMonth, myDay, 0, 0, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-
         long due = 0;
         if (isDate) due = calendar.getTimeInMillis();
         long remId = 0;
         if (isReminder) remId = saveReminder(taskName);
-        TasksData data = new TasksData(TaskManager.this);
-        data.open();
         if (action.matches(TasksConstants.CREATE)) {
-            long localId = data.addTask(taskName, null, 0, false, due, null, null, note,
-                    null, null, null, 0, remId, listId != null ? listId : initListId, GTasksHelper.TASKS_NEED_ACTION, false);
-            new TaskAsync(TaskManager.this, taskName, listId != null ? listId : initListId, null, TasksConstants.INSERT_TASK,
-                    due, note, localId, null).execute();
+            mItem = new TaskItem();
         }
+        mItem.setListId(listId);
+        mItem.setStatus(GTasksHelper.TASKS_NEED_ACTION);
+        mItem.setTitle(taskName);
+        mItem.setNotes(note);
+        mItem.setDueDate(due);
+        mItem.setReminderId(remId);
         if (action.matches(TasksConstants.EDIT)) {
-            if (id != 0) {
+            if (mItem != null) {
                 if (listId != null) {
-                    data.updateTask(id, taskName, due, note, GTasksHelper.TASKS_NEED_ACTION, remId, listId);
+                    long id = mItem.getId();
+                    TasksHelper.getInstance(this).saveTask(mItem);
                     new TaskAsync(TaskManager.this, taskName, initListId, taskId, TasksConstants.UPDATE_TASK,
                             due, note, id, null).execute();
                     if (!listId.matches(initListId)) {
@@ -378,13 +329,16 @@ public class TaskManager extends AppCompatActivity {
                                 due, note, id, initListId).execute();
                     }
                 } else {
-                    data.updateTask(id, taskName, due, note, GTasksHelper.TASKS_NEED_ACTION, remId);
+                    TasksHelper.getInstance(this).saveTask(mItem);
                     new TaskAsync(TaskManager.this, taskName, initListId, taskId, TasksConstants.UPDATE_TASK,
-                            due, note, id, null).execute();
+                            due, note, mItem.getId(), null).execute();
                 }
             }
+        } else {
+            long localId = TasksHelper.getInstance(this).saveTask(mItem);
+            new TaskAsync(TaskManager.this, taskName, listId, null, TasksConstants.INSERT_TASK,
+                    due, note, localId, null).execute();
         }
-        data.close();
         finish();
     }
 
@@ -415,21 +369,15 @@ public class TaskManager extends AppCompatActivity {
     }
 
     private void deleteTask() {
-        TasksData data = new TasksData(TaskManager.this);
-        data.open();
-        Cursor c = data.getTask(id);
-        if (c != null && c.moveToFirst()){
-            String taskId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TASK_ID));
-            data.deleteTask(id);
-            new TaskAsync(TaskManager.this, null, initListId, taskId, TasksConstants.DELETE_TASK,
-                    0, null, id, null).execute();
+        if (mItem != null){
+            String taskId = mItem.getTaskId();
+            TasksHelper.getInstance(this).deleteTask(mItem.getId());
+            new TaskAsync(TaskManager.this, null, mItem.getListId(), taskId, TasksConstants.DELETE_TASK,
+                    0, null, mItem.getId(), null).execute();
         }
-        if (c != null) c.close();
-        data.close();
     }
 
     private void setColor(int i){
-        color = i;
         toolbar.setBackgroundColor(cSetter.getNoteColor(i));
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(cSetter.getNoteDarkColor(i));
@@ -440,7 +388,7 @@ public class TaskManager extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.save_menu, menu);
-        if (id != 0) {
+        if (mItem != null) {
             menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, R.string.delete_task);
             menu.add(Menu.NONE, MENU_ITEM_MOVE, 100, R.string.move_to_another_list);
         }
@@ -508,64 +456,7 @@ public class TaskManager extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        new UpdatesHelper(TaskManager.this).updateTasksWidget();
+        UpdatesHelper.getInstance(this).updateTasksWidget();
         super.onDestroy();
-    }
-
-    public class SimpleAdapter extends CursorAdapter {
-
-        LayoutInflater inflater;
-        private Cursor c;
-        Context cContext;
-        ColorSetter cs;
-
-        public SimpleAdapter(Context context, Cursor c) {
-            super(context, c);
-            this.cContext = context;
-            cs = new ColorSetter(context);
-            inflater = LayoutInflater.from(context);
-            inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            this.c = c;
-            c.moveToFirst();
-        }
-
-        @Override
-        public int getCount() {
-            return c.getCount();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return super.getItem(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            Cursor cursor = getCursor();
-            cursor.moveToPosition(position);
-            return cursor.getLong(cursor.getColumnIndex("_id"));
-        }
-
-        @Override
-        public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            return inflater.inflate(R.layout.list_item_simple_text1, null);
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            c.moveToPosition(position);
-            if (convertView == null) {
-                convertView = inflater.inflate(R.layout.list_item_simple_text1, null);
-            }
-            String text = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
-            RoboTextView textView = (RoboTextView) convertView.findViewById(R.id.text1);
-            textView.setText(text);
-            return convertView;
-        }
-
-        @Override
-        public void bindView(View view, Context context, Cursor cursor) {
-
-        }
     }
 }

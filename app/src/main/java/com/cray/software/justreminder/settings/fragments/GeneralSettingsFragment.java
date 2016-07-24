@@ -161,8 +161,7 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
             sPrefs.putBoolean(Prefs.IS_24_TIME_FORMAT, true);
             use24TimePrefs.setChecked(true);
         }
-
-        new UpdatesHelper(getActivity()).updateWidget();
+        UpdatesHelper.getInstance(getActivity()).updateWidget();
     }
 
     private void wearChange (){

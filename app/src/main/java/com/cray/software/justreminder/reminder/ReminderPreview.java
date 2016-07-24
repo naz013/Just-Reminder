@@ -42,14 +42,17 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.TaskManager;
-import com.cray.software.justreminder.async.SwitchTaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.NextBase;
-import com.cray.software.justreminder.databases.TasksData;
+import com.cray.software.justreminder.google_tasks.SwitchTaskAsync;
+import com.cray.software.justreminder.google_tasks.TaskItem;
+import com.cray.software.justreminder.google_tasks.TaskListItem;
+import com.cray.software.justreminder.google_tasks.TaskManager;
+import com.cray.software.justreminder.google_tasks.TasksDataBase;
+import com.cray.software.justreminder.google_tasks.TasksHelper;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -486,34 +489,22 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                 reminderNote.setImage(noteItem.getImage());
                 reminderNote.setNoteId(noteItem.getId());
             }
-            TasksData data = new TasksData(mContext);
-            data.open();
-            Cursor c = data.getTaskByReminder(mId);
-            if (c != null && c.moveToFirst()) {
-                String task = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
-                String taskNote = c.getString(c.getColumnIndex(TasksConstants.COLUMN_NOTES));
-                String status = c.getString(c.getColumnIndex(TasksConstants.COLUMN_STATUS));
-                String taskListId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
-                String taskId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TASK_ID));
-                long due = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_DUE));
-                long id = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID));
-                reminderNote.setTaskTitle(task);
-                reminderNote.setTaskNote(taskNote);
-                reminderNote.setTaskStatus(status);
-                reminderNote.setTaskDate(due);
-                reminderNote.setTaskId(id);
-                reminderNote.setTaskListId(taskListId);
-                reminderNote.setTaskIdentifier(taskId);
+            TaskItem taskItem = TasksHelper.getInstance(mContext).getTaskByReminder(mId);
+            if (taskItem != null) {
+                reminderNote.setTaskTitle(taskItem.getTitle());
+                reminderNote.setTaskNote(taskItem.getNotes());
+                reminderNote.setTaskStatus(taskItem.getStatus());
+                reminderNote.setTaskDate(taskItem.getDueDate());
+                reminderNote.setTaskId(taskItem.getId());
+                reminderNote.setTaskListId(taskItem.getListId());
+                reminderNote.setTaskIdentifier(taskItem.getTaskId());
+                TaskListItem listItem = TasksHelper.getInstance(mContext).getTaskList(taskItem.getListId());
+                if (listItem != null) {
+                    reminderNote.setColor(listItem.getColor());
+                } else {
+                    reminderNote.setColor(8);
+                }
             }
-            if (c != null) c.close();
-            c = data.getTasksList(reminderNote.getTaskListId());
-            if (c != null && c.moveToFirst()) {
-                reminderNote.setColor(c.getInt(c.getColumnIndex(TasksConstants.COLUMN_COLOR)));
-            } else {
-                reminderNote.setColor(8);
-            }
-            if (c != null) c.close();
-            data.close();
             return reminderNote;
         }
 
@@ -547,7 +538,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                         checkDone.setChecked(false);
                     }
                     checkDone.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                        final TasksData data = new TasksData(mContext);
+                        final TasksDataBase data = new TasksDataBase(mContext);
                         data.open();
                         if (isChecked) {
                             data.setTaskDone(reminderNote.getTaskId());

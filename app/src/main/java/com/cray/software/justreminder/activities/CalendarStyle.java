@@ -252,8 +252,7 @@ public class CalendarStyle extends AppCompatActivity {
         if (i == 2) sPrefs.putInt(Prefs.BIRTH_COLOR, code);
         else if (i == 3) sPrefs.putInt(Prefs.REMINDER_COLOR, code);
         else sPrefs.putInt(Prefs.TODAY_COLOR, code);
-
-        new UpdatesHelper(CalendarStyle.this).updateCalendarWidget();
+        UpdatesHelper.getInstance(this).updateCalendarWidget();
     }
 
     @Override

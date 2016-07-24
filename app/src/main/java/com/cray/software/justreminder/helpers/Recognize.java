@@ -180,7 +180,7 @@ public class Recognize {
         }
         item.setLinkId(remId);
         NoteHelper.getInstance(mContext).saveNote(item);
-        new UpdatesHelper(mContext).updateNotesWidget();
+        UpdatesHelper.getInstance(mContext).updateNotesWidget();
         if (!isWear) Toast.makeText(mContext, mContext.getString(R.string.saved), Toast.LENGTH_SHORT).show();
     }
 }

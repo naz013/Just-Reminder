@@ -28,10 +28,18 @@ import com.cray.software.justreminder.app_widgets.tasks.TasksWidget;
 
 public class UpdatesHelper {
 
+    private static UpdatesHelper helper;
     private Context mContext;
 
-    public UpdatesHelper(Context context){
+    private UpdatesHelper(Context context){
         this.mContext = context;
+    }
+
+    public static UpdatesHelper getInstance(Context context) {
+        if (helper == null) {
+            helper = new UpdatesHelper(context);
+        }
+        return helper;
     }
 
     public void updateWidget(){

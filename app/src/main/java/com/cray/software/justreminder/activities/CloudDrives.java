@@ -25,7 +25,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -36,12 +35,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.async.GetTasksListsAsync;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.constants.TasksConstants;
-import com.cray.software.justreminder.databases.TasksData;
+import com.cray.software.justreminder.google_tasks.GetTasksListsAsync;
+import com.cray.software.justreminder.google_tasks.TasksHelper;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -140,22 +138,8 @@ public class CloudDrives extends AppCompatActivity {
         if (gdx.isLinked()){
             gdx.unlink();
             setUpButton();
-            TasksData data = new TasksData(CloudDrives.this);
-            Cursor c = data.getTasks();
-            if (c != null && c.moveToFirst()){
-                do {
-                    data.deleteTask(c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID)));
-                } while (c.moveToNext());
-            }
-            if (c != null) c.close();
-
-            Cursor s = data.getTasksLists();
-            if (s != null && s.moveToFirst()){
-                do {
-                    data.deleteTasksList(s.getLong(s.getColumnIndex(TasksConstants.COLUMN_ID)));
-                } while (s.moveToNext());
-            }
-            data.close();
+            TasksHelper.getInstance(this).deleteTasks();
+            TasksHelper.getInstance(this).deleteTaskLists();
         } else {
             Intent intent = AccountPicker.newChooseAccountIntent(null, null,
                     new String[]{"com.google"}, false, null, null, null, null);

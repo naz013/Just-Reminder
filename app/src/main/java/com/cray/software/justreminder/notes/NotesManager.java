@@ -453,7 +453,7 @@ public class NotesManager extends AppCompatActivity {
             NoteHelper.getInstance(this).linkReminder(id, remId);
         }
         SharedPrefs.getInstance(this).putBoolean(Prefs.NOTE_CHANGED, true);
-        new UpdatesHelper(NotesManager.this).updateNotesWidget();
+        UpdatesHelper.getInstance(this).updateNotesWidget();
         finish();
     }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.fragments;
+package com.cray.software.justreminder.google_tasks;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -29,25 +29,25 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.adapters.TasksRecyclerAdapter;
-import com.cray.software.justreminder.datas.models.Task;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class TaskListFragment extends Fragment implements SyncListener {
 
     private RecyclerView currentList;
     private LinearLayout emptyItem;
-    private ArrayList<Task> datas;
-
+    private List<TaskItem> data;
+    private Map<String, Integer> colors;
     private NavigationCallbacks mCallbacks;
 
-    public void setData(ArrayList<Task> datas){
-        this.datas = datas;
+    public void setData(List<TaskItem> data, Map<String, Integer> colors){
+        this.data = data;
+        this.colors = colors;
     }
 
     public void setCallbacks(NavigationCallbacks mCallbacks) {
@@ -80,7 +80,7 @@ public class TaskListFragment extends Fragment implements SyncListener {
     }
 
     public void loaderAdapter(){
-        TasksRecyclerAdapter customAdapter = new TasksRecyclerAdapter(getActivity(), datas);
+        TasksRecyclerAdapter customAdapter = new TasksRecyclerAdapter(getActivity(), data, colors);
         customAdapter.setListener(this);
         currentList.setLayoutManager(new LinearLayoutManager(getActivity()));
         currentList.setAdapter(customAdapter);
@@ -92,7 +92,7 @@ public class TaskListFragment extends Fragment implements SyncListener {
     }
 
     private void reloadView() {
-        if (datas != null && datas.size() > 0){
+        if (data != null && data.size() > 0){
             currentList.setVisibility(View.VISIBLE);
             emptyItem.setVisibility(View.GONE);
         } else {

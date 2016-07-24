@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.adapters;
+package com.cray.software.justreminder.google_tasks;
 
 import android.content.Context;
 import android.content.Intent;
@@ -25,34 +25,32 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.TaskManager;
-import com.cray.software.justreminder.async.SwitchTaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.TasksConstants;
-import com.cray.software.justreminder.databases.TasksData;
-import com.cray.software.justreminder.datas.models.Task;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdapter.ViewHolder>  {
 
-    private List<Task> mDataset;
+    private List<TaskItem> mDataset;
     private Context mContext;
     private ColorSetter cs;
     private SyncListener listener;
     private SimpleDateFormat full24Format = new SimpleDateFormat("EEE,\ndd/MM", Locale.getDefault());
+    private Map<String, Integer> colors;
 
-    public TasksRecyclerAdapter(Context context, ArrayList<Task> myDataset) {
+    public TasksRecyclerAdapter(Context context, List<TaskItem> myDataset, Map<String, Integer> colors) {
         this.mDataset = myDataset;
         this.mContext = context;
+        this.colors = colors;
         cs = new ColorSetter(context);
     }
 
@@ -89,7 +87,6 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // create a new view
         View itemLayoutView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_task, parent, false);
         return new ViewHolder(itemLayoutView);
@@ -97,24 +94,25 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        holder.listColor.setBackgroundColor(cs.getNoteColor(mDataset.get(position).getColor()));
+        TaskItem item = mDataset.get(position);
+        String listId = item.getListId();
+        if (colors.containsKey(listId)) {
+            holder.listColor.setBackgroundColor(cs.getNoteColor(colors.get(listId)));
+        }
         holder.card.setCardBackgroundColor(cs.getCardStyle());
-
-        final String name = mDataset.get(position).getTitle();
-
-        holder.txtTitle.setText(name);
+        holder.txtTitle.setText(item.getTitle());
         holder.txtTitle.setOnClickListener(v -> mContext.startActivity(new Intent(mContext, TaskManager.class)
-                .putExtra(Constants.ITEM_ID_INTENT, mDataset.get(position).getId())
+                .putExtra(Constants.ITEM_ID_INTENT, item.getId())
                 .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.EDIT)));
 
-        String notes = mDataset.get(position).getNote();
+        String notes = item.getNotes();
         if (notes != null && !notes.matches("")) {
             holder.note.setText(notes);
         } else {
             holder.note.setVisibility(View.GONE);
         }
 
-        long date = mDataset.get(position).getDate();
+        long date = item.getDueDate();
         java.util.Calendar calendar = java.util.Calendar.getInstance();
         if (date != 0) {
             calendar.setTimeInMillis(date);
@@ -124,7 +122,7 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
             holder.txtDate.setVisibility(View.INVISIBLE);
         }
 
-        if (mDataset.get(position).getStatus().matches(GTasksHelper.TASKS_COMPLETE)){
+        if (item.getStatus().matches(GTasksHelper.TASKS_COMPLETE)){
             holder.checkBox.setChecked(true);
         } else {
             holder.checkBox.setChecked(false);
@@ -150,7 +148,7 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
     }
 
     private void switchTask(int position, boolean isDone){
-        TasksData db = new TasksData(mContext);
+        TasksDataBase db = new TasksDataBase(mContext);
         db.open();
         if (isDone){
             db.setTaskDone(mDataset.get(position).getId());
@@ -158,9 +156,7 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
             db.setTaskUnDone(mDataset.get(position).getId());
         }
 
-        new SwitchTaskAsync(mContext,
-                mDataset.get(position).getListId(),
-                mDataset.get(position).getTaskId(), isDone, listener)
-                .execute();
+        new SwitchTaskAsync(mContext, mDataset.get(position).getListId(),
+                mDataset.get(position).getTaskId(), isDone, listener).execute();
     }
 }

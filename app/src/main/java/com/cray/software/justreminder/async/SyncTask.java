@@ -133,16 +133,16 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
             builder.setWhen(System.currentTimeMillis());
             mNotifyMgr.notify(2, builder.build());
             if (mContext != null) {
-                new UpdatesHelper(mContext).updateWidget();
-                new UpdatesHelper(mContext).updateNotesWidget();
+                UpdatesHelper.getInstance(mContext).updateWidget();
+                UpdatesHelper.getInstance(mContext).updateNotesWidget();
             }
             if (mListener != null && mContext != null) {
                 mListener.endExecution(aVoid);
             }
         } else {
             if (mContext != null) {
-                new UpdatesHelper(mContext).updateWidget();
-                new UpdatesHelper(mContext).updateNotesWidget();
+                UpdatesHelper.getInstance(mContext).updateWidget();
+                UpdatesHelper.getInstance(mContext).updateNotesWidget();
             }
         }
     }

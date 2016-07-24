@@ -55,7 +55,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
                 if (!helper.isRange()) start(context, id);
                 else {
                     Reminder.update(context, id);
-                    new UpdatesHelper(context).updateWidget();
+                    UpdatesHelper.getInstance(context).updateWidget();
                 }
             } else start(context, id);
         } else start(context, id);

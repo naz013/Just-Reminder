@@ -106,14 +106,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TaskListManager"
+            android:name=".google_tasks.TaskListManager"
             android:configChanges="keyboardHidden|orientation|keyboard" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".TaskManager"
+            android:name=".google_tasks.TaskManager"
             android:configChanges="keyboardHidden|orientation|keyboard" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />

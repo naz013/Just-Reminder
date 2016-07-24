@@ -26,7 +26,7 @@ import android.support.annotation.NonNull;
 import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.TaskManager;
+import com.cray.software.justreminder.google_tasks.TaskManager;
 import com.cray.software.justreminder.constants.TasksConstants;
 
 public class TasksWidget extends AppWidgetProvider {

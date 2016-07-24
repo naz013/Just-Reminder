@@ -191,6 +191,6 @@ public class Type {
      */
     private void updateViews(){
         new Notifier(mContext).recreatePermanent();
-        new UpdatesHelper(mContext).updateWidget();
+        UpdatesHelper.getInstance(mContext).updateWidget();
     }
 }

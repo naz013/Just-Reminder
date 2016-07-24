@@ -345,7 +345,7 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
 
             if (result > 0) {
                 Messages.toast(EventsImport.this, result + " " + getString(R.string.events_found));
-                new UpdatesHelper(mContext).updateWidget();
+                UpdatesHelper.getInstance(mContext).updateWidget();
                 new Notifier(mContext).recreatePermanent();
                 finish();
             }

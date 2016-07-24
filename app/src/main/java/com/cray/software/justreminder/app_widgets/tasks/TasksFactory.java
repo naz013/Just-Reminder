@@ -20,22 +20,22 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.TasksConstants;
-import com.cray.software.justreminder.databases.TasksData;
-import com.cray.software.justreminder.datas.models.Task;
+import com.cray.software.justreminder.google_tasks.TaskItem;
+import com.cray.software.justreminder.google_tasks.TaskListItem;
+import com.cray.software.justreminder.google_tasks.TasksHelper;
 import com.cray.software.justreminder.helpers.ColorSetter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -44,7 +44,7 @@ public class TasksFactory implements RemoteViewsService.RemoteViewsFactory {
     private Context mContext;
     private int widgetID;
     private ColorSetter cs;
-    private ArrayList<Task> mData;
+    private List<TaskItem> mData;
     private Map<String, Integer> map;
 
     TasksFactory(Context ctx, Intent intent) {
@@ -65,40 +65,9 @@ public class TasksFactory implements RemoteViewsService.RemoteViewsFactory {
     public void onDataSetChanged() {
         mData.clear();
         map.clear();
-        TasksData data = new TasksData(mContext);
-        data.open();
-        Cursor c = data.getTasksLists();
-        if (c != null && c.moveToFirst()){
-            do {
-                String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
-                int color = c.getInt(c.getColumnIndex(TasksConstants.COLUMN_COLOR));
-                map.put(listId, color);
-            } while (c.moveToNext());
-        }
-        if (c != null) c.close();
-        c = data.getTasks();
-        if (c != null && c.moveToFirst()){
-            do {
-                String title = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
-                if (title != null && !title.matches("")) {
-                    long date = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_DUE));
-                    String taskId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TASK_ID));
-                    String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
-                    String checks = c.getString(c.getColumnIndex(TasksConstants.COLUMN_STATUS));
-                    String note = c.getString(c.getColumnIndex(TasksConstants.COLUMN_NOTES));
-                    long mId = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID));
-                    int color = 0;
-                    if (map.containsKey(listId)) {
-                        color = map.get(listId);
-                    }
-                    if (checks.matches(GTasksHelper.TASKS_NEED_ACTION)) {
-                        mData.add(new Task(title, mId, checks, taskId, date, listId, note, color));
-                    }
-                }
-            } while (c.moveToNext());
-        }
-        if(c != null) c.close();
-        data.close();
+        List<TaskListItem> list = TasksHelper.getInstance(mContext).getTaskLists();
+        for (TaskListItem item : list) map.put(item.getListId(), item.getColor());
+        mData = TasksHelper.getInstance(mContext).getTasks();
     }
 
     @Override
@@ -131,11 +100,11 @@ public class TasksFactory implements RemoteViewsService.RemoteViewsFactory {
         final String name = mData.get(i).getTitle();
         rView.setTextViewText(R.id.task, name);
         SimpleDateFormat full24Format = new SimpleDateFormat("EEE,\ndd/MM", Locale.getDefault());
-        String notes = mData.get(i).getNote();
+        String notes = mData.get(i).getNotes();
         if (notes != null && !notes.matches("")) rView.setTextViewText(R.id.note, notes);
         else rView.setViewVisibility(R.id.note, View.GONE);
 
-        long date = mData.get(i).getDate();
+        long date = mData.get(i).getDueDate();
         java.util.Calendar calendar = java.util.Calendar.getInstance();
         if (date != 0) {
             calendar.setTimeInMillis(date);

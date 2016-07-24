@@ -562,7 +562,7 @@ public class Dialogues {
         builder.setSingleChoiceItems(adapter, day, (dialog, which) -> {
             if (which != -1) {
                 SharedPrefs.getInstance(context).putInt(Prefs.START_DAY, which);
-                new UpdatesHelper(context).updateCalendarWidget();
+                UpdatesHelper.getInstance(context).updateCalendarWidget();
             }
         });
         builder.setPositiveButton(context.getString(R.string.ok), (dialog, which) -> {

@@ -97,7 +97,7 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
             featureRemindersPrefs.setChecked(true);
         }
 
-        new UpdatesHelper(getActivity()).updateCalendarWidget();
+        UpdatesHelper.getInstance(getActivity()).updateCalendarWidget();
     }
 
     private void imageCheck (){
@@ -109,7 +109,7 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
             bgImagePrefs.setChecked(true);
         }
 
-        new UpdatesHelper(getActivity()).updateCalendarWidget();
+        UpdatesHelper.getInstance(getActivity()).updateCalendarWidget();
     }
 
     private void remindersChange (){
@@ -121,7 +121,7 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
             reminderInCalendarPrefs.setChecked(true);
         }
         checkEnabling();
-        new UpdatesHelper(getActivity()).updateCalendarWidget();
+        UpdatesHelper.getInstance(getActivity()).updateCalendarWidget();
     }
 
     private void checkEnabling(){

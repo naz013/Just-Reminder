@@ -17,11 +17,11 @@
 package com.cray.software.justreminder.cloud;
 
 import android.content.Context;
-import android.database.Cursor;
 
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.constants.TasksConstants;
-import com.cray.software.justreminder.databases.TasksData;
+import com.cray.software.justreminder.google_tasks.TaskItem;
+import com.cray.software.justreminder.google_tasks.TaskListItem;
+import com.cray.software.justreminder.google_tasks.TasksHelper;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -95,62 +95,29 @@ public class GTasksHelper {
             task.setTitle(taskTitle);
             if (note != null) task.setNotes(note);
             if (time != 0) task.setDue(new DateTime(time));
-
-            TasksData data = new TasksData(mContext);
-            data.open();
-
             Task result;
             if (listId != null && !listId.matches("")){
                 result = service.tasks().insert(listId, task).execute();
             } else {
-                Cursor c = data.getDefaultTasksList();
-                if (c != null && c.moveToFirst()) {
-                    listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
-                    result = service.tasks().insert(listId, task).execute();
+                TaskListItem taskListItem = TasksHelper.getInstance(mContext).getDefaultTaskList();
+                if (taskListItem != null) {
+                    result = service.tasks().insert(taskListItem.getListId(), task).execute();
                 } else {
                     result = service.tasks().insert("@default", task).execute();
                 }
-                if (c != null) c.close();
             }
-
             if (result != null){
-                DateTime dueDate = result.getDue();
-                long due = dueDate != null ? dueDate.getValue() : 0;
-
-                DateTime completeDate = result.getCompleted();
-                long complete = completeDate != null ? completeDate.getValue() : 0;
-
-                DateTime updateDate = result.getUpdated();
-                long update = updateDate != null ? updateDate.getValue() : 0;
-
-                String taskId = result.getId();
-
-                boolean isDeleted = false;
-                boolean isHidden = false;
-                try {
-                    isDeleted = result.getDeleted();
-                    isHidden = result.getHidden();
-                } catch (NullPointerException e){
-                    e.printStackTrace();
-                }
-
-                Cursor cursor = data.getTask(localId);
-                if (cursor != null && cursor.moveToFirst()){
-                    data.updateFullTask(localId,
-                            result.getTitle(), taskId, complete, isDeleted, due,
-                            result.getEtag(), result.getKind(), result.getNotes(),
-                            result.getParent(), result.getPosition(), result.getSelfLink(), update,
-                            cursor.getLong(cursor.getColumnIndex(TasksConstants.COLUMN_REMINDER_ID)),
-                            listId, result.getStatus(), isHidden);
+                TaskItem taskItem = TasksHelper.getInstance(mContext).getTask(localId);
+                if (taskItem != null){
+                    taskItem.fromTask(result);
+                    taskItem.setListId(listId);
                 } else {
-                    data.addTask(result.getTitle(), taskId, complete, isDeleted, due,
-                            result.getEtag(), result.getKind(), result.getNotes(),
-                            result.getParent(), result.getPosition(), result.getSelfLink(), update, 0,
-                            listId, result.getStatus(), isHidden);
+                    taskItem = new TaskItem();
+                    taskItem.fromTask(result);
+                    taskItem.setListId(listId);
                 }
-                if (cursor != null) cursor.close();
+                TasksHelper.getInstance(mContext).saveTask(taskItem);
             }
-            data.close();
         }
     }
 
@@ -255,16 +222,12 @@ public class GTasksHelper {
             authorize();
             TaskList taskList = new TaskList();
             taskList.setTitle(listTitle);
-
             try {
                 TaskList result = service.tasklists().insert(taskList).execute();
-                TasksData data = new TasksData(mContext);
-                data.open();
-                DateTime dateTime = result.getUpdated();
-                long updated = dateTime != null ? dateTime.getValue() : 0;
-                data.updateTasksList(id, result.getTitle(), result.getId(), 0, result.getEtag(), result.getKind(),
-                        result.getSelfLink(), updated, color);
-                data.close();
+                TaskListItem item = TasksHelper.getInstance(mContext).getTaskList(id);
+                item.fromTaskList(result);
+                item.setColor(color);
+                TasksHelper.getInstance(mContext).saveTaskList(item);
             } catch (IOException e) {
                 e.printStackTrace();
             }

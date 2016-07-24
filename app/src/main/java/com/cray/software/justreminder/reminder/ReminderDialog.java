@@ -800,9 +800,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             tts.stop();
             tts.shutdown();
         }
-
-        new UpdatesHelper(ReminderDialog.this).updateWidget();
-
+        UpdatesHelper.getInstance(this).updateWidget();
         if (SharedPrefs.getInstance(this).getBoolean(Prefs.WEAR_SERVICE)) {
             PutDataMapRequest putDataMapReq = PutDataMapRequest.create(SharedConst.WEAR_STOP);
             DataMap map = putDataMapReq.getDataMap();

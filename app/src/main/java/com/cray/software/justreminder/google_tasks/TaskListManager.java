@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder;
+package com.cray.software.justreminder.google_tasks;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -29,12 +28,11 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
-import com.cray.software.justreminder.async.TaskListAsync;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
-import com.cray.software.justreminder.databases.TasksData;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.modules.Module;
@@ -50,10 +48,9 @@ public class TaskListManager extends AppCompatActivity {
             deepOrange;
     private RoboCheckBox defaultCheck;
 
-    private long id;
     private Toolbar toolbar;
     private RoboEditText editField;
-    private int color, sysDef;
+    private TaskListItem mItem;
     private int prevId;
 
     private static final int MENU_ITEM_DELETE = 12;
@@ -75,7 +72,6 @@ public class TaskListManager extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
         toolbar.setOnMenuItemClickListener(
                 item -> {
                     switch (item.getItemId()) {
@@ -90,34 +86,21 @@ public class TaskListManager extends AppCompatActivity {
                 });
 
         toolbar.inflateMenu(R.menu.save_menu);
-
         editField = (RoboEditText) findViewById(R.id.editField);
         defaultCheck = (RoboCheckBox) findViewById(R.id.defaultCheck);
-
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
-
         Intent intent = getIntent();
-        id = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
-        color = 4;
-        if (id != 0){
-            TasksData data = new TasksData(TaskListManager.this);
-            data.open();
-            Cursor c = data.getTasksList(id);
-            if (c != null && c.moveToFirst()){
-                color = c.getInt(c.getColumnIndex(TasksConstants.COLUMN_COLOR));
-                sysDef = c.getInt(c.getColumnIndex(TasksConstants.SYSTEM_DEFAULT));
-                editField.setText(c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE)));
-                int check = c.getInt(c.getColumnIndex(TasksConstants.COLUMN_DEFAULT));
-                if (check == 1){
-                    defaultCheck.setChecked(true);
-                    defaultCheck.setEnabled(false);
-                }
-                setColor(color);
+        long id = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
+        mItem = TasksHelper.getInstance(this).getTaskList(id);
+        if (mItem != null){
+            editField.setText(mItem.getTitle());
+            if (mItem.getDef() == 1){
+                defaultCheck.setChecked(true);
+                defaultCheck.setEnabled(false);
             }
-            if (c != null) c.close();
-            data.close();
+        } else {
+            mItem = new TaskListItem();
         }
-
         initRadio();
     }
 
@@ -168,46 +151,26 @@ public class TaskListManager extends AppCompatActivity {
             editField.setError(getString(R.string.must_be_not_empty));
             return;
         }
-        TasksData data = new TasksData(TaskListManager.this);
-        data.open();
-        if (id != 0){
-            Cursor c = data.getTasksList(id);
-            String listId;
-            if (c != null && c.moveToFirst()) {
-                listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
-                if (defaultCheck.isChecked()){
-                    Cursor x = data.getTasksLists();
-                    if (x != null && x.moveToFirst()){
-                        do {
-                            data.setSimple(x.getLong(x.getColumnIndex(TasksConstants.COLUMN_ID)));
-                        } while (x.moveToNext());
-                    }
-                    if (x != null) x.close();
-                }
-                data.updateTasksList(id, listName, listId, defaultCheck.isChecked() ? 1 : 0,
-                        c.getString(c.getColumnIndex(TasksConstants.COLUMN_E_TAG)),
-                        c.getString(c.getColumnIndex(TasksConstants.COLUMN_KIND)),
-                        c.getString(c.getColumnIndex(TasksConstants.COLUMN_SELF_LINK)),
-                        System.currentTimeMillis(),
-                        color);
-                new TaskListAsync(TaskListManager.this, listName, id, color, listId, TasksConstants.UPDATE_TASK_LIST).execute();
-            }
-            if (c != null) c.close();
-        } else {
-            if (defaultCheck.isChecked()){
-                Cursor x = data.getTasksLists();
-                if (x != null && x.moveToFirst()){
-                    do {
-                        data.setSimple(x.getLong(x.getColumnIndex(TasksConstants.COLUMN_ID)));
-                    } while (x.moveToNext());
-                }
-                if (x != null) x.close();
-            }
-            long idN = data.addTasksList(listName, null, defaultCheck.isChecked() ? 1 : 0, null, null, null,
-                    System.currentTimeMillis(), color);
-            new TaskListAsync(TaskListManager.this, listName, idN, color, null, TasksConstants.INSERT_TASK_LIST).execute();
+        if (mItem == null) {
+            mItem = new TaskListItem();
         }
-        data.close();
+        mItem.setTitle(listName);
+        mItem.setUpdated(System.currentTimeMillis());
+        if (defaultCheck.isChecked()){
+            mItem.setDef(1);
+            TaskListItem defList = TasksHelper.getInstance(this).getDefaultTaskList();
+            if (defList != null) {
+                defList.setDef(0);
+                TasksHelper.getInstance(this).saveTaskList(defList);
+            }
+        }
+        boolean isNew = mItem.getId() == 0;
+        long id = TasksHelper.getInstance(this).saveTaskList(mItem);
+        if (isNew) {
+            new TaskListAsync(TaskListManager.this, listName, id, mItem.getColor(), null, TasksConstants.INSERT_TASK_LIST).execute();
+        } else {
+            new TaskListAsync(TaskListManager.this, listName, id, mItem.getColor(), mItem.getListId(), TasksConstants.UPDATE_TASK_LIST).execute();
+        }
         finish();
     }
 
@@ -238,38 +201,24 @@ public class TaskListManager extends AppCompatActivity {
     }
 
     private void deleteList() {
-        TasksData data = new TasksData(TaskListManager.this);
-        data.open();
-        Cursor c = data.getTasksList(id);
-        if (c != null && c.moveToFirst()){
-            String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
-            int def = c.getInt(c.getColumnIndex(TasksConstants.COLUMN_DEFAULT));
-            data.deleteTasksList(id);
+        if (mItem != null){
+            String listId = mItem.getListId();
+            int def = mItem.getDef();
+            TasksHelper.getInstance(this).deleteTaskList(mItem.getId());
+            TasksHelper.getInstance(this).deleteTasks(listId);
             new TaskListAsync(TaskListManager.this, null, 0, 0, listId, TasksConstants.DELETE_TASK_LIST).execute();
-            Cursor x = data.getTasks(listId);
-            if (x != null && x.moveToFirst()){
-                do {
-                    data.deleteTask(x.getLong(x.getColumnIndex(TasksConstants.COLUMN_ID)));
-                } while (x.moveToNext());
-            }
-            if (x != null) x.close();
-            if (def == 1){
-                Cursor cc = data.getTasksLists();
-                if (cc != null && cc.moveToFirst()){
-                    data.setDefault(cc.getLong(cc.getColumnIndex(TasksConstants.COLUMN_ID)));
-                }
-                if (cc != null) cc.close();
+            if (def == 1) {
+                TaskListItem listItem = TasksHelper.getInstance(this).getTaskLists().get(0);
+                TasksHelper.getInstance(this).setDefault(listItem.getId());
             }
         }
-        if (c != null) c.close();
-        data.close();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.save_menu, menu);
-        if (id != 0 && sysDef != 1) {
+        if (mItem.getId() != 0 && mItem.getSystemDefault() != 1) {
             menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, R.string.delete_list);
         }
         return true;
@@ -362,7 +311,7 @@ public class TaskListManager extends AppCompatActivity {
     }
 
     private void setColor(int i){
-        color = i;
+        mItem.setColor(i);
         toolbar.setBackgroundColor(cSetter.getNoteColor(i));
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(cSetter.getNoteDarkColor(i));
@@ -370,7 +319,7 @@ public class TaskListManager extends AppCompatActivity {
     }
 
     public void setUpRadio(){
-        switch (color) {
+        switch (mItem.getColor()) {
             case 0:
                 red_checkbox.setSelected(true);
                 break;
@@ -409,7 +358,7 @@ public class TaskListManager extends AppCompatActivity {
                 break;
             default:
                 if (Module.isPro()) {
-                    switch (color) {
+                    switch (mItem.getColor()) {
                         case 12:
                             deepPurple.setSelected(true);
                             break;
@@ -434,6 +383,6 @@ public class TaskListManager extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        new UpdatesHelper(TaskListManager.this).updateTasksWidget();
+        UpdatesHelper.getInstance(this).updateTasksWidget();
     }
 }

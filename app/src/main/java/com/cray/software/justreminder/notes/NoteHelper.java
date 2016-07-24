@@ -163,7 +163,7 @@ public class NoteHelper {
     public void deleteNote(long id, NavigationCallbacks callbacks) {
         String uuId = deleteNote(id).getUuId();
         new DeleteNoteFilesAsync(mContext).execute(uuId);
-        new UpdatesHelper(mContext).updateNotesWidget();
+        UpdatesHelper.getInstance(mContext).updateNotesWidget();
         new Notifier(mContext).discardStatusNotification(id);
         if (callbacks != null) callbacks.showSnackbar(mContext.getString(R.string.note_deleted));
         else Messages.toast(mContext, R.string.note_deleted);

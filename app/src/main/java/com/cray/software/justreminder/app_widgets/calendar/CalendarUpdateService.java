@@ -46,8 +46,8 @@ public class CalendarUpdateService extends IntentService {
             editor.putInt(CalendarWidgetConfig.CALENDAR_WIDGET_MONTH + widgetId, month);
             if (month == 0) year += 1;
             editor.putInt(CalendarWidgetConfig.CALENDAR_WIDGET_YEAR + widgetId, year);
-            editor.commit();
-            new UpdatesHelper(CalendarUpdateService.this).updateCalendarWidget();
+            editor.apply();
+            UpdatesHelper.getInstance(getApplicationContext()).updateCalendarWidget();
             stopSelf();
         } else stopSelf();
     }

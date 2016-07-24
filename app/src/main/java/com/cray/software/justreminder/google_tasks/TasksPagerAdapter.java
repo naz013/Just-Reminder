@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.adapters;
+package com.cray.software.justreminder.google_tasks;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.cray.software.justreminder.datas.models.TaskListData;
-import com.cray.software.justreminder.fragments.TaskListFragment;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Pager adapter for Google Tasks pager.
@@ -34,21 +34,24 @@ public class TasksPagerAdapter extends FragmentStatePagerAdapter {
     /**
      * List of Google Tasks models.
      */
-    private ArrayList<TaskListData> datas;
+    private ArrayList<TaskListData> mData;
 
     /**
      * Navigation drawer callback.
      */
     private NavigationCallbacks mCallbacks;
 
+    private Map<String, Integer> colors;
+
     /**
      * Adapter constructor.
      * @param fm fragment manager.
-     * @param datas list of models.
+     * @param data list of models.
      */
-    public TasksPagerAdapter(final FragmentManager fm, final ArrayList<TaskListData> datas) {
+    public TasksPagerAdapter(final FragmentManager fm, final ArrayList<TaskListData> data, Map<String, Integer> colors) {
         super(fm);
-        this.datas = datas;
+        this.mData = data;
+        this.colors = colors;
     }
 
     /**
@@ -62,13 +65,13 @@ public class TasksPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(final int position) {
         TaskListFragment fragment = new TaskListFragment();
-        fragment.setData(datas.get(position).getmData());
+        fragment.setData(mData.get(position).getmData(), colors);
         fragment.setCallbacks(mCallbacks);
         return fragment;
     }
 
     @Override
     public int getCount() {
-        return datas.size();
+        return mData.size();
     }
 }

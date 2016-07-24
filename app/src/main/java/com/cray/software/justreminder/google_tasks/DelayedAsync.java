@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.async;
+package com.cray.software.justreminder.google_tasks;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 
 import com.cray.software.justreminder.cloud.GTasksHelper;
-import com.cray.software.justreminder.databases.TasksData;
+import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.SyncListener;
-import com.cray.software.justreminder.constants.TasksConstants;
 
 import java.io.IOException;
 
@@ -41,27 +40,27 @@ public class DelayedAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... params) {
         GTasksHelper helper = new GTasksHelper(mContext);
-        TasksData mData = new TasksData(mContext);
+        TasksDataBase mData = new TasksDataBase(mContext);
         mData.open();
         boolean isConnected = SyncHelper.isConnected(mContext);
         if (isConnected) {
             Cursor c = mData.get();
             if (c != null && c.moveToFirst()) {
                 do {
-                    long id = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID));
-                    int code = c.getInt(c.getColumnIndex(TasksConstants.COLUMN_CODE));
+                    long id = c.getLong(c.getColumnIndex(TasksDataBase.COLUMN_ID));
+                    int code = c.getInt(c.getColumnIndex(TasksDataBase.COLUMN_CODE));
 
                     // lists
                     if (code == TasksConstants.INSERT_LIST) {
-                        String title = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
-                        long localId = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_LOCAL_ID));
-                        int color = c.getInt(c.getColumnIndex(TasksConstants.COLUMN_COLOR));
+                        String title = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_TITLE));
+                        long localId = c.getLong(c.getColumnIndex(TasksDataBase.COLUMN_LOCAL_ID));
+                        int color = c.getInt(c.getColumnIndex(TasksDataBase.COLUMN_COLOR));
                         helper.insertTasksList(title, localId, color);
                         mData.delete(id);
                     }
                     if (code == TasksConstants.UPDATE_LIST) {
-                        String title = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
-                        String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
+                        String title = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_TITLE));
+                        String listId = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_LIST_ID));
                         if (listId != null) {
                             try {
                                 helper.updateTasksList(title, listId);
@@ -72,14 +71,14 @@ public class DelayedAsync extends AsyncTask<Void, Void, Void> {
                         }
                     }
                     if (code == TasksConstants.DELETE_LIST) {
-                        String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
+                        String listId = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_LIST_ID));
                         if (listId != null) {
                             helper.deleteTaskList(listId);
                             mData.delete(id);
                         }
                     }
                     if (code == TasksConstants.CLEAR_LIST) {
-                        String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
+                        String listId = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_LIST_ID));
                         if (listId != null) {
                             helper.clearTaskList(listId);
                             mData.delete(id);
@@ -87,9 +86,9 @@ public class DelayedAsync extends AsyncTask<Void, Void, Void> {
                     }
 
                     if (code == TasksConstants.UPDATE_STATUS) {
-                        String status = c.getString(c.getColumnIndex(TasksConstants.COLUMN_STATUS));
-                        String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
-                        String taskId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TASK_ID));
+                        String status = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_STATUS));
+                        String listId = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_LIST_ID));
+                        String taskId = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_TASK_ID));
                         if (status.matches(GTasksHelper.TASKS_COMPLETE) && listId != null && taskId != null) {
                             try {
                                 helper.updateTaskStatus(GTasksHelper.TASKS_COMPLETE, listId, taskId);
@@ -108,11 +107,11 @@ public class DelayedAsync extends AsyncTask<Void, Void, Void> {
                         }
                     }
                     if (code == TasksConstants.INSERT) {
-                        String title = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
-                        String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
-                        String note = c.getString(c.getColumnIndex(TasksConstants.COLUMN_NOTES));
-                        long time = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_DUE));
-                        long localId = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_LOCAL_ID));
+                        String title = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_TITLE));
+                        String listId = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_LIST_ID));
+                        String note = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_NOTES));
+                        long time = c.getLong(c.getColumnIndex(TasksDataBase.COLUMN_DUE));
+                        long localId = c.getLong(c.getColumnIndex(TasksDataBase.COLUMN_LOCAL_ID));
                         if (listId != null && localId != 0) {
                             try {
                                 helper.insertTask(title, listId, time, note, localId);
@@ -123,11 +122,11 @@ public class DelayedAsync extends AsyncTask<Void, Void, Void> {
                         }
                     }
                     if (code == TasksConstants.UPDATE) {
-                        String title = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
-                        String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
-                        String taskId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TASK_ID));
-                        String note = c.getString(c.getColumnIndex(TasksConstants.COLUMN_NOTES));
-                        long time = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_DUE));
+                        String title = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_TITLE));
+                        String listId = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_LIST_ID));
+                        String taskId = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_TASK_ID));
+                        String note = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_NOTES));
+                        long time = c.getLong(c.getColumnIndex(TasksDataBase.COLUMN_DUE));
                         if (listId != null && taskId != null) {
                             try {
                                 helper.updateTask(title, listId, taskId, note, time);
@@ -138,13 +137,13 @@ public class DelayedAsync extends AsyncTask<Void, Void, Void> {
                         }
                     }
                     if (code == TasksConstants.MOVE){
-                        String title = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TITLE));
-                        String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
-                        String taskId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TASK_ID));
-                        String note = c.getString(c.getColumnIndex(TasksConstants.COLUMN_NOTES));
-                        String oldList = c.getString(c.getColumnIndex(TasksConstants.COLUMN_STATUS));
-                        long localId = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_LOCAL_ID));
-                        long time = c.getLong(c.getColumnIndex(TasksConstants.COLUMN_DUE));
+                        String title = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_TITLE));
+                        String listId = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_LIST_ID));
+                        String taskId = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_TASK_ID));
+                        String note = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_NOTES));
+                        String oldList = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_STATUS));
+                        long localId = c.getLong(c.getColumnIndex(TasksDataBase.COLUMN_LOCAL_ID));
+                        long time = c.getLong(c.getColumnIndex(TasksDataBase.COLUMN_DUE));
                         if (listId != null && taskId != null) {
                             try {
                                 helper.updateTask(title, listId, taskId, note, time);
@@ -156,8 +155,8 @@ public class DelayedAsync extends AsyncTask<Void, Void, Void> {
                         }
                     }
                     if (code == TasksConstants.DELETE) {
-                        String listId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_LIST_ID));
-                        String taskId = c.getString(c.getColumnIndex(TasksConstants.COLUMN_TASK_ID));
+                        String listId = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_LIST_ID));
+                        String taskId = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_TASK_ID));
                         if (listId != null && taskId != null) {
                             try {
                                 helper.deleteTask(listId, taskId);
@@ -171,7 +170,6 @@ public class DelayedAsync extends AsyncTask<Void, Void, Void> {
             }
             if (c != null) c.close();
         }
-
         mData.close();
         return null;
     }
@@ -179,8 +177,6 @@ public class DelayedAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        if (mListener != null) {
-            new SyncGoogleTasksAsync(mContext, mListener).execute();
-        }
+        new SyncGoogleTasksAsync(mContext, mListener).execute();
     }
 }

@@ -18,12 +18,13 @@ package com.cray.software.justreminder.reminder;
 import android.content.Context;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.async.TaskAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
-import com.cray.software.justreminder.databases.TasksData;
+import com.cray.software.justreminder.google_tasks.TaskAsync;
+import com.cray.software.justreminder.google_tasks.TaskItem;
+import com.cray.software.justreminder.google_tasks.TasksHelper;
 import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 
@@ -61,25 +62,15 @@ public class ReminderUtils {
      * @param mId reminder identifier.
      */
     public static void exportToTasks(Context context, String summary, long startTime, long mId){
-        TasksData data = new TasksData(context);
-        data.open();
-        long localId = data.addTask(summary, null, 0, false, startTime,
-                null, null, context.getString(R.string.from_reminder), null, null, null, 0,
-                mId, null, GTasksHelper.TASKS_NEED_ACTION, false);
-        data.close();
-
+        TaskItem item = new TaskItem();
+        item.setTitle(summary);
+        item.setStatus(GTasksHelper.TASKS_NEED_ACTION);
+        item.setDueDate(startTime);
+        item.setReminderId(mId);
+        item.setNotes(context.getString(R.string.from_reminder));
+        long localId = TasksHelper.getInstance(context).saveTask(item);
         new TaskAsync(context, summary, null, null, TasksConstants.INSERT_TASK, startTime,
                 context.getString(R.string.from_reminder), localId, null).execute();
-    }
-
-    /**
-     * Generate sync code for reminder.
-     * @param isCheck is checkbox is checked.
-     * @return Sync code.
-     */
-    public static int getSyncCode(boolean isCheck){
-        if (isCheck) return Constants.SYNC_GTASKS_ONLY;
-        else return Constants.SYNC_NO;
     }
 
     /**

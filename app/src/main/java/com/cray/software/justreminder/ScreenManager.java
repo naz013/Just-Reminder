@@ -49,8 +49,8 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.cray.software.justreminder.activities.Help;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
-import com.cray.software.justreminder.async.DelayedAsync;
-import com.cray.software.justreminder.async.GetTasksListsAsync;
+import com.cray.software.justreminder.google_tasks.DelayedAsync;
+import com.cray.software.justreminder.google_tasks.GetTasksListsAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
@@ -62,8 +62,9 @@ import com.cray.software.justreminder.feedback.SendReportActivity;
 import com.cray.software.justreminder.fragments.BackupsFragment;
 import com.cray.software.justreminder.fragments.EventsFragment;
 import com.cray.software.justreminder.fragments.NavigationDrawerFragment;
+import com.cray.software.justreminder.google_tasks.TaskManager;
 import com.cray.software.justreminder.notes.NotesFragment;
-import com.cray.software.justreminder.fragments.TasksFragment;
+import com.cray.software.justreminder.google_tasks.TasksFragment;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupManager;
 import com.cray.software.justreminder.groups.GroupsFragment;
@@ -665,7 +666,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        new UpdatesHelper(this).updateWidget();
+        UpdatesHelper.getInstance(this).updateWidget();
     }
 
     private void showChanges() {
@@ -750,7 +751,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         }
         NoteItem item = new NoteItem(encrypted, uuID, date, color, 5, null, 0, 0);
         long id = NoteHelper.getInstance(this).saveNote(item);
-        new UpdatesHelper(ScreenManager.this).updateNotesWidget();
+        UpdatesHelper.getInstance(this).updateNotesWidget();
         quickNote.setText("");
         quickNote.setError(null);
         ViewUtils.hideReveal(noteCard);

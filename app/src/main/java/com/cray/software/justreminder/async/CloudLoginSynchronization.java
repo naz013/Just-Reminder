@@ -23,16 +23,16 @@ import android.os.AsyncTask;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.cloud.GTasksHelper;
-import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.NextBase;
-import com.cray.software.justreminder.databases.TasksData;
+import com.cray.software.justreminder.google_tasks.TaskItem;
+import com.cray.software.justreminder.google_tasks.TaskListItem;
+import com.cray.software.justreminder.google_tasks.TasksHelper;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.IOHelper;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.LoginListener;
 import com.cray.software.justreminder.utils.MemoryUtil;
-import com.google.api.client.util.DateTime;
 import com.google.api.services.tasks.model.Task;
 import com.google.api.services.tasks.model.TaskList;
 import com.google.api.services.tasks.model.TaskLists;
@@ -48,8 +48,7 @@ public class CloudLoginSynchronization extends AsyncTask<Void, String, Void> {
     private LoginListener listener;
     private ProgressDialog dialog;
 
-    public CloudLoginSynchronization(Context context, boolean isChecked,
-                                     LoginListener listener){
+    public CloudLoginSynchronization(Context context, boolean isChecked, LoginListener listener){
         this.mContext = context;
         this.isChecked = isChecked;
         this.listener = listener;
@@ -72,27 +71,21 @@ public class CloudLoginSynchronization extends AsyncTask<Void, String, Void> {
     protected Void doInBackground(Void... params) {
         if (MemoryUtil.isSdPresent()) {
             IOHelper ioHelper = new IOHelper(mContext);
-
             publishProgress(mContext.getString(R.string.syncing_groups));
             ioHelper.restoreGroup(true);
-
             checkGroups();
-
             //import reminders
             publishProgress(mContext.getString(R.string.syncing_reminders));
             ioHelper.restoreReminder(true);
-
             //import notes
             publishProgress(mContext.getString(R.string.syncing_notes));
             ioHelper.restoreNote(true);
-
             //import birthdays
             if (isChecked) {
                 publishProgress(mContext.getString(R.string.syncing_birthdays));
                 ioHelper.restoreBirthday(true);
             }
         }
-
         //getting Google Tasks
         GTasksHelper helper = new GTasksHelper(mContext);
         TaskLists lists = null;
@@ -101,106 +94,38 @@ public class CloudLoginSynchronization extends AsyncTask<Void, String, Void> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        TasksData data = new TasksData(mContext);
-        data.open();
         if (lists != null && lists.size() > 0) {
             publishProgress(mContext.getString(R.string.syncing_google_tasks));
             for (TaskList item : lists.getItems()) {
-                DateTime dateTime = item.getUpdated();
                 String listId = item.getId();
-                Cursor c = data.getTasksList(listId);
-                if (c != null && c.moveToFirst() && c.getCount() == 1) {
-                    data.updateTasksList(c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID)),
-                            item.getTitle(), listId, c.getInt(c.getColumnIndex(TasksConstants.COLUMN_DEFAULT)),
-                            item.getEtag(), item.getKind(),
-                            item.getSelfLink(), dateTime != null ? dateTime.getValue() : 0,
-                            c.getInt(c.getColumnIndex(TasksConstants.COLUMN_COLOR)));
-                } else if (c != null && c.moveToFirst() && c.getCount() > 1) {
-                    do {
-                        data.deleteTasksList(c.getLong(c.getColumnIndex(TasksConstants.COLUMN_ID)));
-                    } while (c.moveToNext());
-                    Random r = new Random();
-                    int color = r.nextInt(15);
-                    data.addTasksList(item.getTitle(), listId, 0, item.getEtag(), item.getKind(),
-                            item.getSelfLink(), dateTime != null ? dateTime.getValue() : 0, color);
+                TaskListItem taskList = TasksHelper.getInstance(mContext).getTaskList(listId);
+                if (taskList != null){
+                    taskList.fromTaskList(item);
                 } else {
                     Random r = new Random();
                     int color = r.nextInt(15);
-                    data.addTasksList(item.getTitle(), listId, 0, item.getEtag(), item.getKind(),
-                            item.getSelfLink(), dateTime != null ? dateTime.getValue() : 0, color);
+                    taskList = new TaskListItem();
+                    taskList.setColor(color);
+                    taskList.fromTaskList(item);
                 }
-                if (c != null) {
-                    c.close();
-                }
-
-                Cursor cc = data.getTasksLists();
-                if (cc != null && cc.moveToFirst()) {
-                    data.setDefault(cc.getLong(cc.getColumnIndex(TasksConstants.COLUMN_ID)));
-                    data.setSystemDefault(cc.getLong(cc.getColumnIndex(TasksConstants.COLUMN_ID)));
-                }
-                if (cc != null) {
-                    cc.close();
-                }
-
+                TasksHelper.getInstance(mContext).saveTaskList(taskList);
+                TaskListItem listItem = TasksHelper.getInstance(mContext).getTaskLists().get(0);
+                TasksHelper.getInstance(mContext).setDefault(listItem.getId());
                 List<Task> tasks = helper.getTasks(listId);
-                if (tasks != null && tasks.size() > 0) {
-                    for (Task task : tasks) {
-                        DateTime dueDate = task.getDue();
-                        long due = dueDate != null ? dueDate.getValue() : 0;
-
-                        DateTime completeDate = task.getCompleted();
-                        long complete = completeDate != null ? completeDate.getValue() : 0;
-
-                        DateTime updateDate = task.getUpdated();
-                        long update = updateDate != null ? updateDate.getValue() : 0;
-
-                        String taskId = task.getId();
-
-                        boolean isDeleted = false;
-                        try {
-                            isDeleted = task.getDeleted();
-                        } catch (NullPointerException e) {
-                            e.printStackTrace();
-                        }
-
-                        boolean isHidden = false;
-                        try {
-                            isHidden = task.getHidden();
-                        } catch (NullPointerException e) {
-                            e.printStackTrace();
-                        }
-
-                        Cursor cursor = data.getTask(taskId);
-                        if (cursor != null && cursor.moveToFirst() && cursor.getCount() > 1) {
-                            do {
-                                data.deleteTask(cursor.getLong(cursor.getColumnIndex(TasksConstants.COLUMN_ID)));
-                            } while (cursor.moveToNext());
-                            data.addTask(task.getTitle(), taskId, complete, isDeleted, due,
-                                    task.getEtag(), task.getKind(), task.getNotes(),
-                                    task.getParent(), task.getPosition(), task.getSelfLink(), update, 0,
-                                    listId, task.getStatus(), isHidden);
-                        } else if (cursor != null && cursor.moveToFirst() && cursor.getCount() == 1) {
-                            data.updateFullTask(cursor.getLong(cursor.getColumnIndex(TasksConstants.COLUMN_ID)),
-                                    task.getTitle(), taskId, complete, isDeleted, due,
-                                    task.getEtag(), task.getKind(), task.getNotes(),
-                                    task.getParent(), task.getPosition(), task.getSelfLink(), update,
-                                    cursor.getLong(cursor.getColumnIndex(TasksConstants.COLUMN_REMINDER_ID)),
-                                    listId, task.getStatus(), isHidden);
-                        } else {
-                            data.addTask(task.getTitle(), taskId, complete, isDeleted, due,
-                                    task.getEtag(), task.getKind(), task.getNotes(),
-                                    task.getParent(), task.getPosition(), task.getSelfLink(), update, 0,
-                                    listId, task.getStatus(), isHidden);
-                        }
-                        if (cursor != null) {
-                            cursor.close();
-                        }
+                for (Task task : tasks){
+                    TaskItem taskItem = TasksHelper.getInstance(mContext).getTask(task.getId());
+                    if (taskItem != null){
+                        taskItem.setListId(listId);
+                        taskItem.fromTask(task);
+                    } else {
+                        taskItem = new TaskItem();
+                        taskItem.setListId(listId);
+                        taskItem.fromTask(task);
                     }
+                    TasksHelper.getInstance(mContext).saveTask(taskItem);
                 }
             }
         }
-        data.close();
         return null;
     }
 

@@ -16,17 +16,21 @@
 
 package com.cray.software.justreminder.datas.models;
 
+import com.cray.software.justreminder.google_tasks.TaskItem;
+import com.cray.software.justreminder.google_tasks.TaskListItem;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class TaskListData {
-    private TaskList taskList;
-    private ArrayList<Task> mData;
+    private TaskListItem taskList;
+    private List<TaskItem> mData;
     private int position;
 
-    public TaskListData(TaskList taskList, ArrayList<Task> mData,
+    public TaskListData(TaskListItem taskList, List<TaskItem> mData,
                         int position){
         this.taskList = taskList;
-        this.mData = mData;
+        this.mData = new ArrayList<>(mData);
         this.position = position;
     }
 
@@ -38,11 +42,11 @@ public class TaskListData {
         this.position = position;
     }
 
-    public ArrayList<Task> getmData(){
+    public List<TaskItem> getmData(){
         return mData;
     }
 
-    public TaskList getTaskList() {
+    public TaskListItem getTaskList() {
         return taskList;
     }
 }

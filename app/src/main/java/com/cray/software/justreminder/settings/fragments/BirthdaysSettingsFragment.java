@@ -165,13 +165,11 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
         if (widgetShowPrefs.isChecked()){
             mPrefs.putBoolean(Prefs.WIDGET_BIRTHDAYS, false);
             widgetShowPrefs.setChecked(false);
-            UpdatesHelper helper = new UpdatesHelper(getActivity());
-            helper.updateWidget();
+            UpdatesHelper.getInstance(getActivity()).updateWidget();
         } else {
             mPrefs.putBoolean(Prefs.WIDGET_BIRTHDAYS, true);
             widgetShowPrefs.setChecked(true);
-            UpdatesHelper helper = new UpdatesHelper(getActivity());
-            helper.updateWidget();
+            UpdatesHelper.getInstance(getActivity()).updateWidget();
         }
     }
 
