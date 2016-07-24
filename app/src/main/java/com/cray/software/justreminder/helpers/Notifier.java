@@ -59,8 +59,6 @@ import java.util.List;
 public class Notifier {
 
     private Context mContext;
-    private NotificationManagerCompat mNotifyMgr;
-    private NotificationCompat.Builder builder;
     private int NOT_ID = 0;
     private Sound sound;
 
@@ -79,7 +77,7 @@ public class Notifier {
     public void showTTSNotification(final String task, String typePrefs, long itemId,
                                     int color, boolean vibrate){
         SharedPrefs sPrefs = SharedPrefs.getInstance(mContext);
-        builder = new NotificationCompat.Builder(mContext);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(task);
         if (sPrefs.getBoolean(Prefs.SMART_FOLD)) {
             Intent notificationIntent = new Intent(mContext, ReminderDialog.class);
@@ -152,7 +150,7 @@ public class Notifier {
                 builder.setGroupSummary(true);
             }
         }
-        mNotifyMgr = NotificationManagerCompat.from(mContext);
+        NotificationManagerCompat mNotifyMgr = NotificationManagerCompat.from(mContext);
         Integer it = (int) (long) itemId;
         mNotifyMgr.notify(it, builder.build());
         if (isWear){
@@ -208,7 +206,7 @@ public class Notifier {
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                 | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         PendingIntent intent = PendingIntent.getActivity(mContext, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder = new NotificationCompat.Builder(mContext);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(task);
         builder.setContentIntent(intent);
         builder.setAutoCancel(false);
@@ -265,7 +263,7 @@ public class Notifier {
                 builder.setGroupSummary(true);
             }
         }
-        mNotifyMgr = NotificationManagerCompat.from(mContext);
+        NotificationManagerCompat mNotifyMgr = NotificationManagerCompat.from(mContext);
         Integer it = (int) (long) itemId;
         mNotifyMgr.notify(it, builder.build());
         if (isWear){
@@ -305,7 +303,7 @@ public class Notifier {
         } else {
             soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         }
-        builder = new NotificationCompat.Builder(mContext);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(name);
         builder.setAutoCancel(false);
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
@@ -351,7 +349,7 @@ public class Notifier {
                 builder.setGroupSummary(true);
             }
         }
-        mNotifyMgr = NotificationManagerCompat.from(mContext);
+        NotificationManagerCompat mNotifyMgr = NotificationManagerCompat.from(mContext);
         Integer it = (int) (long) itemId;
         mNotifyMgr.notify(it, builder.build());
         if (isWear){
@@ -402,7 +400,7 @@ public class Notifier {
         } else {
             soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         }
-        builder = new NotificationCompat.Builder(mContext);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(name);
         builder.setContentText(TimeUtil.getAgeFormatted(mContext, years));
         builder.setSmallIcon(R.drawable.ic_cake_white_24dp);
@@ -479,7 +477,7 @@ public class Notifier {
                 builder.setGroupSummary(true);
             }
         }
-        mNotifyMgr = NotificationManagerCompat.from(mContext);
+        NotificationManagerCompat mNotifyMgr = NotificationManagerCompat.from(mContext);
         mNotifyMgr.notify(NOT_ID, builder.build());
         if (isWear){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -506,7 +504,7 @@ public class Notifier {
      */
     public void showReminderNotification(String content, long id){
         SharedPrefs sPrefs = SharedPrefs.getInstance(mContext);
-        builder = new NotificationCompat.Builder(mContext);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(content);
         String app;
         if (Module.isPro()){
@@ -525,7 +523,7 @@ public class Notifier {
                 builder.setGroupSummary(true);
             }
         }
-        mNotifyMgr = NotificationManagerCompat.from(mContext);
+        NotificationManagerCompat mNotifyMgr = NotificationManagerCompat.from(mContext);
         Integer it = (int) (long) id;
         mNotifyMgr.notify(it, builder.build());
         if (isWear){
@@ -553,7 +551,7 @@ public class Notifier {
      */
     public void showNoteNotification(String content, long id){
         SharedPrefs sPrefs = SharedPrefs.getInstance(mContext);
-        builder = new NotificationCompat.Builder(mContext);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
         builder.setContentText(mContext.getString(R.string.note));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
@@ -568,7 +566,7 @@ public class Notifier {
                 builder.setGroupSummary(true);
             }
         }
-        mNotifyMgr = NotificationManagerCompat.from(mContext);
+        NotificationManagerCompat mNotifyMgr = NotificationManagerCompat.from(mContext);
         Integer it = (int) (long) id;
         mNotifyMgr.notify(it, builder.build());
         if (isWear){
@@ -751,20 +749,20 @@ public class Notifier {
 
     public void discardNotification(){
         discardMedia();
-        mNotifyMgr = NotificationManagerCompat.from(mContext);
+        NotificationManagerCompat mNotifyMgr = NotificationManagerCompat.from(mContext);
         mNotifyMgr.cancel(NOT_ID);
     }
 
     public void discardStatusNotification(long id){
         Integer i = (int) (long) id;
-        mNotifyMgr = NotificationManagerCompat.from(mContext);
+        NotificationManagerCompat mNotifyMgr = NotificationManagerCompat.from(mContext);
         mNotifyMgr.cancel(i);
     }
 
     public void discardNotification(long id){
         discardMedia();
         Integer i = (int) (long) id;
-        mNotifyMgr = NotificationManagerCompat.from(mContext);
+        NotificationManagerCompat mNotifyMgr = NotificationManagerCompat.from(mContext);
         mNotifyMgr.cancel(i);
     }
 
