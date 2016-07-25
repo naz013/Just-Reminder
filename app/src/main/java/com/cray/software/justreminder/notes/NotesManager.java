@@ -424,9 +424,6 @@ public class NotesManager extends AppCompatActivity {
             taskField.setError(getString(R.string.must_be_not_empty));
             return;
         }
-        if (SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT)){
-            note = SyncHelper.encrypt(note);
-        }
         Calendar calendar1 = Calendar.getInstance();
         int day = calendar1.get(Calendar.DAY_OF_MONTH);
         int month = calendar1.get(Calendar.MONTH);
@@ -439,7 +436,11 @@ public class NotesManager extends AppCompatActivity {
         if (uuID == null || uuID.matches("")) {
             uuID = SyncHelper.generateID();
         }
-        mItem.setNote(note);
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT)){
+            mItem.setNote(SyncHelper.encrypt(note));
+        } else {
+            mItem.setNote(note);
+        }
         mItem.setUuId(uuID);
         mItem.setDate(date);
         long id = NoteHelper.getInstance(this).saveNote(mItem);

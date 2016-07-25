@@ -21,18 +21,19 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.databinding.BindingAdapter;
+import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,13 +41,17 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.databinding.ItemNoteLayoutBinding;
+import com.cray.software.justreminder.databinding.ListItemTaskBinding;
 import com.cray.software.justreminder.google_tasks.SwitchTaskAsync;
 import com.cray.software.justreminder.google_tasks.TaskItem;
 import com.cray.software.justreminder.google_tasks.TaskListItem;
@@ -70,7 +75,6 @@ import com.cray.software.justreminder.utils.IntervalUtil;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
-import com.cray.software.justreminder.views.CircularProgress;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -90,23 +94,47 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
 
     private RoboTextView statusText, time, location, group, type, number, repeat, melody;
     private RoboSwitchCompat statusSwitch;
-    private LinearLayout tasksContainer, notesContainer, mapContainer, background;
-    private RoboTextView listColor, taskText, taskNote, taskDate, noteText;
-    private RoboCheckBox checkDone;
-    private ImageView imageView;
-    private CircularProgress progress;
+    private LinearLayout mapContainer;
     private Toolbar toolbar;
     private CollapsingToolbarLayout toolbarLayout;
     private FloatingActionButton mFab;
     private AppBarLayout appBarLayout;
+    private LinearLayout mContainer;
 
     private long id;
     private ArrayList<Long> list;
     private ReminderModel item;
+    private static NoteItem mNoteItem;
+    private static TaskItem mTaskItem;
+
+    private static SimpleDateFormat full24Format = new SimpleDateFormat("EEE,\ndd/MM", Locale.getDefault());
+
     private OnMapReadyCallback mMapCallback = googleMap -> {
         googleMap.getUiSettings().setMyLocationButtonEnabled(false);
         showPinsOnMap(googleMap);
     };
+    private ClickListener mClickListener = new ClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.noteClick:
+                    if (mNoteItem != null) {
+                        openNote(mNoteItem.getId());
+                    }
+                    break;
+                case R.id.background:
+                    if (mTaskItem != null) {
+                        openTask(mTaskItem.getId());
+                    }
+                    break;
+            }
+        }
+    };
+
+    private void openTask(long id) {
+        startActivity(new Intent(this, TaskManager.class).putExtra(Constants.ITEM_ID_INTENT, id)
+                .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.EDIT));
+    }
 
     private void showPinsOnMap(GoogleMap map) {
         double[] place = item.getPlace();
@@ -173,8 +201,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                 }
                 String mLocation = LocationUtil.getAddress(this, lat, lon);
                 if (mLocation != null && !mLocation.matches("")) {
-                    location.setText(mLocation + "\n" + "("
-                            + String.format("%.5f", lat) + ", " +
+                    location.setText(mLocation + "\n" + "(" + String.format("%.5f", lat) + ", " +
                             String.format("%.5f", lon) + ")");
                 }
             }
@@ -193,6 +220,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
         setRequestedOrientation(cSetter.getRequestOrientation());
 
         appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        mContainer = (LinearLayout) findViewById(R.id.dataContainer);
         toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -233,23 +261,6 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
         number = (RoboTextView) findViewById(R.id.number);
         repeat = (RoboTextView) findViewById(R.id.repeat);
         melody = (RoboTextView) findViewById(R.id.melody);
-
-        tasksContainer = (LinearLayout) findViewById(R.id.tasksContainer);
-        tasksContainer.setVisibility(View.GONE);
-        listColor = (RoboTextView) findViewById(R.id.listColor);
-        taskText = (RoboTextView) findViewById(R.id.taskText);
-        taskNote = (RoboTextView) findViewById(R.id.taskNote);
-        taskDate = (RoboTextView) findViewById(R.id.taskDate);
-        checkDone = (RoboCheckBox) findViewById(R.id.checkDone);
-
-        notesContainer = (LinearLayout) findViewById(R.id.notesContainer);
-        notesContainer.setVisibility(View.GONE);
-        noteText = (RoboTextView) findViewById(R.id.noteText);
-        imageView = (ImageView) findViewById(R.id.imageView);
-
-        progress = (CircularProgress) findViewById(R.id.progress);
-
-        background = (LinearLayout) findViewById(R.id.background);
         mapContainer = (LinearLayout) findViewById(R.id.mapContainer);
         mapContainer.setVisibility(View.GONE);
 
@@ -362,9 +373,56 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
             }
             mFab.setBackgroundTintList(ViewUtils.getFabState(this, setter.colorAccent(catColor),
                     setter.colorAccent(catColor)));
-
-            new LoadOtherData(this, progress, id).execute();
+            mContainer.removeAllViewsInLayout();
+            findNote();
+            findTask();
         }
+    }
+
+    private static void setNote(NoteItem item) {
+        mNoteItem = item;
+    }
+
+    private static void setTask(TaskItem item) {
+        mTaskItem = item;
+    }
+
+    private void findNote() {
+        new Thread(new Runnable() {
+            NoteItem noteItem = NoteHelper.getInstance(ReminderPreview.this).getNoteByReminder(id);
+            @Override
+            public void run() {
+                runOnUiThread(() -> {
+                    if (noteItem != null) {
+                        setNote(noteItem);
+                        View noteView = DataBindingUtil.inflate(getLayoutInflater(), R.layout.item_note_layout, null, false).getRoot();
+                        ItemNoteLayoutBinding binding = DataBindingUtil.bind(noteView);
+                        binding.setNote(noteItem);
+                        binding.setClick(mClickListener);
+                        mContainer.addView(binding.getRoot());
+                    }
+                });
+            }
+        }).start();
+    }
+
+    private void findTask() {
+        new Thread(new Runnable() {
+            TaskItem taskItem = TasksHelper.getInstance(ReminderPreview.this).getTaskByReminder(id);
+            @Override
+            public void run() {
+                runOnUiThread(() -> {
+                    if (taskItem != null) {
+                        setTask(taskItem);
+                        View taskView = DataBindingUtil.inflate(getLayoutInflater(), R.layout.list_item_task, null, false).getRoot();
+                        ListItemTaskBinding binding = DataBindingUtil.bind(taskView);
+                        binding.setTask(taskItem);
+                        binding.setClick(mClickListener);
+                        mContainer.addView(binding.getRoot());
+                    }
+                });
+            }
+        }).start();
     }
 
     @Override
@@ -376,32 +434,35 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int ids = item.getItemId();
-
-        if (ids == R.id.action_delete) {
-            Reminder.moveToTrash(id, ReminderPreview.this, null);
-            closeWindow();
-            return true;
+        switch (ids) {
+            case R.id.action_delete:
+                Reminder.moveToTrash(id, ReminderPreview.this, null);
+                closeWindow();
+                return true;
+            case android.R.id.home:
+                closeWindow();
+                return true;
+            case R.id.action_make_copy:
+                makeCopy();
+                return true;
         }
-        if (ids == android.R.id.home) {
-            closeWindow();
-        }
-        if (ids == R.id.action_make_copy) {
-            NextBase db = new NextBase(this);
-            if (!db.isOpen()) {
-                db.open();
-            }
-            Cursor c = db.getReminder(id);
-            if (c != null && c.moveToFirst()) {
-                String type = c.getString(c.getColumnIndex(NextBase.TYPE));
-                if (!type.contains(Constants.TYPE_LOCATION) && !type.matches(Constants.TYPE_TIME)) {
-                    showDialog();
-                }
-            }
-            if (c != null) c.close();
-            db.close();
-        }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    private void makeCopy() {
+        NextBase db = new NextBase(this);
+        if (!db.isOpen()) {
+            db.open();
+        }
+        Cursor c = db.getReminder(id);
+        if (c != null && c.moveToFirst()) {
+            String type = c.getString(c.getColumnIndex(NextBase.TYPE));
+            if (!type.contains(Constants.TYPE_LOCATION) && !type.matches(Constants.TYPE_TIME)) {
+                showDialog();
+            }
+        }
+        if (c != null) c.close();
+        db.close();
     }
 
     private void closeWindow() {
@@ -411,7 +472,6 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
             finish();
         }
     }
-
 
     public void showDialog() {
         Calendar calendar = Calendar.getInstance();
@@ -461,231 +521,96 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                 .show();
     }
 
-    public class LoadOtherData extends AsyncTask<Void, Void, ReminderNote> {
-
-        private Context mContext;
-        private CircularProgress mProgress;
-        private long mId;
-        private SimpleDateFormat full24Format = new SimpleDateFormat("EEE,\ndd/MM", Locale.getDefault());
-
-        public LoadOtherData(Context context, CircularProgress circularProgress, long id) {
-            this.mContext = context;
-            this.mProgress = circularProgress;
-            this.mId = id;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mProgress.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected ReminderNote doInBackground(Void... params) {
-            ReminderNote reminderNote = new ReminderNote();
-            NoteItem noteItem = NoteHelper.getInstance(mContext).getNoteByReminder(id);
-            if (noteItem != null) {
-                reminderNote.setNoteText(noteItem.getNote());
-                reminderNote.setImage(noteItem.getImage());
-                reminderNote.setNoteId(noteItem.getId());
-            }
-            TaskItem taskItem = TasksHelper.getInstance(mContext).getTaskByReminder(mId);
-            if (taskItem != null) {
-                reminderNote.setTaskTitle(taskItem.getTitle());
-                reminderNote.setTaskNote(taskItem.getNotes());
-                reminderNote.setTaskStatus(taskItem.getStatus());
-                reminderNote.setTaskDate(taskItem.getDueDate());
-                reminderNote.setTaskId(taskItem.getId());
-                reminderNote.setTaskListId(taskItem.getListId());
-                reminderNote.setTaskIdentifier(taskItem.getTaskId());
-                TaskListItem listItem = TasksHelper.getInstance(mContext).getTaskList(taskItem.getListId());
-                if (listItem != null) {
-                    reminderNote.setColor(listItem.getColor());
-                } else {
-                    reminderNote.setColor(8);
-                }
-            }
-            return reminderNote;
-        }
-
-        @Override
-        protected void onPostExecute(final ReminderNote reminderNote) {
-            super.onPostExecute(reminderNote);
-            mProgress.setVisibility(View.GONE);
-            if (reminderNote != null) {
-                if (reminderNote.getTaskId() > 0) {
-                    tasksContainer.setVisibility(View.VISIBLE);
-                    taskText.setText(reminderNote.getTaskTitle());
-                    String mNote = reminderNote.getTaskNote();
-                    listColor.setBackgroundColor(new ColorSetter(mContext).getNoteColor(reminderNote.getColor()));
-                    if (mNote != null && !mNote.matches("")) {
-                        taskNote.setText(mNote);
-                    } else {
-                        taskNote.setVisibility(View.GONE);
-                    }
-                    long date = reminderNote.getTaskDate();
-                    Calendar calendar = Calendar.getInstance();
-                    if (date != 0) {
-                        calendar.setTimeInMillis(date);
-                        String update = full24Format.format(calendar.getTime());
-                        taskDate.setText(update);
-                    } else {
-                        taskDate.setVisibility(View.INVISIBLE);
-                    }
-                    if (reminderNote.getTaskStatus().matches(GTasksHelper.TASKS_COMPLETE)) {
-                        checkDone.setChecked(true);
-                    } else {
-                        checkDone.setChecked(false);
-                    }
-                    checkDone.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                        final TasksDataBase data = new TasksDataBase(mContext);
-                        data.open();
-                        if (isChecked) {
-                            data.setTaskDone(reminderNote.getTaskId());
-                        } else {
-                            data.setTaskUnDone(reminderNote.getTaskId());
-                        }
-
-                        new SwitchTaskAsync(mContext, reminderNote.getTaskListId(),
-                                reminderNote.getTaskIdentifier(), isChecked, null).execute();
-                        loadInfo();
-                    });
-                    background.setOnClickListener(v -> mContext.startActivity(new Intent(mContext, TaskManager.class)
-                            .putExtra(Constants.ITEM_ID_INTENT, reminderNote.getTaskId())
-                            .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.EDIT)));
-                }
-                if (reminderNote.getNoteId() > 0) {
-                    notesContainer.setVisibility(View.VISIBLE);
-                    String note = reminderNote.getNoteText();
-                    if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.NOTE_ENCRYPT)) {
-                        note = SyncHelper.decrypt(note);
-                    }
-                    noteText.setText(note);
-                    noteText.setOnClickListener(v -> openNote(reminderNote.getNoteId()));
-                    byte[] image = reminderNote.getImage();
-                    if (image != null) {
-                        final Bitmap imgB = BitmapFactory.decodeByteArray(image, 0,
-                                image.length);
-                        imageView.setImageBitmap(imgB);
-                        imageView.setOnClickListener(v -> openNote(reminderNote.getNoteId()));
-                    } else imageView.setVisibility(View.GONE);
-                }
-            }
-        }
-    }
-
     private void openNote(long id) {
-        if (Module.isLollipop()) {
-            Intent intent = new Intent(this, NotePreview.class);
-            intent.putExtra(Constants.EDIT_ID, id);
-            String transitionName = "image";
-            ActivityOptionsCompat options =
-                    ActivityOptionsCompat.makeSceneTransitionAnimation(this, imageView,
-                            transitionName);
-            startActivity(intent, options.toBundle());
+        startActivity(new Intent(this, NotePreview.class).putExtra(Constants.EDIT_ID, id));
+    }
+
+    @BindingAdapter({"app:loadImage"})
+    public static void loadImage(ImageView imageView, byte[] image) {
+        if (image != null) {
+            Bitmap photo = BitmapFactory.decodeByteArray(image, 0, image.length);
+            if (photo != null) {
+                imageView.setImageBitmap(photo);
+            } else {
+                imageView.setImageDrawable(null);
+            }
         } else {
-            startActivity(new Intent(this, NotePreview.class)
-                            .putExtra(Constants.EDIT_ID, id));
+            imageView.setImageDrawable(null);
         }
     }
 
-    class ReminderNote {
-        private String noteText;
-        private byte[] image;
-        private int color;
-        private String taskTitle, taskNote, taskStatus, taskListId, taskIdentifier;
-        private long taskDate;
-        private long noteId, taskId;
-
-        public ReminderNote(){
+    @BindingAdapter({"app:loadCard"})
+    public static void loadCard(CardView cardView, int color) {
+        cardView.setCardBackgroundColor(new ColorSetter(cardView.getContext()).getNoteLightColor(color));
+        if (Module.isLollipop()) {
+            cardView.setCardElevation(Configs.CARD_ELEVATION);
         }
+    }
 
-        public void setColor(int color) {
-            this.color = color;
+    @BindingAdapter({"app:loadNote"})
+    public static void loadNote(TextView textView, NoteItem note) {
+        String title = note.getNote();
+        if (SharedPrefs.getInstance(textView.getContext()).getBoolean(Prefs.NOTE_ENCRYPT)) {
+            title = SyncHelper.decrypt(title);
         }
+        if (title.length() > 500) {
+            String substring = title.substring(0, 500);
+            title = substring + "...";
+        }
+        textView.setText(title);
+        textView.setTypeface(new ColorSetter(textView.getContext()).getTypeface(note.getStyle()));
+        textView.setTextSize(SharedPrefs.getInstance(textView.getContext()).getInt(Prefs.TEXT_SIZE) + 12);
+    }
 
-        public int getColor() {
-            return color;
+    @BindingAdapter({"app:loadDue"})
+    public static void loadDue(RoboTextView view, long due) {
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        if (due != 0) {
+            calendar.setTimeInMillis(due);
+            String update = full24Format.format(calendar.getTime());
+            view.setText(update);
+        } else {
+            view.setVisibility(View.INVISIBLE);
         }
+    }
 
-        public String getTaskIdentifier(){
-            return taskIdentifier;
+    @BindingAdapter({"app:loadMarker"})
+    public static void loadMarker(View view, String listId) {
+        TaskListItem listItem = TasksHelper.getInstance(view.getContext()).getTaskList(listId);
+        if (listItem != null) {
+            view.setBackgroundColor(new ColorSetter(view.getContext()).getNoteColor(listItem.getColor()));
+        } else {
+            view.setBackgroundColor(new ColorSetter(view.getContext()).getNoteColor(8));
         }
+    }
 
-        public void setTaskIdentifier(String taskIdentifier){
-            this.taskIdentifier = taskIdentifier;
+    @BindingAdapter({"app:loadCheck"})
+    public static void loadCheck(RoboCheckBox checkBox, TaskItem item) {
+        if (item.getStatus().matches(GTasksHelper.TASKS_COMPLETE)){
+            checkBox.setChecked(true);
+        } else {
+            checkBox.setChecked(false);
         }
+        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> switchTask(checkBox.getContext(),
+                item.getId(), isChecked, item.getListId(), item.getTaskId()));
+    }
 
-        public String getTaskListId(){
-            return taskListId;
+    @BindingAdapter({"app:loadTaskCard"})
+    public static void loadTaskCard(CardView cardView, int i) {
+        cardView.setCardBackgroundColor(new ColorSetter(cardView.getContext()).getCardStyle());
+        if (Module.isLollipop()) {
+            cardView.setCardElevation(Configs.CARD_ELEVATION);
         }
+    }
 
-        public void setTaskListId(String taskListId){
-            this.taskListId = taskListId;
+    private static void switchTask(Context context, long id, boolean isDone, String listId, String taskId) {
+        TasksDataBase db = new TasksDataBase(context);
+        db.open();
+        if (isDone) {
+            db.setTaskDone(id);
+        } else {
+            db.setTaskUnDone(id);
         }
-
-        public String getNoteText(){
-            return noteText;
-        }
-
-        public void setNoteText(String noteText){
-            this.noteText = noteText;
-        }
-
-        public byte[] getImage(){
-            return image;
-        }
-
-        public void setImage(byte[] image){
-            this.image = image;
-        }
-
-        public String getTaskTitle(){
-            return taskTitle;
-        }
-
-        public void setTaskTitle(String taskTitle){
-            this.taskTitle = taskTitle;
-        }
-
-        public String getTaskNote(){
-            return taskNote;
-        }
-
-        public void setTaskNote(String taskNote){
-            this.taskNote = taskNote;
-        }
-
-        public String getTaskStatus(){
-            return taskStatus;
-        }
-
-        public void setTaskStatus(String taskStatus){
-            this.taskStatus = taskStatus;
-        }
-
-        public long getTaskDate(){
-            return taskDate;
-        }
-
-        public void setTaskDate(long taskDate){
-            this.taskDate = taskDate;
-        }
-
-        public long getNoteId(){
-            return noteId;
-        }
-
-        public void setNoteId(long noteId){
-            this.noteId = noteId;
-        }
-
-        public long getTaskId(){
-            return taskId;
-        }
-
-        public void setTaskId(long taskId){
-            this.taskId = taskId;
-        }
+        new SwitchTaskAsync(context, listId, taskId, isDone, null).execute();
     }
 }

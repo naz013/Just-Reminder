@@ -19,7 +19,6 @@ package com.cray.software.justreminder.adapters;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,6 @@ import android.widget.ImageView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
-import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.datas.models.FileModel;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -127,12 +125,8 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
 
     @Override
     public ViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
-        // create a new view
         View itemLayoutView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_file, parent, false);
-
-        // create ViewHolder
-
         return new ViewHolder(itemLayoutView);
     }
 
@@ -145,26 +139,22 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
     }
 
     private int getIcon(String fileName) {
-        Log.d(Constants.LOG_TAG, "File " + fileName);
         if (fileName.endsWith(FileConfig.FILE_NAME_GROUP)) {
             if (isDark) return R.drawable.ic_local_offer_white_24dp;
             else return R.drawable.ic_local_offer_black_24dp;
-        }
-        if (fileName.endsWith(FileConfig.FILE_NAME_REMINDER)) {
+        } else if (fileName.endsWith(FileConfig.FILE_NAME_REMINDER)) {
             if (isDark) return R.drawable.ic_notifications_white_24dp;
             else return R.drawable.ic_notifications_black_24dp;
-        }
-        if (fileName.endsWith(FileConfig.FILE_NAME_NOTE)) {
+        } else if (fileName.endsWith(FileConfig.FILE_NAME_NOTE)) {
             if (isDark) return R.drawable.ic_event_note_white_24dp;
             else return R.drawable.ic_event_note_black_24dp;
-        }
-        if (fileName.endsWith(FileConfig.FILE_NAME_BIRTHDAY)) {
+        } else if (fileName.endsWith(FileConfig.FILE_NAME_BIRTHDAY)) {
             if (isDark) return R.drawable.ic_cake_white_24dp;
             else return R.drawable.ic_cake_black_24dp;
+        } else {
+            if (isDark) return R.drawable.ic_insert_drive_file_white_24dp;
+            else return R.drawable.ic_insert_drive_file_black_24dp;
         }
-
-        if (isDark) return R.drawable.ic_insert_drive_file_white_24dp;
-        else return R.drawable.ic_insert_drive_file_black_24dp;
     }
 
     @Override

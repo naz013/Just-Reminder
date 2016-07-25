@@ -17,6 +17,8 @@
 package com.cray.software.justreminder.notes;
 
 import android.content.Context;
+import android.databinding.BindingAdapter;
+import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.CardView;
@@ -30,6 +32,7 @@ import android.widget.TextView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.databinding.ItemNoteLayoutBinding;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -40,11 +43,11 @@ import java.util.List;
 
 public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapter.ViewHolder> {
 
-    private ColorSetter cs;
+    private static ColorSetter cs;
     private List<NoteItem> mDataList;
     private SimpleListener mEventListener;
-    private int mTextSize;
-    private boolean mEncrypt;
+    private static int mTextSize;
+    private static boolean mEncrypt;
 
     public NoteRecyclerAdapter(Context context, List<NoteItem> list) {
         this.mDataList = list;
@@ -54,79 +57,38 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
         setHasStableIds(true);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
-        public TextView textView;
-        public ImageView noteImage;
-        public CardView itemCard;
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        public ItemNoteLayoutBinding binding;
 
         public ViewHolder(View v) {
             super(v);
-            textView = (TextView) v.findViewById(R.id.note);
-            noteImage = (ImageView) v.findViewById(R.id.noteImage);
-            itemCard = (CardView) v.findViewById(R.id.itemCard);
-            itemCard.setCardBackgroundColor(cs.getCardStyle());
-            if (Module.isLollipop()) {
-                itemCard.setCardElevation(Configs.CARD_ELEVATION);
-            }
-
-            v.setOnClickListener(this);
-            v.setOnLongClickListener(this);
+            binding = DataBindingUtil.bind(v);
+            binding.setClick(v1 -> {
+                if (mEventListener != null) {
+                    mEventListener.onItemClicked(getAdapterPosition(), v1);
+                }
+            });
+            binding.noteClick.setOnLongClickListener(view -> {
+                if (mEventListener != null) {
+                    mEventListener.onItemLongClicked(getAdapterPosition(), view);
+                }
+                return false;
+            });
         }
 
-        @Override
-        public void onClick(View v) {
-            if (mEventListener != null) {
-                mEventListener.onItemClicked(getAdapterPosition(), noteImage);
-            }
-        }
-
-        @Override
-        public boolean onLongClick(View v) {
-            if (mEventListener != null) {
-                mEventListener.onItemLongClicked(getAdapterPosition(), noteImage);
-            }
-            return true;
-        }
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemLayoutView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item_note, parent, false);
-        return new ViewHolder(itemLayoutView);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        return new ViewHolder(DataBindingUtil.inflate(inflater, R.layout.item_note_layout, parent, false).getRoot());
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final NoteItem item = mDataList.get(position);
-        String title = item.getNote();
-        int color = item.getColor();
-        int style = item.getStyle();
-        byte[] byteImage = item.getImage();
-
-        holder.textView.setTypeface(cs.getTypeface(style));
-        holder.itemCard.setCardBackgroundColor(cs.getNoteLightColor(color));
-        if (byteImage != null){
-            Bitmap photo = BitmapFactory.decodeByteArray(byteImage, 0, byteImage.length);
-            if (photo != null){
-                holder.noteImage.setImageBitmap(photo);
-            } else {
-                holder.noteImage.setImageDrawable(null);
-            }
-        } else {
-            holder.noteImage.setImageDrawable(null);
-        }
-
-        if (mEncrypt){
-            title = SyncHelper.decrypt(title);
-        }
-
-        if (title.length() > 500) {
-            String substring = title.substring(0, 500);
-            title = substring + "...";
-        }
-        holder.textView.setText(title);
-        holder.textView.setTextSize(mTextSize);
+        holder.binding.setNote(item);
     }
 
     public NoteItem getItem(int position) {
@@ -150,5 +112,42 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
 
     public void setEventListener(SimpleListener eventListener) {
         mEventListener = eventListener;
+    }
+
+    @BindingAdapter({"app:loadCard"})
+    public static void loadCard(CardView cardView, int color) {
+        cardView.setCardBackgroundColor(cs.getNoteLightColor(color));
+        if (Module.isLollipop()) {
+            cardView.setCardElevation(Configs.CARD_ELEVATION);
+        }
+    }
+
+    @BindingAdapter({"app:loadNote"})
+    public static void loadNote(TextView textView, NoteItem note) {
+        String title = note.getNote();
+        if (mEncrypt) {
+            title = SyncHelper.decrypt(title);
+        }
+        if (title.length() > 500) {
+            String substring = title.substring(0, 500);
+            title = substring + "...";
+        }
+        textView.setText(title);
+        textView.setTypeface(cs.getTypeface(note.getStyle()));
+        textView.setTextSize(mTextSize);
+    }
+
+    @BindingAdapter({"app:loadImage"})
+    public static void loadImage(ImageView imageView, byte[] image) {
+        if (image != null) {
+            Bitmap photo = BitmapFactory.decodeByteArray(image, 0, image.length);
+            if (photo != null) {
+                imageView.setImageBitmap(photo);
+            } else {
+                imageView.setImageDrawable(null);
+            }
+        } else {
+            imageView.setImageDrawable(null);
+        }
     }
 }
