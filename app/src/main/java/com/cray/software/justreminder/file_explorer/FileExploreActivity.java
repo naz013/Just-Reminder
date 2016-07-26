@@ -212,6 +212,7 @@ public class FileExploreActivity extends AppCompatActivity {
 
     private List<FileDataItem> filter(List<FileDataItem> mData, String q) {
         q = q.toLowerCase();
+        if (mData == null) mData = new ArrayList<>();
         List<FileDataItem> filteredModelList = new ArrayList<>();
         if (q.matches("")) {
             filteredModelList = new ArrayList<>(mData);
