@@ -171,6 +171,7 @@ public class ContactsFragment extends Fragment implements LoadListener {
     private List<ContactData> filter(List<ContactData> mData, String q) {
         q = q.toLowerCase();
         List<ContactData> filteredModelList = new ArrayList<>();
+        if (mData == null) mData = new ArrayList<>();
         if (q.matches("")) {
             filteredModelList = new ArrayList<>(mData);
         } else {

@@ -70,7 +70,7 @@ public class FileExploreActivity extends AppCompatActivity {
     private LinearLayout mPlayerLayout;
     private RoboTextView mMelodyTitle;
     private RoboEditText mSearchView;
-    private RecyclerClickListener recyclerClick = position -> selectFile(position);
+    private RecyclerClickListener recyclerClick = this::selectFile;
 
     private void selectFile(int position) {
         FileDataItem item = mAdapter.getItem(position);

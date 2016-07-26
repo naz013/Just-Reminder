@@ -169,6 +169,7 @@ public class CallsFragment extends Fragment implements CallsLogListener {
 
     private List<CallsData> filter(List<CallsData> mData, String q) {
         q = q.toLowerCase();
+        if (mData == null) mData = new ArrayList<>();
         List<CallsData> filteredModelList = new ArrayList<>();
         if (q.matches("")) {
             filteredModelList = new ArrayList<>(mData);
