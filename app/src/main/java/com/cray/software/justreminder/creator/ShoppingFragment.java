@@ -35,7 +35,7 @@ import com.cray.software.justreminder.adapters.TaskListRecyclerAdapter;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.ViewUtils;
@@ -75,8 +75,8 @@ public class ShoppingFragment extends BaseFragment {
         else return null;
     }
 
-    public static ShoppingFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
-                                                  boolean hasStock, boolean hasTasks) {
+    public static ShoppingFragment newInstance(JsonModel item, boolean isDark, boolean hasCalendar,
+                                               boolean hasStock, boolean hasTasks) {
         ShoppingFragment fragment = new ShoppingFragment();
         Bundle args = new Bundle();
         args.putBoolean(THEME, isDark);

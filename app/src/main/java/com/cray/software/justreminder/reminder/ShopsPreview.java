@@ -36,7 +36,7 @@ import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.json.JShopping;
+import com.cray.software.justreminder.reminder.json.JShopping;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.roboto_views.RoboSwitchCompat;

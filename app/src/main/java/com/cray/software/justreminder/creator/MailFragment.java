@@ -30,9 +30,9 @@ import android.widget.ImageButton;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.json.JAction;
-import com.cray.software.justreminder.json.JExport;
-import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.reminder.json.JAction;
+import com.cray.software.justreminder.reminder.json.JExport;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
@@ -49,8 +49,8 @@ public class MailFragment extends BaseFragment implements
     private RoboEditText mail, subject;
     private RoboTextView fileName;
 
-    public static MailFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
-                                                  boolean hasStock, boolean hasTasks) {
+    public static MailFragment newInstance(JsonModel item, boolean isDark, boolean hasCalendar,
+                                           boolean hasStock, boolean hasTasks) {
         MailFragment fragment = new MailFragment();
         Bundle args = new Bundle();
         args.putBoolean(THEME, isDark);

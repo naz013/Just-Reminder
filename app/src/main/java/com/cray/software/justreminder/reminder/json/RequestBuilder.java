@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.json;
+package com.cray.software.justreminder.reminder.json;
 
 import com.cray.software.justreminder.modules.Module;
-
-import java.util.Locale;
 
 public class RequestBuilder {
 

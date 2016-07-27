@@ -40,7 +40,7 @@ import com.cray.software.justreminder.birthdays.BirthdayHelper;
 import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.ColorSetter;

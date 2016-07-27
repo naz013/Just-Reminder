@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.json;
+package com.cray.software.justreminder.reminder.json;
 
 import android.util.Log;
 
@@ -62,7 +62,6 @@ public class JParser {
     public static final String TYPE = "reminder_type";
     public static final String SHOPPING = "shopping";
 
-
     public static final String VERSION = "1.0";
     public static final String VERSION_KEY = "v_key";
 
@@ -99,7 +98,7 @@ public class JParser {
         }
     }
 
-    public JModel parse(){
+    public JsonModel parse(){
         if (jsonObject.has(Constants.COLUMN_TECH_VAR)) {
             try {
                 return modelFromOld();
@@ -107,7 +106,7 @@ public class JParser {
                 return null;
             }
         } else {
-            JModel model = new JModel();
+            JsonModel model = new JsonModel();
             model.setAction(getAction());
             model.setExport(getExport());
             model.setSummary(getSummary());
@@ -134,7 +133,7 @@ public class JParser {
         }
     }
 
-    private JModel modelFromOld() throws JSONException {
+    private JsonModel modelFromOld() throws JSONException {
         String text = null;
         if (!jsonObject.isNull(Constants.COLUMN_TEXT)) {
             text = jsonObject.getString(Constants.COLUMN_TEXT);
@@ -176,66 +175,64 @@ public class JParser {
             uuID = jsonObject.getString(Constants.COLUMN_TECH_VAR);
         }
         if (repMinute < 1000) repMinute = repMinute * TimeCount.MINUTE;
-
         int vibration = -1;
-        if (jsonObject.has(Constants.COLUMN_VIBRATION))
+        if (jsonObject.has(Constants.COLUMN_VIBRATION)) {
             vibration = jsonObject.getInt(Constants.COLUMN_VIBRATION);
+        }
         int voice = -1;
-        if (jsonObject.has(Constants.COLUMN_VOICE))
+        if (jsonObject.has(Constants.COLUMN_VOICE)) {
             voice = jsonObject.getInt(Constants.COLUMN_VOICE);
+        }
         int wake = -1;
-        if (jsonObject.has(Constants.COLUMN_WAKE_SCREEN))
+        if (jsonObject.has(Constants.COLUMN_WAKE_SCREEN)) {
             wake = jsonObject.getInt(Constants.COLUMN_WAKE_SCREEN);
+        }
         int unlock = -1;
-        if (jsonObject.has(Constants.COLUMN_UNLOCK_DEVICE))
+        if (jsonObject.has(Constants.COLUMN_UNLOCK_DEVICE)) {
             unlock = jsonObject.getInt(Constants.COLUMN_UNLOCK_DEVICE);
+        }
         int notificationRepeat = -1;
-        if (jsonObject.has(Constants.COLUMN_NOTIFICATION_REPEAT))
+        if (jsonObject.has(Constants.COLUMN_NOTIFICATION_REPEAT)) {
             notificationRepeat = jsonObject.getInt(Constants.COLUMN_NOTIFICATION_REPEAT);
+        }
         int auto = -1;
-        if (jsonObject.has(Constants.COLUMN_AUTO_ACTION))
+        if (jsonObject.has(Constants.COLUMN_AUTO_ACTION)) {
             auto = jsonObject.getInt(Constants.COLUMN_AUTO_ACTION);
+        }
         long limit = -1;
-        if (jsonObject.has(Constants.COLUMN_REPEAT_LIMIT))
+        if (jsonObject.has(Constants.COLUMN_REPEAT_LIMIT)) {
             limit = jsonObject.getInt(Constants.COLUMN_REPEAT_LIMIT);
+        }
         String exclusion = null;
-        if (jsonObject.has(Constants.COLUMN_EXTRA_3))
+        if (jsonObject.has(Constants.COLUMN_EXTRA_3)) {
             exclusion = jsonObject.getString(Constants.COLUMN_EXTRA_3);
-
+        }
         long due = ReminderUtils.getTime(day, month, year, hour, minute, 0);
-
-        JModel jModel = new JModel();
-        jModel.setCategory(categoryId);
-        jModel.setCount(count);
-        jModel.setAwake(wake);
-        jModel.setUnlock(unlock);
-        jModel.setNotificationRepeat(notificationRepeat);
-        jModel.setVibrate(vibration);
-        jModel.setNotificationRepeat(voice);
-        jModel.setSummary(text);
-        jModel.setType(type);
-        jModel.setEventTime(due);
-        jModel.setStartTime(due);
-        jModel.setUuId(uuID);
-
+        JsonModel jsonModel = new JsonModel();
+        jsonModel.setCategory(categoryId);
+        jsonModel.setCount(count);
+        jsonModel.setAwake(wake);
+        jsonModel.setUnlock(unlock);
+        jsonModel.setNotificationRepeat(notificationRepeat);
+        jsonModel.setVibrate(vibration);
+        jsonModel.setNotificationRepeat(voice);
+        jsonModel.setSummary(text);
+        jsonModel.setType(type);
+        jsonModel.setEventTime(due);
+        jsonModel.setStartTime(due);
+        jsonModel.setUuId(uuID);
         JAction jAction = new JAction(type, number, auto, null, null);
-        jModel.setAction(jAction);
-
+        jsonModel.setAction(jAction);
         JExport jExport = new JExport(0, 0, null);
-        jModel.setExport(jExport);
-
+        jsonModel.setExport(jExport);
         JMelody jMelody = new JMelody(melody, -1);
-        jModel.setMelody(jMelody);
-
+        jsonModel.setMelody(jMelody);
         JLed jLed = new JLed(-1, 0);
-        jModel.setLed(jLed);
-
+        jsonModel.setLed(jLed);
         JPlace jPlace = new JPlace(latitude, longitude, radius, -1);
-        jModel.setPlace(jPlace);
-
+        jsonModel.setPlace(jPlace);
         JExclusion jExclusion = new JExclusion(exclusion);
-        jModel.setExclusion(jExclusion);
-
+        jsonModel.setExclusion(jExclusion);
         JRecurrence jRecurrence = new JRecurrence();
         if (weekdays != null) {
             ArrayList<Integer> list = ReminderUtils.getRepeatArray(weekdays);
@@ -245,8 +242,7 @@ public class JParser {
         jRecurrence.setMonthday(day);
         jRecurrence.setRepeat(repeatCode * TimeCount.DAY);
         jRecurrence.setAfter(repMinute);
-        jModel.setRecurrence(jRecurrence);
-
+        jsonModel.setRecurrence(jRecurrence);
         if (jsonObject.has("shopping_list")) {
             ArrayList<JShopping> list = new ArrayList<>();
             JSONObject listObject = jsonObject.getJSONObject("shopping_list");
@@ -265,18 +261,17 @@ public class JParser {
                     arrayList.add(new ShoppingList(title, checked, uuId, status, time));
                 }
             }
-
             for (ShoppingList item : arrayList){
                 JShopping jShopping = new JShopping(item.getTitle(),
                         item.getIsChecked(), item.getUuId(), item.getTime(), item.getStatus());
                 list.add(jShopping);
             }
-            jModel.setShoppings(list);
+            jsonModel.setShoppings(list);
         }
-        return jModel;
+        return jsonModel;
     }
 
-    public String toJsonString(JModel model) {
+    public String toJsonString(JsonModel model) {
         setUuid(model.getUuId());
         setSummary(model.getSummary());
         setType(model.getType());
@@ -687,11 +682,9 @@ public class JParser {
             try {
                 ArrayList<JPlace> places = new ArrayList<>();
                 JSONArray array = jsonObject.getJSONArray(PLACES);
-                if (array.length() > 0) {
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject object = array.getJSONObject(i);
-                        places.add(new JPlace(object));
-                    }
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject object = array.getJSONObject(i);
+                    places.add(new JPlace(object));
                 }
                 return places;
             } catch (JSONException e) {

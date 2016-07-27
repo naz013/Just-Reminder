@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.databases;
+package com.cray.software.justreminder.reminder;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -27,8 +27,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.json.JParser;
-import com.cray.software.justreminder.json.JPlace;
+import com.cray.software.justreminder.reminder.json.JParser;
+import com.cray.software.justreminder.reminder.json.JPlace;
 import com.cray.software.justreminder.places.PlaceItem;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -105,7 +105,7 @@ public class NextBase {
         return this;
     }
 
-    public boolean isOpen () {
+    public boolean isOpen() {
         return db != null && db.isOpen();
     }
 
@@ -118,8 +118,6 @@ public class NextBase {
             dbHelper.close();
         }
     }
-
-    // Reminders database
 
     public long insertReminder(String summary, String type, long eventTime,
                                String uID, String categoryId, String json) {
@@ -241,14 +239,12 @@ public class NextBase {
 
     public Cursor getAllLocations() throws SQLException {
         openGuard();
-        return db.query(TABLE_NAME, null, TYPE + " LIKE ?",
-                new String[] {"%"+ Constants.TYPE_LOCATION + "%" }, null, null, null);
+        return db.query(TABLE_NAME, null, TYPE + " LIKE ?", new String[] {"%"+ Constants.TYPE_LOCATION + "%" }, null, null, null);
     }
 
     public List<PlaceItem> queryAllLocations() throws SQLException {
         openGuard();
-        Cursor c = db.query(TABLE_NAME, null, TYPE + " LIKE ?",
-                new String[] {"%"+ Constants.TYPE_LOCATION + "%" }, null, null, null);
+        Cursor c = db.query(TABLE_NAME, null, TYPE + " LIKE ?", new String[] {"%"+ Constants.TYPE_LOCATION + "%" }, null, null, null);
         List<PlaceItem> list = new ArrayList<>();
         int mRadius = SharedPrefs.getInstance(mContext).getInt(Prefs.LOCATION_RADIUS);
         if (c != null && c.moveToFirst()) {
@@ -277,22 +273,19 @@ public class NextBase {
 
     public Cursor getByKey(String key) throws SQLException {
         openGuard();
-        return db.query(TABLE_NAME, null, JSON + " LIKE ?",
-                new String[] {"%"+ key + "%" }, null, null, null);
+        return db.query(TABLE_NAME, null, JSON + " LIKE ?", new String[] {"%"+ key + "%" }, null, null, null);
     }
 
     public Cursor getReminders(String category) throws SQLException {
         openGuard();
         String order = DB_STATUS + " ASC, " + EVENT_TIME + " ASC";
-        return db.query(TABLE_NAME, null, CATEGORY  + "='" + category + "'"
-                + " AND "+ DB_LIST + "='" + 0 + "'", null, null, null, order);
+        return db.query(TABLE_NAME, null, CATEGORY  + "='" + category + "'" + " AND "+ DB_LIST + "='" + 0 + "'", null, null, null, order);
     }
 
     public Cursor getReminders(long to) throws SQLException {
         openGuard();
         String order = DB_STATUS + " ASC, " + EVENT_TIME + " ASC";
-        return db.query(TABLE_NAME, null, EVENT_TIME + "<='" + to + "'"
-                + " AND "+ DB_LIST + "='" + 0 + "'", null, null, null, order);
+        return db.query(TABLE_NAME, null, EVENT_TIME + "<='" + to + "'" + " AND "+ DB_LIST + "='" + 0 + "'", null, null, null, order);
     }
 
     public Cursor getReminders() throws SQLException {
@@ -316,14 +309,12 @@ public class NextBase {
 
     public Cursor getReminder(long rowId) throws SQLException {
         openGuard();
-        return db.query(TABLE_NAME, null, _ID  + "=" + rowId, null, null, null,
-                null, null);
+        return db.query(TABLE_NAME, null, _ID  + "=" + rowId, null, null, null, null, null);
     }
 
     public Cursor getReminder(String uuID) throws SQLException {
         openGuard();
-        return db.query(TABLE_NAME, null, UUID + "='" + uuID + "'", null, null, null,
-                null, null);
+        return db.query(TABLE_NAME, null, UUID + "='" + uuID + "'", null, null, null, null, null);
     }
 
     public boolean deleteReminder(long rowId) {
@@ -342,8 +333,7 @@ public class NextBase {
 
     public int getCountActive() throws SQLException {
         openGuard();
-        String countQuery = "SELECT " + _ID + " FROM " + TABLE_NAME +
-                " WHERE " + DB_STATUS + " = '" + 0 + "' AND " + DB_LIST +
+        String countQuery = "SELECT " + _ID + " FROM " + TABLE_NAME + " WHERE " + DB_STATUS + " = '" + 0 + "' AND " + DB_LIST +
                 " = '" + 0 + "'";
         Cursor cursor = db.rawQuery(countQuery, null);
         int cnt = cursor.getCount();

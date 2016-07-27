@@ -30,8 +30,8 @@ import android.widget.ImageButton;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.json.JExport;
-import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.reminder.json.JExport;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.utils.ViewUtils;
@@ -45,8 +45,8 @@ public class CallFragment extends BaseFragment implements
     private RepeatView.OnRepeatListener mRepeatCallbacks;
     private RoboEditText phoneNumber;
 
-    public static CallFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
-                                                  boolean hasStock, boolean hasTasks) {
+    public static CallFragment newInstance(JsonModel item, boolean isDark, boolean hasCalendar,
+                                           boolean hasStock, boolean hasTasks) {
         CallFragment fragment = new CallFragment();
         Bundle args = new Bundle();
         args.putBoolean(THEME, isDark);

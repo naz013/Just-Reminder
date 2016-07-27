@@ -32,8 +32,8 @@ import com.cray.software.justreminder.fragments.helpers.MapCallback;
 import com.cray.software.justreminder.fragments.helpers.PlacesMap;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.MapListener;
-import com.cray.software.justreminder.json.JModel;
-import com.cray.software.justreminder.json.JPlace;
+import com.cray.software.justreminder.reminder.json.JsonModel;
+import com.cray.software.justreminder.reminder.json.JPlace;
 
 import java.util.ArrayList;
 
@@ -50,8 +50,8 @@ public class PlacesFragment extends BaseFragment implements MapCallback {
         else return null;
     }
 
-    public static PlacesFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
-                                                  boolean hasStock, boolean hasTasks) {
+    public static PlacesFragment newInstance(JsonModel item, boolean isDark, boolean hasCalendar,
+                                             boolean hasStock, boolean hasTasks) {
         PlacesFragment fragment = new PlacesFragment();
         Bundle args = new Bundle();
         args.putBoolean(THEME, isDark);

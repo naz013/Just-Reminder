@@ -27,8 +27,8 @@ import android.widget.CompoundButton;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.json.JExport;
-import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.reminder.json.JExport;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.views.DateTimeView;
 import com.cray.software.justreminder.views.RepeatView;
@@ -38,8 +38,8 @@ public class DateFragment extends BaseFragment implements CompoundButton.OnCheck
     private DateTimeView.OnSelectListener mCallbacks;
     private RepeatView.OnRepeatListener mRepeatCallbacks;
 
-    public static DateFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
-                                                  boolean hasStock, boolean hasTasks) {
+    public static DateFragment newInstance(JsonModel item, boolean isDark, boolean hasCalendar,
+                                           boolean hasStock, boolean hasTasks) {
         DateFragment fragment = new DateFragment();
         Bundle args = new Bundle();
         args.putBoolean(THEME, isDark);

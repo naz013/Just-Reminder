@@ -20,7 +20,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.database.Cursor;
 
-import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.reminder.NextBase;
 
 public class TaskButlerService extends IntentService {
 

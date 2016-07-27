@@ -34,8 +34,8 @@ import android.widget.RelativeLayout;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.json.JExport;
-import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.reminder.json.JExport;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.roboto_views.RoboRadioButton;
@@ -57,8 +57,8 @@ public class ApplicationFragment extends BaseFragment implements
 
     private Activity mContext;
 
-    public static ApplicationFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
-                                           boolean hasStock, boolean hasTasks) {
+    public static ApplicationFragment newInstance(JsonModel item, boolean isDark, boolean hasCalendar,
+                                                  boolean hasStock, boolean hasTasks) {
         ApplicationFragment fragment = new ApplicationFragment();
         Bundle args = new Bundle();
         args.putBoolean(THEME, isDark);

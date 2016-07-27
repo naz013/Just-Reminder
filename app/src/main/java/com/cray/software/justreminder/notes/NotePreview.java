@@ -49,7 +49,7 @@ import com.cray.software.justreminder.activities.ImagePreview;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;

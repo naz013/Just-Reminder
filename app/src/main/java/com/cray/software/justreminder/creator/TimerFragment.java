@@ -27,10 +27,10 @@ import android.widget.ImageButton;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.json.JExclusion;
-import com.cray.software.justreminder.json.JExport;
-import com.cray.software.justreminder.json.JModel;
-import com.cray.software.justreminder.json.JRecurrence;
+import com.cray.software.justreminder.reminder.json.JExclusion;
+import com.cray.software.justreminder.reminder.json.JExport;
+import com.cray.software.justreminder.reminder.json.JsonModel;
+import com.cray.software.justreminder.reminder.json.JRecurrence;
 import com.cray.software.justreminder.roboto_views.RoboButton;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
@@ -76,8 +76,8 @@ public class TimerFragment extends BaseFragment implements
         }
     }
 
-    public static TimerFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
-                                                  boolean hasStock, boolean hasTasks) {
+    public static TimerFragment newInstance(JsonModel item, boolean isDark, boolean hasCalendar,
+                                            boolean hasStock, boolean hasTasks) {
         TimerFragment fragment = new TimerFragment();
         Bundle args = new Bundle();
         args.putBoolean(THEME, isDark);

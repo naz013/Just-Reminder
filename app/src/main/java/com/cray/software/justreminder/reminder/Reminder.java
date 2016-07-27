@@ -24,11 +24,9 @@ import android.view.View;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.async.BackupTask;
-import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.helpers.CalendarManager;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
@@ -36,10 +34,10 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.ActionCallbacks;
-import com.cray.software.justreminder.json.JExport;
-import com.cray.software.justreminder.json.JModel;
-import com.cray.software.justreminder.json.JParser;
-import com.cray.software.justreminder.json.JRecurrence;
+import com.cray.software.justreminder.reminder.json.JExport;
+import com.cray.software.justreminder.reminder.json.JsonModel;
+import com.cray.software.justreminder.reminder.json.JParser;
+import com.cray.software.justreminder.reminder.json.JRecurrence;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.DelayReceiver;
 import com.cray.software.justreminder.services.GeolocationService;
@@ -270,16 +268,16 @@ public class Reminder {
             eventTime = calendar.getTimeInMillis();
 
             JParser jParser = new JParser(json);
-            JModel jModel = jParser.parse();
-            JExport jExport = jModel.getExport();
+            JsonModel jsonModel = jParser.parse();
+            JExport jExport = jsonModel.getExport();
             int exp = jExport.getCalendar();
             int code = jExport.getgTasks();
-            jModel.setEventTime(eventTime);
-            jModel.setStartTime(eventTime);
+            jsonModel.setEventTime(eventTime);
+            jsonModel.setStartTime(eventTime);
 
             String uuID = SyncHelper.generateID();
-            jModel.setUuId(uuID);
-            jParser.toJsonString(jModel);
+            jsonModel.setUuId(uuID);
+            jParser.toJsonString(jsonModel);
             long idN = db.insertReminder(summary, type, eventTime, uuID, categoryId, jParser.toJsonString());
 
             if (type.contains(Constants.TYPE_LOCATION)){
@@ -293,13 +291,13 @@ public class Reminder {
                 }
             } else if (type.contains(Constants.TYPE_MONTHDAY) ||
                     type.contains(Constants.TYPE_WEEKDAY)) {
-                JRecurrence jRecurrence = jModel.getRecurrence();
+                JRecurrence jRecurrence = jsonModel.getRecurrence();
                 long nextTime = new TimeCount(context).generateDateTime(type,
                         jRecurrence.getMonthday(), time, 0,
                         jRecurrence.getWeekdays(), 0, 0);
                 db.updateReminderTime(idN, nextTime);
-                jModel.setEventTime(nextTime);
-                db.setJson(idN, new JParser().toJsonString(jModel));
+                jsonModel.setEventTime(nextTime);
+                db.setJson(idN, new JParser().toJsonString(jsonModel));
                 new AlarmReceiver().enableReminder(context, idN);
             } else {
                 boolean isCalendar = SharedPrefs.getInstance(context).getBoolean(Prefs.EXPORT_TO_CALENDAR);

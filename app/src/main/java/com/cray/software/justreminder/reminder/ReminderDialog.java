@@ -70,12 +70,12 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.Telephony;
 import com.cray.software.justreminder.interfaces.SendListener;
-import com.cray.software.justreminder.json.JAction;
-import com.cray.software.justreminder.json.JLed;
-import com.cray.software.justreminder.json.JMelody;
-import com.cray.software.justreminder.json.JModel;
-import com.cray.software.justreminder.json.JRecurrence;
-import com.cray.software.justreminder.json.JShopping;
+import com.cray.software.justreminder.reminder.json.JAction;
+import com.cray.software.justreminder.reminder.json.JLed;
+import com.cray.software.justreminder.reminder.json.JMelody;
+import com.cray.software.justreminder.reminder.json.JsonModel;
+import com.cray.software.justreminder.reminder.json.JRecurrence;
+import com.cray.software.justreminder.reminder.json.JShopping;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.DeliveredReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
@@ -127,7 +127,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     private int mStream;
 
     private Type reminder;
-    private JModel item;
+    private JsonModel item;
     private ArrayList<JShopping> shoppings;
 
     private ShoppingListDataProvider provider;

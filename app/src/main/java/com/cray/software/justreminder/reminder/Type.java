@@ -20,12 +20,11 @@ import android.database.Cursor;
 import android.support.v4.app.Fragment;
 
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.json.JExport;
-import com.cray.software.justreminder.json.JModel;
-import com.cray.software.justreminder.json.JParser;
+import com.cray.software.justreminder.reminder.json.JExport;
+import com.cray.software.justreminder.reminder.json.JsonModel;
+import com.cray.software.justreminder.reminder.json.JParser;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 
 public class Type {
@@ -52,7 +51,7 @@ public class Type {
      * @param id reminder identifier.
      * @return reminder object
      */
-    public JModel getItem(long id){
+    public JsonModel getItem(long id){
         NextBase db = new NextBase(mContext);
         db.open();
         Cursor c = db.getReminder(id);
@@ -94,7 +93,7 @@ public class Type {
      * @param uuId reminder unique identifier.
      * @return reminder object
      */
-    public JModel getItem(String uuId){
+    public JsonModel getItem(String uuId){
         NextBase db = new NextBase(mContext);
         db.open();
         Cursor c = db.getReminder(uuId);
@@ -138,7 +137,7 @@ public class Type {
      * @param item reminder object.
      * @return reminder identifier
      */
-    public long save(JModel item){
+    public long save(JsonModel item){
         NextBase db = new NextBase(mContext);
         db.open();
         JParser jParser = new JParser();
@@ -155,7 +154,7 @@ public class Type {
      * @param id reminder identifier.
      * @param item reminder object.
      */
-    public void save(long id, JModel item){
+    public void save(long id, JsonModel item){
         NextBase db = new NextBase(mContext);
         db.open();
         JParser jParser = new JParser();
@@ -171,17 +170,19 @@ public class Type {
      * @param item reminder object.
      * @param id reminder identifier.
      */
-    protected void exportToServices(JModel item, long id){
+    protected void exportToServices(JsonModel item, long id){
         long due = item.getEventTime();
         if (due > 0) {
             boolean stock = SharedPrefs.getInstance(mContext).getBoolean(Prefs.EXPORT_TO_STOCK);
             boolean calendar = SharedPrefs.getInstance(mContext).getBoolean(Prefs.EXPORT_TO_CALENDAR);
             JExport jExport = item.getExport();
             if (jExport != null) {
-                if (jExport.getCalendar() == 1)
+                if (jExport.getCalendar() == 1) {
                     ReminderUtils.exportToCalendar(mContext, item.getSummary(), due, id, calendar, stock);
-                if (jExport.getgTasks() == 1)
+                }
+                if (jExport.getgTasks() == 1) {
                     ReminderUtils.exportToTasks(mContext, item.getSummary(), due, id);
+                }
             }
         }
     }

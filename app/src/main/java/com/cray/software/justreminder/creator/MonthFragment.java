@@ -33,8 +33,8 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.ActionCallbacks;
-import com.cray.software.justreminder.json.JExport;
-import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.reminder.json.JExport;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.roboto_views.RoboRadioButton;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
@@ -78,8 +78,8 @@ public class MonthFragment extends BaseFragment implements
     public View.OnClickListener timeClick = v -> new TimePickerDialog(getActivity(), MonthFragment.this, myHour, myMinute,
             SharedPrefs.getInstance(getActivity()).getBoolean(Prefs.IS_24_TIME_FORMAT)).show();
 
-    public static MonthFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
-                                                  boolean hasStock, boolean hasTasks) {
+    public static MonthFragment newInstance(JsonModel item, boolean isDark, boolean hasCalendar,
+                                            boolean hasStock, boolean hasTasks) {
         MonthFragment fragment = new MonthFragment();
         Bundle args = new Bundle();
         args.putBoolean(THEME, isDark);

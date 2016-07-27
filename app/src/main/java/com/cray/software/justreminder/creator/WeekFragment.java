@@ -32,8 +32,8 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.json.JExport;
-import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.reminder.json.JExport;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.IntervalUtil;
@@ -75,8 +75,8 @@ public class WeekFragment extends BaseFragment implements CompoundButton.OnCheck
     public View.OnClickListener timeClick = v -> new TimePickerDialog(getActivity(), WeekFragment.this, myHour, myMinute,
             SharedPrefs.getInstance(getActivity()).getBoolean(Prefs.IS_24_TIME_FORMAT)).show();
 
-    public static WeekFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
-                                                  boolean hasStock, boolean hasTasks) {
+    public static WeekFragment newInstance(JsonModel item, boolean isDark, boolean hasCalendar,
+                                           boolean hasStock, boolean hasTasks) {
         WeekFragment fragment = new WeekFragment();
         Bundle args = new Bundle();
         args.putBoolean(THEME, isDark);

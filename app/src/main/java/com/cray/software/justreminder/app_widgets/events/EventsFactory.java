@@ -32,16 +32,16 @@ import com.cray.software.justreminder.birthdays.BirthdayHelper;
 import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.datas.models.CalendarModel;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.Recurrence;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.json.JModel;
-import com.cray.software.justreminder.json.JParser;
-import com.cray.software.justreminder.json.JPlace;
+import com.cray.software.justreminder.reminder.json.JsonModel;
+import com.cray.software.justreminder.reminder.json.JParser;
+import com.cray.software.justreminder.reminder.json.JPlace;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 
@@ -95,11 +95,11 @@ public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
                 long eventTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
                 long id = c.getLong(c.getColumnIndex(NextBase._ID));
 
-                JModel jModel = new JParser(json).parse();
-                JPlace jPlace = jModel.getPlace();
+                JsonModel jsonModel = new JParser(json).parse();
+                JPlace jPlace = jsonModel.getPlace();
 
-                ArrayList<Integer> weekdays = jModel.getRecurrence().getWeekdays();
-                String exclusion = jModel.getExclusion().toString();
+                ArrayList<Integer> weekdays = jsonModel.getRecurrence().getWeekdays();
+                String exclusion = jsonModel.getExclusion().toString();
 
                 String time = "";
                 String date = "";
@@ -121,7 +121,7 @@ public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
                         time = TimeUtil.getTime(calendar1.getTime(), is24);
                     } else if (mType.matches(Constants.TYPE_SHOPPING_LIST)) {
                         viewType = 2;
-                        map.put(id, new ShoppingListDataProvider(jModel.getShoppings(), false).getData());
+                        map.put(id, new ShoppingListDataProvider(jsonModel.getShoppings(), false).getData());
                     } else {
                         String[] dT = mCount.getNextDateTime(eventTime);
                         date = dT[0];
@@ -135,7 +135,7 @@ public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
                     }
                 }
 
-                data.add(new CalendarModel(summary, jModel.getAction().getTarget(),
+                data.add(new CalendarModel(summary, jsonModel.getAction().getTarget(),
                         id, time, date, eventTime, viewType));
             } while (c.moveToNext());
         }

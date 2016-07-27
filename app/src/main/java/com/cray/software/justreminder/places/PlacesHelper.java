@@ -3,7 +3,7 @@ package com.cray.software.justreminder.places;
 import android.content.Context;
 
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.reminder.NextBase;
 
 import java.util.List;
 

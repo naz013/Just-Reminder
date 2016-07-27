@@ -28,13 +28,13 @@ import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
-import com.cray.software.justreminder.json.JModel;
-import com.cray.software.justreminder.json.JParser;
-import com.cray.software.justreminder.json.JRecurrence;
-import com.cray.software.justreminder.json.JShopping;
+import com.cray.software.justreminder.reminder.json.JsonModel;
+import com.cray.software.justreminder.reminder.json.JParser;
+import com.cray.software.justreminder.reminder.json.JRecurrence;
+import com.cray.software.justreminder.reminder.json.JShopping;
 import com.cray.software.justreminder.notes.NoteHelper;
 import com.cray.software.justreminder.notes.NoteItem;
 import com.cray.software.justreminder.reminder.DateType;
@@ -519,25 +519,25 @@ public class SyncHelper {
      * @throws JSONException
      */
     private void reminderObject(JSONObject jsonObj) throws JSONException {
-        JModel jModel = new JParser(jsonObj).parse();
-        if (jModel == null) return;
-        String uuID = jModel.getUuId();
-        String type = jModel.getType();
+        JsonModel jsonModel = new JParser(jsonObj).parse();
+        if (jsonModel == null) return;
+        String uuID = jsonModel.getUuId();
+        String type = jsonModel.getType();
         if (uuID != null && !Reminder.isUuId(mContext, uuID) && type != null) {
             if (type.contains(Constants.TYPE_LOCATION)){
-                new LocationType(mContext, type).save(jModel);
+                new LocationType(mContext, type).save(jsonModel);
             } else {
                 if (type.startsWith(Constants.TYPE_WEEKDAY) ||
                         type.startsWith(Constants.TYPE_MONTHDAY)) {
-                    JRecurrence jr = jModel.getRecurrence();
+                    JRecurrence jr = jsonModel.getRecurrence();
                     long time = new TimeCount(mContext).generateDateTime(type, jr.getMonthday(),
-                            jModel.getEventTime(), jr.getRepeat(), jr.getWeekdays(), 0, 0);
-                    jModel.setEventTime(time);
-                    jModel.setStartTime(time);
-                    new DateType(mContext, type).save(jModel);
+                            jsonModel.getEventTime(), jr.getRepeat(), jr.getWeekdays(), 0, 0);
+                    jsonModel.setEventTime(time);
+                    jsonModel.setStartTime(time);
+                    new DateType(mContext, type).save(jsonModel);
                 } else {
-                    if (jModel.getEventTime() > System.currentTimeMillis()) {
-                        new DateType(mContext, type).save(jModel);
+                    if (jsonModel.getEventTime() > System.currentTimeMillis()) {
+                        new DateType(mContext, type).save(jsonModel);
                     }
                 }
             }
@@ -549,9 +549,9 @@ public class SyncHelper {
                 if (c != null && c.moveToFirst()) {
                     String json = c.getString(c.getColumnIndex(NextBase.JSON));
                     JParser parser = new JParser(json);
-                    JModel model = parser.parse();
+                    JsonModel model = parser.parse();
                     ArrayList<String> uuIds = parser.getShoppingKeys();
-                    List<JShopping> shoppings = jModel.getShoppings();
+                    List<JShopping> shoppings = jsonModel.getShoppings();
                     if (shoppings != null) {
                         for (JShopping item : shoppings) {
                             if (!uuIds.contains(item.getUuId())) {
@@ -559,9 +559,9 @@ public class SyncHelper {
                             }
                         }
                     }
-                    new DateType(mContext, type).save(jModel);
+                    new DateType(mContext, type).save(jsonModel);
                 } else {
-                    new DateType(mContext, type).save(jModel);
+                    new DateType(mContext, type).save(jsonModel);
                 }
                 if (c != null) c.close();
                 db.close();

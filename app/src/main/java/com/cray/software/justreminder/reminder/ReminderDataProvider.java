@@ -24,14 +24,13 @@ import com.cray.software.justreminder.birthdays.BirthdayHelper;
 import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.json.JModel;
-import com.cray.software.justreminder.json.JParser;
-import com.cray.software.justreminder.json.JRecurrence;
+import com.cray.software.justreminder.reminder.json.JsonModel;
+import com.cray.software.justreminder.reminder.json.JParser;
+import com.cray.software.justreminder.reminder.json.JRecurrence;
 import com.hexrain.flextcal.Events;
 import com.hexrain.flextcal.FlextHelper;
 
@@ -140,8 +139,8 @@ public class ReminderDataProvider {
                 if (map.containsKey(categoryId)) catColor = map.get(categoryId);
 
                 //Log.d(Constants.LOG_TAG, "Json ---- " + json);
-                JModel jModel = new JParser(json).parse();
-                data.add(new ReminderModel(id, jModel, catColor, archived, completed, viewType));
+                JsonModel jsonModel = new JParser(json).parse();
+                data.add(new ReminderModel(id, jsonModel, catColor, archived, completed, viewType));
             } while (c.moveToNext());
         }
         if (c != null) c.close();
@@ -177,11 +176,11 @@ public class ReminderDataProvider {
                     String summary = c.getString(c.getColumnIndex(NextBase.SUMMARY));
                     long eventTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
                     if (!mType.contains(Constants.TYPE_LOCATION)) {
-                        JModel jModel = new JParser(json).parse();
-                        JRecurrence jRecurrence = jModel.getRecurrence();
+                        JsonModel jsonModel = new JParser(json).parse();
+                        JRecurrence jRecurrence = jsonModel.getRecurrence();
                         long repeatTime = jRecurrence.getRepeat();
                         long limit = jRecurrence.getLimit();
-                        long count = jModel.getCount();
+                        long count = jsonModel.getCount();
                         int myDay = jRecurrence.getMonthday();
                         boolean isLimited = limit > 0;
 
@@ -299,8 +298,8 @@ public class ReminderDataProvider {
             int catColor = 0;
             if (map.containsKey(categoryId)) catColor = map.get(categoryId);
 
-            JModel jModel = new JParser(json).parse();
-            item = new ReminderModel(id, jModel, catColor, archived, completed, viewType);
+            JsonModel jsonModel = new JParser(json).parse();
+            item = new ReminderModel(id, jsonModel, catColor, archived, completed, viewType);
         }
         if (c != null) c.close();
         db.close();

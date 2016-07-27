@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.json;
+package com.cray.software.justreminder.reminder.json;
 
 import org.json.JSONException;
 import org.json.JSONObject;

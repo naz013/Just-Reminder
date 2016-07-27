@@ -38,7 +38,7 @@ import com.cray.software.justreminder.birthdays.BirthdayHelper;
 import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.notes.NotesManager;
 import com.cray.software.justreminder.reminder.ReminderDialog;

@@ -26,10 +26,10 @@ import android.util.Log;
 
 import com.cray.software.justreminder.reminder.ReminderDialog;
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.enums.NewMethod;
 import com.cray.software.justreminder.helpers.Recurrence;
-import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
 import com.cray.software.justreminder.reminder.Type;
@@ -46,7 +46,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         long id = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
         Intent service = new Intent(context, AlarmReceiver.class);
         context.startService(service);
-        JModel reminder = new Type(context).getItem(id);
+        JsonModel reminder = new Type(context).getItem(id);
         String exclusion = reminder.getExclusion().toString();
         String type = reminder.getType();
         if (type.matches(Constants.TYPE_TIME)) {

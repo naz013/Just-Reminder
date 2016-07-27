@@ -23,7 +23,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
-import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.utils.SuperUtil;
 

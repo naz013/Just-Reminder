@@ -22,7 +22,7 @@ import android.view.ViewGroup;
 import android.widget.SeekBar;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.async.DisableAsync;
+import com.cray.software.justreminder.reminder.DisableAsync;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;

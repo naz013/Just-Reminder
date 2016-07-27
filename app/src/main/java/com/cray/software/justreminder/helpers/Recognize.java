@@ -37,10 +37,10 @@ import com.cray.software.justreminder.dialogs.VoiceHelp;
 import com.cray.software.justreminder.dialogs.VoiceResult;
 import com.cray.software.justreminder.feedback.SendReportActivity;
 import com.cray.software.justreminder.groups.GroupHelper;
-import com.cray.software.justreminder.json.JAction;
-import com.cray.software.justreminder.json.JExport;
-import com.cray.software.justreminder.json.JModel;
-import com.cray.software.justreminder.json.JRecurrence;
+import com.cray.software.justreminder.reminder.json.JAction;
+import com.cray.software.justreminder.reminder.json.JExport;
+import com.cray.software.justreminder.reminder.json.JsonModel;
+import com.cray.software.justreminder.reminder.json.JRecurrence;
 import com.cray.software.justreminder.notes.NoteHelper;
 import com.cray.software.justreminder.notes.NoteItem;
 import com.cray.software.justreminder.reminder.AddReminderActivity;
@@ -139,9 +139,9 @@ public class Recognize {
         Log.d("----RECORD_TIME-----", TimeUtil.getFullDateTime(System.currentTimeMillis(), true));
         Log.d("----EVENT_TIME-----", TimeUtil.getFullDateTime(startTime, true));
 
-        JModel jModel = new JModel(summary, type, categoryId,
+        JsonModel jsonModel = new JsonModel(summary, type, categoryId,
                 SyncHelper.generateID(), startTime, startTime, jRecurrence, jAction, jExport);
-        long remId = new DateType(mContext, Constants.TYPE_REMINDER).save(jModel);
+        long remId = new DateType(mContext, Constants.TYPE_REMINDER).save(jsonModel);
         if (isCalendar || isStock) {
             ReminderUtils.exportToCalendar(mContext, summary, startTime, remId, isCalendar, isStock);
         }
@@ -174,9 +174,9 @@ public class Recognize {
             long after = prefs.getInt(Prefs.QUICK_NOTE_REMINDER_TIME) * 1000 * 60;
             long due = calendar1.getTimeInMillis() + after;
             JRecurrence jRecurrence = new JRecurrence(0, 0, -1, null, after);
-            JModel jModel = new JModel(note, Constants.TYPE_REMINDER, categoryId,
+            JsonModel jsonModel = new JsonModel(note, Constants.TYPE_REMINDER, categoryId,
                     SyncHelper.generateID(), due, due, jRecurrence, null, null);
-            remId = new DateType(mContext, Constants.TYPE_REMINDER).save(jModel);
+            remId = new DateType(mContext, Constants.TYPE_REMINDER).save(jsonModel);
         }
         item.setLinkId(remId);
         NoteHelper.getInstance(mContext).saveNote(item);

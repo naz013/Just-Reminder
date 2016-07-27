@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.json;
+package com.cray.software.justreminder.reminder.json;
 
 import java.util.ArrayList;
 
-public class JModel {
+public class JsonModel {
 
     private ArrayList<JPlace> places;
     private ArrayList<JShopping> shoppings;
@@ -43,12 +43,12 @@ public class JModel {
     private int awake;
     private int unlock;
 
-    public JModel() {
+    public JsonModel() {
     }
 
-    public JModel(String summary, String type, String category, String uuId,
-                  long eventTime, long startTime, JRecurrence jRecurrence,
-                  JAction jAction, JExport jExport) {
+    public JsonModel(String summary, String type, String category, String uuId,
+                     long eventTime, long startTime, JRecurrence jRecurrence,
+                     JAction jAction, JExport jExport) {
         this.summary = summary;
         this.type = type;
         this.category = category;
@@ -73,13 +73,13 @@ public class JModel {
         this.shoppings = null;
     }
 
-    public JModel(String summary, String type, String category, String uuId,
-                  long eventTime, long startTime, long count, int vibrate,
-                  int notificationRepeat, int voice, int awake, int unlock,
-                  JExclusion jExclusion, JLed jLed, JMelody jMelody,
-                  JRecurrence jRecurrence, JAction jAction, JExport jExport,
-                  JPlace jPlace, ArrayList<String> tags, ArrayList<JPlace> places,
-                  ArrayList<JShopping> shoppings) {
+    public JsonModel(String summary, String type, String category, String uuId,
+                     long eventTime, long startTime, long count, int vibrate,
+                     int notificationRepeat, int voice, int awake, int unlock,
+                     JExclusion jExclusion, JLed jLed, JMelody jMelody,
+                     JRecurrence jRecurrence, JAction jAction, JExport jExport,
+                     JPlace jPlace, ArrayList<String> tags, ArrayList<JPlace> places,
+                     ArrayList<JShopping> shoppings) {
         this.summary = summary;
         this.type = type;
         this.category = category;

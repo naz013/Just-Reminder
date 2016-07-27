@@ -30,8 +30,8 @@ import android.widget.RadioGroup;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.json.JExport;
-import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.reminder.json.JExport;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.roboto_views.RoboRadioButton;
@@ -61,8 +61,8 @@ public class SkypeFragment extends BaseFragment implements
         return type;
     }
 
-    public static SkypeFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
-                                                  boolean hasStock, boolean hasTasks) {
+    public static SkypeFragment newInstance(JsonModel item, boolean isDark, boolean hasCalendar,
+                                            boolean hasStock, boolean hasTasks) {
         SkypeFragment fragment = new SkypeFragment();
         Bundle args = new Bundle();
         args.putBoolean(THEME, isDark);

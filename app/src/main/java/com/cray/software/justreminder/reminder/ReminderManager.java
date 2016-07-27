@@ -48,7 +48,6 @@ import android.widget.Spinner;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderApp;
-import com.cray.software.justreminder.async.DisableAsync;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.LED;
@@ -67,7 +66,6 @@ import com.cray.software.justreminder.creator.ShoppingFragment;
 import com.cray.software.justreminder.creator.SkypeFragment;
 import com.cray.software.justreminder.creator.TimerFragment;
 import com.cray.software.justreminder.creator.WeekFragment;
-import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.dialogs.ExtraPickerDialog;
 import com.cray.software.justreminder.dialogs.LedColor;
@@ -86,16 +84,16 @@ import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.ActionCallbacksExtended;
 import com.cray.software.justreminder.interfaces.MapListener;
-import com.cray.software.justreminder.json.JAction;
-import com.cray.software.justreminder.json.JExclusion;
-import com.cray.software.justreminder.json.JExport;
-import com.cray.software.justreminder.json.JLed;
-import com.cray.software.justreminder.json.JMelody;
-import com.cray.software.justreminder.json.JModel;
-import com.cray.software.justreminder.json.JParser;
-import com.cray.software.justreminder.json.JPlace;
-import com.cray.software.justreminder.json.JRecurrence;
-import com.cray.software.justreminder.json.JShopping;
+import com.cray.software.justreminder.reminder.json.JAction;
+import com.cray.software.justreminder.reminder.json.JExclusion;
+import com.cray.software.justreminder.reminder.json.JExport;
+import com.cray.software.justreminder.reminder.json.JLed;
+import com.cray.software.justreminder.reminder.json.JMelody;
+import com.cray.software.justreminder.reminder.json.JsonModel;
+import com.cray.software.justreminder.reminder.json.JParser;
+import com.cray.software.justreminder.reminder.json.JPlace;
+import com.cray.software.justreminder.reminder.json.JRecurrence;
+import com.cray.software.justreminder.reminder.json.JShopping;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
@@ -184,7 +182,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     private boolean hasTasks = false, isMessage, hasAction;
 
     private Type remControl = new Type(this);
-    private JModel item;
+    private JsonModel item;
     private BaseFragment baseFragment;
 
     private Handler handler = new Handler();
@@ -843,7 +841,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      * Save new or update current reminder.
      */
     private void save() {
-        JModel item = getData();
+        JsonModel item = getData();
         if (item == null) return;
         if (id != 0) remControl.save(id, item);
         else {
@@ -1027,7 +1025,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      * Create reminder object.
      * @return Reminder object
      */
-    private JModel getData() {
+    private JsonModel getData() {
         String type = getType();
         if (type == null) return null;
         ArrayList<JShopping> jShoppings = new ArrayList<>();
@@ -1212,7 +1210,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         Log.d("----RECORD_TIME-----", TimeUtil.getFullDateTime(System.currentTimeMillis(), true));
         Log.d("----EVENT_TIME-----", TimeUtil.getFullDateTime(startTime, true));
 
-        return new JModel(task, type, categoryId, uuId, startTime, startTime, 0, vibration,
+        return new JsonModel(task, type, categoryId, uuId, startTime, startTime, 0, vibration,
                 notificationRepeat, voice, wake, unlock, jExclusion, jLed, jMelody,
                 jRecurrence, jAction, jExport, jPlace, null, places, jShoppings);
     }

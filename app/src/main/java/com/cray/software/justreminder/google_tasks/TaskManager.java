@@ -23,13 +23,13 @@ import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
-import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.roboto_views.RoboEditText;
@@ -348,9 +348,9 @@ public class TaskManager extends AppCompatActivity {
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(myYear, myMonth, myDay, myHour, myMinute);
         long due = calendar.getTimeInMillis();
-        JModel jModel = new JModel(task, Constants.TYPE_REMINDER, categoryId,
+        JsonModel jsonModel = new JsonModel(task, Constants.TYPE_REMINDER, categoryId,
                 SyncHelper.generateID(), due, due, null, null, null);
-        return new DateType(TaskManager.this, Constants.TYPE_REMINDER).save(jModel);
+        return new DateType(TaskManager.this, Constants.TYPE_REMINDER).save(jsonModel);
     }
 
     private void deleteDialog() {

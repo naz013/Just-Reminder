@@ -45,8 +45,8 @@ import com.cray.software.justreminder.fragments.helpers.MapFragment;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.MapListener;
-import com.cray.software.justreminder.json.JModel;
-import com.cray.software.justreminder.json.JPlace;
+import com.cray.software.justreminder.reminder.json.JsonModel;
+import com.cray.software.justreminder.reminder.json.JPlace;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.roboto_views.RoboRadioButton;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
@@ -111,7 +111,7 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
         return isDelayed;
     }
 
-    public static OutLocationFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
+    public static OutLocationFragment newInstance(JsonModel item, boolean isDark, boolean hasCalendar,
                                                   boolean hasStock, boolean hasTasks) {
         OutLocationFragment fragment = new OutLocationFragment();
         Bundle args = new Bundle();

@@ -22,7 +22,7 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.IOHelper;

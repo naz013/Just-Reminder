@@ -35,7 +35,6 @@ import android.widget.LinearLayout;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;

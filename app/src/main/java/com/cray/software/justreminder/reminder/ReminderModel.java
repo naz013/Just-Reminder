@@ -16,12 +16,12 @@
 package com.cray.software.justreminder.reminder;
 
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.json.JAction;
-import com.cray.software.justreminder.json.JMelody;
-import com.cray.software.justreminder.json.JModel;
-import com.cray.software.justreminder.json.JPlace;
-import com.cray.software.justreminder.json.JRecurrence;
-import com.cray.software.justreminder.json.JShopping;
+import com.cray.software.justreminder.reminder.json.JAction;
+import com.cray.software.justreminder.reminder.json.JMelody;
+import com.cray.software.justreminder.reminder.json.JsonModel;
+import com.cray.software.justreminder.reminder.json.JPlace;
+import com.cray.software.justreminder.reminder.json.JRecurrence;
+import com.cray.software.justreminder.reminder.json.JShopping;
 
 import java.util.ArrayList;
 
@@ -34,7 +34,7 @@ public class ReminderModel {
     private ArrayList<Integer> weekdays;
     private ArrayList<JPlace> places;
 
-    public ReminderModel(long id, JModel jModel, int catColor, int archived, int completed,
+    public ReminderModel(long id, JsonModel jsonModel, int catColor, int archived, int completed,
                          int viewType) {
         this.id = id;
         this.catColor = catColor;
@@ -42,26 +42,26 @@ public class ReminderModel {
         this.completed = completed;
         this.viewType = viewType;
 
-        this.groupId = jModel.getCategory();
-        this.title = jModel.getSummary();
-        this.type = jModel.getType();
-        this.uuId = jModel.getUuId();
-        this.exclusion = jModel.getExclusion().toString();
-        this.due = jModel.getEventTime();
+        this.groupId = jsonModel.getCategory();
+        this.title = jsonModel.getSummary();
+        this.type = jsonModel.getType();
+        this.uuId = jsonModel.getUuId();
+        this.exclusion = jsonModel.getExclusion().toString();
+        this.due = jsonModel.getEventTime();
 
-        JMelody jMelody = jModel.getMelody();
+        JMelody jMelody = jsonModel.getMelody();
         this.melody = jMelody.getMelodyPath();
 
-        JAction jAction = jModel.getAction();
+        JAction jAction = jsonModel.getAction();
         this.number = jAction.getTarget();
 
-        JPlace jPlace = jModel.getPlace();
+        JPlace jPlace = jsonModel.getPlace();
         this.radius = jPlace.getRadius();
         this.place = new double[]{jPlace.getLatitude(), jPlace.getLongitude()};
         this.marker = jPlace.getMarker();
 
         if (type.matches(Constants.TYPE_PLACES)) {
-            places = jModel.getPlaces();
+            places = jsonModel.getPlaces();
             if (places != null && places.size() > 0) {
                 totalPlaces = places.size();
                 JPlace place = places.get(0);
@@ -71,11 +71,11 @@ public class ReminderModel {
             }
         }
 
-        JRecurrence jRecurrence = jModel.getRecurrence();
+        JRecurrence jRecurrence = jsonModel.getRecurrence();
         repeat = jRecurrence.getRepeat();
         weekdays = jRecurrence.getWeekdays();
 
-        this.shoppings = jModel.getShoppings();
+        this.shoppings = jsonModel.getShoppings();
     }
 
     public ArrayList<JPlace> getPlaces() {

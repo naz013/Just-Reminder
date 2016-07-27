@@ -46,8 +46,8 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.json.JModel;
-import com.cray.software.justreminder.json.JRecurrence;
+import com.cray.software.justreminder.reminder.json.JsonModel;
+import com.cray.software.justreminder.reminder.json.JRecurrence;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.roboto_views.RoboButton;
@@ -310,9 +310,9 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
                             if (dtStart >= currTime) {
                                 eventsCount += 1;
                                 JRecurrence jRecurrence = new JRecurrence(0, repeat, -1, null, 0);
-                                JModel jModel = new JModel(summary, Constants.TYPE_REMINDER, categoryId, uuID, dtStart,
+                                JsonModel jsonModel = new JsonModel(summary, Constants.TYPE_REMINDER, categoryId, uuID, dtStart,
                                         dtStart, jRecurrence, null, null);
-                                long id = new DateType(mContext, Constants.TYPE_REMINDER).save(jModel);
+                                long id = new DateType(mContext, Constants.TYPE_REMINDER).save(jsonModel);
                                 DB.addCalendarEvent(null, id, item.getId());
                             } else {
                                 if (repeat > 0) {
@@ -322,9 +322,9 @@ public class EventsImport extends AppCompatActivity implements View.OnClickListe
                                     } while (dtStart < currTime);
                                     eventsCount += 1;
                                     JRecurrence jRecurrence = new JRecurrence(0, repeat, -1, null, 0);
-                                    JModel jModel = new JModel(summary, Constants.TYPE_REMINDER, categoryId, uuID, dtStart,
+                                    JsonModel jsonModel = new JsonModel(summary, Constants.TYPE_REMINDER, categoryId, uuID, dtStart,
                                             dtStart, jRecurrence, null, null);
-                                    long id = new DateType(mContext, Constants.TYPE_REMINDER).save(jModel);
+                                    long id = new DateType(mContext, Constants.TYPE_REMINDER).save(jsonModel);
                                     DB.addCalendarEvent(null, id, item.getId());
                                 }
                             }

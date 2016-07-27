@@ -23,7 +23,7 @@ import android.os.AsyncTask;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.constants.FileConfig;
-import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.utils.MemoryUtil;
 

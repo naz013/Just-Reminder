@@ -23,7 +23,7 @@ import android.os.AsyncTask;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.cloud.GTasksHelper;
-import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.google_tasks.TaskItem;
 import com.cray.software.justreminder.google_tasks.TaskListItem;
 import com.cray.software.justreminder.google_tasks.TasksHelper;

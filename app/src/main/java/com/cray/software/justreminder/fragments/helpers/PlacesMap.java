@@ -54,7 +54,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.ExecutionListener;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.interfaces.SimpleListener;
-import com.cray.software.justreminder.json.JPlace;
+import com.cray.software.justreminder.reminder.json.JPlace;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.roboto_views.RoboTextView;

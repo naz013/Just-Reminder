@@ -30,8 +30,8 @@ import android.widget.ImageButton;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.json.JExport;
-import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.reminder.json.JExport;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.utils.ViewUtils;
@@ -46,8 +46,8 @@ public class MessageFragment extends BaseFragment implements
 
     private RoboEditText phoneNumber;
 
-    public static MessageFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
-                                                  boolean hasStock, boolean hasTasks) {
+    public static MessageFragment newInstance(JsonModel item, boolean isDark, boolean hasCalendar,
+                                              boolean hasStock, boolean hasTasks) {
         MessageFragment fragment = new MessageFragment();
         Bundle args = new Bundle();
         args.putBoolean(THEME, isDark);

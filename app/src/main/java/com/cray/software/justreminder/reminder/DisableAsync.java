@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.async;
+package com.cray.software.justreminder.reminder;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +22,6 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.databases.NextBase;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.services.GeolocationService;
 import com.cray.software.justreminder.utils.LocationUtil;

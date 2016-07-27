@@ -22,7 +22,7 @@ import android.database.Cursor;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.datas.models.ShoppingList;
-import com.cray.software.justreminder.json.JShopping;
+import com.cray.software.justreminder.reminder.json.JShopping;
 
 import java.util.ArrayList;
 

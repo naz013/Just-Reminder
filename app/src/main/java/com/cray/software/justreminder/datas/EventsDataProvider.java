@@ -24,15 +24,15 @@ import com.cray.software.justreminder.birthdays.BirthdayHelper;
 import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.databases.NextBase;
+import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.datas.models.EventsItem;
 import com.cray.software.justreminder.enums.EventType;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.json.JModel;
-import com.cray.software.justreminder.json.JParser;
-import com.cray.software.justreminder.json.JRecurrence;
+import com.cray.software.justreminder.reminder.json.JsonModel;
+import com.cray.software.justreminder.reminder.json.JParser;
+import com.cray.software.justreminder.reminder.json.JRecurrence;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -156,14 +156,14 @@ public class EventsDataProvider {
                 if (map.containsKey(category)) color = map.get(category);
 
                 if (!mType.contains(Constants.TYPE_LOCATION)) {
-                    JModel jModel = new JParser(json).parse();
-                    JRecurrence jRecurrence = jModel.getRecurrence();
+                    JsonModel jsonModel = new JParser(json).parse();
+                    JRecurrence jRecurrence = jsonModel.getRecurrence();
                     long repeatTime = jRecurrence.getRepeat();
                     long limit = jRecurrence.getLimit();
-                    long count = jModel.getCount();
+                    long count = jsonModel.getCount();
                     int myDay = jRecurrence.getMonthday();
                     boolean isLimited = limit > 0;
-                    String number = jModel.getAction().getTarget();
+                    String number = jsonModel.getAction().getTarget();
 
                     Calendar calendar1 = Calendar.getInstance();
                     calendar1.setTimeInMillis(eventTime);

@@ -27,7 +27,7 @@ import com.cray.software.justreminder.file_explorer.FileExploreActivity;
 import com.cray.software.justreminder.fragments.helpers.MapFragment;
 import com.cray.software.justreminder.fragments.helpers.PlacesMap;
 import com.cray.software.justreminder.helpers.Permissions;
-import com.cray.software.justreminder.json.JModel;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.reminder.ReminderManager;
 import com.cray.software.justreminder.utils.SuperUtil;
 
@@ -44,7 +44,7 @@ public class BaseFragment extends Fragment {
     protected PlacesMap placesMap;
     protected MapFragment mapFragment;
 
-    protected JModel item;
+    protected JsonModel item;
     protected boolean isCalendar;
     protected boolean isTasks;
     protected String number;
@@ -114,7 +114,7 @@ public class BaseFragment extends Fragment {
         return filePath;
     }
 
-    public JModel getItem() {
+    public JsonModel getItem() {
         return item;
     }
 
@@ -133,7 +133,7 @@ public class BaseFragment extends Fragment {
     public BaseFragment() {
     }
 
-    public void setItem(JModel item) {
+    public void setItem(JsonModel item) {
         this.item = item;
     }
 

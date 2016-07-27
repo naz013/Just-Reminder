@@ -16,7 +16,7 @@
 
 package com.cray.software.justreminder.helpers;
 
-import com.cray.software.justreminder.json.JExclusion;
+import com.cray.software.justreminder.reminder.json.JExclusion;
 import com.cray.software.justreminder.utils.TimeUtil;
 
 import java.util.Calendar;

@@ -43,8 +43,8 @@ import com.cray.software.justreminder.fragments.helpers.MapCallback;
 import com.cray.software.justreminder.fragments.helpers.MapFragment;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.MapListener;
-import com.cray.software.justreminder.json.JModel;
-import com.cray.software.justreminder.json.JPlace;
+import com.cray.software.justreminder.reminder.json.JsonModel;
+import com.cray.software.justreminder.reminder.json.JPlace;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.ActionView;
@@ -101,8 +101,8 @@ public class LocationFragment extends BaseFragment implements GeocoderTask.Geoco
         return isDelayed;
     }
 
-    public static LocationFragment newInstance(JModel item, boolean isDark, boolean hasCalendar,
-                                                  boolean hasStock, boolean hasTasks) {
+    public static LocationFragment newInstance(JsonModel item, boolean isDark, boolean hasCalendar,
+                                               boolean hasStock, boolean hasTasks) {
         LocationFragment fragment = new LocationFragment();
         Bundle args = new Bundle();
         args.putBoolean(THEME, isDark);

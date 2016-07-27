@@ -21,8 +21,8 @@ import android.util.Log;
 
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.interfaces.ExecutionListener;
-import com.cray.software.justreminder.json.JPlaceParser;
-import com.cray.software.justreminder.json.RequestBuilder;
+import com.cray.software.justreminder.reminder.json.JPlaceParser;
+import com.cray.software.justreminder.reminder.json.RequestBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
