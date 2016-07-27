@@ -116,8 +116,6 @@ public class DataBase {
                     ");";
 
     public class DBHelper extends SQLiteOpenHelper {
-
-
         public DBHelper(Context context) {
             super(context, DB_NAME, null, DB_VERSION);
         }
@@ -198,7 +196,7 @@ public class DataBase {
         return this;
     }
 
-    public boolean isOpen () {
+    public boolean isOpen() {
         return db != null && db.isOpen();
     }
 
@@ -238,14 +236,7 @@ public class DataBase {
         List<BirthdayItem> list = new ArrayList<>();
         if (c != null && c.moveToFirst()) {
             do {
-                String name = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_NAME));
-                String date = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_BIRTHDATE));
-                String number = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_NUMBER));
-                String uuID = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_UUID));
-                String shownYear = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_VAR));
-                int conId = c.getInt(c.getColumnIndex(Constants.Contacts.COLUMN_CONTACT_ID));
-                long id = c.getLong(c.getColumnIndex(Constants.Contacts.COLUMN_ID));
-                list.add(new BirthdayItem(id, name, date, number, uuID, shownYear, conId, day, month));
+                list.add(birthdayFromCursor(c));
             } while (c.moveToNext());
         }
         if (c != null) c.close();
@@ -258,16 +249,7 @@ public class DataBase {
                 "=" + rowId, null, null, null, null, null);
         BirthdayItem item = null;
         if (c != null && c.moveToFirst()) {
-            String name = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_NAME));
-            String date = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_BIRTHDATE));
-            String number = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_NUMBER));
-            String uuID = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_UUID));
-            String shownYear = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_VAR));
-            int conId = c.getInt(c.getColumnIndex(Constants.Contacts.COLUMN_CONTACT_ID));
-            int day = c.getInt(c.getColumnIndex(Constants.Contacts.COLUMN_DAY));
-            int month = c.getInt(c.getColumnIndex(Constants.Contacts.COLUMN_MONTH));
-            long id = c.getLong(c.getColumnIndex(Constants.Contacts.COLUMN_ID));
-            item = new BirthdayItem(id, name, date, number, uuID, shownYear, conId, day, month);
+            item = birthdayFromCursor(c);
         }
         if (c != null) c.close();
         return item;
@@ -279,20 +261,24 @@ public class DataBase {
         List<BirthdayItem> list = new ArrayList<>();
         if (c != null && c.moveToFirst()) {
             do {
-                String name = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_NAME));
-                String date = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_BIRTHDATE));
-                String number = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_NUMBER));
-                String uuID = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_UUID));
-                String shownYear = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_VAR));
-                int conId = c.getInt(c.getColumnIndex(Constants.Contacts.COLUMN_CONTACT_ID));
-                int day = c.getInt(c.getColumnIndex(Constants.Contacts.COLUMN_DAY));
-                int month = c.getInt(c.getColumnIndex(Constants.Contacts.COLUMN_MONTH));
-                long id = c.getLong(c.getColumnIndex(Constants.Contacts.COLUMN_ID));
-                list.add(new BirthdayItem(id, name, date, number, uuID, shownYear, conId, day, month));
+                list.add(birthdayFromCursor(c));
             } while (c.moveToNext());
         }
         if (c != null) c.close();
         return list;
+    }
+
+    private BirthdayItem birthdayFromCursor(Cursor c) {
+        String name = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_NAME));
+        String date = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_BIRTHDATE));
+        String number = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_NUMBER));
+        String uuID = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_UUID));
+        String shownYear = c.getString(c.getColumnIndex(Constants.Contacts.COLUMN_VAR));
+        int conId = c.getInt(c.getColumnIndex(Constants.Contacts.COLUMN_CONTACT_ID));
+        int day = c.getInt(c.getColumnIndex(Constants.Contacts.COLUMN_DAY));
+        int month = c.getInt(c.getColumnIndex(Constants.Contacts.COLUMN_MONTH));
+        long id = c.getLong(c.getColumnIndex(Constants.Contacts.COLUMN_ID));
+        return new BirthdayItem(id, name, date, number, uuID, shownYear, conId, day, month);
     }
 
     public long saveBirthday(BirthdayItem item) {
@@ -340,10 +326,7 @@ public class DataBase {
                         "='" + name + "'", null, null, null, null, null);
         PlaceItem item = null;
         if (c != null && c.moveToFirst()) {
-            long id = c.getLong(c.getColumnIndex(Constants.Location.COLUMN_ID));
-            double lat = c.getDouble(c.getColumnIndex(Constants.Location.COLUMN_LOCATION_LATITUDE));
-            double lng = c.getDouble(c.getColumnIndex(Constants.Location.COLUMN_LOCATION_LONGITUDE));
-            item = new PlaceItem(name, new LatLng(lat, lng), id);
+            item = placeFromCursor(c);
         }
         if (c != null) c.close();
         return item;
@@ -355,10 +338,7 @@ public class DataBase {
                         "=" + id, null, null, null, null, null);
         PlaceItem item = null;
         if (c != null && c.moveToFirst()) {
-            String name = c.getString(c.getColumnIndex(Constants.Location.COLUMN_LOCATION_NAME));
-            double lat = c.getDouble(c.getColumnIndex(Constants.Location.COLUMN_LOCATION_LATITUDE));
-            double lng = c.getDouble(c.getColumnIndex(Constants.Location.COLUMN_LOCATION_LONGITUDE));
-            item = new PlaceItem(name, new LatLng(lat, lng), id);
+            item = placeFromCursor(c);
         }
         if (c != null) c.close();
         return item;
@@ -370,15 +350,19 @@ public class DataBase {
         List<PlaceItem> list = new ArrayList<>();
         if (c != null && c.moveToFirst()) {
             do {
-                long id = c.getLong(c.getColumnIndex(Constants.Location.COLUMN_ID));
-                String name = c.getString(c.getColumnIndex(Constants.Location.COLUMN_LOCATION_NAME));
-                double lat = c.getDouble(c.getColumnIndex(Constants.Location.COLUMN_LOCATION_LATITUDE));
-                double lng = c.getDouble(c.getColumnIndex(Constants.Location.COLUMN_LOCATION_LONGITUDE));
-                list.add(new PlaceItem(name, new LatLng(lat, lng), id));
+                list.add(placeFromCursor(c));
             } while (c.moveToNext());
         }
         if (c != null) c.close();
         return list;
+    }
+
+    private PlaceItem placeFromCursor(Cursor c) {
+        long id = c.getLong(c.getColumnIndex(Constants.Location.COLUMN_ID));
+        String name = c.getString(c.getColumnIndex(Constants.Location.COLUMN_LOCATION_NAME));
+        double lat = c.getDouble(c.getColumnIndex(Constants.Location.COLUMN_LOCATION_LATITUDE));
+        double lng = c.getDouble(c.getColumnIndex(Constants.Location.COLUMN_LOCATION_LONGITUDE));
+        return new PlaceItem(name, new LatLng(lat, lng), id);
     }
 
     public long savePlace (PlaceItem placeItem) {
@@ -523,11 +507,7 @@ public class DataBase {
                 "=" + id, null, null, null, null, null);
         GroupItem groupItem = null;
         if (c != null && c.moveToFirst()) {
-            String text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-            String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-            int color = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
-            long date = c.getLong(c.getColumnIndex(Constants.COLUMN_DATE_TIME));
-            groupItem = new GroupItem(text, uuId, color, id, date);
+            groupItem = groupFromCursor(c);
         }
         if (c != null) c.close();
         return groupItem;
@@ -540,11 +520,7 @@ public class DataBase {
                         "='" + uuId + "'", null, null, null, null, null);
         GroupItem groupItem = null;
         if (c != null && c.moveToFirst()) {
-            String text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-            int color = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
-            long date = c.getLong(c.getColumnIndex(Constants.COLUMN_DATE_TIME));
-            long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-            groupItem = new GroupItem(text, uuId, color, id, date);
+            groupItem = groupFromCursor(c);
         }
         if (c != null) c.close();
         return groupItem;
@@ -556,16 +532,20 @@ public class DataBase {
         Cursor c = db.query(CATEGORIES_TABLE_NAME, null, null, null, null, null, null);
         if (c != null && c.moveToFirst()) {
             do {
-                String text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
-                String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
-                int color = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
-                long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                long date = c.getLong(c.getColumnIndex(Constants.COLUMN_DATE_TIME));
-                list.add(new GroupItem(text, uuId, color, id, date));
+                list.add(groupFromCursor(c));
             } while (c.moveToNext());
         }
         if (c != null) c.close();
         return list;
+    }
+
+    private GroupItem groupFromCursor(Cursor c) {
+        String text = c.getString(c.getColumnIndex(Constants.COLUMN_TEXT));
+        String uuId = c.getString(c.getColumnIndex(Constants.COLUMN_TECH_VAR));
+        int color = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
+        long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
+        long date = c.getLong(c.getColumnIndex(Constants.COLUMN_DATE_TIME));
+        return new GroupItem(text, uuId, color, id, date);
     }
 
     public boolean deleteGroup(long rowId) {

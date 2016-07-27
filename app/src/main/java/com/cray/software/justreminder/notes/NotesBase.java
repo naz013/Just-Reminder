@@ -156,19 +156,23 @@ public class NotesBase {
         List<NoteItem> list = new ArrayList<>();
         if (c != null && c.moveToFirst()) {
             do {
-                String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
-                int color  = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
-                int style  = c.getInt(c.getColumnIndex(Constants.COLUMN_FONT_STYLE));
-                String date = c.getString(c.getColumnIndex(Constants.COLUMN_DATE));
-                String uuID = c.getString(c.getColumnIndex(Constants.COLUMN_UUID));
-                byte[] image = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
-                long linkId = c.getLong(c.getColumnIndex(Constants.COLUMN_LINK_ID));
-                long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-                list.add(new NoteItem(note, uuID, date, color, style, image, id, linkId));
+                list.add(noteFromCursor(c));
             } while (c.moveToNext());
         }
         if (c != null) c.close();
         return list;
+    }
+
+    private NoteItem noteFromCursor(Cursor c) {
+        String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
+        int color  = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
+        int style  = c.getInt(c.getColumnIndex(Constants.COLUMN_FONT_STYLE));
+        String date = c.getString(c.getColumnIndex(Constants.COLUMN_DATE));
+        String uuID = c.getString(c.getColumnIndex(Constants.COLUMN_UUID));
+        byte[] image = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
+        long linkId = c.getLong(c.getColumnIndex(Constants.COLUMN_LINK_ID));
+        long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
+        return new NoteItem(note, uuID, date, color, style, image, id, linkId);
     }
 
     public NoteItem getNote(long id) throws SQLException {
@@ -176,14 +180,7 @@ public class NotesBase {
         Cursor c = db.query(NOTE_TABLE_NAME, null, Constants.COLUMN_ID  + "=" + id, null, null, null, null, null);
         NoteItem item = null;
         if (c != null && c.moveToFirst()) {
-            String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
-            int color  = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
-            int style  = c.getInt(c.getColumnIndex(Constants.COLUMN_FONT_STYLE));
-            String date = c.getString(c.getColumnIndex(Constants.COLUMN_DATE));
-            String uuID = c.getString(c.getColumnIndex(Constants.COLUMN_UUID));
-            byte[] image = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
-            long linkId = c.getLong(c.getColumnIndex(Constants.COLUMN_LINK_ID));
-            item = new NoteItem(note, uuID, date, color, style, image, id, linkId);
+            item = noteFromCursor(c);
         }
         if (c != null) c.close();
         return item;
@@ -194,14 +191,7 @@ public class NotesBase {
         Cursor c = db.query(NOTE_TABLE_NAME, null, Constants.COLUMN_LINK_ID  + "='" + remId + "'", null, null, null, null, null);
         NoteItem item = null;
         if (c != null && c.moveToFirst()) {
-            String note = c.getString(c.getColumnIndex(Constants.COLUMN_NOTE));
-            int color  = c.getInt(c.getColumnIndex(Constants.COLUMN_COLOR));
-            int style  = c.getInt(c.getColumnIndex(Constants.COLUMN_FONT_STYLE));
-            String date = c.getString(c.getColumnIndex(Constants.COLUMN_DATE));
-            String uuID = c.getString(c.getColumnIndex(Constants.COLUMN_UUID));
-            byte[] image = c.getBlob(c.getColumnIndex(Constants.COLUMN_IMAGE));
-            long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
-            item = new NoteItem(note, uuID, date, color, style, image, id, remId);
+            item = noteFromCursor(c);
         }
         if (c != null) c.close();
         return item;

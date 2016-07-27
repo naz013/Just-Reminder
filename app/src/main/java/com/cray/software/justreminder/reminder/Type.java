@@ -142,7 +142,7 @@ public class Type {
         db.open();
         JParser jParser = new JParser();
         jParser.toJsonString(item);
-        long id = db.insertReminder(item.getSummary(), item.getType(), item.getEventTime(), item.getUuId(),
+        long id = db.saveReminder(item.getSummary(), item.getType(), item.getEventTime(), item.getUuId(),
                 item.getCategory(), jParser.toJsonString());
         db.close();
         updateViews();

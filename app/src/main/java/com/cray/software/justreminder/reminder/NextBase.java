@@ -27,9 +27,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.places.PlaceItem;
 import com.cray.software.justreminder.reminder.json.JParser;
 import com.cray.software.justreminder.reminder.json.JPlace;
-import com.cray.software.justreminder.places.PlaceItem;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
@@ -119,80 +119,33 @@ public class NextBase {
         }
     }
 
-    public long insertReminder(String summary, String type, long eventTime,
-                               String uID, String categoryId, String json) {
+    public long saveReminder(ReminderItem item) {
         openGuard();
         ContentValues cv = new ContentValues();
-        cv.put(SUMMARY, summary);
-        cv.put(TYPE, type);
-        cv.put(EVENT_TIME, eventTime);
-        cv.put(UUID, uID);
-        cv.put(CATEGORY, categoryId);
-        cv.put(JSON, json);
-        cv.put(DB_LIST, 0);
-        cv.put(DB_STATUS, 0);
-        cv.put(REMINDER_STATUS, 0);
-        cv.put(NOTIFICATION_STATUS, 0);
-        cv.put(DELAY, 0);
-        return db.insert(TABLE_NAME, null, cv);
-    }
-
-    public boolean updateReminder(long rowId, String summary, String type, long eventTime,
-                                  String uID, String categoryId, String json) {
-        openGuard();
-        ContentValues cv = new ContentValues();
-        cv.put(SUMMARY, summary);
-        cv.put(TYPE, type);
-        cv.put(EVENT_TIME, eventTime);
-        cv.put(UUID, uID);
-        cv.put(CATEGORY, categoryId);
-        cv.put(JSON, json);
-        cv.put(DB_LIST, 0);
-        cv.put(DB_STATUS, 0);
-        cv.put(REMINDER_STATUS, 0);
-        cv.put(NOTIFICATION_STATUS, 0);
-        cv.put(DELAY, 0);
-        return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
-    }
-
-    public boolean updateReminderTime(long rowId, long eventTime) {
-        openGuard();
-        ContentValues cv = new ContentValues();
-        cv.put(EVENT_TIME, eventTime);
-        cv.put(DELAY, 0);
-        return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
-    }
-
-    public boolean updateReminderEventTime(long rowId, long eventTime) {
-        openGuard();
-        ContentValues cv = new ContentValues();
-        cv.put(EVENT_TIME, eventTime);
-        cv.put(DB_LIST, 0);
-        cv.put(DB_STATUS, 0);
-        cv.put(REMINDER_STATUS, 0);
-        cv.put(NOTIFICATION_STATUS, 0);
-        return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
+        cv.put(SUMMARY, item.getSummary());
+        cv.put(TYPE, item.getType());
+        cv.put(EVENT_TIME, item.getDateTime());
+        cv.put(UUID, item.getUuId());
+        cv.put(CATEGORY, item.getCategoryUuId());
+        cv.put(JSON, item.getJson());
+        cv.put(DB_LIST, item.getList());
+        cv.put(DB_STATUS, item.getStatus());
+        cv.put(REMINDER_STATUS, item.getReminder());
+        cv.put(NOTIFICATION_STATUS, item.getNotification());
+        cv.put(LOCATION_STATUS, item.getLocation());
+        cv.put(DELAY, item.getDelay());
+        cv.put(TAGS, item.getTags());
+        if (item.getId() == 0) {
+            return db.insert(TABLE_NAME, null, cv);
+        } else {
+            return db.update(TABLE_NAME, cv, _ID + "=" + item.getId(), null);
+        }
     }
 
     public boolean setGroup(long rowId, String group) {
         openGuard();
         ContentValues cv = new ContentValues();
         cv.put(CATEGORY, group);
-        return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
-    }
-
-    public boolean setJson(long rowId, String json) {
-        openGuard();
-        ContentValues cv = new ContentValues();
-        cv.put(JSON, json);
-        return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
-    }
-
-    public boolean updateCount(long rowId, String json) {
-        openGuard();
-        ContentValues cv = new ContentValues();
-        cv.put(JSON, json);
-        cv.put(DELAY, 0);
         return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
     }
 

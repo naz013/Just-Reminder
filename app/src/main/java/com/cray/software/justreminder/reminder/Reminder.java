@@ -278,7 +278,7 @@ public class Reminder {
             String uuID = SyncHelper.generateID();
             jsonModel.setUuId(uuID);
             jParser.toJsonString(jsonModel);
-            long idN = db.insertReminder(summary, type, eventTime, uuID, categoryId, jParser.toJsonString());
+            long idN = db.saveReminder(summary, type, eventTime, uuID, categoryId, jParser.toJsonString());
 
             if (type.contains(Constants.TYPE_LOCATION)){
                 if (eventTime > 0){

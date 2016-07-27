@@ -350,7 +350,7 @@ public class SplashScreen extends AppCompatActivity {
 
                 String json = parser.toJsonString();
 
-                long mId = nextBase.insertReminder(text, type, due, uuId, catId, json);
+                long mId = nextBase.saveReminder(text, type, due, uuId, catId, json);
                 db.deleteReminder(id);
 
                 receiver.enableReminder(SplashScreen.this, mId);

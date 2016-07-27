@@ -201,21 +201,25 @@ public class TasksDataBase {
         List<TaskListItem> list = new ArrayList<>();
         if (c != null && c.moveToFirst()) {
             do {
-                long id = c.getLong(c.getColumnIndex(COLUMN_ID));
-                long updated = c.getLong(c.getColumnIndex(COLUMN_UPDATED));
-                int def = c.getInt(c.getColumnIndex(COLUMN_DEFAULT));
-                int color = c.getInt(c.getColumnIndex(COLUMN_COLOR));
-                int sys = c.getInt(c.getColumnIndex(SYSTEM_DEFAULT));
-                String title = c.getString(c.getColumnIndex(COLUMN_TITLE));
-                String listId = c.getString(c.getColumnIndex(COLUMN_LIST_ID));
-                String eTag = c.getString(c.getColumnIndex(COLUMN_E_TAG));
-                String kind = c.getString(c.getColumnIndex(COLUMN_KIND));
-                String selfLink = c.getString(c.getColumnIndex(COLUMN_SELF_LINK));
-                list.add(new TaskListItem(title, listId, def, eTag, kind, selfLink, updated, color, id, sys));
+                list.add(taskListFromCursor(c));
             } while (c.moveToNext());
         }
         if (c != null) c.close();
         return list;
+    }
+
+    private TaskListItem taskListFromCursor(Cursor c) {
+        long id = c.getLong(c.getColumnIndex(COLUMN_ID));
+        long updated = c.getLong(c.getColumnIndex(COLUMN_UPDATED));
+        int def = c.getInt(c.getColumnIndex(COLUMN_DEFAULT));
+        int color = c.getInt(c.getColumnIndex(COLUMN_COLOR));
+        int sys = c.getInt(c.getColumnIndex(SYSTEM_DEFAULT));
+        String title = c.getString(c.getColumnIndex(COLUMN_TITLE));
+        String listId = c.getString(c.getColumnIndex(COLUMN_LIST_ID));
+        String eTag = c.getString(c.getColumnIndex(COLUMN_E_TAG));
+        String kind = c.getString(c.getColumnIndex(COLUMN_KIND));
+        String selfLink = c.getString(c.getColumnIndex(COLUMN_SELF_LINK));
+        return new TaskListItem(title, listId, def, eTag, kind, selfLink, updated, color, id, sys);
     }
 
     public TaskListItem getTasksList(long id) throws SQLException {
@@ -223,16 +227,7 @@ public class TasksDataBase {
         Cursor c = db.query(GOOGLE_TASKS_LISTS_TABLE_NAME, null, COLUMN_ID  + "=" + id, null, null, null, null, null);
         TaskListItem item = null;
         if (c != null && c.moveToFirst()) {
-            long updated = c.getLong(c.getColumnIndex(COLUMN_UPDATED));
-            int def = c.getInt(c.getColumnIndex(COLUMN_DEFAULT));
-            int color = c.getInt(c.getColumnIndex(COLUMN_COLOR));
-            int sys = c.getInt(c.getColumnIndex(SYSTEM_DEFAULT));
-            String title = c.getString(c.getColumnIndex(COLUMN_TITLE));
-            String listId = c.getString(c.getColumnIndex(COLUMN_LIST_ID));
-            String eTag = c.getString(c.getColumnIndex(COLUMN_E_TAG));
-            String kind = c.getString(c.getColumnIndex(COLUMN_KIND));
-            String selfLink = c.getString(c.getColumnIndex(COLUMN_SELF_LINK));
-            item = new TaskListItem(title, listId, def, eTag, kind, selfLink, updated, color, id, sys);
+            item = taskListFromCursor(c);
         }
         if (c != null) c.close();
         return item;
@@ -243,16 +238,7 @@ public class TasksDataBase {
         Cursor c = db.query(GOOGLE_TASKS_LISTS_TABLE_NAME, null, COLUMN_LIST_ID  + "='" + listId + "'", null, null, null, null, null);
         TaskListItem item = null;
         if (c != null && c.moveToFirst()) {
-            long id = c.getLong(c.getColumnIndex(COLUMN_ID));
-            long updated = c.getLong(c.getColumnIndex(COLUMN_UPDATED));
-            int def = c.getInt(c.getColumnIndex(COLUMN_DEFAULT));
-            int color = c.getInt(c.getColumnIndex(COLUMN_COLOR));
-            int sys = c.getInt(c.getColumnIndex(SYSTEM_DEFAULT));
-            String title = c.getString(c.getColumnIndex(COLUMN_TITLE));
-            String eTag = c.getString(c.getColumnIndex(COLUMN_E_TAG));
-            String kind = c.getString(c.getColumnIndex(COLUMN_KIND));
-            String selfLink = c.getString(c.getColumnIndex(COLUMN_SELF_LINK));
-            item = new TaskListItem(title, listId, def, eTag, kind, selfLink, updated, color, id, sys);
+            item = taskListFromCursor(c);
         }
         if (c != null) c.close();
         return item;
@@ -263,17 +249,7 @@ public class TasksDataBase {
         Cursor c = db.query(GOOGLE_TASKS_LISTS_TABLE_NAME, null, COLUMN_DEFAULT  + "='" + 1 + "'", null, null, null, null, null);
         TaskListItem item = null;
         if (c != null && c.moveToFirst()) {
-            long id = c.getLong(c.getColumnIndex(COLUMN_ID));
-            long updated = c.getLong(c.getColumnIndex(COLUMN_UPDATED));
-            int def = c.getInt(c.getColumnIndex(COLUMN_DEFAULT));
-            int color = c.getInt(c.getColumnIndex(COLUMN_COLOR));
-            int sys = c.getInt(c.getColumnIndex(SYSTEM_DEFAULT));
-            String title = c.getString(c.getColumnIndex(COLUMN_TITLE));
-            String listId = c.getString(c.getColumnIndex(COLUMN_LIST_ID));
-            String eTag = c.getString(c.getColumnIndex(COLUMN_E_TAG));
-            String kind = c.getString(c.getColumnIndex(COLUMN_KIND));
-            String selfLink = c.getString(c.getColumnIndex(COLUMN_SELF_LINK));
-            item = new TaskListItem(title, listId, def, eTag, kind, selfLink, updated, color, id, sys);
+            item = taskListFromCursor(c);
         }
         if (c != null) c.close();
         return item;
@@ -347,29 +323,33 @@ public class TasksDataBase {
         List<TaskItem> list = new ArrayList<>();
         if (c != null && c.moveToFirst()) {
             do {
-                long id = c.getLong(c.getColumnIndex(COLUMN_ID));
-                long updated = c.getLong(c.getColumnIndex(COLUMN_UPDATED));
-                long completed = c.getLong(c.getColumnIndex(COLUMN_COMPLETED));
-                long due = c.getLong(c.getColumnIndex(COLUMN_DUE));
-                long reminderId = c.getLong(c.getColumnIndex(COLUMN_REMINDER_ID));
-                int del = c.getInt(c.getColumnIndex(COLUMN_DELETED));
-                int hidden = c.getInt(c.getColumnIndex(COLUMN_HIDDEN));
-                String title = c.getString(c.getColumnIndex(COLUMN_TITLE));
-                String listId = c.getString(c.getColumnIndex(COLUMN_LIST_ID));
-                String taskId = c.getString(c.getColumnIndex(COLUMN_TASK_ID));
-                String eTag = c.getString(c.getColumnIndex(COLUMN_E_TAG));
-                String note = c.getString(c.getColumnIndex(COLUMN_NOTES));
-                String kind = c.getString(c.getColumnIndex(COLUMN_KIND));
-                String selfLink = c.getString(c.getColumnIndex(COLUMN_SELF_LINK));
-                String parent = c.getString(c.getColumnIndex(COLUMN_PARENT));
-                String position = c.getString(c.getColumnIndex(COLUMN_POSITION));
-                String status = c.getString(c.getColumnIndex(COLUMN_STATUS));
-                list.add(new TaskItem(title, taskId, completed, del, due, eTag, kind, note, parent,
-                        position, selfLink, updated, reminderId, listId, status, hidden, id));
+                list.add(taskFromCursor(c));
             } while (c.moveToNext());
         }
         if (c != null) c.close();
         return list;
+    }
+
+    private TaskItem taskFromCursor(Cursor c) {
+        long id = c.getLong(c.getColumnIndex(COLUMN_ID));
+        long updated = c.getLong(c.getColumnIndex(COLUMN_UPDATED));
+        long completed = c.getLong(c.getColumnIndex(COLUMN_COMPLETED));
+        long due = c.getLong(c.getColumnIndex(COLUMN_DUE));
+        long reminderId = c.getLong(c.getColumnIndex(COLUMN_REMINDER_ID));
+        int del = c.getInt(c.getColumnIndex(COLUMN_DELETED));
+        int hidden = c.getInt(c.getColumnIndex(COLUMN_HIDDEN));
+        String title = c.getString(c.getColumnIndex(COLUMN_TITLE));
+        String listId = c.getString(c.getColumnIndex(COLUMN_LIST_ID));
+        String taskId = c.getString(c.getColumnIndex(COLUMN_TASK_ID));
+        String eTag = c.getString(c.getColumnIndex(COLUMN_E_TAG));
+        String note = c.getString(c.getColumnIndex(COLUMN_NOTES));
+        String kind = c.getString(c.getColumnIndex(COLUMN_KIND));
+        String selfLink = c.getString(c.getColumnIndex(COLUMN_SELF_LINK));
+        String parent = c.getString(c.getColumnIndex(COLUMN_PARENT));
+        String position = c.getString(c.getColumnIndex(COLUMN_POSITION));
+        String status = c.getString(c.getColumnIndex(COLUMN_STATUS));
+        return new TaskItem(title, taskId, completed, del, due, eTag, kind, note, parent,
+                position, selfLink, updated, reminderId, listId, status, hidden, id);
     }
 
     public TaskItem getTask(long id) throws SQLException {
@@ -377,24 +357,7 @@ public class TasksDataBase {
         Cursor c = db.query(GOOGLE_TASKS_TABLE_NAME, null, COLUMN_ID  + "=" + id, null, null, null, null, null);
         TaskItem item = null;
         if (c != null && c.moveToFirst()) {
-            long updated = c.getLong(c.getColumnIndex(COLUMN_UPDATED));
-            long completed = c.getLong(c.getColumnIndex(COLUMN_COMPLETED));
-            long due = c.getLong(c.getColumnIndex(COLUMN_DUE));
-            long reminderId = c.getLong(c.getColumnIndex(COLUMN_REMINDER_ID));
-            int del = c.getInt(c.getColumnIndex(COLUMN_DELETED));
-            int hidden = c.getInt(c.getColumnIndex(COLUMN_HIDDEN));
-            String title = c.getString(c.getColumnIndex(COLUMN_TITLE));
-            String listId = c.getString(c.getColumnIndex(COLUMN_LIST_ID));
-            String taskId = c.getString(c.getColumnIndex(COLUMN_TASK_ID));
-            String eTag = c.getString(c.getColumnIndex(COLUMN_E_TAG));
-            String note = c.getString(c.getColumnIndex(COLUMN_NOTES));
-            String kind = c.getString(c.getColumnIndex(COLUMN_KIND));
-            String selfLink = c.getString(c.getColumnIndex(COLUMN_SELF_LINK));
-            String parent = c.getString(c.getColumnIndex(COLUMN_PARENT));
-            String position = c.getString(c.getColumnIndex(COLUMN_POSITION));
-            String status = c.getString(c.getColumnIndex(COLUMN_STATUS));
-            item = new TaskItem(title, taskId, completed, del, due, eTag, kind, note, parent,
-                    position, selfLink, updated, reminderId, listId, status, hidden, id);
+            item = taskFromCursor(c);
         }
         if (c != null) c.close();
         return item;
@@ -405,24 +368,7 @@ public class TasksDataBase {
         Cursor c = db.query(GOOGLE_TASKS_TABLE_NAME, null, COLUMN_TASK_ID  + "='" + taskId + "'", null, null, null, null, null);
         TaskItem item = null;
         if (c != null && c.moveToFirst()) {
-            long id = c.getLong(c.getColumnIndex(COLUMN_ID));
-            long updated = c.getLong(c.getColumnIndex(COLUMN_UPDATED));
-            long completed = c.getLong(c.getColumnIndex(COLUMN_COMPLETED));
-            long due = c.getLong(c.getColumnIndex(COLUMN_DUE));
-            long reminderId = c.getLong(c.getColumnIndex(COLUMN_REMINDER_ID));
-            int del = c.getInt(c.getColumnIndex(COLUMN_DELETED));
-            int hidden = c.getInt(c.getColumnIndex(COLUMN_HIDDEN));
-            String title = c.getString(c.getColumnIndex(COLUMN_TITLE));
-            String listId = c.getString(c.getColumnIndex(COLUMN_LIST_ID));
-            String eTag = c.getString(c.getColumnIndex(COLUMN_E_TAG));
-            String note = c.getString(c.getColumnIndex(COLUMN_NOTES));
-            String kind = c.getString(c.getColumnIndex(COLUMN_KIND));
-            String selfLink = c.getString(c.getColumnIndex(COLUMN_SELF_LINK));
-            String parent = c.getString(c.getColumnIndex(COLUMN_PARENT));
-            String position = c.getString(c.getColumnIndex(COLUMN_POSITION));
-            String status = c.getString(c.getColumnIndex(COLUMN_STATUS));
-            item = new TaskItem(title, taskId, completed, del, due, eTag, kind, note, parent,
-                    position, selfLink, updated, reminderId, listId, status, hidden, id);
+            item = taskFromCursor(c);
         }
         if (c != null) c.close();
         return item;
@@ -433,24 +379,7 @@ public class TasksDataBase {
         Cursor c = db.query(GOOGLE_TASKS_TABLE_NAME, null, COLUMN_REMINDER_ID  + "='" + reminderId + "'", null, null, null, null, null);
         TaskItem item = null;
         if (c != null && c.moveToFirst()) {
-            long id = c.getLong(c.getColumnIndex(COLUMN_ID));
-            long updated = c.getLong(c.getColumnIndex(COLUMN_UPDATED));
-            long completed = c.getLong(c.getColumnIndex(COLUMN_COMPLETED));
-            long due = c.getLong(c.getColumnIndex(COLUMN_DUE));
-            int del = c.getInt(c.getColumnIndex(COLUMN_DELETED));
-            int hidden = c.getInt(c.getColumnIndex(COLUMN_HIDDEN));
-            String title = c.getString(c.getColumnIndex(COLUMN_TITLE));
-            String listId = c.getString(c.getColumnIndex(COLUMN_LIST_ID));
-            String taskId = c.getString(c.getColumnIndex(COLUMN_TASK_ID));
-            String eTag = c.getString(c.getColumnIndex(COLUMN_E_TAG));
-            String note = c.getString(c.getColumnIndex(COLUMN_NOTES));
-            String kind = c.getString(c.getColumnIndex(COLUMN_KIND));
-            String selfLink = c.getString(c.getColumnIndex(COLUMN_SELF_LINK));
-            String parent = c.getString(c.getColumnIndex(COLUMN_PARENT));
-            String position = c.getString(c.getColumnIndex(COLUMN_POSITION));
-            String status = c.getString(c.getColumnIndex(COLUMN_STATUS));
-            item = new TaskItem(title, taskId, completed, del, due, eTag, kind, note, parent,
-                    position, selfLink, updated, reminderId, listId, status, hidden, id);
+            item = taskFromCursor(c);
         }
         if (c != null) c.close();
         return item;
@@ -477,24 +406,7 @@ public class TasksDataBase {
         List<TaskItem> list = new ArrayList<>();
         if (c != null && c.moveToFirst()) {
             do {
-                long id = c.getLong(c.getColumnIndex(COLUMN_ID));
-                long updated = c.getLong(c.getColumnIndex(COLUMN_UPDATED));
-                long completed = c.getLong(c.getColumnIndex(COLUMN_COMPLETED));
-                long due = c.getLong(c.getColumnIndex(COLUMN_DUE));
-                long reminderId = c.getLong(c.getColumnIndex(COLUMN_REMINDER_ID));
-                int del = c.getInt(c.getColumnIndex(COLUMN_DELETED));
-                int hidden = c.getInt(c.getColumnIndex(COLUMN_HIDDEN));
-                String title = c.getString(c.getColumnIndex(COLUMN_TITLE));
-                String taskId = c.getString(c.getColumnIndex(COLUMN_TASK_ID));
-                String eTag = c.getString(c.getColumnIndex(COLUMN_E_TAG));
-                String note = c.getString(c.getColumnIndex(COLUMN_NOTES));
-                String kind = c.getString(c.getColumnIndex(COLUMN_KIND));
-                String selfLink = c.getString(c.getColumnIndex(COLUMN_SELF_LINK));
-                String parent = c.getString(c.getColumnIndex(COLUMN_PARENT));
-                String position = c.getString(c.getColumnIndex(COLUMN_POSITION));
-                String status = c.getString(c.getColumnIndex(COLUMN_STATUS));
-                list.add(new TaskItem(title, taskId, completed, del, due, eTag, kind, note, parent,
-                        position, selfLink, updated, reminderId, listId, status, hidden, id));
+                list.add(taskFromCursor(c));
             } while (c.moveToNext());
         }
         if (c != null) c.close();
@@ -508,24 +420,7 @@ public class TasksDataBase {
         List<TaskItem> list = new ArrayList<>();
         if (c != null && c.moveToFirst()) {
             do {
-                long id = c.getLong(c.getColumnIndex(COLUMN_ID));
-                long updated = c.getLong(c.getColumnIndex(COLUMN_UPDATED));
-                long completed = c.getLong(c.getColumnIndex(COLUMN_COMPLETED));
-                long due = c.getLong(c.getColumnIndex(COLUMN_DUE));
-                long reminderId = c.getLong(c.getColumnIndex(COLUMN_REMINDER_ID));
-                int del = c.getInt(c.getColumnIndex(COLUMN_DELETED));
-                int hidden = c.getInt(c.getColumnIndex(COLUMN_HIDDEN));
-                String title = c.getString(c.getColumnIndex(COLUMN_TITLE));
-                String taskId = c.getString(c.getColumnIndex(COLUMN_TASK_ID));
-                String eTag = c.getString(c.getColumnIndex(COLUMN_E_TAG));
-                String note = c.getString(c.getColumnIndex(COLUMN_NOTES));
-                String kind = c.getString(c.getColumnIndex(COLUMN_KIND));
-                String selfLink = c.getString(c.getColumnIndex(COLUMN_SELF_LINK));
-                String parent = c.getString(c.getColumnIndex(COLUMN_PARENT));
-                String position = c.getString(c.getColumnIndex(COLUMN_POSITION));
-                String status = c.getString(c.getColumnIndex(COLUMN_STATUS));
-                list.add(new TaskItem(title, taskId, completed, del, due, eTag, kind, note, parent,
-                        position, selfLink, updated, reminderId, listId, status, hidden, id));
+                list.add(taskFromCursor(c));
             } while (c.moveToNext());
         }
         if (c != null) c.close();
