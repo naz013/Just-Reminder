@@ -103,13 +103,7 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
     }
 
     private static void switchTask(Context context, long id, boolean isDone, String listId, String taskId){
-        TasksDataBase db = new TasksDataBase(context);
-        db.open();
-        if (isDone){
-            db.setTaskDone(id);
-        } else {
-            db.setTaskUnDone(id);
-        }
+        TasksHelper.getInstance(context).setStatus(id, isDone);
         new SwitchTaskAsync(context, listId, taskId, isDone, listener).execute();
     }
 

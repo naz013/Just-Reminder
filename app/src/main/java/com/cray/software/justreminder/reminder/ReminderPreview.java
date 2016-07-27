@@ -56,7 +56,6 @@ import com.cray.software.justreminder.google_tasks.SwitchTaskAsync;
 import com.cray.software.justreminder.google_tasks.TaskItem;
 import com.cray.software.justreminder.google_tasks.TaskListItem;
 import com.cray.software.justreminder.google_tasks.TaskManager;
-import com.cray.software.justreminder.google_tasks.TasksDataBase;
 import com.cray.software.justreminder.google_tasks.TasksHelper;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -604,13 +603,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
     }
 
     private static void switchTask(Context context, long id, boolean isDone, String listId, String taskId) {
-        TasksDataBase db = new TasksDataBase(context);
-        db.open();
-        if (isDone) {
-            db.setTaskDone(id);
-        } else {
-            db.setTaskUnDone(id);
-        }
+        TasksHelper.getInstance(context).setStatus(id, isDone);
         new SwitchTaskAsync(context, listId, taskId, isDone, null).execute();
     }
 }

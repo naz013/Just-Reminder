@@ -196,4 +196,12 @@ public class TasksHelper {
         db.close();
         return isDeleted;
     }
+
+    public void setStatus(long id, boolean status){
+        TasksDataBase db = new TasksDataBase(mContext);
+        db.open();
+        if (status) db.setTaskDone(id);
+        else db.setTaskUnDone(id);
+        db.close();
+    }
 }
