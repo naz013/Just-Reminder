@@ -18,6 +18,7 @@ package com.cray.software.justreminder.google_tasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.cloud.GTasksHelper;
@@ -31,10 +32,12 @@ import java.util.List;
 import java.util.Random;
 
 public class SyncGoogleTasksAsync extends AsyncTask<Void, Void, Void> {
+    private static final String TAG = "SyncGoogleTasksAsync";
     private Context mContext;
     private SyncListener mListener;
 
     public SyncGoogleTasksAsync(Context context, SyncListener listener){
+        Log.d(TAG, "SyncGoogleTasksAsync: ");
         this.mContext = context;
         this.mListener = listener;
     }
@@ -47,9 +50,6 @@ public class SyncGoogleTasksAsync extends AsyncTask<Void, Void, Void> {
             lists = helper.getTaskLists();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        for (TaskListItem item : TasksHelper.getInstance(mContext).getTaskLists()) {
-            TasksHelper.getInstance(mContext).deleteTaskList(item.getId());
         }
         if (lists != null && lists.size() > 0){
             for (TaskList item : lists.getItems()){
@@ -65,8 +65,6 @@ public class SyncGoogleTasksAsync extends AsyncTask<Void, Void, Void> {
                     taskList.fromTaskList(item);
                 }
                 TasksHelper.getInstance(mContext).saveTaskList(taskList);
-                TaskListItem listItem = TasksHelper.getInstance(mContext).getTaskLists().get(0);
-                TasksHelper.getInstance(mContext).setDefault(listItem.getId());
                 List<Task> tasks = helper.getTasks(listId);
                 for (Task task : tasks){
                     TaskItem taskItem = TasksHelper.getInstance(mContext).getTask(task.getId());

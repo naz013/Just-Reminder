@@ -61,7 +61,6 @@ public class TaskListFragment extends Fragment implements SyncListener {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_screen_manager, container, false);
-
         emptyItem = (LinearLayout) view.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
         RoboTextView emptyText = (RoboTextView) view.findViewById(R.id.emptyText);
@@ -73,7 +72,6 @@ public class TaskListFragment extends Fragment implements SyncListener {
         } else {
             emptyImage.setImageResource(R.drawable.ic_clear_black_vector);
         }
-
         currentList = (RecyclerView) view.findViewById(R.id.currentList);
         loaderAdapter();
         return view;

@@ -47,7 +47,6 @@ import java.util.List;
  */
 public class GTasksHelper {
 
-    public static final String TASKS_ALL = "all";
     public static final String TASKS_NEED_ACTION = "needsAction";
     public static final String TASKS_COMPLETE = "completed";
 

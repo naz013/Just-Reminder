@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,7 +33,6 @@ import android.view.ViewGroup;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
-import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
@@ -49,6 +49,7 @@ import java.util.Map;
 
 public class TasksFragment extends Fragment {
 
+    private static final String TAG = "TasksFragment";
     private ViewPager pager;
     private ArrayList<TaskListData> taskListDatum;
     private int currentPos;
@@ -250,9 +251,10 @@ public class TasksFragment extends Fragment {
         Map<String, Integer> colors = new HashMap<>();
         for (int i = 0; i < taskLists.size(); i++){
             TaskListItem item = taskLists.get(i);
-            taskListDatum.add(new TaskListData(item, getList(item), i));
+            taskListDatum.add(new TaskListData(item, getList(item.getListId()), i));
             if (i > 0) colors.put(item.getListId(), item.getColor());
         }
+        Log.d(TAG, "loadData: " + colors.toString());
         int pos = SharedPrefs.getInstance(mContext).getInt(Prefs.LAST_LIST);
         final TasksPagerAdapter pagerAdapter = new TasksPagerAdapter(getChildFragmentManager(), taskListDatum, colors);
         pagerAdapter.setCallbacks(mCallbacks);
@@ -319,20 +321,20 @@ public class TasksFragment extends Fragment {
         ArrayList<TaskListItem> lists = new ArrayList<>();
         TaskListItem zeroItem = new TaskListItem();
         zeroItem.setTitle(getString(R.string.all));
-        zeroItem.setListId(GTasksHelper.TASKS_ALL);
         zeroItem.setColor(25);
         lists.add(zeroItem);
         for (TaskListItem item : TasksHelper.getInstance(getActivity()).getTaskLists()) lists.add(item);
         return lists;
     }
 
-    private List<TaskItem> getList(TaskListItem taskList) {
+    private List<TaskItem> getList(String listId) {
         List<TaskItem> mData = new ArrayList<>();
-        if (taskList.getListId() == null) {
+        Log.d(TAG, "getList: " + listId);
+        if (listId == null) {
             List<TaskItem> list = TasksHelper.getInstance(getActivity()).getTasks();
             mData.addAll(list);
         } else {
-            List<TaskItem> list = TasksHelper.getInstance(getActivity()).getTasks(taskList.getListId());
+            List<TaskItem> list = TasksHelper.getInstance(getActivity()).getTasks(listId);
             mData.addAll(list);
         }
         return mData;

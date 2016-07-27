@@ -23,6 +23,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
@@ -68,6 +69,7 @@ public class TasksDataBase {
     private static final String GOOGLE_TASKS_LISTS_TABLE_NAME = "google_task_lists";
     private static final String GOOGLE_TASKS_TABLE_NAME = "google_tasks";
     private static final String GOOGLE_DELAYED_TABLE_NAME = "delayed_tasks";
+    private static final String TAG = "TasksDataBase";
     private DBHelper dbHelper;
     private static Context mContext;
     private SQLiteDatabase db;
@@ -176,6 +178,7 @@ public class TasksDataBase {
 
     public long saveTaskList(TaskListItem item) {
         openGuard();
+        Log.d(TAG, "saveTaskList: id " + item.getId() + ", color " + item.getColor());
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_TITLE, item.getTitle());
         cv.put(COLUMN_LIST_ID, item.getListId());

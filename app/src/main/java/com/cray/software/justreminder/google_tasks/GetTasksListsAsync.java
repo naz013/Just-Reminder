@@ -18,6 +18,7 @@ package com.cray.software.justreminder.google_tasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.cloud.GTasksHelper;
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.Random;
 
 public class GetTasksListsAsync extends AsyncTask<Void, Void, Void> {
+    private static final String TAG = "GetTasksListsAsync";
     private Context mContext;
     private SyncListener mListener;
 
