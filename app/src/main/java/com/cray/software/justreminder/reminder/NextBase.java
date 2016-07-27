@@ -185,14 +185,48 @@ public class NextBase {
         return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
     }
 
-    public Cursor queryAllReminders() throws SQLException {
-        openGuard();
-        return db.query(TABLE_NAME, null, null, null, null, null, null);
+    private ReminderItem reminderFromCursor(Cursor c) {
+        String summary = c.getString(c.getColumnIndex(SUMMARY));
+        String json = c.getString(c.getColumnIndex(JSON));
+        String type = c.getString(c.getColumnIndex(TYPE));
+        String categoryId = c.getString(c.getColumnIndex(CATEGORY));
+        String tags = c.getString(c.getColumnIndex(TAGS));
+        String uuId = c.getString(c.getColumnIndex(UUID));
+        int list = c.getInt(c.getColumnIndex(DB_LIST));
+        int status = c.getInt(c.getColumnIndex(DB_STATUS));
+        int location = c.getInt(c.getColumnIndex(LOCATION_STATUS));
+        int reminder = c.getInt(c.getColumnIndex(REMINDER_STATUS));
+        int notification = c.getInt(c.getColumnIndex(NOTIFICATION_STATUS));
+        long id = c.getLong(c.getColumnIndex(_ID));
+        long dateTime = c.getLong(c.getColumnIndex(EVENT_TIME));
+        long delay = c.getLong(c.getColumnIndex(DELAY));
+        return new ReminderItem(summary, json, type, uuId, categoryId, tags, list, status, location, reminder, notification, dateTime, delay, id);
     }
 
-    public Cursor getAllLocations() throws SQLException {
+    public List<ReminderItem> queryAllReminders() throws SQLException {
         openGuard();
-        return db.query(TABLE_NAME, null, TYPE + " LIKE ?", new String[] {"%"+ Constants.TYPE_LOCATION + "%" }, null, null, null);
+        Cursor c = db.query(TABLE_NAME, null, null, null, null, null, null);
+        List<ReminderItem> list = new ArrayList<>();
+        if (c != null && c.moveToFirst()) {
+            do {
+                list.add(reminderFromCursor(c));
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+        return list;
+    }
+
+    public List<ReminderItem> getAllLocations() throws SQLException {
+        openGuard();
+        Cursor c = db.query(TABLE_NAME, null, TYPE + " LIKE ?", new String[] {"%"+ Constants.TYPE_LOCATION + "%" }, null, null, null);
+        List<ReminderItem> list = new ArrayList<>();
+        if (c != null && c.moveToFirst()) {
+            do {
+                list.add(reminderFromCursor(c));
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+        return list;
     }
 
     public List<PlaceItem> queryAllLocations() throws SQLException {
@@ -224,50 +258,109 @@ public class NextBase {
         return list;
     }
 
-    public Cursor getByKey(String key) throws SQLException {
+    public List<ReminderItem> getByKey(String key) throws SQLException {
         openGuard();
-        return db.query(TABLE_NAME, null, JSON + " LIKE ?", new String[] {"%"+ key + "%" }, null, null, null);
+        Cursor c = db.query(TABLE_NAME, null, JSON + " LIKE ?", new String[] {"%"+ key + "%" }, null, null, null);
+        List<ReminderItem> list = new ArrayList<>();
+        if (c != null && c.moveToFirst()) {
+            do {
+                list.add(reminderFromCursor(c));
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+        return list;
     }
 
-    public Cursor getReminders(String category) throws SQLException {
-        openGuard();
-        String order = DB_STATUS + " ASC, " + EVENT_TIME + " ASC";
-        return db.query(TABLE_NAME, null, CATEGORY  + "='" + category + "'" + " AND "+ DB_LIST + "='" + 0 + "'", null, null, null, order);
-    }
-
-    public Cursor getReminders(long to) throws SQLException {
-        openGuard();
-        String order = DB_STATUS + " ASC, " + EVENT_TIME + " ASC";
-        return db.query(TABLE_NAME, null, EVENT_TIME + "<='" + to + "'" + " AND "+ DB_LIST + "='" + 0 + "'", null, null, null, order);
-    }
-
-    public Cursor getReminders() throws SQLException {
+    public List<ReminderItem> getReminders(String category) throws SQLException {
         openGuard();
         String order = DB_STATUS + " ASC, " + EVENT_TIME + " ASC";
-        return db.query(TABLE_NAME, null, DB_LIST  + "='" + 0 + "'", null, null, null, order);
+        Cursor c = db.query(TABLE_NAME, null, CATEGORY  + "='" + category + "'" + " AND "+ DB_LIST + "='" + 0 + "'", null, null, null, order);
+        List<ReminderItem> list = new ArrayList<>();
+        if (c != null && c.moveToFirst()) {
+            do {
+                list.add(reminderFromCursor(c));
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+        return list;
     }
 
-    public Cursor getArchivedReminders() throws SQLException {
+    public List<ReminderItem> getReminders(long to) throws SQLException {
+        openGuard();
+        String order = DB_STATUS + " ASC, " + EVENT_TIME + " ASC";
+        Cursor c = db.query(TABLE_NAME, null, EVENT_TIME + "<='" + to + "'" + " AND "+ DB_LIST + "='" + 0 + "'", null, null, null, order);
+        List<ReminderItem> list = new ArrayList<>();
+        if (c != null && c.moveToFirst()) {
+            do {
+                list.add(reminderFromCursor(c));
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+        return list;
+    }
+
+    public List<ReminderItem> getReminders() throws SQLException {
+        openGuard();
+        String order = DB_STATUS + " ASC, " + EVENT_TIME + " ASC";
+        Cursor c = db.query(TABLE_NAME, null, DB_LIST  + "='" + 0 + "'", null, null, null, order);
+        List<ReminderItem> list = new ArrayList<>();
+        if (c != null && c.moveToFirst()) {
+            do {
+                list.add(reminderFromCursor(c));
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+        return list;
+    }
+
+    public List<ReminderItem> getArchivedReminders() throws SQLException {
         openGuard();
         String order = EVENT_TIME + " ASC";
-        return db.query(TABLE_NAME, null, DB_LIST  + "='" + 1 + "'", null, null, null, order);
+        Cursor c = db.query(TABLE_NAME, null, DB_LIST  + "='" + 1 + "'", null, null, null, order);
+        List<ReminderItem> list = new ArrayList<>();
+        if (c != null && c.moveToFirst()) {
+            do {
+                list.add(reminderFromCursor(c));
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+        return list;
     }
 
-    public Cursor getActiveReminders() throws SQLException {
+    public List<ReminderItem> getActiveReminders() throws SQLException {
         openGuard();
         String order = DB_STATUS + " ASC, " + EVENT_TIME + " ASC";
-        return db.query(TABLE_NAME, null, DB_STATUS + "=" + 0 + " AND "+ DB_LIST + "="
-                + 0 + "", null, null, null, order);
+        Cursor c = db.query(TABLE_NAME, null, DB_STATUS + "=" + 0 + " AND "+ DB_LIST + "=" + 0 + "", null, null, null, order);
+        List<ReminderItem> list = new ArrayList<>();
+        if (c != null && c.moveToFirst()) {
+            do {
+                list.add(reminderFromCursor(c));
+            } while (c.moveToNext());
+        }
+        if (c != null) c.close();
+        return list;
     }
 
-    public Cursor getReminder(long rowId) throws SQLException {
+    public ReminderItem getReminder(long rowId) throws SQLException {
         openGuard();
-        return db.query(TABLE_NAME, null, _ID  + "=" + rowId, null, null, null, null, null);
+        Cursor c = db.query(TABLE_NAME, null, _ID  + "=" + rowId, null, null, null, null, null);
+        ReminderItem item = null;
+        if (c != null && c.moveToFirst()) {
+            item = reminderFromCursor(c);
+        }
+        if (c != null) c.close();
+        return item;
     }
 
-    public Cursor getReminder(String uuID) throws SQLException {
+    public ReminderItem getReminder(String uuID) throws SQLException {
         openGuard();
-        return db.query(TABLE_NAME, null, UUID + "='" + uuID + "'", null, null, null, null, null);
+        Cursor c = db.query(TABLE_NAME, null, UUID + "='" + uuID + "'", null, null, null, null, null);
+        ReminderItem item = null;
+        if (c != null && c.moveToFirst()) {
+            item = reminderFromCursor(c);
+        }
+        if (c != null) c.close();
+        return item;
     }
 
     public boolean deleteReminder(long rowId) {

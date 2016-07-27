@@ -33,5 +33,11 @@ public class ReminderHelper {
         return groupHelper;
     }
 
-
+    public long saveReminder(ReminderItem item) {
+        NextBase db = new NextBase(mContext);
+        db.open();
+        long id = db.saveReminder(item);
+        db.close();
+        return id;
+    }
 }
