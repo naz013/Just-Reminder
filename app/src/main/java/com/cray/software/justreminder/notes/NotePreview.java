@@ -19,7 +19,6 @@ package com.cray.software.justreminder.notes;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -49,7 +48,6 @@ import com.cray.software.justreminder.activities.ImagePreview;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
@@ -58,6 +56,8 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
+import com.cray.software.justreminder.reminder.ReminderHelper;
+import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.roboto_views.RoboButton;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
@@ -324,24 +324,21 @@ public class NotePreview extends AppCompatActivity {
             }
 
             if (mItem.getLinkId() != 0){
-                NextBase dataBase = new NextBase(NotePreview.this);
-                dataBase.open();
-                Cursor r = dataBase.getReminder(mItem.getLinkId());
-                if (r != null && r.moveToFirst()){
-                    long feature = r.getLong(r.getColumnIndex(NextBase.EVENT_TIME));
+                ReminderItem reminderItem = ReminderHelper.getInstance(this).getReminder(mItem.getLinkId());
+                if (reminderItem != null){
+                    long feature = reminderItem.getDateTime();
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(System.currentTimeMillis());
                     if (feature != 0) {
                         calendar.setTimeInMillis(feature);
                     }
-
                     reminderTime.setText(TimeUtil.getDateTime(calendar.getTime(),
                             SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
                     reminderContainer.setVisibility(View.VISIBLE);
                 }
-                if (r != null) r.close();
-                dataBase.close();
             }
+        } else {
+            finish();
         }
     }
 

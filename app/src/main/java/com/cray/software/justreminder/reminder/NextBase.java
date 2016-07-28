@@ -126,7 +126,7 @@ public class NextBase {
         cv.put(TYPE, item.getType());
         cv.put(EVENT_TIME, item.getDateTime());
         cv.put(UUID, item.getUuId());
-        cv.put(CATEGORY, item.getCategoryUuId());
+        cv.put(CATEGORY, item.getGroupUuId());
         cv.put(JSON, item.getJson());
         cv.put(DB_LIST, item.getList());
         cv.put(DB_STATUS, item.getStatus());
@@ -146,13 +146,6 @@ public class NextBase {
         openGuard();
         ContentValues cv = new ContentValues();
         cv.put(CATEGORY, group);
-        return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
-    }
-
-    public boolean setDelay(long rowId, long delay) {
-        openGuard();
-        ContentValues cv = new ContentValues();
-        cv.put(DELAY, delay);
         return db.update(TABLE_NAME, cv, _ID + "=" + rowId, null) > 0;
     }
 
@@ -366,25 +359,6 @@ public class NextBase {
     public boolean deleteReminder(long rowId) {
         openGuard();
         return db.delete(TABLE_NAME, _ID + "=" + rowId, null) > 0;
-    }
-
-    public int getCount() throws SQLException {
-        openGuard();
-        String countQuery = "SELECT " + _ID + " FROM " + TABLE_NAME;
-        Cursor cursor = db.rawQuery(countQuery, null);
-        int cnt = cursor.getCount();
-        cursor.close();
-        return cnt;
-    }
-
-    public int getCountActive() throws SQLException {
-        openGuard();
-        String countQuery = "SELECT " + _ID + " FROM " + TABLE_NAME + " WHERE " + DB_STATUS + " = '" + 0 + "' AND " + DB_LIST +
-                " = '" + 0 + "'";
-        Cursor cursor = db.rawQuery(countQuery, null);
-        int cnt = cursor.getCount();
-        cursor.close();
-        return cnt;
     }
 
     public void openGuard() throws SQLiteException {

@@ -20,11 +20,11 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
-import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.reminder.ReminderHelper;
+import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.utils.SuperUtil;
 
 public class PositionDelayReceiver extends WakefulBroadcastReceiver {
@@ -41,18 +41,9 @@ public class PositionDelayReceiver extends WakefulBroadcastReceiver {
     }
 
     public void setDelay(Context context, long id) {
-        NextBase db = new NextBase(context);
-        db.open();
-        Cursor c = db.getReminder(id);
-
+        ReminderItem item = ReminderHelper.getInstance(context).getReminder(id);
         Integer i = (int) (long) id;
-        long startTime = 0;
-        if (c != null && c.moveToNext()) {
-            startTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
-        }
-        if (c != null) c.close();
-        db.close();
-
+        long startTime = item.getDateTime();
         Intent intent = new Intent(context, PositionDelayReceiver.class);
         alarmIntent = PendingIntent.getBroadcast(context, i, intent, 0);
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);

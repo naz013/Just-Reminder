@@ -17,17 +17,18 @@
 package com.cray.software.justreminder.groups;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.os.AsyncTask;
 
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.constants.FileConfig;
-import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.reminder.ReminderHelper;
+import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.utils.MemoryUtil;
 
 import java.io.File;
+import java.util.List;
 
 public class DeleteGroupAsync extends AsyncTask<Void, Void, Void> {
 
@@ -66,38 +67,32 @@ public class DeleteGroupAsync extends AsyncTask<Void, Void, Void> {
         if (gdx.isLinked() && isInternet) {
             gdx.deleteGroupFileByName(uuId);
         }
-        NextBase db = new NextBase(mContext);
-        db.open();
-        Cursor c = db.getReminders(uuId);
-        if (c != null && c.moveToFirst()){
-            do {
-                String remUUId = c.getString(c.getColumnIndex(NextBase.UUID));
-                db.deleteReminder(c.getLong(c.getColumnIndex(NextBase._ID)));
-                dir = MemoryUtil.getRDir();
-                exportFileName = remUUId + FileConfig.FILE_NAME_REMINDER;
-                file = new File(dir, exportFileName);
-                if (file.exists()) {
-                    file.delete();
-                }
-                dir = MemoryUtil.getDRDir();
-                file = new File(dir, exportFileName);
-                if (file.exists()) {
-                    file.delete();
-                }
-                dir = MemoryUtil.getGRDir();
-                file = new File(dir, exportFileName);
-                if (file.exists()) {
-                    file.delete();
-                }
-                if (dbx.isLinked() && isInternet) {
-                    dbx.deleteReminder(remUUId);
-                }
-                if (gdx.isLinked() && isInternet) {
-                    gdx.deleteReminderFileByName(uuId);
-                }
-            } while (c.moveToNext());
+        List<ReminderItem> list = ReminderHelper.getInstance(mContext).getReminders(uuId);
+        for (ReminderItem item : list) {
+            dir = MemoryUtil.getRDir();
+            exportFileName = item.getUuId() + FileConfig.FILE_NAME_REMINDER;
+            file = new File(dir, exportFileName);
+            if (file.exists()) {
+                file.delete();
+            }
+            dir = MemoryUtil.getDRDir();
+            file = new File(dir, exportFileName);
+            if (file.exists()) {
+                file.delete();
+            }
+            dir = MemoryUtil.getGRDir();
+            file = new File(dir, exportFileName);
+            if (file.exists()) {
+                file.delete();
+            }
+            if (dbx.isLinked() && isInternet) {
+                dbx.deleteReminder(item.getUuId());
+            }
+            if (gdx.isLinked() && isInternet) {
+                gdx.deleteReminderFileByName(uuId);
+            }
         }
-        db.close();
+        ReminderHelper.getInstance(mContext).deleteReminders(list);
         return null;
     }
 }

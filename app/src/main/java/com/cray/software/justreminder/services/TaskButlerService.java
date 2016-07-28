@@ -18,9 +18,9 @@ package com.cray.software.justreminder.services;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.database.Cursor;
 
-import com.cray.software.justreminder.reminder.NextBase;
+import com.cray.software.justreminder.reminder.ReminderHelper;
+import com.cray.software.justreminder.reminder.ReminderItem;
 
 public class TaskButlerService extends IntentService {
 
@@ -31,20 +31,9 @@ public class TaskButlerService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         AlarmReceiver alarm = new AlarmReceiver();
-        NextBase db = new NextBase(getApplicationContext());
-        db.open();
-        Cursor c = db.getReminders();
-        if (c != null && c.moveToFirst()){
-            do {
-                long rowId = c.getLong(c.getColumnIndex(NextBase._ID));
-                int isDone = c.getInt(c.getColumnIndex(NextBase.DB_STATUS));
-                if (isDone != 1) {
-                    alarm.enableReminder(getApplicationContext(), rowId);
-                }
-            } while (c.moveToNext());
+        for (ReminderItem item : ReminderHelper.getInstance(getApplicationContext()).getRemindersEnabled()) {
+            alarm.enableReminder(getApplicationContext(), item.getId());
         }
-        if (c != null) c.close();
-        db.close();
         stopSelf();
     }
 }

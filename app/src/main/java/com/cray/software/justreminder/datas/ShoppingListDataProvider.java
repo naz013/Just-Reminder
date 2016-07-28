@@ -25,9 +25,10 @@ import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.reminder.json.JShopping;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ShoppingListDataProvider {
-    private ArrayList<ShoppingList> data;
+    private List<ShoppingList> data;
     private int flag;
     private boolean hidden;
 
@@ -35,7 +36,7 @@ public class ShoppingListDataProvider {
         data = new ArrayList<>();
     }
 
-    public ShoppingListDataProvider(ArrayList<JShopping> datas, boolean hidden){
+    public ShoppingListDataProvider(List<JShopping> datas, boolean hidden){
         this.data = new ArrayList<>();
         this.hidden = hidden;
         loadFromList(datas);
@@ -59,7 +60,7 @@ public class ShoppingListDataProvider {
         return size;
     }
 
-    public ArrayList<ShoppingList> getData(){
+    public List<ShoppingList> getData(){
         return data;
     }
 
@@ -113,7 +114,7 @@ public class ShoppingListDataProvider {
         return data;
     }
 
-    public void loadFromList(ArrayList<JShopping> jShoppings) {
+    public void loadFromList(List<JShopping> jShoppings) {
         data = new ArrayList<>();
         data.clear();
         for (JShopping item : jShoppings) {

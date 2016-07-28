@@ -17,7 +17,6 @@ package com.cray.software.justreminder.reminder;
 
 import android.app.Activity;
 import android.content.Context;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -67,14 +66,9 @@ public class TrashFragment extends Fragment implements RecyclerListener {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.archive_menu, menu);
-        NextBase db = new NextBase(mContext);
-        db.open();
-        Cursor c = db.getArchivedReminders();
-        if (c.getCount() == 0){
+        if (ReminderHelper.getInstance(mContext).getRemindersArchived().size() == 0){
             menu.findItem(R.id.action_delete_all).setVisible(false);
         }
-        c.close();
-        db.close();
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -180,17 +174,9 @@ public class TrashFragment extends Fragment implements RecyclerListener {
     }
 
     private void deleteAll(){
-        NextBase db = new NextBase(mContext);
-        if (!db.isOpen()) db.open();
-        Cursor c = db.getArchivedReminders();
-        if (c != null && c.moveToFirst()){
-            do{
-                long rowId = c.getLong(c.getColumnIndex(NextBase._ID));
-                Reminder.delete(rowId, mContext);
-            }while (c.moveToNext());
+        for (ReminderItem item : ReminderHelper.getInstance(mContext).getRemindersArchived()) {
+            Reminder.delete(item.getId(), mContext);
         }
-        if (c != null) c.close();
-        db.close();
         if (mCallbacks != null) {
             mCallbacks.showSnackbar(getString(R.string.trash_cleared));
         }

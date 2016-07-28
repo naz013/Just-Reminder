@@ -74,13 +74,11 @@ public class TaskItem {
         try {
             isDeleted = task.getDeleted();
         } catch (NullPointerException e){
-            e.printStackTrace();
         }
         boolean isHidden = false;
         try {
             isHidden = task.getHidden();
         } catch (NullPointerException e){
-            e.printStackTrace();
         }
         this.selfLink = task.getSelfLink();
         this.kind = task.getKind();

@@ -45,6 +45,7 @@ import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
+import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.reminder.json.JAction;
 import com.cray.software.justreminder.reminder.json.JExport;
 import com.cray.software.justreminder.reminder.json.JsonModel;
@@ -335,7 +336,7 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
         JExport jExport = new JExport(isTasks, isCalendar, null);
         JsonModel jsonModel = new JsonModel(text, type, categoryId,
                 SyncHelper.generateID(), due, due, null, jAction, jExport);
-        long remId = new DateType(FollowReminder.this, Constants.TYPE_REMINDER).save(jsonModel);
+        long remId = new DateType(FollowReminder.this, Constants.TYPE_REMINDER).save(new ReminderItem(jsonModel));
 
         if (isCalendar == 1) {
             ReminderUtils.exportToCalendar(this, text.matches("") ? mNumber : text, due,

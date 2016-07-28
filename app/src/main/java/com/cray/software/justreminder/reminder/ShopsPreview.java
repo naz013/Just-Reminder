@@ -33,11 +33,10 @@ import com.cray.software.justreminder.adapters.TaskListRecyclerAdapter;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
-import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.reminder.json.JShopping;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.reminder.json.JShopping;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.roboto_views.RoboSwitchCompat;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
@@ -45,7 +44,7 @@ import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.WrapLayoutManager;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class ShopsPreview extends AppCompatActivity {
 
@@ -161,24 +160,24 @@ public class ShopsPreview extends AppCompatActivity {
             mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorAccent(catColor),
                     cSetter.colorAccent(catColor)));
 
-            ArrayList<JShopping> list = item.getShoppings();
+            List<JShopping> list = item.getShoppings();
             provider = new ShoppingListDataProvider(list, isHidden);
             TaskListRecyclerAdapter shoppingAdapter = new TaskListRecyclerAdapter(this, provider, new TaskListRecyclerAdapter.ActionListener() {
                 @Override
                 public void onItemCheck(int position, boolean isChecked) {
-                    ShoppingList.switchItem(ShopsPreview.this, id, isChecked, provider.getItem(position).getUuId());
+                    Reminder.switchItem(ShopsPreview.this, id, isChecked, provider.getItem(position).getUuId());
                     loadUi();
                 }
 
                 @Override
                 public void onItemDelete(int position) {
-                    ShoppingList.hideItem(ShopsPreview.this, id, provider.getItem(position).getUuId());
+                    Reminder.hideItem(ShopsPreview.this, id, provider.getItem(position).getUuId());
                     loadUi();
                 }
 
                 @Override
                 public void onItemChange(int position) {
-                    ShoppingList.showItem(ShopsPreview.this, id, provider.getItem(position).getUuId());
+                    Reminder.showItem(ShopsPreview.this, id, provider.getItem(position).getUuId());
                     loadUi();
                 }
             });

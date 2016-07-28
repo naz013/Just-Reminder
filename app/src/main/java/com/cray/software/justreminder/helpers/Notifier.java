@@ -21,7 +21,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
-import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -38,10 +37,11 @@ import com.cray.software.justreminder.birthdays.BirthdayHelper;
 import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.notes.NotesManager;
 import com.cray.software.justreminder.reminder.ReminderDialog;
+import com.cray.software.justreminder.reminder.ReminderHelper;
+import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.reminder.ReminderManager;
 import com.cray.software.justreminder.services.BirthdayPermanentService;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -635,30 +635,18 @@ public class Notifier {
                 PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.text, resultPendingInt);
         remoteViews.setOnClickPendingIntent(R.id.featured, resultPendingInt);
-        NextBase db = new NextBase(mContext);
-        db.open();
-        int count = db.getCountActive();
         ArrayList<Long> dates = new ArrayList<>();
         ArrayList<String> tasks = new ArrayList<>();
-        dates.clear();
-        tasks.clear();
-        Cursor c = db.getActiveReminders();
-        if (c != null && c.moveToFirst()){
-            do {
-                long eventTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
-                String summary = c.getString(c.getColumnIndex(NextBase.SUMMARY));
-
-                if (eventTime > 0) {
-                    dates.add(eventTime);
-                    tasks.add(summary);
-                }
-
-            } while (c.moveToNext());
+        List<ReminderItem> list = ReminderHelper.getInstance(mContext).getRemindersEnabled();
+        int count = list.size();
+        for (ReminderItem item : list) {
+            long eventTime = item.getDateTime();
+            String summary = item.getSummary();
+            if (eventTime > 0) {
+                dates.add(eventTime);
+                tasks.add(summary);
+            }
         }
-        if (c != null) {
-            c.close();
-        }
-        db.close();
         String event = "";
         long prevTime = 0;
         for (int i = 0; i < dates.size(); i++) {

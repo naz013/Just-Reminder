@@ -88,7 +88,7 @@
                 android:src="@drawable/ic_tune_white_24dp" />
 
             <com.cray.software.justreminder.roboto_views.RoboTextView
-                android:id="@+id/category"
+                android:id="@+id/group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"

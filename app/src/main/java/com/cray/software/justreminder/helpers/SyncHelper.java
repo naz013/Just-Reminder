@@ -17,7 +17,6 @@
 package com.cray.software.justreminder.helpers;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Base64;
@@ -28,18 +27,19 @@ import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
-import com.cray.software.justreminder.reminder.json.JsonModel;
-import com.cray.software.justreminder.reminder.json.JParser;
-import com.cray.software.justreminder.reminder.json.JRecurrence;
-import com.cray.software.justreminder.reminder.json.JShopping;
 import com.cray.software.justreminder.notes.NoteHelper;
 import com.cray.software.justreminder.notes.NoteItem;
 import com.cray.software.justreminder.reminder.DateType;
 import com.cray.software.justreminder.reminder.LocationType;
 import com.cray.software.justreminder.reminder.Reminder;
+import com.cray.software.justreminder.reminder.ReminderHelper;
+import com.cray.software.justreminder.reminder.ReminderItem;
+import com.cray.software.justreminder.reminder.json.JParser;
+import com.cray.software.justreminder.reminder.json.JRecurrence;
+import com.cray.software.justreminder.reminder.json.JShopping;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.utils.MemoryUtil;
 
 import org.json.JSONException;
@@ -164,31 +164,27 @@ public class SyncHelper {
      * @throws JSONException
      */
     public void reminderToJson() throws JSONException {
-        NextBase db = new NextBase(mContext);
-        db.open();
-        Cursor c = db.getReminders();
-        if (c != null && c.moveToFirst()){
-            do {
-                String json = c.getString(c.getColumnIndex(NextBase.JSON));
-                String uuID = c.getString(c.getColumnIndex(NextBase.UUID));
-                int isDone = c.getInt(c.getColumnIndex(NextBase.DB_STATUS));
-                int isArchived = c.getInt(c.getColumnIndex(NextBase.DB_LIST));
-                if (isDone == 0 && isArchived == 0) {
-                    File dir = MemoryUtil.getRDir();
-                    if (dir != null) {
-                        String exportFileName = uuID + FileConfig.FILE_NAME_REMINDER;
-                        File file = new File(dir, exportFileName);
-                        try {
-                            writeFile(file, json);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else Log.i("reminder-info", "Couldn't find external storage!");
+        for (ReminderItem item : ReminderHelper.getInstance(mContext).getAll()) {
+            String json = item.getJson();
+            String uuID = item.getUuId();
+            int isDone = item.getStatus();
+            int isArchived = item.getList();
+            if (isDone == 0 && isArchived == 0) {
+                File dir = MemoryUtil.getRDir();
+                if (dir != null) {
+                    String exportFileName = uuID + FileConfig.FILE_NAME_REMINDER;
+                    File file = new File(dir, exportFileName);
+                    try {
+                        writeFile(file, json);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Log.i("reminder-info", "Couldn't find external storage!");
+                    break;
                 }
-            } while (c.moveToNext());
+            }
         }
-        if (c != null) c.close();
-        db.close();
     }
 
     /**
@@ -525,7 +521,7 @@ public class SyncHelper {
         String type = jsonModel.getType();
         if (uuID != null && !Reminder.isUuId(mContext, uuID) && type != null) {
             if (type.contains(Constants.TYPE_LOCATION)){
-                new LocationType(mContext, type).save(jsonModel);
+                new LocationType(mContext, type).save(new ReminderItem(jsonModel));
             } else {
                 if (type.startsWith(Constants.TYPE_WEEKDAY) ||
                         type.startsWith(Constants.TYPE_MONTHDAY)) {
@@ -534,23 +530,21 @@ public class SyncHelper {
                             jsonModel.getEventTime(), jr.getRepeat(), jr.getWeekdays(), 0, 0);
                     jsonModel.setEventTime(time);
                     jsonModel.setStartTime(time);
-                    new DateType(mContext, type).save(jsonModel);
+                    new DateType(mContext, type).save(new ReminderItem(jsonModel));
                 } else {
                     if (jsonModel.getEventTime() > System.currentTimeMillis()) {
-                        new DateType(mContext, type).save(jsonModel);
+                        new DateType(mContext, type).save(new ReminderItem(jsonModel));
                     }
                 }
             }
         } else {
             if (type != null && type.matches(Constants.TYPE_SHOPPING_LIST)) {
-                NextBase db = new NextBase(mContext);
-                db.open();
-                Cursor c = db.getReminder(uuID);
-                if (c != null && c.moveToFirst()) {
-                    String json = c.getString(c.getColumnIndex(NextBase.JSON));
+                ReminderItem reminder = ReminderHelper.getInstance(mContext).getReminder(uuID);
+                if (reminder != null) {
+                    String json = reminder.getJson();
                     JParser parser = new JParser(json);
                     JsonModel model = parser.parse();
-                    ArrayList<String> uuIds = parser.getShoppingKeys();
+                    List<String> uuIds = parser.getShoppingKeys();
                     List<JShopping> shoppings = jsonModel.getShoppings();
                     if (shoppings != null) {
                         for (JShopping item : shoppings) {
@@ -559,12 +553,10 @@ public class SyncHelper {
                             }
                         }
                     }
-                    new DateType(mContext, type).save(jsonModel);
+                    new DateType(mContext, type).save(new ReminderItem(jsonModel));
                 } else {
-                    new DateType(mContext, type).save(jsonModel);
+                    new DateType(mContext, type).save(new ReminderItem(jsonModel));
                 }
-                if (c != null) c.close();
-                db.close();
             }
         }
     }

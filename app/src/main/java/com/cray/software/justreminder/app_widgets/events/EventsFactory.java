@@ -20,7 +20,6 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Build;
 import android.util.TypedValue;
 import android.view.View;
@@ -32,17 +31,17 @@ import com.cray.software.justreminder.birthdays.BirthdayHelper;
 import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.datas.models.CalendarModel;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.Recurrence;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.reminder.json.JsonModel;
-import com.cray.software.justreminder.reminder.json.JParser;
-import com.cray.software.justreminder.reminder.json.JPlace;
+import com.cray.software.justreminder.reminder.ReminderHelper;
+import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.reminder.ReminderUtils;
+import com.cray.software.justreminder.reminder.json.JPlace;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.utils.TimeUtil;
 
 import java.text.ParseException;
@@ -59,7 +58,7 @@ public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     private static final String TAG = "EventsFactory";
     private ArrayList<CalendarModel> data;
-    private Map<Long, ArrayList<ShoppingList>> map;
+    private Map<Long, List<ShoppingList>> map;
     private Context mContext;
     private TimeCount mCount;
     private int widgetID;
@@ -84,63 +83,54 @@ public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
         data.clear();
         map.clear();
         boolean is24 = SharedPrefs.getInstance(mContext).getBoolean(Prefs.IS_24_TIME_FORMAT);
-        NextBase db = new NextBase(mContext);
-        db.open();
-        Cursor c = db.getActiveReminders();
-        if (c != null && c.moveToFirst()) {
-            do {
-                String json = c.getString(c.getColumnIndex(NextBase.JSON));
-                String mType = c.getString(c.getColumnIndex(NextBase.TYPE));
-                String summary = c.getString(c.getColumnIndex(NextBase.SUMMARY));
-                long eventTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
-                long id = c.getLong(c.getColumnIndex(NextBase._ID));
+        List<ReminderItem> reminderItems = ReminderHelper.getInstance(mContext).getRemindersEnabled();
+        for (ReminderItem item : reminderItems) {
+            String mType = item.getType();
+            String summary = item.getSummary();
+            long eventTime = item.getDateTime();
+            long id = item.getId();
 
-                JsonModel jsonModel = new JParser(json).parse();
-                JPlace jPlace = jsonModel.getPlace();
+            JsonModel jsonModel = item.getModel();
+            JPlace jPlace = jsonModel.getPlace();
 
-                ArrayList<Integer> weekdays = jsonModel.getRecurrence().getWeekdays();
-                String exclusion = jsonModel.getExclusion().toString();
+            List<Integer> weekdays = jsonModel.getRecurrence().getWeekdays();
+            String exclusion = jsonModel.getExclusion().toString();
 
-                String time = "";
-                String date = "";
-                int viewType = 1;
-                if (mType.contains(Constants.TYPE_LOCATION)) {
-                    date = String.format("%.5f", jPlace.getLatitude());
-                    time = String.format("%.5f", jPlace.getLongitude());
+            String time = "";
+            String date = "";
+            int viewType = 1;
+            if (mType.contains(Constants.TYPE_LOCATION)) {
+                date = String.format(Locale.getDefault(), "%.5f", jPlace.getLatitude());
+                time = String.format(Locale.getDefault(), "%.5f", jPlace.getLongitude());
+            } else {
+                if (mType.startsWith(Constants.TYPE_WEEKDAY)) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(eventTime);
+                    date = ReminderUtils.getRepeatString(mContext, weekdays);
+                    time = TimeUtil.getTime(calendar.getTime(), is24);
+                } else if (mType.startsWith(Constants.TYPE_MONTHDAY)) {
+                    Calendar calendar1 = Calendar.getInstance();
+                    calendar1.setTimeInMillis(eventTime);
+                    date = TimeUtil.dateFormat.format(calendar1.getTime());
+                    time = TimeUtil.getTime(calendar1.getTime(), is24);
+                } else if (mType.matches(Constants.TYPE_SHOPPING_LIST)) {
+                    viewType = 2;
+                    map.put(id, new ShoppingListDataProvider(jsonModel.getShoppings(), false).getData());
                 } else {
-                    if (mType.startsWith(Constants.TYPE_WEEKDAY)) {
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.setTimeInMillis(eventTime);
-
-                        date = ReminderUtils.getRepeatString(mContext, weekdays);
-                        time = TimeUtil.getTime(calendar.getTime(), is24);
-                    } else if (mType.startsWith(Constants.TYPE_MONTHDAY)) {
-                        Calendar calendar1 = Calendar.getInstance();
-                        calendar1.setTimeInMillis(eventTime);
-                        date = TimeUtil.dateFormat.format(calendar1.getTime());
-                        time = TimeUtil.getTime(calendar1.getTime(), is24);
-                    } else if (mType.matches(Constants.TYPE_SHOPPING_LIST)) {
-                        viewType = 2;
-                        map.put(id, new ShoppingListDataProvider(jsonModel.getShoppings(), false).getData());
-                    } else {
-                        String[] dT = mCount.getNextDateTime(eventTime);
-                        date = dT[0];
-                        time = dT[1];
-                        if (mType.matches(Constants.TYPE_TIME) && exclusion != null){
-                            if (new Recurrence(exclusion).isRange()){
-                                date = mContext.getString(R.string.paused);
-                            }
-                            time = "";
+                    String[] dT = mCount.getNextDateTime(eventTime);
+                    date = dT[0];
+                    time = dT[1];
+                    if (mType.matches(Constants.TYPE_TIME) && exclusion != null){
+                        if (new Recurrence(exclusion).isRange()){
+                            date = mContext.getString(R.string.paused);
                         }
+                        time = "";
                     }
                 }
-
-                data.add(new CalendarModel(summary, jsonModel.getAction().getTarget(),
-                        id, time, date, eventTime, viewType));
-            } while (c.moveToNext());
+            }
+            data.add(new CalendarModel(summary, jsonModel.getAction().getTarget(),
+                    id, time, date, eventTime, viewType));
         }
-        if(c != null) c.close();
-        db.close();
 
         SharedPrefs prefs = SharedPrefs.getInstance(mContext);
         if (prefs.getBoolean(Prefs.WIDGET_BIRTHDAYS)) {
@@ -274,7 +264,7 @@ public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
                 }
 
                 int count = 0;
-                ArrayList<ShoppingList> lists = map.get(item.getId());
+                List<ShoppingList> lists = map.get(item.getId());
                 rView.removeAllViews(R.id.todoList);
                 for (ShoppingList list : lists) {
                     RemoteViews view = new RemoteViews(mContext.getPackageName(),

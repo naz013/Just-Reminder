@@ -42,6 +42,7 @@ import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.DateTimeView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ShoppingFragment extends BaseFragment {
 
@@ -70,7 +71,7 @@ public class ShoppingFragment extends BaseFragment {
         else return 0;
     }
 
-    public ArrayList<ShoppingList> getData() {
+    public List<ShoppingList> getData() {
         if (shoppingLists != null) return shoppingLists.getData();
         else return null;
     }

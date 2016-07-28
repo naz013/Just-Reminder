@@ -18,13 +18,14 @@ package com.cray.software.justreminder.reminder;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.AsyncTask;
 
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.services.GeolocationService;
 import com.cray.software.justreminder.utils.LocationUtil;
+
+import java.util.List;
 
 public class DisableAsync extends AsyncTask<Void, Void, Void> {
 
@@ -36,39 +37,33 @@ public class DisableAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        NextBase db = new NextBase(mContext);
-        db.open();
-        Cursor c = db.getReminders();
-        if (c != null && c.moveToFirst()){
-            boolean res = false;
-            do {
-                String tp = c.getString(c.getColumnIndex(NextBase.TYPE));
-                if (tp.contains(Constants.TYPE_LOCATION)) {
-                    long startTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
-                    int isShown = c.getInt(c.getColumnIndex(NextBase.REMINDER_STATUS));
-                    int isDone = c.getInt(c.getColumnIndex(NextBase.DB_STATUS));
-                    if (startTime == 0) {
+        boolean res = false;
+        List<ReminderItem> list = ReminderHelper.getInstance(mContext).getRemindersActive();
+        if (list.size() == 0) {
+            mContext.stopService(new Intent(mContext, GeolocationService.class));
+        }
+        for (ReminderItem item : list) {
+            if (item.getType().contains(Constants.TYPE_LOCATION)) {
+                long startTime = item.getDateTime();
+                int isShown = item.getLocation();
+                int isDone = item.getStatus();
+                if (startTime == 0) {
+                    if (isDone != 1){
+                        if (isShown != LocationUtil.SHOWN) res = true;
+                    }
+                } else {
+                    TimeCount tc = new TimeCount(mContext);
+                    if (tc.isCurrent(startTime)) {
                         if (isDone != 1){
                             if (isShown != LocationUtil.SHOWN) res = true;
                         }
-                    } else {
-                        TimeCount tc = new TimeCount(mContext);
-                        if (tc.isCurrent(startTime)) {
-                            if (isDone != 1){
-                                if (isShown != LocationUtil.SHOWN) res = true;
-                            }
-                        }
                     }
                 }
-            } while (c.moveToNext());
-            if (!res) {
-                mContext.stopService(new Intent(mContext, GeolocationService.class));
             }
-        } else {
+        }
+        if (!res) {
             mContext.stopService(new Intent(mContext, GeolocationService.class));
         }
-        if (c != null) c.close();
-        db.close();
         return null;
     }
 }

@@ -120,7 +120,7 @@ public class JParser {
             model.setAwake(getAwake());
             model.setVibrate(getVibrate());
             model.setType(getType());
-            model.setCategory(getCategory());
+            model.setGroup(getCategory());
             model.setCount(getCount());
             model.setEventTime(getEventTime());
             model.setStartTime(getStartTime());
@@ -209,7 +209,7 @@ public class JParser {
         }
         long due = ReminderUtils.getTime(day, month, year, hour, minute, 0);
         JsonModel jsonModel = new JsonModel();
-        jsonModel.setCategory(categoryId);
+        jsonModel.setGroup(categoryId);
         jsonModel.setCount(count);
         jsonModel.setAwake(wake);
         jsonModel.setUnlock(unlock);
@@ -244,9 +244,9 @@ public class JParser {
         jRecurrence.setAfter(repMinute);
         jsonModel.setRecurrence(jRecurrence);
         if (jsonObject.has("shopping_list")) {
-            ArrayList<JShopping> list = new ArrayList<>();
+            List<JShopping> list = new ArrayList<>();
             JSONObject listObject = jsonObject.getJSONObject("shopping_list");
-            ArrayList<ShoppingList> arrayList = new ArrayList<>();
+            List<ShoppingList> arrayList = new ArrayList<>();
             Iterator<?> keys = listObject.keys();
             while (keys.hasNext()) {
                 String key = (String) keys.next();
@@ -275,7 +275,7 @@ public class JParser {
         setUuid(model.getUuId());
         setSummary(model.getSummary());
         setType(model.getType());
-        setCategory(model.getCategory());
+        setCategory(model.getGroup());
         setEventTime(model.getEventTime());
         setStartTime(model.getStartTime());
         setCount(model.getCount());
@@ -462,7 +462,7 @@ public class JParser {
         }
     }
 
-    public void setPlaces(ArrayList<JPlace> list) {
+    public void setPlaces(List<JPlace> list) {
         if (list != null) {
             JSONArray array = new JSONArray();
             for (JPlace place : list) {
@@ -476,7 +476,7 @@ public class JParser {
         }
     }
 
-    public void setShopping(ArrayList<JShopping> list) {
+    public void setShopping(List<JShopping> list) {
         if (list != null) {
             JSONObject array = new JSONObject();
             try {
@@ -486,7 +486,6 @@ public class JParser {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
             try {
                 jsonObject.put(SHOPPING, array);
             } catch (JSONException e) {
@@ -495,8 +494,8 @@ public class JParser {
         }
     }
 
-    public ArrayList<String> getShoppingKeys() {
-        ArrayList<String> list = new ArrayList<>();
+    public List<String> getShoppingKeys() {
+        List<String> list = new ArrayList<>();
         if (jsonObject.has(SHOPPING)) {
             try {
                 JSONObject object = jsonObject.getJSONObject(SHOPPING);
@@ -512,10 +511,10 @@ public class JParser {
         return null;
     }
 
-    public ArrayList<JShopping> getShoppings() {
+    public List<JShopping> getShoppings() {
         if (jsonObject.has(SHOPPING)) {
             try {
-                ArrayList<JShopping> places = new ArrayList<>();
+                List<JShopping> places = new ArrayList<>();
                 JSONObject object = jsonObject.getJSONObject(SHOPPING);
                 Iterator<String> keys = object.keys();
                 while (keys.hasNext()) {
@@ -677,10 +676,10 @@ public class JParser {
         return -1;
     }
 
-    public ArrayList<JPlace> getPlaces() {
+    public List<JPlace> getPlaces() {
         if (jsonObject.has(PLACES)) {
             try {
-                ArrayList<JPlace> places = new ArrayList<>();
+                List<JPlace> places = new ArrayList<>();
                 JSONArray array = jsonObject.getJSONArray(PLACES);
                 for (int i = 0; i < array.length(); i++) {
                     JSONObject object = array.getJSONObject(i);
@@ -762,7 +761,7 @@ public class JParser {
         return new JAction();
     }
 
-    public ArrayList<String> getTags() {
+    public List<String> getTags() {
         if (jsonObject.has(TAGS)){
             Type collectionType = new TypeToken<ArrayList<String>>() {}.getType();
             try {

@@ -18,12 +18,10 @@ package com.cray.software.justreminder.async;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.database.Cursor;
 import android.os.AsyncTask;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.cloud.GTasksHelper;
-import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.google_tasks.TaskItem;
 import com.cray.software.justreminder.google_tasks.TaskListItem;
 import com.cray.software.justreminder.google_tasks.TasksHelper;
@@ -32,6 +30,8 @@ import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.IOHelper;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.LoginListener;
+import com.cray.software.justreminder.reminder.ReminderHelper;
+import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.utils.MemoryUtil;
 import com.google.api.services.tasks.model.Task;
 import com.google.api.services.tasks.model.TaskList;
@@ -149,18 +149,11 @@ public class CloudLoginSynchronization extends AsyncTask<Void, String, Void> {
             helper.saveGroup(new GroupItem("General", defUiID, 5, 0, time));
             helper.saveGroup(new GroupItem("Work", SyncHelper.generateID(), 3, 0, time));
             helper.saveGroup(new GroupItem("Personal", SyncHelper.generateID(), 0, 0, time));
-            NextBase db = new NextBase(mContext);
-            db.open();
-            Cursor c = db.getReminders();
-            if (c != null && c.moveToFirst()){
-                do {
-                    db.setGroup(c.getLong(c.getColumnIndex(NextBase._ID)), defUiID);
-                } while (c.moveToNext());
+            List<ReminderItem> items = ReminderHelper.getInstance(mContext).getAll();
+            for (ReminderItem item : items) {
+                item.setGroupId(defUiID);
             }
-            if (c != null) {
-                c.close();
-            }
-            db.close();
+            ReminderHelper.getInstance(mContext).saveReminders(items);
         }
     }
 }

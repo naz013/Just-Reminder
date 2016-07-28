@@ -27,10 +27,9 @@ public class ReminderItem {
 
     private JsonModel model;
     private String summary;
-    private String json;
     private String type;
     private String uuId;
-    private String categoryUuId;
+    private String groupUuId;
     private String tags;
     private int list;
     private int status;
@@ -41,15 +40,32 @@ public class ReminderItem {
     private long delay;
     private long id;
 
+    public ReminderItem() {}
+
+    public ReminderItem(JsonModel model) {
+        this.model = model;
+        this.summary = model.getSummary();
+        this.type = model.getType();
+        this.uuId = model.getUuId();
+        this.groupUuId = model.getGroup();
+        this.list = 0;
+        this.status = 0;
+        this.location = 0;
+        this.reminder = 0;
+        this.notification = 0;
+        this.dateTime = model.getEventTime();
+        this.delay = 0;
+        this.id = 0;
+    }
+
     public ReminderItem(String summary, String json, String type, String uuId,
-                        String categoryUuId, String tags, int list, int status, int location,
+                        String groupUuId, String tags, int list, int status, int location,
                         int reminder, int notification, long dateTime, long delay, long id) {
         this.model = new JParser(json).parse();
         this.summary = summary;
-        this.json = json;
         this.type = type;
         this.uuId = uuId;
-        this.categoryUuId = categoryUuId;
+        this.groupUuId = groupUuId;
         this.tags = tags;
         this.list = list;
         this.status = status;
@@ -67,7 +83,6 @@ public class ReminderItem {
 
     public void setModel(JsonModel model) {
         this.model = model;
-        this.json = new JParser().toJsonString(model);
     }
 
     public String getSummary() {
@@ -79,11 +94,10 @@ public class ReminderItem {
     }
 
     public String getJson() {
-        return json;
+        return new JParser().toJsonString(model);
     }
 
     public void setJson(String json) {
-        this.json = json;
         this.model = new JParser(json).parse();
     }
 
@@ -103,12 +117,12 @@ public class ReminderItem {
         this.uuId = uuId;
     }
 
-    public String getCategoryUuId() {
-        return categoryUuId;
+    public String getGroupUuId() {
+        return groupUuId;
     }
 
-    public void setCategoryUuId(String categoryUuId) {
-        this.categoryUuId = categoryUuId;
+    public void setGroupId(String categoryUuId) {
+        this.groupUuId = categoryUuId;
     }
 
     public String getTags() {

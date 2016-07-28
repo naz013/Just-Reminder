@@ -36,6 +36,7 @@ import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.reminder.json.JPlace;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PlacesFragment extends BaseFragment implements MapCallback {
 
@@ -141,7 +142,7 @@ public class PlacesFragment extends BaseFragment implements MapCallback {
     @Override
     public void onMapReady() {
         if (item != null) {
-            ArrayList<JPlace> list = item.getPlaces();
+            List<JPlace> list = item.getPlaces();
             placesMap.selectMarkers(list);
         }
     }

@@ -43,6 +43,7 @@ import com.cray.software.justreminder.views.DateTimeView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class WeekFragment extends BaseFragment implements CompoundButton.OnCheckedChangeListener,
         TimePickerDialog.OnTimeSetListener {
@@ -159,7 +160,7 @@ public class WeekFragment extends BaseFragment implements CompoundButton.OnCheck
             String type = item.getType();
             long eventTime = item.getEventTime();
             number = item.getAction().getTarget();
-            ArrayList<Integer> weekdays = item.getRecurrence().getWeekdays();
+            List<Integer> weekdays = item.getRecurrence().getWeekdays();
 
             if (exp == 1) {
                 dateExport.setChecked(true);
@@ -193,7 +194,7 @@ public class WeekFragment extends BaseFragment implements CompoundButton.OnCheck
      * Check days toggle buttons depends on weekday string.
      * @param weekdays weekday string.
      */
-    private void setCheckForDays(ArrayList<Integer> weekdays){
+    private void setCheckForDays(List<Integer> weekdays){
         if (weekdays.get(0) == Constants.DAY_CHECKED) {
             sundayCheck.setChecked(true);
         } else sundayCheck.setChecked(false);

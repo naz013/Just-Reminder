@@ -18,21 +18,21 @@ package com.cray.software.justreminder.reminder;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.reminder.json.JAction;
 import com.cray.software.justreminder.reminder.json.JMelody;
-import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.reminder.json.JPlace;
 import com.cray.software.justreminder.reminder.json.JRecurrence;
 import com.cray.software.justreminder.reminder.json.JShopping;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class ReminderModel {
     private String title, type, uuId, number, groupId, exclusion, melody;
     private int completed, archived, catColor, viewType, radius, marker, totalPlaces;
     private long due, id, repeat;
     private double[] place;
-    private ArrayList<JShopping> shoppings;
-    private ArrayList<Integer> weekdays;
-    private ArrayList<JPlace> places;
+    private List<JShopping> shoppings;
+    private List<Integer> weekdays;
+    private List<JPlace> places;
 
     public ReminderModel(long id, JsonModel jsonModel, int catColor, int archived, int completed,
                          int viewType) {
@@ -42,7 +42,7 @@ public class ReminderModel {
         this.completed = completed;
         this.viewType = viewType;
 
-        this.groupId = jsonModel.getCategory();
+        this.groupId = jsonModel.getGroup();
         this.title = jsonModel.getSummary();
         this.type = jsonModel.getType();
         this.uuId = jsonModel.getUuId();
@@ -78,7 +78,7 @@ public class ReminderModel {
         this.shoppings = jsonModel.getShoppings();
     }
 
-    public ArrayList<JPlace> getPlaces() {
+    public List<JPlace> getPlaces() {
         return places;
     }
 
@@ -86,7 +86,7 @@ public class ReminderModel {
         return totalPlaces;
     }
 
-    public ArrayList<Integer> getWeekdays() {
+    public List<Integer> getWeekdays() {
         return weekdays;
     }
 
@@ -94,7 +94,7 @@ public class ReminderModel {
         return marker;
     }
 
-    public ArrayList<JShopping> getShoppings() {
+    public List<JShopping> getShoppings() {
         return shoppings;
     }
 

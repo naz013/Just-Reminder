@@ -18,18 +18,17 @@ package com.cray.software.justreminder.datas;
 
 import android.app.AlarmManager;
 import android.content.Context;
-import android.database.Cursor;
 
 import com.cray.software.justreminder.birthdays.BirthdayHelper;
 import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.enums.WidgetType;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.reminder.json.JsonModel;
-import com.cray.software.justreminder.reminder.json.JParser;
+import com.cray.software.justreminder.reminder.ReminderHelper;
+import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.reminder.json.JRecurrence;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -103,90 +102,78 @@ public class WidgetDataProvider {
     }
 
     public void loadReminders(){
-        NextBase db = new NextBase(mContext);
-        db.open();
-        Cursor c = db.getActiveReminders();
-        if (c != null && c.moveToFirst()) {
-            do {
-                String json = c.getString(c.getColumnIndex(NextBase.JSON));
-                String mType = c.getString(c.getColumnIndex(NextBase.TYPE));
-                long eventTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
-
-                if (!mType.contains(Constants.TYPE_LOCATION)) {
-                    Calendar calendar1 = Calendar.getInstance();
-                    calendar1.setTimeInMillis(eventTime);
-                    int mDay = calendar1.get(Calendar.DAY_OF_MONTH);
-                    int mMonth = calendar1.get(Calendar.MONTH);
-                    int mYear = calendar1.get(Calendar.YEAR);
-                    if (eventTime > 0) {
-                        data.add(new Item(mDay, mMonth, mYear, WidgetType.REMINDER));
-                    }
-
-                    JsonModel jsonModel = new JParser(json).parse();
-                    JRecurrence jRecurrence = jsonModel.getRecurrence();
-                    long repeatTime = jRecurrence.getRepeat();
-                    long limit = jRecurrence.getLimit();
-                    long count = jsonModel.getCount();
-                    int myDay = jRecurrence.getMonthday();
-                    boolean isLimited = limit > 0;
-
-                    if (isFeature) {
-                        if (mType.startsWith(Constants.TYPE_WEEKDAY)) {
-                            long days = 0;
-                            long max = Configs.MAX_DAYS_COUNT;
-                            if (isLimited) max = limit - count;
-                            ArrayList<Integer> list = jRecurrence.getWeekdays();
-                            do {
-                                calendar1.setTimeInMillis(calendar1.getTimeInMillis() +
-                                        AlarmManager.INTERVAL_DAY);
-                                eventTime = calendar1.getTimeInMillis();
-                                int weekDay = calendar1.get(Calendar.DAY_OF_WEEK);
-                                if (list.get(weekDay - 1) == 1 && eventTime > 0) {
-                                    int sDay = calendar1.get(Calendar.DAY_OF_MONTH);
-                                    int sMonth = calendar1.get(Calendar.MONTH);
-                                    int sYear = calendar1.get(Calendar.YEAR);
-                                    days++;
-                                    data.add(new Item(sDay, sMonth, sYear, WidgetType.REMINDER));
-                                }
-                            } while (days < max);
-                        } else if (mType.startsWith(Constants.TYPE_MONTHDAY)) {
-                            long days = 0;
-                            long max = Configs.MAX_DAYS_COUNT;
-                            if (isLimited) max = limit - count;
-                            do {
-                                eventTime = TimeCount.getNextMonthDayTime(myDay,
-                                        calendar1.getTimeInMillis() + TimeCount.DAY);
-                                calendar1.setTimeInMillis(eventTime);
+        List<ReminderItem> reminderItems = ReminderHelper.getInstance(mContext).getRemindersEnabled();
+        for (ReminderItem item : reminderItems) {
+            String mType = item.getType();
+            long eventTime = item.getDateTime();
+            if (!mType.contains(Constants.TYPE_LOCATION)) {
+                Calendar calendar1 = Calendar.getInstance();
+                calendar1.setTimeInMillis(eventTime);
+                int mDay = calendar1.get(Calendar.DAY_OF_MONTH);
+                int mMonth = calendar1.get(Calendar.MONTH);
+                int mYear = calendar1.get(Calendar.YEAR);
+                if (eventTime > 0) {
+                    data.add(new Item(mDay, mMonth, mYear, WidgetType.REMINDER));
+                }
+                JsonModel jsonModel = item.getModel();
+                JRecurrence jRecurrence = jsonModel.getRecurrence();
+                long repeatTime = jRecurrence.getRepeat();
+                long limit = jRecurrence.getLimit();
+                long count = jsonModel.getCount();
+                int myDay = jRecurrence.getMonthday();
+                boolean isLimited = limit > 0;
+                if (isFeature) {
+                    if (mType.startsWith(Constants.TYPE_WEEKDAY)) {
+                        long days = 0;
+                        long max = Configs.MAX_DAYS_COUNT;
+                        if (isLimited) max = limit - count;
+                        List<Integer> list = jRecurrence.getWeekdays();
+                        do {
+                            calendar1.setTimeInMillis(calendar1.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
+                            eventTime = calendar1.getTimeInMillis();
+                            int weekDay = calendar1.get(Calendar.DAY_OF_WEEK);
+                            if (list.get(weekDay - 1) == 1 && eventTime > 0) {
                                 int sDay = calendar1.get(Calendar.DAY_OF_MONTH);
                                 int sMonth = calendar1.get(Calendar.MONTH);
                                 int sYear = calendar1.get(Calendar.YEAR);
-                                if (eventTime > 0) {
-                                    days++;
-                                    data.add(new Item(sDay, sMonth, sYear, WidgetType.REMINDER));
-                                }
-                            } while (days < max);
-                        } else {
-                            long days = 0;
-                            long max = Configs.MAX_DAYS_COUNT;
-                            if (isLimited) max = limit - count;
-                            do {
-                                calendar1.setTimeInMillis(calendar1.getTimeInMillis() + repeatTime);
-                                eventTime = calendar1.getTimeInMillis();
-                                mDay = calendar1.get(Calendar.DAY_OF_MONTH);
-                                mMonth = calendar1.get(Calendar.MONTH);
-                                mYear = calendar1.get(Calendar.YEAR);
-                                if (eventTime > 0) {
-                                    days++;
-                                    data.add(new Item(mDay, mMonth, mYear, WidgetType.REMINDER));
-                                }
-                            } while (days < max);
-                        }
+                                days++;
+                                data.add(new Item(sDay, sMonth, sYear, WidgetType.REMINDER));
+                            }
+                        } while (days < max);
+                    } else if (mType.startsWith(Constants.TYPE_MONTHDAY)) {
+                        long days = 0;
+                        long max = Configs.MAX_DAYS_COUNT;
+                        if (isLimited) max = limit - count;
+                        do {
+                            eventTime = TimeCount.getNextMonthDayTime(myDay, calendar1.getTimeInMillis() + TimeCount.DAY);
+                            calendar1.setTimeInMillis(eventTime);
+                            int sDay = calendar1.get(Calendar.DAY_OF_MONTH);
+                            int sMonth = calendar1.get(Calendar.MONTH);
+                            int sYear = calendar1.get(Calendar.YEAR);
+                            if (eventTime > 0) {
+                                days++;
+                                data.add(new Item(sDay, sMonth, sYear, WidgetType.REMINDER));
+                            }
+                        } while (days < max);
+                    } else {
+                        long days = 0;
+                        long max = Configs.MAX_DAYS_COUNT;
+                        if (isLimited) max = limit - count;
+                        do {
+                            calendar1.setTimeInMillis(calendar1.getTimeInMillis() + repeatTime);
+                            eventTime = calendar1.getTimeInMillis();
+                            mDay = calendar1.get(Calendar.DAY_OF_MONTH);
+                            mMonth = calendar1.get(Calendar.MONTH);
+                            mYear = calendar1.get(Calendar.YEAR);
+                            if (eventTime > 0) {
+                                days++;
+                                data.add(new Item(mDay, mMonth, mYear, WidgetType.REMINDER));
+                            }
+                        } while (days < max);
                     }
                 }
-            } while (c.moveToNext());
+            }
         }
-        if (c != null) c.close();
-        db.close();
     }
 
     public void loadBirthdays(){

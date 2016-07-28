@@ -63,20 +63,19 @@ import com.cray.software.justreminder.constants.Language;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
-import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.Telephony;
 import com.cray.software.justreminder.interfaces.SendListener;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.json.JAction;
 import com.cray.software.justreminder.reminder.json.JLed;
 import com.cray.software.justreminder.reminder.json.JMelody;
-import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.reminder.json.JRecurrence;
 import com.cray.software.justreminder.reminder.json.JShopping;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.services.DeliveredReceiver;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.services.SendReceiver;
@@ -98,7 +97,7 @@ import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import jp.wasabeef.picasso.transformations.BlurTransformation;
@@ -126,9 +125,8 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     private int mVolume;
     private int mStream;
 
-    private Type reminder;
-    private JsonModel item;
-    private ArrayList<JShopping> shoppings;
+    private ReminderItem item;
+    private List<JShopping> shoppings;
 
     private ShoppingListDataProvider provider;
 
@@ -138,9 +136,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     private Handler handler = new Handler();
 
     private Tracker mTracker;
-
     private GoogleApiClient mGoogleApiClient;
-
     private ProgressDialog mSendDialog;
 
     /**
@@ -198,38 +194,30 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             am.setStreamVolume(mStream, mVolume, 0);
         }
 
-        reminder = new Type(this);
-
-        item = reminder.getItem(id);
+        item = ReminderHelper.getInstance(this).getReminder(id);
         if (item != null) {
             task = item.getSummary();
             reminderType = item.getType();
-
-            JAction jAction = item.getAction();
+            JsonModel model = item.getModel();
+            JAction jAction = model.getAction();
             number = jAction.getTarget();
             subject = jAction.getSubject();
             attachment = jAction.getAttachment();
             auto = jAction.getAuto();
-
-            JMelody jMelody = item.getMelody();
+            JMelody jMelody = model.getMelody();
             melody = jMelody.getMelodyPath();
-
-            JRecurrence jRecurrence = item.getRecurrence();
+            JRecurrence jRecurrence = model.getRecurrence();
             repeaCode = jRecurrence.getRepeat();
             limit = jRecurrence.getLimit();
-
-            JLed jLed = item.getLed();
+            JLed jLed = model.getLed();
             color = jLed.getColor();
-
-            vibration = item.getVibrate();
-            voice = item.getVoice();
-            notificationRepeat = item.getNotificationRepeat();
-            wake = item.getAwake();
-            unlock = item.getUnlock();
-
-            count = item.getCount();
-
-            if (reminder.getDelay(id) != 0 && item.getEventTime() > System.currentTimeMillis()) {
+            vibration = model.getVibrate();
+            voice = model.getVoice();
+            notificationRepeat = model.getNotificationRepeat();
+            wake = model.getAwake();
+            unlock = model.getUnlock();
+            count = model.getCount();
+            if (item.getDelay() != 0 && item.getDateTime() > System.currentTimeMillis()) {
                 notifier.discardNotification(id);
                 finish();
             }
@@ -604,21 +592,21 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
     }
 
     private void loadData() {
-        shoppings = item.getShoppings();
+        shoppings = item.getModel().getShoppings();
         provider = new ShoppingListDataProvider(shoppings, true);
         TaskListRecyclerAdapter shoppingAdapter = new TaskListRecyclerAdapter(this, provider,
                 new TaskListRecyclerAdapter.ActionListener() {
             @Override
             public void onItemCheck(int position, boolean isChecked) {
                 shoppings.get(position).setStatus(isChecked ? 1 : 0);
-                ShoppingList.switchItem(ReminderDialog.this, id, isChecked, provider.getItem(position).getUuId());
+                Reminder.switchItem(ReminderDialog.this, id, isChecked, provider.getItem(position).getUuId());
                 loadData();
             }
 
             @Override
             public void onItemDelete(int position) {
                 shoppings.remove(position);
-                ShoppingList.hideItem(ReminderDialog.this, id, provider.getItem(position).getUuId());
+                Reminder.hideItem(ReminderDialog.this, id, provider.getItem(position).getUuId());
                 loadData();
             }
 
@@ -638,7 +626,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 return item.getType();
             } else {
                 if (id != 0){
-                    return reminder.getItem(id).getType();
+                    return ReminderHelper.getInstance(this).getReminder(id).getType();
                 } else {
                     return Constants.TYPE_REMINDER;
                 }

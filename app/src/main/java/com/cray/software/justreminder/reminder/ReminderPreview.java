@@ -20,7 +20,6 @@ import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
@@ -61,11 +60,11 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.ActionCallbacks;
-import com.cray.software.justreminder.reminder.json.JPlace;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.notes.NoteHelper;
 import com.cray.software.justreminder.notes.NoteItem;
 import com.cray.software.justreminder.notes.NotePreview;
+import com.cray.software.justreminder.reminder.json.JPlace;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.roboto_views.RoboSwitchCompat;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
@@ -86,6 +85,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 public class ReminderPreview extends AppCompatActivity implements ActionCallbacks {
@@ -150,7 +150,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
             location.setVisibility(View.VISIBLE);
             ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMapAsync(mMapCallback);
 
-            ArrayList<JPlace> places = item.getPlaces();
+            List<JPlace> places = item.getPlaces();
             if (places != null) {
                 for (JPlace jPlace : places) {
                     LatLng pos = new LatLng(jPlace.getLatitude(), jPlace.getLongitude());
@@ -448,19 +448,13 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
     }
 
     private void makeCopy() {
-        NextBase db = new NextBase(this);
-        if (!db.isOpen()) {
-            db.open();
-        }
-        Cursor c = db.getReminder(id);
-        if (c != null && c.moveToFirst()) {
-            String type = c.getString(c.getColumnIndex(NextBase.TYPE));
+        ReminderItem item = ReminderHelper.getInstance(this).getReminder(id);
+        if (item != null) {
+            String type = item.getType();
             if (!type.contains(Constants.TYPE_LOCATION) && !type.matches(Constants.TYPE_TIME)) {
                 showDialog();
             }
         }
-        if (c != null) c.close();
-        db.close();
     }
 
     private void closeWindow() {

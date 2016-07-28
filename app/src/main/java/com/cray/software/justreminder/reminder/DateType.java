@@ -18,7 +18,6 @@ package com.cray.software.justreminder.reminder;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 
-import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.services.AlarmReceiver;
 
 public class DateType extends Type {
@@ -39,18 +38,11 @@ public class DateType extends Type {
     }
 
     @Override
-    public long save(JsonModel item) {
+    public long save(ReminderItem item) {
         long id = super.save(item);
         startAlarm(id);
         exportToServices(item, id);
         return id;
-    }
-
-    @Override
-    public void save(long id, JsonModel item) {
-        super.save(id, item);
-        startAlarm(id);
-        exportToServices(item, id);
     }
 
     private void startAlarm(long id) {

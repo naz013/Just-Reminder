@@ -5,7 +5,6 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -23,15 +22,16 @@ import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
-import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
+import com.cray.software.justreminder.reminder.ReminderHelper;
+import com.cray.software.justreminder.reminder.ReminderItem;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -173,19 +173,13 @@ public class TaskManager extends AppCompatActivity {
                     listText.setText(listItem.getTitle());
                     setColor(listItem.getColor());
                 }
-                if (remId > 0) {
-                    NextBase db = new NextBase(this);
-                    db.open();
-                    Cursor r = db.getReminder(remId);
-                    if (r != null && r.moveToFirst()){
-                        long eventTime = r.getLong(r.getColumnIndex(NextBase.EVENT_TIME));
-                        calendar.setTimeInMillis(eventTime);
-                        timeField.setText(TimeUtil.getTime(calendar.getTime(),
-                                SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
-                        isReminder = true;
-                    }
-                    if (r != null) r.close();
-                    db.close();
+                ReminderItem item = ReminderHelper.getInstance(this).getReminder(remId);
+                if (item != null){
+                    long eventTime = item.getDateTime();
+                    calendar.setTimeInMillis(eventTime);
+                    timeField.setText(TimeUtil.getTime(calendar.getTime(),
+                            SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
+                    isReminder = true;
                 }
             }
         }
@@ -350,7 +344,7 @@ public class TaskManager extends AppCompatActivity {
         long due = calendar.getTimeInMillis();
         JsonModel jsonModel = new JsonModel(task, Constants.TYPE_REMINDER, categoryId,
                 SyncHelper.generateID(), due, due, null, null, null);
-        return new DateType(TaskManager.this, Constants.TYPE_REMINDER).save(jsonModel);
+        return new DateType(TaskManager.this, Constants.TYPE_REMINDER).save(new ReminderItem(jsonModel));
     }
 
     private void deleteDialog() {

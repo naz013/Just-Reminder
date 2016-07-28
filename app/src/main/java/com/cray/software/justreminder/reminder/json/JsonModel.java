@@ -17,11 +17,12 @@
 package com.cray.software.justreminder.reminder.json;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class JsonModel {
 
-    private ArrayList<JPlace> places;
-    private ArrayList<JShopping> shoppings;
+    private List<JPlace> places = new ArrayList<>();
+    private List<JShopping> shoppings = new ArrayList<>();
     private JExclusion exclusion;
     private JLed led;
     private JMelody melody;
@@ -29,10 +30,10 @@ public class JsonModel {
     private JAction action;
     private JExport export;
     private JPlace place;
-    private ArrayList<String> tags;
+    private List<String> tags = new ArrayList<>();
     private String summary;
     private String type;
-    private String category;
+    private String group;
     private String uuId;
     private long eventTime;
     private long startTime;
@@ -46,12 +47,12 @@ public class JsonModel {
     public JsonModel() {
     }
 
-    public JsonModel(String summary, String type, String category, String uuId,
+    public JsonModel(String summary, String type, String group, String uuId,
                      long eventTime, long startTime, JRecurrence jRecurrence,
                      JAction jAction, JExport jExport) {
         this.summary = summary;
         this.type = type;
-        this.category = category;
+        this.group = group;
         this.uuId = uuId;
         this.eventTime = eventTime;
         this.startTime = startTime;
@@ -73,16 +74,16 @@ public class JsonModel {
         this.shoppings = null;
     }
 
-    public JsonModel(String summary, String type, String category, String uuId,
+    public JsonModel(String summary, String type, String group, String uuId,
                      long eventTime, long startTime, long count, int vibrate,
                      int notificationRepeat, int voice, int awake, int unlock,
                      JExclusion jExclusion, JLed jLed, JMelody jMelody,
                      JRecurrence jRecurrence, JAction jAction, JExport jExport,
-                     JPlace jPlace, ArrayList<String> tags, ArrayList<JPlace> places,
-                     ArrayList<JShopping> shoppings) {
+                     JPlace jPlace, List<String> tags, List<JPlace> places,
+                     List<JShopping> shoppings) {
         this.summary = summary;
         this.type = type;
-        this.category = category;
+        this.group = group;
         this.uuId = uuId;
         this.eventTime = eventTime;
         this.startTime = startTime;
@@ -152,11 +153,11 @@ public class JsonModel {
         return recurrence;
     }
 
-    public ArrayList<JPlace> getPlaces() {
+    public List<JPlace> getPlaces() {
         return places;
     }
 
-    public ArrayList<JShopping> getShoppings() {
+    public List<JShopping> getShoppings() {
         return shoppings;
     }
 
@@ -180,7 +181,7 @@ public class JsonModel {
         return voice;
     }
 
-    public ArrayList<String> getTags() {
+    public List<String> getTags() {
         return tags;
     }
 
@@ -192,8 +193,8 @@ public class JsonModel {
         return eventTime;
     }
 
-    public String getCategory() {
-        return category;
+    public String getGroup() {
+        return group;
     }
 
     public String getUuId() {
@@ -220,7 +221,7 @@ public class JsonModel {
         this.melody = melody;
     }
 
-    public void setPlaces(ArrayList<JPlace> places) {
+    public void setPlaces(List<JPlace> places) {
         this.places = places;
     }
 
@@ -232,12 +233,12 @@ public class JsonModel {
         this.type = type;
     }
 
-    public void setShoppings(ArrayList<JShopping> shoppings) {
+    public void setShoppings(List<JShopping> shoppings) {
         this.shoppings = shoppings;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setGroup(String group) {
+        this.group = group;
     }
 
     public void setCount(long count) {
@@ -252,7 +253,7 @@ public class JsonModel {
         this.notificationRepeat = notificationRepeat;
     }
 
-    public void setTags(ArrayList<String> tags) {
+    public void setTags(List<String> tags) {
         this.tags = tags;
     }
 

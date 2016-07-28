@@ -67,6 +67,7 @@ import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.Telephony;
+import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
@@ -450,7 +451,7 @@ public class NotesManager extends AppCompatActivity {
             long due = calendar1.getTimeInMillis();
             JsonModel jsonModel = new JsonModel(note, Constants.TYPE_REMINDER, categoryId,
                     SyncHelper.generateID(), due, due, null, null, null);
-            long remId = new DateType(NotesManager.this, Constants.TYPE_REMINDER).save(jsonModel);
+            long remId = new DateType(NotesManager.this, Constants.TYPE_REMINDER).save(new ReminderItem(jsonModel));
             NoteHelper.getInstance(this).linkReminder(id, remId);
         }
         SharedPrefs.getInstance(this).putBoolean(Prefs.NOTE_CHANGED, true);

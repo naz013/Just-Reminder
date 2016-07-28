@@ -42,16 +42,10 @@ public class LocationType extends Type {
     }
 
     @Override
-    public long save(JsonModel item) {
+    public long save(ReminderItem item) {
         long id = super.save(item);
-        startTracking(id, item);
+        startTracking(id, item.getModel());
         return id;
-    }
-
-    @Override
-    public void save(long id, JsonModel item) {
-        super.save(id, item);
-        startTracking(id, item);
     }
 
     private void startTracking(long id, JsonModel item) {

@@ -20,7 +20,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationManagerCompat;
@@ -28,14 +27,14 @@ import android.support.v4.content.WakefulBroadcastReceiver;
 import android.support.v7.app.NotificationCompat;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.reminder.ReminderDialog;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.reminder.json.JsonModel;
-import com.cray.software.justreminder.reminder.json.JParser;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.reminder.ReminderDialog;
+import com.cray.software.justreminder.reminder.ReminderHelper;
+import com.cray.software.justreminder.reminder.ReminderItem;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.io.File;
@@ -49,21 +48,14 @@ public class RepeatNotificationReceiver extends WakefulBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         long id = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
-        if (id != 0) {
-            NextBase db = new NextBase(context);
-            db.open();
-            Cursor c = db.getReminder(id);
-            if (c!= null && c.moveToFirst()) {
-                String task = c.getString(c.getColumnIndex(NextBase.SUMMARY));
-                String type = c.getString(c.getColumnIndex(NextBase.TYPE));
-                String json = c.getString(c.getColumnIndex(NextBase.JSON));
-                JsonModel jsonModel = new JParser(json).parse();
-                String melody = jsonModel.getMelody().getMelodyPath();
-                int color = jsonModel.getLed().getColor();
-                showNotification(context, task, type, id, color, melody);
-            }
-            if (c != null) c.close();
-            db.close();
+        ReminderItem item = ReminderHelper.getInstance(context).getReminder(id);
+        if (item != null) {
+            String task = item.getSummary();
+            String type = item.getType();
+            JsonModel jsonModel = item.getModel();
+            String melody = jsonModel.getMelody().getMelodyPath();
+            int color = jsonModel.getLed().getColor();
+            showNotification(context, task, type, id, color, melody);
         }
     }
 
@@ -77,12 +69,11 @@ public class RepeatNotificationReceiver extends WakefulBroadcastReceiver {
         alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        if (Module.isMarshmallow())
-            alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP,
-                    calendar.getTimeInMillis() + minutes, minutes, alarmIntent);
-        else
-            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP,
-                    calendar.getTimeInMillis() + minutes, minutes, alarmIntent);
+        if (Module.isMarshmallow()) {
+            alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + minutes, minutes, alarmIntent);
+        } else {
+            alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + minutes, minutes, alarmIntent);
+        }
     }
 
     public void cancelAlarm(Context context, long id) {

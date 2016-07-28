@@ -31,13 +31,14 @@ import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Recycler view adapter for frequently used places.
  */
 public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapter.ViewHolder> {
 
-    private ArrayList<GooglePlaceItem> array = new ArrayList<>();
+    private List<GooglePlaceItem> array = new ArrayList<>();
 
     /**
      * Action listener for adapter.
@@ -50,7 +51,7 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
      * @param context application context.
      * @param array places data provider.
      */
-    public GooglePlacesAdapter(final Context context, ArrayList<GooglePlaceItem> array) {
+    public GooglePlacesAdapter(final Context context, List<GooglePlaceItem> array) {
         this.array = array;
         isDark = new ColorSetter(context).isDark();
         setHasStableIds(true);
@@ -148,7 +149,7 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
         return array.size();
     }
 
-    private int getIcon(ArrayList<String> tags) {
+    private int getIcon(List<String> tags) {
         if (tags == null) {
             if (isDark) return R.drawable.ic_place_white_vector;
             else return R.drawable.ic_place_black_vector;

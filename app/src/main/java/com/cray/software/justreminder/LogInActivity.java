@@ -40,7 +40,6 @@ import com.cray.software.justreminder.birthdays.BirthdayHelper;
 import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -49,6 +48,8 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.LoginListener;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.reminder.ReminderHelper;
+import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.SuperUtil;
@@ -412,18 +413,11 @@ public class LogInActivity extends Activity implements LoginListener {
             helper.saveGroup(new GroupItem("General", defUiID, 5, 0, time));
             helper.saveGroup(new GroupItem("Work", SyncHelper.generateID(), 3, 0, time));
             helper.saveGroup(new GroupItem("Personal", SyncHelper.generateID(), 0, 0, time));
-            NextBase db = new NextBase(this);
-            db.open();
-            Cursor c = db.getReminders();
-            if (c != null && c.moveToFirst()){
-                do {
-                    db.setGroup(c.getLong(c.getColumnIndex(NextBase._ID)), defUiID);
-                } while (c.moveToNext());
+            List<ReminderItem> items = ReminderHelper.getInstance(this).getAll();
+            for (ReminderItem item : items) {
+                item.setGroupId(defUiID);
             }
-            if (c != null) {
-                c.close();
-            }
-            db.close();
+            ReminderHelper.getInstance(this).saveReminders(items);
         }
     }
 

@@ -42,10 +42,10 @@ import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
-import com.cray.software.justreminder.reminder.json.JExport;
-import com.cray.software.justreminder.reminder.json.JsonModel;
-import com.cray.software.justreminder.reminder.json.JRecurrence;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.reminder.json.JExport;
+import com.cray.software.justreminder.reminder.json.JRecurrence;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
@@ -219,7 +219,7 @@ public class AddReminderActivity extends AppCompatActivity {
         JRecurrence jRecurrence = new JRecurrence(0, repeat * AlarmManager.INTERVAL_DAY, -1, null, 0);
         JsonModel jsonModel = new JsonModel(text, type, categoryId,
                 SyncHelper.generateID(), startTime, startTime, jRecurrence, null, jExport);
-        long remId = new DateType(AddReminderActivity.this, Constants.TYPE_REMINDER).save(jsonModel);
+        long remId = new DateType(AddReminderActivity.this, Constants.TYPE_REMINDER).save(new ReminderItem(jsonModel));
         if (isCalendar || isStock) {
             ReminderUtils.exportToCalendar(this, text, startTime, remId, isCalendar, isStock);
         }

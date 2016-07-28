@@ -17,7 +17,6 @@ package com.cray.software.justreminder.reminder;
 
 import android.app.AlarmManager;
 import android.content.Context;
-import android.database.Cursor;
 import android.util.Log;
 
 import com.cray.software.justreminder.birthdays.BirthdayHelper;
@@ -28,9 +27,8 @@ import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.reminder.json.JsonModel;
-import com.cray.software.justreminder.reminder.json.JParser;
 import com.cray.software.justreminder.reminder.json.JRecurrence;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.hexrain.flextcal.Events;
 import com.hexrain.flextcal.FlextHelper;
 
@@ -117,34 +115,22 @@ public class ReminderDataProvider {
 
     public void load(){
         data.clear();
-        NextBase db = new NextBase(mContext);
-        db.open();
         Map<String, Integer> map = getCategories(mContext);
-        Cursor c = isArchive ? db.getArchivedReminders() : db.getReminders();
-        if (categoryId != null) c = db.getReminders(categoryId);
-        if (time > 0) c = db.getReminders(time);
-        if (c != null && c.moveToNext()){
-            do {
-                String json = c.getString(c.getColumnIndex(NextBase.JSON));
-                String type = c.getString(c.getColumnIndex(NextBase.TYPE));
-                String categoryId = c.getString(c.getColumnIndex(NextBase.CATEGORY));
-                int archived = c.getInt(c.getColumnIndex(NextBase.DB_LIST));
-                int completed = c.getInt(c.getColumnIndex(NextBase.DB_STATUS));
-                long id = c.getLong(c.getColumnIndex(NextBase._ID));
-
-                int viewType = VIEW_REMINDER;
-                if (type.matches(Constants.TYPE_SHOPPING_LIST)) viewType = VIEW_SHOPPING_LIST;
-
-                int catColor = 0;
-                if (map.containsKey(categoryId)) catColor = map.get(categoryId);
-
-                //Log.d(Constants.LOG_TAG, "Json ---- " + json);
-                JsonModel jsonModel = new JParser(json).parse();
-                data.add(new ReminderModel(id, jsonModel, catColor, archived, completed, viewType));
-            } while (c.moveToNext());
+        ReminderHelper helper = ReminderHelper.getInstance(mContext);
+        List<ReminderItem> list = isArchive ? helper.getRemindersArchived() : helper.getRemindersActive();
+        if (categoryId != null) list = helper.getReminders(categoryId);
+        if (time > 0) list = helper.getReminders(time);
+        for (ReminderItem item : list) {
+            String type = item.getType();
+            String categoryId = item.getGroupUuId();
+            int archived = item.getList();
+            int completed = item.getStatus();
+            int viewType = VIEW_REMINDER;
+            if (type.matches(Constants.TYPE_SHOPPING_LIST)) viewType = VIEW_SHOPPING_LIST;
+            int catColor = 0;
+            if (map.containsKey(categoryId)) catColor = map.get(categoryId);
+            data.add(new ReminderModel(item.getId(), item.getModel(), catColor, archived, completed, viewType));
         }
-        if (c != null) c.close();
-        db.close();
     }
 
     private void setEvent(long eventTime, String summary, int color) {
@@ -165,79 +151,71 @@ public class ReminderDataProvider {
 
         if (isReminder) {
             int rColor = cs.getColor(cs.colorReminderCalendar());
-            NextBase db = new NextBase(mContext);
-            db.open();
-            Cursor c = db.getActiveReminders();
-            if (c != null && c.moveToNext()){
-                Log.d(Constants.LOG_TAG, "Count " + c.getCount());
-                do {
-                    String json = c.getString(c.getColumnIndex(NextBase.JSON));
-                    String mType = c.getString(c.getColumnIndex(NextBase.TYPE));
-                    String summary = c.getString(c.getColumnIndex(NextBase.SUMMARY));
-                    long eventTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
-                    if (!mType.contains(Constants.TYPE_LOCATION)) {
-                        JsonModel jsonModel = new JParser(json).parse();
-                        JRecurrence jRecurrence = jsonModel.getRecurrence();
-                        long repeatTime = jRecurrence.getRepeat();
-                        long limit = jRecurrence.getLimit();
-                        long count = jsonModel.getCount();
-                        int myDay = jRecurrence.getMonthday();
-                        boolean isLimited = limit > 0;
+            List<ReminderItem> reminders = ReminderHelper.getInstance(mContext).getRemindersEnabled();
+            for (ReminderItem item : reminders) {
+                String mType = item.getType();
+                String summary = item.getSummary();
+                long eventTime = item.getDateTime();
+                if (!mType.contains(Constants.TYPE_LOCATION)) {
+                    JsonModel jsonModel = item.getModel();
+                    JRecurrence jRecurrence = jsonModel.getRecurrence();
+                    long repeatTime = jRecurrence.getRepeat();
+                    long limit = jRecurrence.getLimit();
+                    long count = jsonModel.getCount();
+                    int myDay = jRecurrence.getMonthday();
+                    boolean isLimited = limit > 0;
 
-                        if (eventTime > 0) {
-                            setEvent(eventTime, summary, rColor);
-                        } else continue;
+                    if (eventTime > 0) {
+                        setEvent(eventTime, summary, rColor);
+                    } else continue;
 
-                        if (isFeature) {
-                            Calendar calendar1 = Calendar.getInstance();
-                            calendar1.setTimeInMillis(eventTime);
-                            if (mType.startsWith(Constants.TYPE_WEEKDAY)) {
-                                long days = 0;
-                                long max = Configs.MAX_DAYS_COUNT;
-                                if (isLimited) max = limit - count;
-                                ArrayList<Integer> list = jRecurrence.getWeekdays();
-                                do {
-                                    calendar1.setTimeInMillis(calendar1.getTimeInMillis() +
-                                            AlarmManager.INTERVAL_DAY);
-                                    eventTime = calendar1.getTimeInMillis();
-                                    int weekDay = calendar1.get(Calendar.DAY_OF_WEEK);
-                                    if (list.get(weekDay - 1) == 1 && eventTime > 0) {
-                                        days++;
-                                        setEvent(eventTime, summary, rColor);
-                                    }
-                                } while (days < max);
-                            } else if (mType.startsWith(Constants.TYPE_MONTHDAY)) {
-                                long days = 0;
-                                long max = Configs.MAX_DAYS_COUNT;
-                                if (isLimited) max = limit - count;
-                                do {
-                                    eventTime = TimeCount.getNextMonthDayTime(myDay,
-                                            calendar1.getTimeInMillis() + TimeCount.DAY);
-                                    calendar1.setTimeInMillis(eventTime);
-                                    if (eventTime > 0) {
-                                        days++;
-                                        setEvent(eventTime, summary, rColor);
-                                    }
-                                } while (days < max);
-                            } else {
-                                if (repeatTime == 0) continue;
-                                long days = 0;
-                                long max = Configs.MAX_DAYS_COUNT;
-                                if (isLimited) max = limit - count;
-                                do {
-                                    calendar1.setTimeInMillis(calendar1.getTimeInMillis() + repeatTime);
-                                    eventTime = calendar1.getTimeInMillis();
+                    if (isFeature) {
+                        Calendar calendar1 = Calendar.getInstance();
+                        calendar1.setTimeInMillis(eventTime);
+                        if (mType.startsWith(Constants.TYPE_WEEKDAY)) {
+                            long days = 0;
+                            long max = Configs.MAX_DAYS_COUNT;
+                            if (isLimited) max = limit - count;
+                            List<Integer> list = jRecurrence.getWeekdays();
+                            do {
+                                calendar1.setTimeInMillis(calendar1.getTimeInMillis() +
+                                        AlarmManager.INTERVAL_DAY);
+                                eventTime = calendar1.getTimeInMillis();
+                                int weekDay = calendar1.get(Calendar.DAY_OF_WEEK);
+                                if (list.get(weekDay - 1) == 1 && eventTime > 0) {
                                     days++;
                                     setEvent(eventTime, summary, rColor);
-                                } while (days < max);
+                                }
+                            } while (days < max);
+                        } else if (mType.startsWith(Constants.TYPE_MONTHDAY)) {
+                            long days = 0;
+                            long max = Configs.MAX_DAYS_COUNT;
+                            if (isLimited) max = limit - count;
+                            do {
+                                eventTime = TimeCount.getNextMonthDayTime(myDay,
+                                        calendar1.getTimeInMillis() + TimeCount.DAY);
+                                calendar1.setTimeInMillis(eventTime);
+                                if (eventTime > 0) {
+                                    days++;
+                                    setEvent(eventTime, summary, rColor);
+                                }
+                            } while (days < max);
+                        } else {
+                            if (repeatTime == 0) continue;
+                            long days = 0;
+                            long max = Configs.MAX_DAYS_COUNT;
+                            if (isLimited) max = limit - count;
+                            do {
+                                calendar1.setTimeInMillis(calendar1.getTimeInMillis() + repeatTime);
+                                eventTime = calendar1.getTimeInMillis();
+                                days++;
+                                setEvent(eventTime, summary, rColor);
+                            } while (days < max);
 
-                            }
                         }
                     }
-                } while (c.moveToNext());
+                }
             }
-            if (c != null) c.close();
-            db.close();
         }
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         List<BirthdayItem> list = BirthdayHelper.getInstance(mContext).getAll();
@@ -278,31 +256,21 @@ public class ReminderDataProvider {
         return map;
     }
 
-    public static ReminderModel getItem(Context mContext, long id){
+    public static ReminderModel getItem(Context context, long id){
         ReminderModel item = null;
-        NextBase db = new NextBase(mContext);
-        db.open();
-        Map<String, Integer> map = getCategories(mContext);
-        Cursor c = db.getReminder(id);
-        if (c != null && c.moveToNext()){
-            String json = c.getString(c.getColumnIndex(NextBase.JSON));
-            String type = c.getString(c.getColumnIndex(NextBase.TYPE));
-            String summary = c.getString(c.getColumnIndex(NextBase.SUMMARY));
-            String categoryId = c.getString(c.getColumnIndex(NextBase.CATEGORY));
-            int archived = c.getInt(c.getColumnIndex(NextBase.DB_LIST));
-            int completed = c.getInt(c.getColumnIndex(NextBase.DB_STATUS));
-
+        Map<String, Integer> map = getCategories(context);
+        ReminderItem reminderItem = ReminderHelper.getInstance(context).getReminder(id);
+        if (reminderItem != null){
+            String type = reminderItem.getType();
+            String categoryId = reminderItem.getGroupUuId();
+            int archived = reminderItem.getList();
+            int completed = reminderItem.getStatus();
             int viewType = VIEW_REMINDER;
             if (type.matches(Constants.TYPE_SHOPPING_LIST)) viewType = VIEW_SHOPPING_LIST;
-
             int catColor = 0;
             if (map.containsKey(categoryId)) catColor = map.get(categoryId);
-
-            JsonModel jsonModel = new JParser(json).parse();
-            item = new ReminderModel(id, jsonModel, catColor, archived, completed, viewType);
+            item = new ReminderModel(id, reminderItem.getModel(), catColor, archived, completed, viewType);
         }
-        if (c != null) c.close();
-        db.close();
         return item;
     }
 }

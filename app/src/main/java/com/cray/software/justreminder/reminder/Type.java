@@ -16,16 +16,13 @@
 package com.cray.software.justreminder.reminder;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.support.v4.app.Fragment;
 
+import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.reminder.json.JExport;
-import com.cray.software.justreminder.reminder.json.JsonModel;
-import com.cray.software.justreminder.reminder.json.JParser;
-import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 
 public class Type {
 
@@ -44,68 +41,6 @@ public class Type {
      */
     public void inflateView(Fragment fragment){
         this.fragment = fragment;
-    }
-
-    /**
-     * Get reminder object.
-     * @param id reminder identifier.
-     * @return reminder object
-     */
-    public JsonModel getItem(long id){
-        NextBase db = new NextBase(mContext);
-        db.open();
-        Cursor c = db.getReminder(id);
-        if (c != null && c.moveToFirst()){
-            String json = c.getString(c.getColumnIndex(NextBase.JSON));
-            c.close();
-            db.close();
-            return new JParser(json).parse();
-        }
-
-        if (c != null) c.close();
-        db.close();
-        return null;
-    }
-
-    /**
-     * Get reminder object.
-     * @param id reminder identifier.
-     * @return reminder object
-     */
-    public int getDelay(long id){
-        NextBase db = new NextBase(mContext);
-        db.open();
-        Cursor c = db.getReminder(id);
-        if (c != null && c.moveToFirst()){
-            int delay = c.getInt(c.getColumnIndex(NextBase.DELAY));
-            c.close();
-            db.close();
-            return delay;
-        }
-
-        if (c != null) c.close();
-        db.close();
-        return 0;
-    }
-
-    /**
-     * Get reminder object.
-     * @param uuId reminder unique identifier.
-     * @return reminder object
-     */
-    public JsonModel getItem(String uuId){
-        NextBase db = new NextBase(mContext);
-        db.open();
-        Cursor c = db.getReminder(uuId);
-        if (c != null && c.moveToFirst()){
-            String json = c.getString(c.getColumnIndex(NextBase.JSON));
-            c.close();
-            db.close();
-            return new JParser(json).parse();
-        }
-        if (c != null) c.close();
-        db.close();
-        return null;
     }
 
     /**
@@ -137,32 +72,10 @@ public class Type {
      * @param item reminder object.
      * @return reminder identifier
      */
-    public long save(JsonModel item){
-        NextBase db = new NextBase(mContext);
-        db.open();
-        JParser jParser = new JParser();
-        jParser.toJsonString(item);
-        long id = db.saveReminder(item.getSummary(), item.getType(), item.getEventTime(), item.getUuId(),
-                item.getCategory(), jParser.toJsonString());
-        db.close();
+    public long save(ReminderItem item){
+        long id = ReminderHelper.getInstance(mContext).saveReminder(item);
         updateViews();
         return id;
-    }
-
-    /**
-     * Update reminder in database.
-     * @param id reminder identifier.
-     * @param item reminder object.
-     */
-    public void save(long id, JsonModel item){
-        NextBase db = new NextBase(mContext);
-        db.open();
-        JParser jParser = new JParser();
-        jParser.toJsonString(item);
-        db.updateReminder(id, item.getSummary(), item.getType(), item.getEventTime(), item.getUuId(),
-                item.getCategory(), jParser.toJsonString());
-        db.close();
-        updateViews();
     }
 
     /**
@@ -170,12 +83,12 @@ public class Type {
      * @param item reminder object.
      * @param id reminder identifier.
      */
-    protected void exportToServices(JsonModel item, long id){
-        long due = item.getEventTime();
+    protected void exportToServices(ReminderItem item, long id){
+        long due = item.getDateTime();
         if (due > 0) {
             boolean stock = SharedPrefs.getInstance(mContext).getBoolean(Prefs.EXPORT_TO_STOCK);
             boolean calendar = SharedPrefs.getInstance(mContext).getBoolean(Prefs.EXPORT_TO_CALENDAR);
-            JExport jExport = item.getExport();
+            JExport jExport = item.getModel().getExport();
             if (jExport != null) {
                 if (jExport.getCalendar() == 1) {
                     ReminderUtils.exportToCalendar(mContext, item.getSummary(), due, id, calendar, stock);

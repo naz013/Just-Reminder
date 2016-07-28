@@ -38,7 +38,6 @@ import com.cray.software.justreminder.constants.LED;
 import com.cray.software.justreminder.constants.Language;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
-import com.cray.software.justreminder.reminder.NextBase;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.datas.models.ShoppingList;
 import com.cray.software.justreminder.groups.GroupHelper;
@@ -46,6 +45,10 @@ import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
+import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.reminder.ReminderHelper;
+import com.cray.software.justreminder.reminder.ReminderItem;
+import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.reminder.json.JAction;
 import com.cray.software.justreminder.reminder.json.JExclusion;
 import com.cray.software.justreminder.reminder.json.JExport;
@@ -55,8 +58,6 @@ import com.cray.software.justreminder.reminder.json.JParser;
 import com.cray.software.justreminder.reminder.json.JPlace;
 import com.cray.software.justreminder.reminder.json.JRecurrence;
 import com.cray.software.justreminder.reminder.json.JShopping;
-import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.CheckPosition;
 import com.cray.software.justreminder.services.GeolocationService;
@@ -232,16 +233,10 @@ public class SplashScreen extends AppCompatActivity {
             helper.saveGroup(new GroupItem("General", defUiID, 5, 0, time));
             helper.saveGroup(new GroupItem("Work", SyncHelper.generateID(), 3, 0, time));
             helper.saveGroup(new GroupItem("Personal", SyncHelper.generateID(), 0, 0, time));
-            NextBase db = new NextBase(this);
-            db.open();
-            Cursor c = db.getReminders();
-            if (c != null && c.moveToFirst()){
-                do {
-                    db.setGroup(c.getLong(c.getColumnIndex(NextBase._ID)), defUiID);
-                } while (c.moveToNext());
+            for (ReminderItem item : ReminderHelper.getInstance(this).getAll()) {
+                item.setGroupId(defUiID);
+                ReminderHelper.getInstance(this).saveReminder(item);
             }
-            if (c != null) c.close();
-            db.close();
         }
     }
 
@@ -252,8 +247,6 @@ public class SplashScreen extends AppCompatActivity {
         db.open();
         Cursor c = db.queryAllReminders();
         if (c != null && c.moveToFirst()){
-            NextBase nextBase = new NextBase(this);
-            nextBase.open();
             AlarmReceiver receiver = new AlarmReceiver();
             do {
                 long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));
@@ -282,20 +275,15 @@ public class SplashScreen extends AppCompatActivity {
                 String exclusion = c.getString(c.getColumnIndex(Constants.COLUMN_EXTRA_3));
                 double latitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LATITUDE));
                 double longitude = c.getDouble(c.getColumnIndex(Constants.COLUMN_LONGITUDE));
-
                 receiver.cancelAlarm(SplashScreen.this, id);
-
                 ArrayList<Integer> listW = new ArrayList<>();
                 if (weekdays != null) {
                     listW = ReminderUtils.getRepeatArray(weekdays);
                 }
-
-                due = new TimeCount(SplashScreen.this)
-                        .generateDateTime(type, myDay, due, repCode * TimeCount.DAY, listW, count, 0);
+                due = new TimeCount(SplashScreen.this).generateDateTime(type, myDay, due, repCode * TimeCount.DAY, listW, count, 0);
                 if (due < System.currentTimeMillis()) {
                     continue;
                 }
-
                 JParser parser = new JParser();
                 parser.setCategory(catId);
                 parser.setCount(count);
@@ -309,7 +297,6 @@ public class SplashScreen extends AppCompatActivity {
                 parser.setEventTime(due);
                 parser.setStartTime(due);
                 parser.setUuid(uuId);
-
                 if (type.matches(Constants.TYPE_SHOPPING_LIST)){
                     ArrayList<JShopping> list = new ArrayList<>();
                     ArrayList<ShoppingList> shoppingLists =
@@ -321,42 +308,31 @@ public class SplashScreen extends AppCompatActivity {
                     }
                     parser.setShopping(list);
                 }
-
                 JAction jAction = new JAction(type, number, auto, null, null);
                 parser.setAction(jAction);
-
                 JExport jExport = new JExport(expTasks, exp, null);
                 parser.setExport(jExport);
-
                 JMelody jMelody = new JMelody(melody, -1);
                 parser.setMelody(jMelody);
-
                 int status = ledColor != -1 ? 1 : 0;
                 JLed jLed = new JLed(ledColor, status);
                 parser.setLed(jLed);
-
                 JPlace jPlace = new JPlace(latitude, longitude, radius, -1);
                 parser.setPlace(jPlace);
-
                 JExclusion jExclusion = new JExclusion(exclusion);
                 parser.setExclusion(jExclusion);
-
                 JRecurrence jRecurrence = new JRecurrence();
                 jRecurrence.setWeekdays(listW);
                 jRecurrence.setLimit(limit);
                 jRecurrence.setMonthday(myDay);
                 jRecurrence.setRepeat(repCode * AlarmManager.INTERVAL_DAY);
                 parser.setRecurrence(jRecurrence);
-
                 String json = parser.toJsonString();
-
-                long mId = nextBase.saveReminder(text, type, due, uuId, catId, json);
+                ReminderItem item = new ReminderItem(text, json, type, uuId, catId, null, 0, 0, 0, 0, 0, due, 0, 0);
+                long mId = ReminderHelper.getInstance(this).saveReminder(item);
                 db.deleteReminder(id);
-
                 receiver.enableReminder(SplashScreen.this, mId);
             } while (c.moveToNext());
-
-            nextBase.close();
         }
         if (c != null) c.close();
         db.close();

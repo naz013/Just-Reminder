@@ -26,9 +26,9 @@ import com.backdoor.simpleai.RecUtils;
 import com.backdoor.simpleai.Recognizer;
 import com.backdoor.simpleai.Types;
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.birthdays.AddBirthdayActivity;
 import com.cray.software.justreminder.activities.SplashScreen;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
+import com.cray.software.justreminder.birthdays.AddBirthdayActivity;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Language;
 import com.cray.software.justreminder.constants.Prefs;
@@ -37,15 +37,16 @@ import com.cray.software.justreminder.dialogs.VoiceHelp;
 import com.cray.software.justreminder.dialogs.VoiceResult;
 import com.cray.software.justreminder.feedback.SendReportActivity;
 import com.cray.software.justreminder.groups.GroupHelper;
-import com.cray.software.justreminder.reminder.json.JAction;
-import com.cray.software.justreminder.reminder.json.JExport;
-import com.cray.software.justreminder.reminder.json.JsonModel;
-import com.cray.software.justreminder.reminder.json.JRecurrence;
 import com.cray.software.justreminder.notes.NoteHelper;
 import com.cray.software.justreminder.notes.NoteItem;
 import com.cray.software.justreminder.reminder.AddReminderActivity;
 import com.cray.software.justreminder.reminder.DateType;
+import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.reminder.ReminderUtils;
+import com.cray.software.justreminder.reminder.json.JAction;
+import com.cray.software.justreminder.reminder.json.JExport;
+import com.cray.software.justreminder.reminder.json.JRecurrence;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.settings.SettingsActivity;
 import com.cray.software.justreminder.utils.TimeUtil;
 
@@ -141,7 +142,7 @@ public class Recognize {
 
         JsonModel jsonModel = new JsonModel(summary, type, categoryId,
                 SyncHelper.generateID(), startTime, startTime, jRecurrence, jAction, jExport);
-        long remId = new DateType(mContext, Constants.TYPE_REMINDER).save(jsonModel);
+        long remId = new DateType(mContext, Constants.TYPE_REMINDER).save(new ReminderItem(jsonModel));
         if (isCalendar || isStock) {
             ReminderUtils.exportToCalendar(mContext, summary, startTime, remId, isCalendar, isStock);
         }
@@ -176,7 +177,7 @@ public class Recognize {
             JRecurrence jRecurrence = new JRecurrence(0, 0, -1, null, after);
             JsonModel jsonModel = new JsonModel(note, Constants.TYPE_REMINDER, categoryId,
                     SyncHelper.generateID(), due, due, jRecurrence, null, null);
-            remId = new DateType(mContext, Constants.TYPE_REMINDER).save(jsonModel);
+            remId = new DateType(mContext, Constants.TYPE_REMINDER).save(new ReminderItem(jsonModel));
         }
         item.setLinkId(remId);
         NoteHelper.getInstance(mContext).saveNote(item);

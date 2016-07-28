@@ -25,6 +25,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 
 public class JPlace {
 
@@ -43,7 +44,7 @@ public class JPlace {
     private int radius, marker;
     private double latitude, longitude;
     private String name, id, address;
-    private ArrayList<String> types;
+    private List<String> types = new ArrayList<>();
 
     /**
      * JSON object.
@@ -91,7 +92,7 @@ public class JPlace {
     }
 
     public JPlace(String name, double latitude, double longitude, String address,
-                  String id, ArrayList<String> types){
+                  String id, List<String> types){
         jsonObject = new JSONObject();
         setName(name);
         setAddress(address);
@@ -104,7 +105,7 @@ public class JPlace {
     }
 
     public JPlace(String name, double latitude, double longitude, String address,
-                  String id, int radius, int marker, ArrayList<String> types){
+                  String id, int radius, int marker, List<String> types){
         jsonObject = new JSONObject();
         setName(name);
         setAddress(address);
@@ -202,7 +203,7 @@ public class JPlace {
         this.jsonObject = jsonObject;
     }
 
-    public void setTags(ArrayList<String> types) {
+    public void setTags(List<String> types) {
         if (types != null) {
             JSONArray array = new JSONArray();
             for (String tag : types) {
@@ -279,7 +280,7 @@ public class JPlace {
         }
     }
 
-    public ArrayList<String> getTypes() {
+    public List<String> getTypes() {
         return types;
     }
 

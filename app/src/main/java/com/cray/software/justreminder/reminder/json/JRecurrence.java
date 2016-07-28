@@ -40,7 +40,7 @@ public class JRecurrence {
 
     private int monthday;
     private long repeat, limit, after;
-    private ArrayList<Integer> weekdays;
+    private List<Integer> weekdays = new ArrayList<>();
 
     /**
      * JSON object.
@@ -74,7 +74,7 @@ public class JRecurrence {
         setAfter(0);
     }
 
-    public JRecurrence(int monthday, long repeat, long limit, ArrayList<Integer> weekdays, long after){
+    public JRecurrence(int monthday, long repeat, long limit, List<Integer> weekdays, long after){
         jsonObject = new JSONObject();
         setMonthday(monthday);
         setRepeat(repeat);
@@ -185,7 +185,7 @@ public class JRecurrence {
         }
     }
 
-    public void setWeekdays(ArrayList<Integer> weekdays) {
+    public void setWeekdays(List<Integer> weekdays) {
         if (weekdays != null) {
             this.weekdays = weekdays;
             JSONArray jsonArray = new JSONArray();
@@ -202,7 +202,7 @@ public class JRecurrence {
         return after;
     }
 
-    public ArrayList<Integer> getWeekdays() {
+    public List<Integer> getWeekdays() {
         return weekdays;
     }
 

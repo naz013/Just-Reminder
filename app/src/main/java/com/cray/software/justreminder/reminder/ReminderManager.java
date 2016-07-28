@@ -19,7 +19,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
@@ -84,17 +83,17 @@ import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.ActionCallbacksExtended;
 import com.cray.software.justreminder.interfaces.MapListener;
+import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.json.JAction;
 import com.cray.software.justreminder.reminder.json.JExclusion;
 import com.cray.software.justreminder.reminder.json.JExport;
 import com.cray.software.justreminder.reminder.json.JLed;
 import com.cray.software.justreminder.reminder.json.JMelody;
-import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.reminder.json.JParser;
 import com.cray.software.justreminder.reminder.json.JPlace;
 import com.cray.software.justreminder.reminder.json.JRecurrence;
 import com.cray.software.justreminder.reminder.json.JShopping;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.services.AlarmReceiver;
@@ -182,7 +181,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     private boolean hasTasks = false, isMessage, hasAction;
 
     private Type remControl = new Type(this);
-    private JsonModel item;
+    private ReminderItem mItem;
     private BaseFragment baseFragment;
 
     private Handler handler = new Handler();
@@ -217,21 +216,22 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         initFab();
         findViewById(R.id.windowBackground).setBackgroundColor(colorSetter.getBackgroundStyle());
         loadDefaultGroup();
-
         spinner.setSelection(selection);
         if (id != 0){
-            item = remControl.getItem(id);
+            mItem = ReminderHelper.getInstance(this).getReminder(id);
             readReminder();
         } else if (filePath != null) {
             File file = new File(filePath);
             if (file.exists()) {
-                item = new JParser(SyncHelper.readFile(filePath)).parse();
-                uuId = item.getUuId();
+                mItem = new ReminderItem(new JParser(SyncHelper.readFile(filePath)).parse());
+                uuId = mItem.getUuId();
                 readReminder();
             } else {
                 Messages.toast(this, getString(R.string.something_went_wrong));
                 finish();
             }
+        } else {
+            mItem = new ReminderItem();
         }
 
         if (LocationUtil.isGooglePlayServicesAvailable(this)) {
@@ -366,7 +366,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                         .putExtra("prefs", new int[]{voice, vibration, wake, unlock,
                                 notificationRepeat, auto}), REQUEST_EXTRA));
 
-        category = (RoboTextView) findViewById(R.id.category);
+        category = (RoboTextView) findViewById(R.id.group);
         category.setOnClickListener(v -> Dialogues.selectCategory(ReminderManager.this, categoryId, ReminderManager.this));
     }
 
@@ -383,20 +383,22 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     }
 
     private void readReminder() {
-        if (item != null) {
-            type = item.getType();
-            vibration = item.getVibrate();
-            voice = item.getVoice();
-            notificationRepeat = item.getNotificationRepeat();
-            wake = item.getAwake();
-            unlock = item.getUnlock();
-            radius = item.getPlace().getRadius();
-            ledColor = item.getLed().getColor();
-            auto = item.getAction().getAuto();
-            melody = item.getMelody().getMelodyPath();
-            repeats = item.getRecurrence().getLimit();
-            String catId = item.getCategory();
-            long time = item.getEventTime();
+        if (mItem != null) {
+            type = mItem.getType();
+            categoryId = mItem.getGroupUuId();
+            JsonModel model = mItem.getModel();
+            vibration = model.getVibrate();
+            voice = model.getVoice();
+            notificationRepeat = model.getNotificationRepeat();
+            wake = model.getAwake();
+            unlock = model.getUnlock();
+            radius = model.getPlace().getRadius();
+            ledColor = model.getLed().getColor();
+            auto = model.getAction().getAuto();
+            melody = model.getMelody().getMelodyPath();
+            repeats = model.getRecurrence().getLimit();
+            String catId = model.getGroup();
+            long time = model.getEventTime();
             Calendar calendar = Calendar.getInstance();
             if (time > 0) calendar.setTimeInMillis(time);
             else calendar.setTimeInMillis(System.currentTimeMillis());
@@ -414,11 +416,6 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 }
             }
         } else {
-            Messages.toast(this, getString(R.string.something_went_wrong));
-            finish();
-        }
-
-        if (type == null) {
             Messages.toast(this, getString(R.string.something_went_wrong));
             finish();
         }
@@ -524,19 +521,14 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      * Delete or move to trash reminder.
      */
     private void deleteReminder() {
-        NextBase db = new NextBase(this);
-        db.open();
-        Cursor c = db.getReminder(id);
-        if (c != null && c.moveToFirst()) {
-            int isArchived = c.getInt(c.getColumnIndex(NextBase.DB_LIST));
+        if (mItem != null) {
+            int isArchived = mItem.getList();
             if (isArchived == 1) {
                 Reminder.delete(id, this);
                 Messages.toast(ReminderManager.this, getString(R.string.deleted));
             } else Reminder.moveToTrash(id, this, null);
             finish();
         }
-        if (c != null) c.close();
-        db.close();
     }
 
     /**
@@ -597,14 +589,14 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachDateReminder(){
         taskField.setHint(getString(R.string.remind_me));
-        DateFragment fragment = DateFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        DateFragment fragment = DateFragment.newInstance(mItem.getModel(), isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
         remControl = new DateType(this, Constants.TYPE_REMINDER, fragment);
-        if (item != null && isSame()) {
-            eventTime = item.getEventTime();
-            repeatCode = item.getRecurrence().getRepeat();
-            taskField.setText(item.getSummary());
+        if (id != 0 && isSame()) {
+            eventTime = mItem.getModel().getEventTime();
+            repeatCode = mItem.getModel().getRecurrence().getRepeat();
+            taskField.setText(mItem.getSummary());
             baseFragment.setEventTime(eventTime);
         }
     }
@@ -614,14 +606,14 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachMonthDay(){
         taskField.setHint(getString(R.string.remind_me));
-        MonthFragment fragment = MonthFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        MonthFragment fragment = MonthFragment.newInstance(mItem.getModel(), isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
         remControl = new DateType(this, Constants.TYPE_MONTHDAY, fragment);
-        if (item != null && isSame()) {
-            eventTime = item.getEventTime();
-            repeatCode = item.getRecurrence().getRepeat();
-            taskField.setText(item.getSummary());
+        if (id != 0 && isSame()) {
+            eventTime = mItem.getModel().getEventTime();
+            repeatCode = mItem.getModel().getRecurrence().getRepeat();
+            taskField.setText(mItem.getSummary());
             baseFragment.setEventTime(eventTime);
         }
     }
@@ -631,14 +623,14 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachWeekDayReminder(){
         taskField.setHint(getString(R.string.remind_me));
-        WeekFragment fragment = WeekFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        WeekFragment fragment = WeekFragment.newInstance(mItem.getModel(), isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
         remControl = new DateType(this, Constants.TYPE_WEEKDAY, fragment);
-        if (item != null && isSame()) {
-            eventTime = item.getEventTime();
-            repeatCode = item.getRecurrence().getRepeat();
-            taskField.setText(item.getSummary());
+        if (id != 0 && isSame()) {
+            eventTime = mItem.getModel().getEventTime();
+            repeatCode = mItem.getModel().getRecurrence().getRepeat();
+            taskField.setText(mItem.getSummary());
             baseFragment.setEventTime(eventTime);
         }
     }
@@ -648,15 +640,15 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachTimeReminder(){
         taskField.setHint(getString(R.string.remind_me));
-        TimerFragment fragment = TimerFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        TimerFragment fragment = TimerFragment.newInstance(mItem.getModel(), isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
         remControl = new DateType(this, Constants.TYPE_TIME, fragment);
-        if (item != null && isSame()) {
-            eventTime = item.getEventTime();
-            repeatCode = item.getRecurrence().getRepeat();
-            taskField.setText(item.getSummary());
-            exclusion = item.getExclusion().toString();
+        if (id != 0 && isSame()) {
+            eventTime = mItem.getModel().getEventTime();
+            repeatCode = mItem.getModel().getRecurrence().getRepeat();
+            taskField.setText(mItem.getSummary());
+            exclusion = mItem.getModel().getExclusion().toString();
             baseFragment.setEventTime(eventTime);
         }
     }
@@ -666,14 +658,14 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachSkype(){
         taskField.setHint(getString(R.string.remind_me));
-        SkypeFragment fragment = SkypeFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        SkypeFragment fragment = SkypeFragment.newInstance(mItem.getModel(), isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
         remControl = new DateType(this, Constants.TYPE_SKYPE, fragment);
-        if (item != null && isSame()) {
-            eventTime = item.getEventTime();
-            repeatCode = item.getRecurrence().getRepeat();
-            taskField.setText(item.getSummary());
+        if (id != 0 && isSame()) {
+            eventTime = mItem.getModel().getEventTime();
+            repeatCode = mItem.getModel().getRecurrence().getRepeat();
+            taskField.setText(mItem.getSummary());
             baseFragment.setEventTime(eventTime);
         }
     }
@@ -683,15 +675,15 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachApplication(){
         taskField.setHint(getString(R.string.remind_me));
-        ApplicationFragment fragment = ApplicationFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        ApplicationFragment fragment = ApplicationFragment.newInstance(mItem.getModel(), isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
         remControl = new DateType(this, Constants.TYPE_APPLICATION, fragment);
-        if (item != null && isSame()) {
-            eventTime = item.getEventTime();
-            repeatCode = item.getRecurrence().getRepeat();
-            selectedPackage = item.getAction().getTarget();
-            taskField.setText(item.getSummary());
+        if (id != 0 && isSame()) {
+            eventTime = mItem.getModel().getEventTime();
+            repeatCode = mItem.getModel().getRecurrence().getRepeat();
+            selectedPackage = mItem.getModel().getAction().getTarget();
+            taskField.setText(mItem.getSummary());
             baseFragment.setEventTime(eventTime);
         }
     }
@@ -701,14 +693,14 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachCall(){
         taskField.setHint(getString(R.string.remind_me));
-        CallFragment fragment = CallFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        CallFragment fragment = CallFragment.newInstance(mItem.getModel(), isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
         remControl = new DateType(this, Constants.TYPE_CALL, fragment);
-        if (item != null && isSame()) {
-            eventTime = item.getEventTime();
-            repeatCode = item.getRecurrence().getRepeat();
-            taskField.setText(item.getSummary());
+        if (id != 0 && isSame()) {
+            eventTime = mItem.getModel().getEventTime();
+            repeatCode = mItem.getModel().getRecurrence().getRepeat();
+            taskField.setText(mItem.getSummary());
             baseFragment.setEventTime(eventTime);
         }
     }
@@ -718,14 +710,14 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachMessage(){
         taskField.setHint(getString(R.string.message));
-        MessageFragment fragment = MessageFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        MessageFragment fragment = MessageFragment.newInstance(mItem.getModel(), isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
         remControl = new DateType(this, Constants.TYPE_MESSAGE, fragment);
-        if (item != null && isSame()) {
-            eventTime = item.getEventTime();
-            repeatCode = item.getRecurrence().getRepeat();
-            taskField.setText(item.getSummary());
+        if (id != 0 && isSame()) {
+            eventTime = mItem.getModel().getEventTime();
+            repeatCode = mItem.getModel().getRecurrence().getRepeat();
+            taskField.setText(mItem.getSummary());
             baseFragment.setEventTime(eventTime);
         }
     }
@@ -735,14 +727,14 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachMail(){
         taskField.setHint(getString(R.string.subject));
-        MailFragment fragment = MailFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        MailFragment fragment = MailFragment.newInstance(mItem.getModel(), isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
         remControl = new DateType(this, Constants.TYPE_MAIL, fragment);
-        if (item != null && isSame()) {
-            eventTime = item.getEventTime();
-            repeatCode = item.getRecurrence().getRepeat();
-            taskField.setText(item.getAction().getSubject());
+        if (id != 0 && isSame()) {
+            eventTime = mItem.getModel().getEventTime();
+            repeatCode = mItem.getModel().getRecurrence().getRepeat();
+            taskField.setText(mItem.getModel().getAction().getSubject());
             baseFragment.setEventTime(eventTime);
         }
     }
@@ -771,15 +763,15 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachLocation() {
         taskField.setHint(getString(R.string.remind_me));
-        LocationFragment fragment = LocationFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        LocationFragment fragment = LocationFragment.newInstance(mItem.getModel(), isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
         remControl = new LocationType(this, Constants.TYPE_LOCATION, fragment);
-        if (item != null && isSame()) {
-            String text = item.getSummary();
-            eventTime = item.getStartTime();
+        if (id != 0 && isSame()) {
+            String text = mItem.getSummary();
+            eventTime = mItem.getModel().getStartTime();
             taskField.setText(text);
-            JPlace jPlace = item.getPlace();
+            JPlace jPlace = mItem.getModel().getPlace();
             radius = jPlace.getRadius();
             baseFragment.setEventTime(eventTime);
         }
@@ -790,15 +782,15 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachLocationOut() {
         taskField.setHint(getString(R.string.remind_me));
-        OutLocationFragment fragment = OutLocationFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        OutLocationFragment fragment = OutLocationFragment.newInstance(mItem.getModel(), isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
         remControl = new LocationType(this, Constants.TYPE_LOCATION_OUT, fragment);
-        if (item != null && isSame()) {
-            String text = item.getSummary();
-            eventTime = item.getStartTime();
+        if (id != 0 && isSame()) {
+            String text = mItem.getSummary();
+            eventTime = mItem.getModel().getStartTime();
             taskField.setText(text);
-            JPlace jPlace = item.getPlace();
+            JPlace jPlace = mItem.getModel().getPlace();
             radius = jPlace.getRadius();
             baseFragment.setEventTime(eventTime);
         }
@@ -809,13 +801,13 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachPLaces() {
         taskField.setHint(getString(R.string.remind_me));
-        PlacesFragment fragment = PlacesFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        PlacesFragment fragment = PlacesFragment.newInstance(mItem.getModel(), isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
         remControl = new LocationType(this, Constants.TYPE_PLACES, fragment);
-        if (item != null && isSame()) {
-            String text = item.getSummary();
-            eventTime = item.getStartTime();
+        if (id != 0 && isSame()) {
+            String text = mItem.getModel().getSummary();
+            eventTime = mItem.getModel().getStartTime();
             taskField.setText(text);
             baseFragment.setEventTime(eventTime);
         }
@@ -826,13 +818,13 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void attachShoppingList(){
         taskField.setHint(R.string.title);
-        ShoppingFragment fragment = ShoppingFragment.newInstance(item, isDark, isCalendar, isStock, hasTasks);
+        ShoppingFragment fragment = ShoppingFragment.newInstance(mItem.getModel(), isDark, isCalendar, isStock, hasTasks);
         baseFragment = fragment;
         addFragment(R.id.layoutContainer, fragment);
         remControl = new DateType(this, Constants.TYPE_SHOPPING_LIST, fragment);
-        if (item != null && isSame()) {
-            eventTime = item.getEventTime();
-            taskField.setText(item.getSummary());
+        if (id != 0 && isSame()) {
+            eventTime = mItem.getModel().getEventTime();
+            taskField.setText(mItem.getSummary());
             baseFragment.setEventTime(eventTime);
         }
     }
@@ -843,10 +835,18 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     private void save() {
         JsonModel item = getData();
         if (item == null) return;
-        if (id != 0) remControl.save(id, item);
-        else {
-            if (!Reminder.isUuId(this, uuId)) remControl.save(item);
-            else {
+        if (id != 0) {
+            mItem.setModel(item);
+            mItem.setGroupId(categoryId);
+            mItem.setDateTime(item.getEventTime());
+            mItem.setGroupId(item.getGroup());
+            remControl.save(mItem);
+        } else {
+            if (!Reminder.isUuId(this, uuId)) {
+                ReminderItem reminderItem = new ReminderItem(item);
+                reminderItem.setGroupId(categoryId);
+                remControl.save(reminderItem);
+            } else {
                 showSnackbar(getString(R.string.same_reminder_also_present));
                 return;
             }
@@ -1193,12 +1193,9 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         if (isMonthDayAttached()) {
             if (type.endsWith("_last")) myDay = 0;
         }
-
         long startTime = new TimeCount(this).generateStartEvent(type, myDay, myMonth,
                 myYear, myHour, myMinute, mySeconds, weekdays, timeAfter);
-
         if (repeat == 0) repeats = -1;
-
         JExclusion jExclusion = new JExclusion(exclusion);
         JLed jLed = new JLed(ledColor, ledColor == -1 ? 0 : 1);
         JMelody jMelody = new JMelody(melody, volume);
@@ -1206,10 +1203,8 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         JAction jAction = new JAction(type, number, auto, subjectString, attachment);
         JExport jExport = new JExport().setGtasks(gTaskSync).setCalendar(calendarSync);
         JPlace jPlace = new JPlace(latitude, longitude, radius, style);
-
         Log.d("----RECORD_TIME-----", TimeUtil.getFullDateTime(System.currentTimeMillis(), true));
         Log.d("----EVENT_TIME-----", TimeUtil.getFullDateTime(startTime, true));
-
         return new JsonModel(task, type, categoryId, uuId, startTime, startTime, 0, vibration,
                 notificationRepeat, voice, wake, unlock, jExclusion, jLed, jMelody,
                 jRecurrence, jAction, jExport, jPlace, null, places, jShoppings);
@@ -1271,12 +1266,10 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         if (baseFragment != null) {
             if (baseFragment.onBackPressed()) return;
         }
-
         if (mFab.getVisibility() == View.GONE){
             mFab.show();
             return;
         }
-
         restoreTask();
     }
 
@@ -1285,23 +1278,21 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
      */
     private void restoreTask(){
         if (id != 0) {
-            NextBase db = new NextBase(this);
-            db.open();
             new DisableAsync(this).execute();
-            Cursor c = db.getReminder(id);
-            if (c != null && c.moveToFirst()) {
-                String type = c.getString(c.getColumnIndex(NextBase.TYPE));
-                int isDone = c.getInt(c.getColumnIndex(NextBase.DB_STATUS));
-                int isArchive = c.getInt(c.getColumnIndex(NextBase.DB_LIST));
-                eventTime = c.getLong(c.getColumnIndex(NextBase.EVENT_TIME));
+            ReminderItem item = ReminderHelper.getInstance(this).getReminder(id);
+            if (item != null) {
+                String type = item.getType();
+                int isDone = item.getStatus();
+                int isArchive = item.getList();
+                eventTime = item.getDateTime();
                 if (isDone != 1 && isArchive != 1) {
                     if (type.contains(Constants.TYPE_LOCATION) && eventTime > 0) {
                         new PositionDelayReceiver().setDelay(ReminderManager.this, id);
-                    } else new AlarmReceiver().enableReminder(ReminderManager.this, id);
+                    } else {
+                        new AlarmReceiver().enableReminder(ReminderManager.this, id);
+                    }
                 }
             }
-            if (c != null) c.close();
-            db.close();
         }
         new Notifier(ReminderManager.this).recreatePermanent();
         finish();

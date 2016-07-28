@@ -30,6 +30,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class ReminderUtils {
 
@@ -119,7 +120,7 @@ public class ReminderUtils {
      * @param repCode system weekdays string.
      * @return get selected weekdays string.
      */
-    public static String getRepeatString(Context context, ArrayList<Integer> repCode){
+    public static String getRepeatString(Context context, List<Integer> repCode){
         StringBuilder sb = new StringBuilder();
         int first = SharedPrefs.getInstance(context).getInt(Prefs.START_DAY);
         if (first == 0) {
@@ -164,7 +165,7 @@ public class ReminderUtils {
         } else return sb.toString();
     }
 
-    public static boolean isAllChecked(ArrayList<Integer> repCode) {
+    public static boolean isAllChecked(List<Integer> repCode) {
         boolean is = true;
         for (int i : repCode) {
             if (i == Constants.DAY_UNCHECKED) {

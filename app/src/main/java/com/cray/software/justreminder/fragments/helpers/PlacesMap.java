@@ -71,6 +71,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
@@ -99,7 +100,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
     /**
      * Array of user frequently used places;
      */
-    private ArrayList<GooglePlaceItem> spinnerArray = new ArrayList<>();
+    private List<GooglePlaceItem> spinnerArray = new ArrayList<>();
 
     /**
      * init variables and flags;
@@ -287,7 +288,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
      * Add markers to map from JSON objects.
      * @param list list of objects.
      */
-    public void selectMarkers(ArrayList<JPlace> list) {
+    public void selectMarkers(List<JPlace> list) {
         mMap.clear();
         toModels(list, true);
         refreshAdapter(false);
@@ -649,7 +650,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         return places;
     }
 
-    private void toModels(ArrayList<JPlace> list, boolean select) {
+    private void toModels(List<JPlace> list, boolean select) {
         spinnerArray = new ArrayList<>();
         if (list != null && list.size() > 0) {
             for (JPlace model : list) {

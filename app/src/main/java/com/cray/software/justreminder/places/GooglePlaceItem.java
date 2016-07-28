@@ -19,19 +19,20 @@ package com.cray.software.justreminder.places;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GooglePlaceItem {
     private String name, id, icon, address;
     private LatLng position;
     private int selected;
-    private ArrayList<String> types;
+    private List<String> types;
 
     public GooglePlaceItem() {
         selected = 0;
     }
 
     public GooglePlaceItem(String name, String id, String icon, String address,
-                           LatLng position, ArrayList<String> types, int selected){
+                           LatLng position, List<String> types, int selected){
         this.name = name;
         this.id = id;
         this.icon = icon;
@@ -41,11 +42,11 @@ public class GooglePlaceItem {
         this.selected = selected;
     }
 
-    public ArrayList<String> getTypes() {
+    public List<String> getTypes() {
         return types;
     }
 
-    public void setTypes(ArrayList<String> types) {
+    public void setTypes(List<String> types) {
         this.types = types;
     }
 

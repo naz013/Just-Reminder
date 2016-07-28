@@ -26,6 +26,7 @@ import com.cray.software.justreminder.utils.TimeUtil;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -83,7 +84,7 @@ public class TimeCount {
      * @return Date and time milliseconds.
      */
     public long generateStartEvent(String type, int dayOfMonth, int month, int year, int hour,
-                                  int minute, int seconds, ArrayList<Integer> weekdays, long after) {
+                                  int minute, int seconds, List<Integer> weekdays, long after) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, hour);
@@ -114,7 +115,7 @@ public class TimeCount {
      * @return Next event time
      */
     public long generateDateTime(String type, int dayOfMonth, long startTime, long repeat,
-                                      ArrayList<Integer> weekdays, long count, long delay){
+                                 List<Integer> weekdays, long count, long delay){
         long dateTime;
         if (startTime == 0) {
             dateTime = 0;
@@ -232,7 +233,7 @@ public class TimeCount {
      * @param delay delay for reminder.
      * @return Due time in milliseconds.
      */
-    public static long getNextWeekdayTime(long startTime, ArrayList<Integer> weekdays, long delay){
+    public static long getNextWeekdayTime(long startTime, List<Integer> weekdays, long delay){
         Calendar cc = Calendar.getInstance();
         cc.setTimeInMillis(startTime);
         cc.set(Calendar.SECOND, 0);
@@ -311,7 +312,7 @@ public class TimeCount {
         return cc.getTimeInMillis();
     }
 
-    public static boolean isWeeekDay(ArrayList<Integer> days) {
+    public static boolean isWeeekDay(List<Integer> days) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         int day = calendar.get(Calendar.DAY_OF_WEEK);
