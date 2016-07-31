@@ -1193,7 +1193,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         if (isMonthDayAttached()) {
             if (type.endsWith("_last")) myDay = 0;
         }
-        long startTime = new TimeCount(this).generateStartEvent(type, myDay, myMonth,
+        long startTime = TimeCount.getInstance(this).generateStartEvent(type, myDay, myMonth,
                 myYear, myHour, myMinute, mySeconds, weekdays, timeAfter);
         if (repeat == 0) repeats = -1;
         JExclusion jExclusion = new JExclusion(exclusion);

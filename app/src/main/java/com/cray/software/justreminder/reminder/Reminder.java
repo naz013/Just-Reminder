@@ -87,7 +87,7 @@ public class Reminder {
                     !type.contains(Constants.TYPE_MONTHDAY)){
                 disableReminder(id, context);
             } else {
-                long eventTime = new TimeCount(context).generateDateTime(type,
+                long eventTime = TimeCount.getInstance(context).generateDateTime(type,
                         jRecurrence.getMonthday(), model.getStartTime(),
                         repeat, jRecurrence.getWeekdays(), count, 0);
                 if (type.startsWith(Constants.TYPE_MONTHDAY) || type.startsWith(Constants.TYPE_WEEKDAY)) {
@@ -98,7 +98,7 @@ public class Reminder {
                     calendar.setTimeInMillis(System.currentTimeMillis());
                     calendar.set(Calendar.HOUR_OF_DAY, hour);
                     calendar.set(Calendar.MINUTE, minute);
-                    eventTime = new TimeCount(context).generateDateTime(type,
+                    eventTime = TimeCount.getInstance(context).generateDateTime(type,
                             jRecurrence.getMonthday(), calendar.getTimeInMillis(),
                             repeat, jRecurrence.getWeekdays(), count, 0);
                 }
@@ -181,7 +181,7 @@ public class Reminder {
                     calendar.setTimeInMillis(System.currentTimeMillis());
                     calendar.set(Calendar.HOUR_OF_DAY, hour);
                     calendar.set(Calendar.MINUTE, minute);
-                    long nextTime = new TimeCount(context).generateDateTime(item.getType(),
+                    long nextTime = TimeCount.getInstance(context).generateDateTime(item.getType(),
                             jRecurrence.getMonthday(), calendar.getTimeInMillis(), 0,
                             jRecurrence.getWeekdays(), 0, 0);
                     model.setEventTime(nextTime);
@@ -192,7 +192,7 @@ public class Reminder {
                     new AlarmReceiver().enableReminder(context, id);
                     res = true;
                 } else {
-                    if (new TimeCount(context).isNext(item.getDateTime())) {
+                    if (TimeCount.getInstance(context).isNext(item.getDateTime())) {
                         ReminderHelper.getInstance(context).setStatus(id, false);
                         new AlarmReceiver().enableReminder(context, id);
                         res = true;
@@ -254,7 +254,7 @@ public class Reminder {
                 }
             } else if (type.contains(Constants.TYPE_MONTHDAY) || type.contains(Constants.TYPE_WEEKDAY)) {
                 JRecurrence jRecurrence = jsonModel.getRecurrence();
-                long nextTime = new TimeCount(context).generateDateTime(type,
+                long nextTime = TimeCount.getInstance(context).generateDateTime(type,
                         jRecurrence.getMonthday(), time, 0, jRecurrence.getWeekdays(), 0, 0);
                 item.setDateTime(nextTime);
                 jsonModel.setEventTime(nextTime);
@@ -379,7 +379,7 @@ public class Reminder {
                     !type.contains(Constants.TYPE_MONTHDAY) && delay == 0){
                 disableReminder(id, context);
             } else {
-                long eventTime = new TimeCount(context).generateDateTime(type,
+                long eventTime = TimeCount.getInstance(context).generateDateTime(type,
                         jRecurrence.getMonthday(), model.getStartTime(),
                         repeat, jRecurrence.getWeekdays(), count, delay);
                 if (type.startsWith(Constants.TYPE_MONTHDAY) || type.startsWith(Constants.TYPE_WEEKDAY)) {
@@ -390,7 +390,7 @@ public class Reminder {
                     calendar.setTimeInMillis(System.currentTimeMillis());
                     calendar.set(Calendar.HOUR_OF_DAY, hour);
                     calendar.set(Calendar.MINUTE, minute);
-                    eventTime = new TimeCount(context).generateDateTime(type,
+                    eventTime = TimeCount.getInstance(context).generateDateTime(type,
                             jRecurrence.getMonthday(), calendar.getTimeInMillis(),
                             repeat, jRecurrence.getWeekdays(), count, delay);
                 }
@@ -515,7 +515,6 @@ public class Reminder {
     /**
      * Get all tasks unique identifiers.
      * @param context application context.
-     * @param remId reminder identifier.
      * @return Map with unique identifier as key and database identifier as value
      */
     public static List<String> getUuIds(Context context, long id){

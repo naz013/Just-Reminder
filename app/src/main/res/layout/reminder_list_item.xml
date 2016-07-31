@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:data="http://schemas.android.com/tools">
 
     <data>
 
@@ -48,7 +49,7 @@
             app:cardCornerRadius="3dp"
             app:cardUseCompatPadding="true"
             app:contentPadding="1dp"
-            app:loadCard='@{item.groupUuId}'>
+            data:loadCard='@{item.groupUuId}'>
 
             <RelativeLayout
                 android:id="@+id/reminderContainer"
@@ -66,8 +67,8 @@
                     android:focusable="false"
                     android:onClick="@{click.onClick}"
                     android:visibility="visible"
-                    app:loadCheck='@{item.status}'
-                    app:switch_font_style="roboto_medium" />
+                    app:switch_font_style="roboto_medium"
+                    data:loadCheck='@{item}' />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -85,7 +86,7 @@
                         android:focusable="false"
                         android:singleLine="true"
                         app:font_style="roboto_light"
-                        app:loadType='@{item.type}' />
+                        data:loadType='@{item.type}' />
 
                     <com.cray.software.justreminder.roboto_views.RoboTextView
                         android:id="@+id/taskText"
@@ -109,7 +110,7 @@
                         android:singleLine="true"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         app:font_style="roboto_light"
-                        app:loadContact='@{item.type, item.model.action.target}' />
+                        data:loadContact='@{item.model}' />
 
                     <com.cray.software.justreminder.roboto_views.RoboTextView
                         android:id="@+id/taskDate"
@@ -119,7 +120,7 @@
                         android:focusable="false"
                         android:singleLine="true"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        app:loadDate='@{item.model}' />
+                        data:loadDate='@{item.model}' />
 
                     <LinearLayout
                         android:id="@+id/endContainer"
@@ -127,7 +128,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:orientation="horizontal"
-                        app:loadContainer='@{item.type}'>
+                        data:loadContainer='@{item.type}'>
 
                         <com.cray.software.justreminder.roboto_views.RoboTextView
                             android:id="@+id/repeatInterval"
@@ -138,7 +139,7 @@
                             android:gravity="left"
                             android:textSize="15sp"
                             app:font_style="roboto_light"
-                            app:loadLeft='@{item.dateTime, item.status}' />
+                            data:loadLeft='@{item}' />
 
                         <com.cray.software.justreminder.roboto_views.RoboTextView
                             android:id="@+id/remainingTime"
@@ -153,7 +154,7 @@
                             android:textStyle="italic"
                             android:visibility="visible"
                             app:font_style="roboto_medium"
-                            app:loadRepeat='@{item.model}' />
+                            data:loadRepeat='@{item.model}' />
 
                     </LinearLayout>
                 </LinearLayout>

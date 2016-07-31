@@ -124,10 +124,10 @@ dependencies {
     compile project(':shared')
     compile project(':simpleai')
     //wearApp project(':wear')
-    compile 'com.android.support:cardview-v7:24.1.0'
-    compile 'com.android.support:support-v4:24.1.0'
-    compile 'com.android.support:recyclerview-v7:24.1.0'
-    compile 'com.android.support:appcompat-v7:24.1.0'
+    compile 'com.android.support:cardview-v7:24.1.1'
+    compile 'com.android.support:support-v4:24.1.1'
+    compile 'com.android.support:recyclerview-v7:24.1.1'
+    compile 'com.android.support:appcompat-v7:24.1.1'
     compile 'com.google.android.gms:play-services-auth:9.2.1'
     compile 'com.google.android.gms:play-services-appindexing:9.2.1'
     compile 'com.google.android.gms:play-services-drive:9.2.1'
@@ -135,11 +135,11 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:9.2.1'
     compile 'com.google.android.gms:play-services-analytics:9.2.1'
     compile 'com.google.android.gms:play-services-wearable:9.2.1'
-    compile 'com.android.support:design:24.1.0'
+    compile 'com.android.support:design:24.1.1'
     compile('com.crashlytics.sdk.android:crashlytics:2.5.7@aar') {
         transitive = true;
     }
-    compile 'com.android.support:support-v13:24.1.0'
+    compile 'com.android.support:support-v13:24.1.1'
     compile 'com.google.apis:google-api-services-calendar:v3-rev196-1.22.0'
     compile 'com.google.api-client:google-api-client-android:1.22.0'
     compile 'com.google.apis:google-api-services-drive:v3-rev32-1.22.0'
@@ -151,7 +151,7 @@ dependencies {
     compile 'com.github.deano2390:MaterialShowcaseView:1.1.0'
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'org.apache.commons:commons-lang3:3.4'
-    compile 'com.android.support:support-v4:24.1.0'
+    compile 'com.android.support:support-v4:24.1.1'
     compile 'com.github.castorflex.smoothprogressbar:library-circular:1.2.0'
     compile 'com.google.android.gms:play-services-analytics:9.2.1'
     compile 'com.google.android.gms:play-services-auth:9.2.1'

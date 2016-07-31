@@ -526,7 +526,7 @@ public class SyncHelper {
                 if (type.startsWith(Constants.TYPE_WEEKDAY) ||
                         type.startsWith(Constants.TYPE_MONTHDAY)) {
                     JRecurrence jr = jsonModel.getRecurrence();
-                    long time = new TimeCount(mContext).generateDateTime(type, jr.getMonthday(),
+                    long time = TimeCount.getInstance(mContext).generateDateTime(type, jr.getMonthday(),
                             jsonModel.getEventTime(), jr.getRepeat(), jr.getWeekdays(), 0, 0);
                     jsonModel.setEventTime(time);
                     jsonModel.setStartTime(time);

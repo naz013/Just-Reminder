@@ -52,7 +52,7 @@ public class DisableAsync extends AsyncTask<Void, Void, Void> {
                         if (isShown != LocationUtil.SHOWN) res = true;
                     }
                 } else {
-                    TimeCount tc = new TimeCount(mContext);
+                    TimeCount tc = TimeCount.getInstance(mContext);
                     if (tc.isCurrent(startTime)) {
                         if (isDone != 1){
                             if (isShown != LocationUtil.SHOWN) res = true;

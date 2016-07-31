@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:data="http://schemas.android.com/tools">
 
     <data>
 
@@ -48,7 +49,7 @@
             app:cardCornerRadius="3dp"
             app:cardUseCompatPadding="true"
             app:contentPadding="1dp"
-            app:loadCard='@{item.groupUuId}'>
+            data:loadCard='@{item.groupUuId}'>
 
             <LinearLayout
                 android:id="@+id/subBackground"
@@ -98,7 +99,7 @@
                     android:overScrollMode="never"
                     android:scrollbars="none"
                     android:visibility="visible"
-                    app:loadItems='@{item.model.shoppings}' />
+                    data:loadItems='@{item.model.shoppings}' />
 
                 <com.cray.software.justreminder.roboto_views.RoboTextView
                     android:id="@+id/shoppingTime"
@@ -108,7 +109,7 @@
                     android:drawablePadding="@dimen/reminder_preview_margin_top"
                     android:textSize="18sp"
                     app:font_style="roboto_medium"
-                    app:loadShoppingDate='@{item.dateTime}' />
+                    data:loadShoppingDate='@{item.dateTime}' />
 
             </LinearLayout>
         </android.support.v7.widget.CardView>

@@ -55,7 +55,7 @@ public class CheckPosition extends IntentService {
         Location locationA = new Location("point A");
         locationA.setLatitude(currentLat);
         locationA.setLongitude(currentLong);
-        TimeCount timeCount = new TimeCount(getApplicationContext());
+        TimeCount timeCount = TimeCount.getInstance(getApplicationContext());
         boolean isEnabled = SharedPrefs.getInstance(getApplicationContext()).getBoolean(Prefs.TRACKING_NOTIFICATION);
         for (ReminderItem item : ReminderHelper.getInstance(getApplicationContext()).getLocationReminders()) {
             long id = item.getId();

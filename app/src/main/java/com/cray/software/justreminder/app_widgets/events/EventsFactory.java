@@ -66,7 +66,7 @@ public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     EventsFactory(Context ctx, Intent intent) {
         mContext = ctx;
-        mCount = new TimeCount(ctx);
+        mCount = TimeCount.getInstance(ctx);
         widgetID = intent.getIntExtra(
                 AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);

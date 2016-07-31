@@ -163,6 +163,42 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
+    private void initLabel(RoboTextView listHeader, int position) {
+        ReminderItem item = (ReminderItem) mDataList.get(position).getObject();
+        long due = item.getDateTime();
+        String simpleDate = TimeUtil.getSimpleDate(due);
+        int isDone = item.getStatus();
+        ReminderItem prevItem = null;
+        try {
+            prevItem = (ReminderItem) mDataList.get(position - 1).getObject();
+        } catch (ArrayIndexOutOfBoundsException e) {}
+        if (isDone == 1 && position > 0 && (prevItem != null && prevItem.getStatus() == 0)) {
+            simpleDate = mContext.getString(R.string.disabled);
+            listHeader.setText(simpleDate);
+            listHeader.setVisibility(View.VISIBLE);
+        } else if (isDone == 1 && position > 0 && (prevItem != null && prevItem.getStatus() == 1)) {
+            listHeader.setVisibility(View.GONE);
+        } else if (isDone == 1 && position == 0) {
+            simpleDate = mContext.getString(R.string.disabled);
+            listHeader.setText(simpleDate);
+            listHeader.setVisibility(View.VISIBLE);
+        } else if (isDone == 0 && position > 0 && (prevItem != null && simpleDate.equals(TimeUtil.getSimpleDate(prevItem.getDateTime())))) {
+            listHeader.setVisibility(View.GONE);
+        } else {
+            if (due <= 0 || due < (System.currentTimeMillis() - AlarmManager.INTERVAL_DAY)) {
+                simpleDate = mContext.getString(R.string.permanent);
+            } else {
+                if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis()))) {
+                    simpleDate = mContext.getString(R.string.today);
+                } else if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis() + AlarmManager.INTERVAL_DAY))) {
+                    simpleDate = mContext.getString(R.string.tomorrow);
+                }
+            }
+            listHeader.setText(simpleDate);
+            listHeader.setVisibility(View.VISIBLE);
+        }
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
@@ -177,74 +213,15 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-        final ReminderItem item = (ReminderItem) mDataList.get(position).getObject();
-        int isDone = item.getStatus();
-        long due = item.getDateTime();
-        String simpleDate = TimeUtil.getSimpleDate(due);
-        ReminderItem prevItem = null;
-        try {
-            prevItem = (ReminderItem) mDataList.get(position - 1).getObject();
-        } catch (ArrayIndexOutOfBoundsException e) {}
+        ReminderItem item = (ReminderItem) mDataList.get(position).getObject();
         if (holder instanceof ReminderHolder) {
             ReminderHolder reminderHolder = (ReminderHolder) holder;
-            if (prevItem != null) {
-                if (isDone == 1 && position > 0 && prevItem.getStatus() == 0) {
-                    simpleDate = mContext.getString(R.string.disabled);
-                    reminderHolder.listHeader.setText(simpleDate);
-                    reminderHolder.listHeader.setVisibility(View.VISIBLE);
-                } else if (isDone == 1 && position > 0 && prevItem.getStatus() == 1) {
-                    reminderHolder.listHeader.setVisibility(View.GONE);
-                } else if (isDone == 1 && position == 0) {
-                    simpleDate = mContext.getString(R.string.disabled);
-                    reminderHolder.listHeader.setText(simpleDate);
-                    reminderHolder.listHeader.setVisibility(View.VISIBLE);
-                } else if (isDone == 0 && position > 0 && simpleDate.equals(TimeUtil.getSimpleDate(prevItem.getDateTime()))) {
-                    reminderHolder.listHeader.setVisibility(View.GONE);
-                } else {
-                    if (due <= 0 || due < (System.currentTimeMillis() - AlarmManager.INTERVAL_DAY)) {
-                        simpleDate = mContext.getString(R.string.permanent);
-                    } else {
-                        if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis()))) {
-                            simpleDate = mContext.getString(R.string.today);
-                        } else if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis() + AlarmManager.INTERVAL_DAY))) {
-                            simpleDate = mContext.getString(R.string.tomorrow);
-                        }
-                    }
-                    reminderHolder.listHeader.setText(simpleDate);
-                    reminderHolder.listHeader.setVisibility(View.VISIBLE);
-                }
-            }
             reminderHolder.binding.setItem(item);
+            initLabel(reminderHolder.listHeader, position);
         } else if (holder instanceof ShoppingHolder) {
             ShoppingHolder shoppingHolder = (ShoppingHolder) holder;
-            if (prevItem != null) {
-                if (isDone == 1 && position > 0 && prevItem.getStatus() == 0) {
-                    simpleDate = mContext.getString(R.string.disabled);
-                    shoppingHolder.listHeader.setText(simpleDate);
-                    shoppingHolder.listHeader.setVisibility(View.VISIBLE);
-                } else if (isDone == 1 && position > 0 && prevItem.getStatus() == 1) {
-                    shoppingHolder.listHeader.setVisibility(View.GONE);
-                } else if (isDone == 1 && position == 0) {
-                    simpleDate = mContext.getString(R.string.disabled);
-                    shoppingHolder.listHeader.setText(simpleDate);
-                    shoppingHolder.listHeader.setVisibility(View.VISIBLE);
-                } else if (isDone == 0 && position > 0 && simpleDate.equals(TimeUtil.getSimpleDate(prevItem.getDateTime()))) {
-                    shoppingHolder.listHeader.setVisibility(View.GONE);
-                } else {
-                    if (due <= 0 || due < (System.currentTimeMillis() - AlarmManager.INTERVAL_DAY)) {
-                        simpleDate = mContext.getString(R.string.permanent);
-                    } else {
-                        if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis()))) {
-                            simpleDate = mContext.getString(R.string.today);
-                        } else if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis() + AlarmManager.INTERVAL_DAY))) {
-                            simpleDate = mContext.getString(R.string.tomorrow);
-                        }
-                    }
-                    shoppingHolder.listHeader.setText(simpleDate);
-                    shoppingHolder.listHeader.setVisibility(View.VISIBLE);
-                }
-            }
             shoppingHolder.binding.setItem(item);
+            initLabel(shoppingHolder.listHeader, position);
         }
     }
 
@@ -353,18 +330,21 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     @BindingAdapter({"app:loadCheck"})
-    public static void loadCheck(RoboSwitchCompat switchCompat, int status) {
-        if (status == 1) {
+    public static void loadCheck(RoboSwitchCompat switchCompat, ReminderItem item) {
+        if (item.getStatus() == 1) {
             switchCompat.setChecked(false);
         } else {
             switchCompat.setChecked(true);
         }
+        if (item.getList() == 1) {
+            switchCompat.setVisibility(View.GONE);
+        }
     }
 
     @BindingAdapter({"app:loadLeft"})
-    public static void loadLeft(RoboTextView textView, long due, int status) {
-        if (status == 0) {
-            textView.setText(TimeCount.getInstance(textView.getContext()).getRemaining(due));
+    public static void loadLeft(RoboTextView textView, ReminderItem item) {
+        if (item.getStatus() == 0) {
+            textView.setText(TimeCount.getInstance(textView.getContext()).getRemaining(item.getDateTime()));
         } else {
             textView.setText("");
         }
@@ -391,7 +371,9 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     @BindingAdapter({"app:loadContact"})
-    public static void loadContact(RoboTextView textView, String type, String number) {
+    public static void loadContact(RoboTextView textView, JsonModel model) {
+        String type = model.getType();
+        String number = model.getAction().getTarget();
         textView.setVisibility(View.VISIBLE);
         if (type.contains(Constants.TYPE_CALL) || type.contains(Constants.TYPE_MESSAGE)) {
             String name = Contacts.getNameFromNumber(number, textView.getContext());

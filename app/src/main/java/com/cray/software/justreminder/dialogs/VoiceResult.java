@@ -106,7 +106,7 @@ public class VoiceResult extends Activity {
 
         reminderContainer.setVisibility(View.VISIBLE);
 
-        TimeCount mCount = new TimeCount(this);
+        TimeCount mCount = TimeCount.getInstance(this);
 
         taskTitle.setText(title);
         reminder_type.setText(ReminderUtils.getTypeString(this, type));

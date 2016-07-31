@@ -280,7 +280,7 @@ public class SplashScreen extends AppCompatActivity {
                 if (weekdays != null) {
                     listW = ReminderUtils.getRepeatArray(weekdays);
                 }
-                due = new TimeCount(SplashScreen.this).generateDateTime(type, myDay, due, repCode * TimeCount.DAY, listW, count, 0);
+                due = TimeCount.getInstance(SplashScreen.this).generateDateTime(type, myDay, due, repCode * TimeCount.DAY, listW, count, 0);
                 if (due < System.currentTimeMillis()) {
                     continue;
                 }
