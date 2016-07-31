@@ -23,8 +23,6 @@ import com.cray.software.justreminder.birthdays.BirthdayHelper;
 import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.groups.GroupHelper;
-import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.reminder.json.JRecurrence;
@@ -34,28 +32,19 @@ import com.hexrain.flextcal.FlextHelper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import hirondelle.date4j.DateTime;
 
 public class ReminderDataProvider {
 
-    public static final int VIEW_REMINDER = 15666;
-    public static final int VIEW_SHOPPING_LIST = 15667;
-
-    private ArrayList<ReminderModel> data;
     private Context mContext;
-    private boolean isArchive = false;
     private boolean isReminder = false;
     private boolean isFeature = false;
-    private String categoryId = null;
-    private long time = 0;
 
     private HashMap<DateTime, Events> map = new HashMap<>();
 
@@ -64,73 +53,6 @@ public class ReminderDataProvider {
         this.isReminder = isReminder;
         this.isFeature = isFeature;
         map = new HashMap<>();
-    }
-
-    public ReminderDataProvider(Context mContext, boolean isArchive, String categoryId){
-        data = new ArrayList<>();
-        this.mContext = mContext;
-        this.isArchive = isArchive;
-        this.categoryId = categoryId;
-        load();
-    }
-
-    public ReminderDataProvider(Context mContext, long time){
-        data = new ArrayList<>();
-        this.mContext = mContext;
-        this.isArchive = false;
-        this.categoryId = null;
-        this.time = time;
-        load();
-    }
-
-    public ArrayList<ReminderModel> getData(){
-        return data;
-    }
-
-    public int getCount(){
-        return data != null ? data.size() : 0;
-    }
-
-    public int getPosition(ReminderModel item){
-        int res = -1;
-        if (data.size() > 0) {
-            for (int i = 0; i < data.size(); i++){
-                ReminderModel item1 = data.get(i);
-                if (item.getId() == item1.getId()) {
-                    res = i;
-                    break;
-                }
-            }
-        }
-        return res;
-    }
-
-    public ReminderModel getItem(int index) {
-        if (index < 0 || index >= getCount()) {
-            return null;
-        }
-
-        return data.get(index);
-    }
-
-    public void load(){
-        data.clear();
-        Map<String, Integer> map = getCategories(mContext);
-        ReminderHelper helper = ReminderHelper.getInstance(mContext);
-        List<ReminderItem> list = isArchive ? helper.getRemindersArchived() : helper.getRemindersActive();
-        if (categoryId != null) list = helper.getReminders(categoryId);
-        if (time > 0) list = helper.getReminders(time);
-        for (ReminderItem item : list) {
-            String type = item.getType();
-            String categoryId = item.getGroupUuId();
-            int archived = item.getList();
-            int completed = item.getStatus();
-            int viewType = VIEW_REMINDER;
-            if (type.matches(Constants.TYPE_SHOPPING_LIST)) viewType = VIEW_SHOPPING_LIST;
-            int catColor = 0;
-            if (map.containsKey(categoryId)) catColor = map.get(categoryId);
-            data.add(new ReminderModel(item.getId(), item.getModel(), catColor, archived, completed, viewType));
-        }
     }
 
     private void setEvent(long eventTime, String summary, int color) {
@@ -245,32 +167,5 @@ public class ReminderDataProvider {
             }
         }
         return map;
-    }
-
-    public static Map<String, Integer> getCategories(Context context) {
-        Map<String, Integer> map = new HashMap<>();
-        List<GroupItem> groups = GroupHelper.getInstance(context).getAll();
-        for (GroupItem item : groups) {
-            map.put(item.getUuId(), item.getColor());
-        }
-        return map;
-    }
-
-    public static ReminderModel getItem(Context context, long id){
-        ReminderModel item = null;
-        Map<String, Integer> map = getCategories(context);
-        ReminderItem reminderItem = ReminderHelper.getInstance(context).getReminder(id);
-        if (reminderItem != null){
-            String type = reminderItem.getType();
-            String categoryId = reminderItem.getGroupUuId();
-            int archived = reminderItem.getList();
-            int completed = reminderItem.getStatus();
-            int viewType = VIEW_REMINDER;
-            if (type.matches(Constants.TYPE_SHOPPING_LIST)) viewType = VIEW_SHOPPING_LIST;
-            int catColor = 0;
-            if (map.containsKey(categoryId)) catColor = map.get(categoryId);
-            item = new ReminderModel(id, reminderItem.getModel(), catColor, archived, completed, viewType);
-        }
-        return item;
     }
 }

@@ -244,12 +244,12 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         mEventListener = eventListener;
     }
 
-    @BindingAdapter({"app:loadType"})
+    @BindingAdapter({"loadType"})
     public static void loadType(RoboTextView textView, String type) {
         textView.setText(ReminderUtils.getTypeString(textView.getContext(), type));
     }
 
-    @BindingAdapter({"app:loadItems"})
+    @BindingAdapter({"loadItems"})
     public static void loadItems(LinearLayout container, List<JShopping> shoppings) {
         container.setFocusableInTouchMode(false);
         container.setFocusable(false);
@@ -283,7 +283,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
-    @BindingAdapter({"app:loadCard"})
+    @BindingAdapter({"loadCard"})
     public static void loadCard(CardView cardView, String groupId) {
         GroupItem item = GroupHelper.getInstance(cardView.getContext()).getGroup(groupId);
         if (item != null) {
@@ -293,7 +293,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
-    @BindingAdapter({"app:loadDate"})
+    @BindingAdapter({"loadDate"})
     public static void loadDate(RoboTextView textView, JsonModel model) {
         JPlace place = model.getPlace();
         if (model.getType().contains(Constants.TYPE_LOCATION)) {
@@ -310,7 +310,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
-    @BindingAdapter({"app:loadShoppingDate"})
+    @BindingAdapter({"loadShoppingDate"})
     public static void loadShoppingDate(RoboTextView textView, long due) {
         if (due > 0){
             textView.setText(TimeUtil.getFullDateTime(due, is24));
@@ -320,7 +320,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
-    @BindingAdapter({"app:loadShoppingTitle"})
+    @BindingAdapter({"loadShoppingTitle"})
     public static void loadShoppingTitle(RoboTextView textView, String title) {
         if (title.matches("")) {
             textView.setVisibility(View.GONE);
@@ -329,7 +329,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
-    @BindingAdapter({"app:loadCheck"})
+    @BindingAdapter({"loadCheck"})
     public static void loadCheck(RoboSwitchCompat switchCompat, ReminderItem item) {
         if (item.getStatus() == 1) {
             switchCompat.setChecked(false);
@@ -341,7 +341,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
-    @BindingAdapter({"app:loadLeft"})
+    @BindingAdapter({"loadLeft"})
     public static void loadLeft(RoboTextView textView, ReminderItem item) {
         if (item.getStatus() == 0) {
             textView.setText(TimeCount.getInstance(textView.getContext()).getRemaining(item.getDateTime()));
@@ -350,7 +350,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
-    @BindingAdapter({"app:loadRepeat"})
+    @BindingAdapter({"loadRepeat"})
     public static void loadRepeat(RoboTextView textView, JsonModel model) {
         if (model.getType().startsWith(Constants.TYPE_MONTHDAY)) {
             textView.setText(String.format(textView.getContext().getString(R.string.xM), 1));
@@ -361,7 +361,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
-    @BindingAdapter({"app:loadContainer"})
+    @BindingAdapter({"loadContainer"})
     public static void loadContainer(LinearLayout layout, String type) {
         if (type.contains(Constants.TYPE_LOCATION)) {
             layout.setVisibility(View.GONE);
@@ -370,7 +370,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
-    @BindingAdapter({"app:loadContact"})
+    @BindingAdapter({"loadContact"})
     public static void loadContact(RoboTextView textView, JsonModel model) {
         String type = model.getType();
         String number = model.getAction().getTarget();

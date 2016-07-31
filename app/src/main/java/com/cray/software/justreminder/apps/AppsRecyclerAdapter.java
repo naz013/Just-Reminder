@@ -133,7 +133,7 @@ public class AppsRecyclerAdapter extends RecyclerView.Adapter<AppsRecyclerAdapte
         else return null;
     }
 
-    @BindingAdapter("app:loadImage")
+    @BindingAdapter("loadImage")
     public static void loadImage(ImageView imageView, Drawable v) {
         imageView.setImageDrawable(v);
     }

@@ -51,6 +51,19 @@ public class SimpleProvider {
         return list;
     }
 
+    public List<AdapterItem> getActiveByGroup(String groupId) {
+        List<AdapterItem> list = new ArrayList<>();
+        List<ReminderItem> items = ReminderHelper.getInstance(mContext).getReminders(groupId);
+        for (ReminderItem item : items) {
+            int viewType = 0;
+            if (item.getType().matches(Constants.TYPE_SHOPPING_LIST)) {
+                viewType = 1;
+            }
+            list.add(new AdapterItem(viewType, item));
+        }
+        return list;
+    }
+
     public List<AdapterItem> getTrashed() {
         List<AdapterItem> list = new ArrayList<>();
         List<ReminderItem> items = ReminderHelper.getInstance(mContext).getRemindersArchived();

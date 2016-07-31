@@ -107,7 +107,7 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
         new SwitchTaskAsync(context, listId, taskId, isDone, listener).execute();
     }
 
-    @BindingAdapter({"app:loadDue"})
+    @BindingAdapter({"loadDue"})
     public static void loadDue(RoboTextView view, long due) {
         java.util.Calendar calendar = java.util.Calendar.getInstance();
         if (due != 0) {
@@ -119,14 +119,14 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
         }
     }
 
-    @BindingAdapter({"app:loadMarker"})
+    @BindingAdapter({"loadMarker"})
     public static void loadMarker(View view, String listId) {
         if (colors.containsKey(listId)) {
             view.setBackgroundColor(cs.getNoteColor(colors.get(listId)));
         }
     }
 
-    @BindingAdapter({"app:loadCheck"})
+    @BindingAdapter({"loadCheck"})
     public static void loadCheck(RoboCheckBox checkBox, TaskItem item) {
         if (item.getStatus().matches(GTasksHelper.TASKS_COMPLETE)){
             checkBox.setChecked(true);
@@ -137,7 +137,7 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
                 item.getId(), isChecked, item.getListId(), item.getTaskId()));
     }
 
-    @BindingAdapter({"app:loadTaskCard"})
+    @BindingAdapter({"loadTaskCard"})
     public static void loadTaskCard(CardView cardView, int i) {
         cardView.setCardBackgroundColor(cs.getCardStyle());
         if (Module.isLollipop()) {

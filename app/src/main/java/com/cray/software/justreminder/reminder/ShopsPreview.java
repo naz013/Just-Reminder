@@ -33,6 +33,8 @@ import com.cray.software.justreminder.adapters.TaskListRecyclerAdapter;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
+import com.cray.software.justreminder.groups.GroupHelper;
+import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.modules.Module;
@@ -119,7 +121,6 @@ public class ShopsPreview extends AppCompatActivity {
         });
 
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
-
         new android.os.Handler().postDelayed(() -> mFab.show(), 500);
     }
 
@@ -130,11 +131,11 @@ public class ShopsPreview extends AppCompatActivity {
     }
 
     private void loadUi() {
-        ReminderModel item = ReminderDataProvider.getItem(this, id);
+        ReminderItem item = ReminderHelper.getInstance(this).getReminder(id);
         if (item != null) {
-            String title = item.getTitle();
+            String title = item.getSummary();
             toolbar.setTitle(title);
-            long due = item.getDue();
+            long due = item.getDateTime();
             if (due > 0) {
                 time.setText(TimeUtil.getFullDateTime(due, SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
                 reminderContainer.setVisibility(View.VISIBLE);
@@ -142,13 +143,14 @@ public class ShopsPreview extends AppCompatActivity {
                 reminderContainer.setVisibility(View.GONE);
             }
 
-            if (item.getCompleted() == 1){
+            if (item.getStatus() == 1){
                 reminderSwitch.setChecked(false);
             } else {
                 reminderSwitch.setChecked(true);
             }
-
-            int catColor = item.getCatColor();
+            GroupItem group = GroupHelper.getInstance(this).getGroup(item.getGroupUuId());
+            int catColor = 0;
+            if (group != null) catColor = group.getColor();
             int mColor = ViewUtils.getColor(this, cSetter.getCategoryColor(catColor));
             toolbar.setBackgroundColor(mColor);
             toolbarLayout.setBackgroundColor(mColor);
@@ -160,7 +162,7 @@ public class ShopsPreview extends AppCompatActivity {
             mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorAccent(catColor),
                     cSetter.colorAccent(catColor)));
 
-            List<JShopping> list = item.getShoppings();
+            List<JShopping> list = item.getModel().getShoppings();
             provider = new ShoppingListDataProvider(list, isHidden);
             TaskListRecyclerAdapter shoppingAdapter = new TaskListRecyclerAdapter(this, provider, new TaskListRecyclerAdapter.ActionListener() {
                 @Override

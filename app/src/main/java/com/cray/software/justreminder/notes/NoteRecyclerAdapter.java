@@ -76,7 +76,6 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
                 return false;
             });
         }
-
     }
 
     @Override
@@ -114,7 +113,7 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
         mEventListener = eventListener;
     }
 
-    @BindingAdapter({"app:loadCard"})
+    @BindingAdapter({"loadCard"})
     public static void loadCard(CardView cardView, int color) {
         cardView.setCardBackgroundColor(cs.getNoteLightColor(color));
         if (Module.isLollipop()) {
@@ -122,7 +121,7 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
         }
     }
 
-    @BindingAdapter({"app:loadNote"})
+    @BindingAdapter({"loadNote"})
     public static void loadNote(TextView textView, NoteItem note) {
         String title = note.getNote();
         if (mEncrypt) {
@@ -137,7 +136,7 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
         textView.setTextSize(mTextSize);
     }
 
-    @BindingAdapter({"app:loadImage"})
+    @BindingAdapter({"loadImage"})
     public static void loadImage(ImageView imageView, byte[] image) {
         if (image != null) {
             Bitmap photo = BitmapFactory.decodeByteArray(image, 0, image.length);

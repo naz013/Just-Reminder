@@ -56,6 +56,7 @@ import com.cray.software.justreminder.google_tasks.TaskListItem;
 import com.cray.software.justreminder.google_tasks.TaskManager;
 import com.cray.software.justreminder.google_tasks.TasksHelper;
 import com.cray.software.justreminder.groups.GroupHelper;
+import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -65,6 +66,7 @@ import com.cray.software.justreminder.notes.NoteHelper;
 import com.cray.software.justreminder.notes.NoteItem;
 import com.cray.software.justreminder.notes.NotePreview;
 import com.cray.software.justreminder.reminder.json.JPlace;
+import com.cray.software.justreminder.reminder.json.JRecurrence;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.roboto_views.RoboSwitchCompat;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
@@ -101,7 +103,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
 
     private long id;
     private ArrayList<Long> list;
-    private ReminderModel item;
+    private ReminderItem item;
     private static NoteItem mNoteItem;
     private static TaskItem mTaskItem;
 
@@ -135,14 +137,14 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
     }
 
     private void showPinsOnMap(GoogleMap map) {
-        double[] place = item.getPlace();
-        double lat = place[0];
-        double lon = place[1];
+        JPlace place = item.getModel().getPlace();
+        double lat = place.getLatitude();
+        double lon = place.getLongitude();
         ColorSetter cs = new ColorSetter(this);
         if (lat != 0.0 && lon != 0.0) {
             if (item.getType().matches(Constants.TYPE_PLACES)) {
                 location.setText(String.format(Locale.getDefault(),
-                        "%.5f %.5f (%d)", lat, lon, item.getTotalPlaces()));
+                        "%.5f %.5f (%d)", lat, lon, item.getModel().getPlaces().size()));
             } else {
                 location.setText(lat + " " + lon);
             }
@@ -150,7 +152,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
             location.setVisibility(View.VISIBLE);
             ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMapAsync(mMapCallback);
 
-            List<JPlace> places = item.getPlaces();
+            List<JPlace> places = item.getModel().getPlaces();
             if (places != null) {
                 for (JPlace jPlace : places) {
                     LatLng pos = new LatLng(jPlace.getLatitude(), jPlace.getLongitude());
@@ -177,14 +179,14 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                 }
             } else {
                 LatLng pos = new LatLng(lat, lon);
-                int marker = item.getMarker();
+                int marker = place.getMarker();
                 map.addMarker(new MarkerOptions()
                         .position(pos)
-                        .title(item.getTitle())
+                        .title(item.getSummary())
                         .icon(BitmapDescriptorFactory.fromResource(cs.getMarkerStyle(marker)))
                         .draggable(false));
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
-                int radius = item.getRadius();
+                int radius = place.getRadius();
                 if (radius == -1) {
                     radius = SharedPrefs.getInstance(this).getInt(Prefs.LOCATION_RADIUS);
                 }
@@ -288,25 +290,26 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
     }
 
     private void loadInfo() {
-        item = ReminderDataProvider.getItem(this, id);
+        item = ReminderHelper.getInstance(this).getReminder(id);
         if (item != null) {
-            if (item.getCompleted() == 1) {
+            if (item.getStatus() == 1) {
                 statusSwitch.setChecked(false);
                 statusText.setText(R.string.disabled);
             } else {
                 statusSwitch.setChecked(true);
                 statusText.setText(R.string.enabled4);
             }
-            toolbar.setTitle(item.getTitle());
+            toolbar.setTitle(item.getSummary());
             type.setText(ReminderUtils.getTypeString(this, item.getType()));
-            group.setText(GroupHelper.getInstance(this).getCategoryTitle(item.getGroupId()));
+            group.setText(GroupHelper.getInstance(this).getCategoryTitle(item.getGroupUuId()));
 
-            long due = item.getDue();
+            long due = item.getDateTime();
             if (due > 0) {
+                JRecurrence recurrence = item.getModel().getRecurrence();
                 time.setText(TimeUtil.getFullDateTime(due, SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
-                String repeatStr = IntervalUtil.getInterval(this, item.getRepeat());
+                String repeatStr = IntervalUtil.getInterval(this, recurrence.getRepeat());
                 if (item.getType().startsWith(Constants.TYPE_WEEKDAY)) {
-                    repeatStr = ReminderUtils.getRepeatString(this, item.getWeekdays());
+                    repeatStr = ReminderUtils.getRepeatString(this, recurrence.getWeekdays());
                 }
                 if (repeatStr != null) {
                     repeat.setText(repeatStr);
@@ -318,9 +321,9 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                 repeat.setVisibility(View.GONE);
             }
 
-            double[] place = item.getPlace();
-            double lat = place[0];
-            double lon = place[1];
+            JPlace place = item.getModel().getPlace();
+            double lat = place.getLatitude();
+            double lon = place.getLongitude();
             if (lat != 0.0 && lon != 0.0) {
                 mapContainer.setVisibility(View.VISIBLE);
                 location.setVisibility(View.VISIBLE);
@@ -329,14 +332,14 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                 location.setVisibility(View.GONE);
                 mapContainer.setVisibility(View.GONE);
             }
-            String numberStr = item.getNumber();
+            String numberStr = item.getModel().getAction().getTarget();
             if (numberStr != null && !numberStr.matches("")) {
                 number.setText(numberStr);
             } else {
                 number.setVisibility(View.GONE);
             }
 
-            String melodyStr = item.getMelody();
+            String melodyStr = item.getModel().getMelody().getMelodyPath();
             File file;
             if (melodyStr != null && !melodyStr.matches("")) {
                 file = new File(melodyStr);
@@ -358,8 +361,9 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
 
             melodyStr = file.getName();
             melody.setText(melodyStr);
-
-            int catColor = item.getCatColor();
+            GroupItem group = GroupHelper.getInstance(this).getGroup(item.getGroupUuId());
+            int catColor = 0;
+            if (group != null) catColor = group.getColor();
             ColorSetter setter = new ColorSetter(this);
             int mColor = ViewUtils.getColor(this, setter.getCategoryColor(catColor));
             toolbar.setBackgroundColor(mColor);
@@ -517,7 +521,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
         startActivity(new Intent(this, NotePreview.class).putExtra(Constants.EDIT_ID, id));
     }
 
-    @BindingAdapter({"app:loadImage"})
+    @BindingAdapter({"loadImage"})
     public static void loadImage(ImageView imageView, byte[] image) {
         if (image != null) {
             Bitmap photo = BitmapFactory.decodeByteArray(image, 0, image.length);
@@ -531,7 +535,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
         }
     }
 
-    @BindingAdapter({"app:loadCard"})
+    @BindingAdapter({"loadCard"})
     public static void loadCard(CardView cardView, int color) {
         cardView.setCardBackgroundColor(new ColorSetter(cardView.getContext()).getNoteLightColor(color));
         if (Module.isLollipop()) {
@@ -539,7 +543,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
         }
     }
 
-    @BindingAdapter({"app:loadNote"})
+    @BindingAdapter({"loadNote"})
     public static void loadNote(TextView textView, NoteItem note) {
         String title = note.getNote();
         if (SharedPrefs.getInstance(textView.getContext()).getBoolean(Prefs.NOTE_ENCRYPT)) {
@@ -554,7 +558,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
         textView.setTextSize(SharedPrefs.getInstance(textView.getContext()).getInt(Prefs.TEXT_SIZE) + 12);
     }
 
-    @BindingAdapter({"app:loadDue"})
+    @BindingAdapter({"loadDue"})
     public static void loadDue(RoboTextView view, long due) {
         java.util.Calendar calendar = java.util.Calendar.getInstance();
         if (due != 0) {
@@ -566,7 +570,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
         }
     }
 
-    @BindingAdapter({"app:loadMarker"})
+    @BindingAdapter({"loadMarker"})
     public static void loadMarker(View view, String listId) {
         TaskListItem listItem = TasksHelper.getInstance(view.getContext()).getTaskList(listId);
         if (listItem != null) {
@@ -576,7 +580,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
         }
     }
 
-    @BindingAdapter({"app:loadCheck"})
+    @BindingAdapter({"loadCheck"})
     public static void loadCheck(RoboCheckBox checkBox, TaskItem item) {
         if (item.getStatus().matches(GTasksHelper.TASKS_COMPLETE)){
             checkBox.setChecked(true);
@@ -587,7 +591,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
                 item.getId(), isChecked, item.getListId(), item.getTaskId()));
     }
 
-    @BindingAdapter({"app:loadTaskCard"})
+    @BindingAdapter({"loadTaskCard"})
     public static void loadTaskCard(CardView cardView, int i) {
         cardView.setCardBackgroundColor(new ColorSetter(cardView.getContext()).getCardStyle());
         if (Module.isLollipop()) {

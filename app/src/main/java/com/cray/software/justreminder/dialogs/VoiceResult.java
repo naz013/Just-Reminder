@@ -38,9 +38,11 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.Reminder;
-import com.cray.software.justreminder.reminder.ReminderDataProvider;
-import com.cray.software.justreminder.reminder.ReminderModel;
+import com.cray.software.justreminder.reminder.ReminderHelper;
+import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.reminder.ReminderUtils;
+import com.cray.software.justreminder.reminder.json.JExclusion;
+import com.cray.software.justreminder.reminder.json.JPlace;
 import com.cray.software.justreminder.roboto_views.RoboSwitchCompat;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.IntervalUtil;
@@ -92,17 +94,18 @@ public class VoiceResult extends Activity {
             itemCard.setCardElevation(Configs.CARD_ELEVATION);
         }
         boolean is24 = SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT);
-        ReminderModel model = ReminderDataProvider.getItem(this, id);
-        String title = model.getTitle();
+        ReminderItem model = ReminderHelper.getInstance(this).getReminder(id);
+        String title = model.getSummary();
         String type = model.getType();
-        String number = model.getNumber();
-        long due = model.getDue();
-        double lat = model.getPlace()[0];
-        double lon = model.getPlace()[1];
-        int isDone = model.getCompleted();
-        String repeat = IntervalUtil.getInterval(this, model.getRepeat());
-        String exclusion = model.getExclusion();
-        int archived = model.getArchived();
+        String number = model.getModel().getAction().getTarget();
+        long due = model.getDateTime();
+        JPlace place = model.getModel().getPlace();
+        double lat = place.getLatitude();
+        double lon = place.getLongitude();
+        int isDone = model.getStatus();
+        String repeat = IntervalUtil.getInterval(this, model.getModel().getRecurrence().getRepeat());
+        JExclusion exclusion = model.getModel().getExclusion();
+        int archived = model.getList();
 
         reminderContainer.setVisibility(View.VISIBLE);
 

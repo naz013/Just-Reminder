@@ -140,11 +140,21 @@ dependencies {
         transitive = true;
     }
     compile 'com.android.support:support-v13:24.1.1'
-    compile 'com.google.apis:google-api-services-calendar:v3-rev196-1.22.0'
-    compile 'com.google.api-client:google-api-client-android:1.22.0'
-    compile 'com.google.apis:google-api-services-drive:v3-rev32-1.22.0'
-    compile 'com.google.apis:google-api-services-tasks:v1-rev45-1.22.0'
-    compile 'com.google.http-client:google-http-client-gson:1.22.0'
+    compile ('com.google.apis:google-api-services-calendar:v3-rev196-1.22.0') {
+        exclude module: 'httpclient'
+    }
+    compile ('com.google.api-client:google-api-client-android:1.22.0') {
+        exclude module: 'httpclient'
+    }
+    compile ('com.google.apis:google-api-services-drive:v3-rev32-1.22.0') {
+        exclude module: 'httpclient'
+    }
+    compile ('com.google.apis:google-api-services-tasks:v1-rev45-1.22.0') {
+        exclude module: 'httpclient'
+    }
+    compile ('com.google.http-client:google-http-client-gson:1.22.0') {
+        exclude module: 'httpclient'
+    }
     compile 'com.android.support:multidex:1.0.1'
     compile 'jp.wasabeef:picasso-transformations:2.1.0'
     compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.3.0'

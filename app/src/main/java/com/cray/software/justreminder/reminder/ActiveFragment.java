@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -36,7 +35,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
@@ -49,13 +47,10 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
-import com.cray.software.justreminder.utils.TimeUtil;
-import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,15 +58,13 @@ import java.util.List;
 /**
  * Show all active reminders.
  */
-public class ActiveFragment extends Fragment implements RecyclerListener, SyncListener, SeekBar.OnSeekBarChangeListener {
+public class ActiveFragment extends Fragment implements RecyclerListener, SyncListener {
 
     /**
      * Views.
      */
     private RecyclerView mRecyclerView;
     private LinearLayout mEmptyLayout;
-    private LinearLayout mFilterLayout;
-    private RoboTextView mDateEnd;
 
     /**
      * Reminder data provider for recycler view.
@@ -93,19 +86,6 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
      */
     private NavigationCallbacks mCallbacks;
     private Activity mContext;
-
-    private Handler mHandler = new Handler();
-    /**
-     * Runnable for hiding repeat limit seekbar.
-     */
-    private Runnable mFilterSeek = new Runnable() {
-        @Override
-        public void run() {
-            if (mFilterLayout.getVisibility() == View.VISIBLE) {
-                ViewUtils.collapse(mFilterLayout);
-            }
-        }
-    };
 
     /**
      * Fragment default instance.
@@ -151,13 +131,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                 mContext.finish();
                 break;
             case R.id.action_search:
-                if (mFilterLayout.getVisibility() == View.VISIBLE) {
-                    ViewUtils.collapse(mFilterLayout);
-                    mHandler.removeCallbacks(mFilterSeek);
-                } else {
-                    ViewUtils.expand(mFilterLayout);
-                    mHandler.postDelayed(mFilterSeek, 2000);
-                }
+                // TODO: 31.07.2016 New search functionality
                 break;
             default:
                 break;
@@ -169,13 +143,6 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
-        mFilterLayout = (LinearLayout) rootView.findViewById(R.id.filterLayout);
-        RoboTextView dateStart = (RoboTextView) rootView.findViewById(R.id.dateStart);
-        mDateEnd = (RoboTextView) rootView.findViewById(R.id.dateEnd);
-        SeekBar dateSeek = (SeekBar) rootView.findViewById(R.id.dateSeek);
-        dateStart.setText(TimeUtil.getSimpleDate(System.currentTimeMillis()));
-        mDateEnd.setText(TimeUtil.getSimpleDate(System.currentTimeMillis()));
-        dateSeek.setOnSeekBarChangeListener(this);
         mEmptyLayout = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         mEmptyLayout.setVisibility(View.VISIBLE);
         RoboTextView emptyText = (RoboTextView) rootView.findViewById(R.id.emptyText);
@@ -246,7 +213,11 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     public void loaderAdapter(final String groupId, long time){
         mLastGroupId = groupId;
         SharedPrefs.getInstance(mContext).putBoolean(Prefs.REMINDER_CHANGED, false);
-        mAdapter = new RemindersRecyclerAdapter(mContext, SimpleProvider.getInstance(mContext).getActive());
+        if (groupId != null) {
+            mAdapter = new RemindersRecyclerAdapter(mContext, SimpleProvider.getInstance(mContext).getActiveByGroup(groupId));
+        } else {
+            mAdapter = new RemindersRecyclerAdapter(mContext, SimpleProvider.getInstance(mContext).getActive());
+        }
         mAdapter.setEventListener(this);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -411,23 +382,5 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         if (mContext != null) {
             loaderAdapter(mLastGroupId, 0);
         }
-    }
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        long start = System.currentTimeMillis();
-        long target = start + (progress * TimeCount.DAY);
-        mDateEnd.setText(TimeUtil.getSimpleDate(target));
-        loaderAdapter(null, target);
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-        mHandler.removeCallbacks(mFilterSeek);
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-        mHandler.postDelayed(mFilterSeek, 2000);
     }
 }

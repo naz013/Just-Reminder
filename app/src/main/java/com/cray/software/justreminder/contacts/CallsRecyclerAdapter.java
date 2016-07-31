@@ -142,13 +142,13 @@ public class CallsRecyclerAdapter extends RecyclerView.Adapter<CallsRecyclerAdap
         else return null;
     }
 
-    @BindingAdapter("app:loadDate")
+    @BindingAdapter("loadDate")
     public static void loadDate(RoboTextView textView, long date) {
         boolean is24 = SharedPrefs.getInstance(textView.getContext()).getBoolean(Prefs.IS_24_TIME_FORMAT);
         textView.setText(TimeUtil.getSimpleDateTime(date, is24));
     }
 
-    @BindingAdapter("app:loadIcon")
+    @BindingAdapter("loadIcon")
     public static void loadIcon(ImageView imageView, int type) {
         boolean isDark = new ColorSetter(imageView.getContext()).isDark();
         if (type == CallLog.Calls.INCOMING_TYPE) {
@@ -160,7 +160,7 @@ public class CallsRecyclerAdapter extends RecyclerView.Adapter<CallsRecyclerAdap
         }
     }
 
-    @BindingAdapter("app:loadImage")
+    @BindingAdapter("loadImage")
     public static void loadImage(ImageView imageView, String v) {
         boolean isDark = new ColorSetter(imageView.getContext()).isDark();
         if (v == null) {

@@ -22,49 +22,7 @@
         android:id="@+id/currentList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/filterLayout"
         android:visibility="visible" />
 
     <include layout="@layout/empty_item_layout" />
-
-    <LinearLayout
-        android:id="@+id/filterLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:orientation="vertical"
-        android:padding="10dp"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <com.cray.software.justreminder.roboto_views.RoboTextView
-                android:id="@+id/dateStart"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:text="12 Jan 2016" />
-
-            <com.cray.software.justreminder.roboto_views.RoboTextView
-                android:id="@+id/dateEnd"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="15 Jan 2016" />
-
-        </LinearLayout>
-
-        <SeekBar
-            android:id="@+id/dateSeek"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:max="58" />
-
-    </LinearLayout>
 </RelativeLayout>

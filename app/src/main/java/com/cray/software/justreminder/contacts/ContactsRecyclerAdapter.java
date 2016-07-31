@@ -137,7 +137,7 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
         else return null;
     }
 
-    @BindingAdapter("app:loadImage")
+    @BindingAdapter("loadImage")
     public static void loadImage(ImageView imageView, String v) {
         boolean isDark = new ColorSetter(imageView.getContext()).isDark();
         if (v == null) {

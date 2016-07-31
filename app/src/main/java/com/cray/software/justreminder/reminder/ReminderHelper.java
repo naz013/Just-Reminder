@@ -74,10 +74,10 @@ public class ReminderHelper {
         return list;
     }
 
-    public List<ReminderItem> getReminders(String categoryId) {
+    public List<ReminderItem> getReminders(String groupId) {
         NextBase db = new NextBase(mContext);
         db.open();
-        List<ReminderItem> list = db.getReminders(categoryId);
+        List<ReminderItem> list = db.getReminders(groupId);
         db.close();
         return list;
     }
