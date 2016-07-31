@@ -30,7 +30,10 @@ public class JAction {
     private static final String ATTACHMENT = "attachment";
     private static final String AUTO = "_auto";
 
-    private String type, target, subject, attachment;
+    private String type;
+    private String target;
+    private String subject;
+    private String attachment;
     private int auto;
 
     /**

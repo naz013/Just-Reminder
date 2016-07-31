@@ -23,7 +23,6 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.utils.TimeUtil;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -44,9 +43,17 @@ public class TimeCount {
     public final static long DAY = HALF_DAY * 2;
 
     private Context mContext;
+    private static TimeCount instance;
 
-    public TimeCount(Context context){
+    private TimeCount(Context context){
         this.mContext = context;
+    }
+
+    public static TimeCount getInstance(Context context) {
+        if (instance == null) {
+            instance = new TimeCount(context);
+        }
+        return instance;
     }
 
     /**

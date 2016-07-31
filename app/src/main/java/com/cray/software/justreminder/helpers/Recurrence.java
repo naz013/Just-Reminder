@@ -31,6 +31,10 @@ public class Recurrence {
         recurrence = new JExclusion(jsonObject);
     }
 
+    public Recurrence(JExclusion exclusion) {
+        this.recurrence = exclusion;
+    }
+
     /**
      * Check if current event time is out of disabled range.
      * @return boolean

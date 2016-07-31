@@ -63,8 +63,7 @@ import java.util.List;
 /**
  * Show all active reminders.
  */
-public class ActiveFragment extends Fragment implements
-        RecyclerListener, SyncListener, SeekBar.OnSeekBarChangeListener {
+public class ActiveFragment extends Fragment implements RecyclerListener, SyncListener, SeekBar.OnSeekBarChangeListener {
 
     /**
      * Views.
@@ -247,10 +246,7 @@ public class ActiveFragment extends Fragment implements
     public void loaderAdapter(final String groupId, long time){
         mLastGroupId = groupId;
         SharedPrefs.getInstance(mContext).putBoolean(Prefs.REMINDER_CHANGED, false);
-        ReminderDataProvider provider;
-        if (time > 0) provider = new ReminderDataProvider(mContext, time);
-        else provider = new ReminderDataProvider(mContext, false, groupId);
-        mAdapter = new RemindersRecyclerAdapter(mContext, provider.getData());
+        mAdapter = new RemindersRecyclerAdapter(mContext, SimpleProvider.getInstance(mContext).getActive());
         mAdapter.setEventListener(this);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -372,7 +368,7 @@ public class ActiveFragment extends Fragment implements
 
     @Override
     public void onItemClicked(final int position, final View view) {
-        ReminderModel item = mAdapter.getItem(position);
+        ReminderItem item = mAdapter.getItem(position);
         if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.ITEM_PREVIEW)) {
             previewReminder(view, item.getId(), item.getType());
         } else {
@@ -390,7 +386,7 @@ public class ActiveFragment extends Fragment implements
         final String[] items = {getString(R.string.open), getString(R.string.edit),
                 getString(R.string.change_group), getString(R.string.move_to_trash)};
         Dialogues.showLCAM(mContext, item -> {
-            ReminderModel item1 = mAdapter.getItem(position);
+            ReminderItem item1 = mAdapter.getItem(position);
             switch (item){
                 case 0:
                     previewReminder(view, item1.getId(), item1.getType());
@@ -399,7 +395,7 @@ public class ActiveFragment extends Fragment implements
                     Reminder.edit(item1.getId(), mContext);
                     break;
                 case 2:
-                    changeGroup(item1.getGroupId(), item1.getId());
+                    changeGroup(item1.getGroupUuId(), item1.getId());
                     break;
                 case 3:
                     mAdapter.removeItem(position);

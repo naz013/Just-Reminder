@@ -19,6 +19,8 @@ import android.app.AlarmManager;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.databinding.BindingAdapter;
+import android.databinding.DataBindingUtil;
 import android.graphics.Paint;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -27,52 +29,58 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.contacts.Contacts;
+import com.cray.software.justreminder.databinding.ReminderListItemBinding;
+import com.cray.software.justreminder.databinding.ShoppingListItemBinding;
+import com.cray.software.justreminder.datas.AdapterItem;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
 import com.cray.software.justreminder.datas.models.ShoppingList;
+import com.cray.software.justreminder.groups.GroupHelper;
+import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Recurrence;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.reminder.json.JPlace;
+import com.cray.software.justreminder.reminder.json.JShopping;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.roboto_views.RoboSwitchCompat;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.IntervalUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
-public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecyclerAdapter.ViewHolder> {
+public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
-    private TimeCount mCount;
-    private ColorSetter cs;
-    private ArrayList<ReminderModel> mDataList;
+    private static ColorSetter cs;
+    private List<AdapterItem> mDataList;
     private RecyclerListener mEventListener;
-    private boolean is24;
-    private boolean isDark;
+    private static boolean is24;
+    private static boolean isDark;
 
-    public RemindersRecyclerAdapter(Context context, ArrayList<ReminderModel> list) {
+    public RemindersRecyclerAdapter(Context context, List<AdapterItem> list) {
         this.mContext = context;
         mDataList = new ArrayList<>(list);
         cs = new ColorSetter(context);
-        mCount = new TimeCount(context);
         is24 = SharedPrefs.getInstance(context).getBoolean(Prefs.IS_24_TIME_FORMAT);
         isDark = cs.isDark();
         setHasStableIds(true);
     }
 
-    public ReminderModel getItem(int position) {
+    public ReminderItem getItem(int position) {
         if (position < mDataList.size()) {
-            return mDataList.get(position);
+            return (ReminderItem) mDataList.get(position).getObject();
         } return null;
     }
 
@@ -84,286 +92,159 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
         }
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
-            View.OnLongClickListener {
-
-        public RoboTextView leftTime, taskTitle, taskDate, reminder_type, reminder_phone,
-                repeatInterval, listHeader;
-        public RoboSwitchCompat check;
+    public class ReminderHolder extends RecyclerView.ViewHolder {
+        public RoboTextView listHeader;
         public CardView itemCard;
+        public ReminderListItemBinding binding;
 
-        public RoboTextView shoppingTitle, shoppingTime;
-        public LinearLayout todoList;
-        public LinearLayout subBackground, titleContainer, endContainer;
-        public RelativeLayout reminderContainer;
-
-        public ViewHolder(View v) {
+        public ReminderHolder(View v) {
             super(v);
-            reminderContainer = (RelativeLayout) v.findViewById(R.id.reminderContainer);
-            leftTime = (RoboTextView) v.findViewById(R.id.remainingTime);
-            listHeader = (RoboTextView) v.findViewById(R.id.listHeader);
-            check = (RoboSwitchCompat) v.findViewById(R.id.itemCheck);
-            check.setVisibility(View.VISIBLE);
-            taskDate = (RoboTextView) v.findViewById(R.id.taskDate);
-            taskDate.setText("");
-            reminder_type = (RoboTextView) v.findViewById(R.id.reminder_type);
-            reminder_type.setText("");
-            reminder_phone = (RoboTextView) v.findViewById(R.id.reminder_phone);
-            reminder_phone.setText("");
-            repeatInterval = (RoboTextView) v.findViewById(R.id.repeatInterval);
-            repeatInterval.setText("");
-
-            taskTitle = (RoboTextView) v.findViewById(R.id.taskText);
-            shoppingTime = (RoboTextView) v.findViewById(R.id.shoppingTime);
-            shoppingTime.setVisibility(View.GONE);
-            taskTitle.setText("");
-            itemCard = (CardView) v.findViewById(R.id.itemCard);
+            binding = DataBindingUtil.bind(v);
+            listHeader = binding.listHeader;
+            itemCard = binding.itemCard;
             itemCard.setCardBackgroundColor(cs.getCardStyle());
             if (Module.isLollipop()) {
                 itemCard.setCardElevation(Configs.CARD_ELEVATION);
             }
-
-            endContainer = (LinearLayout) v.findViewById(R.id.endContainer);
-            todoList = (LinearLayout) v.findViewById(R.id.todoList);
-            todoList.setVisibility(View.VISIBLE);
-            subBackground = (LinearLayout) v.findViewById(R.id.subBackground);
-            titleContainer = (LinearLayout) v.findViewById(R.id.titleContainer);
-            shoppingTitle = (RoboTextView) v.findViewById(R.id.shoppingTitle);
-            shoppingTitle.setText("");
-
-            v.setOnClickListener(this);
-            v.setOnLongClickListener(this);
-            check.setOnClickListener(v1 -> {
+            binding.itemCard.setOnLongClickListener(view -> {
                 if (mEventListener != null) {
-                    mEventListener.onItemSwitched(getAdapterPosition(), check);
+                    mEventListener.onItemLongClicked(getAdapterPosition(), itemCard);
+                }
+                return true;
+            });
+            binding.reminderContainer.setBackgroundColor(cs.getCardStyle());
+            binding.setClick(v1 -> {
+                switch (v1.getId()) {
+                    case R.id.itemCard:
+                        if (mEventListener != null) {
+                            mEventListener.onItemClicked(getAdapterPosition(), binding.itemCheck);
+                        }
+                        break;
+                    case R.id.itemCheck:
+                        if (mEventListener != null) {
+                            mEventListener.onItemSwitched(getAdapterPosition(), v1);
+                        }
+                        break;
                 }
             });
-
-            reminderContainer.setBackgroundColor(cs.getCardStyle());
-            subBackground.setBackgroundColor(cs.getCardStyle());
         }
+    }
 
-        @Override
-        public void onClick(View v) {
-            View view = itemCard;
-            if (mDataList.get(getAdapterPosition()).getViewType() == ReminderDataProvider.VIEW_REMINDER) {
-                view = check;
-            }
-            if (mEventListener != null) {
-                mEventListener.onItemClicked(getAdapterPosition(), view);
-            }
-        }
+    public class ShoppingHolder extends RecyclerView.ViewHolder {
+        public RoboTextView listHeader;
+        public CardView itemCard;
+        public ShoppingListItemBinding binding;
 
-        @Override
-        public boolean onLongClick(View v) {
-            if (mEventListener != null) {
-                mEventListener.onItemLongClicked(getAdapterPosition(), itemCard);
+        public ShoppingHolder(View v) {
+            super(v);
+            binding = DataBindingUtil.bind(v);
+            listHeader = binding.listHeader;
+            itemCard = binding.itemCard;
+            itemCard.setCardBackgroundColor(cs.getCardStyle());
+            if (Module.isLollipop()) {
+                itemCard.setCardElevation(Configs.CARD_ELEVATION);
             }
-            return true;
+            binding.itemCard.setOnLongClickListener(view -> {
+                if (mEventListener != null) {
+                    mEventListener.onItemLongClicked(getAdapterPosition(), itemCard);
+                }
+                return true;
+            });
+            binding.subBackground.setBackgroundColor(cs.getCardStyle());
+            binding.setClick(v1 -> {
+                switch (v1.getId()) {
+                    case R.id.itemCard:
+                        if (mEventListener != null) {
+                            mEventListener.onItemClicked(getAdapterPosition(), binding.subBackground);
+                        }
+                        break;
+                }
+            });
         }
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // create a new view
-        View itemLayoutView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item_card, parent, false);
-
-        // create ViewHolder
-        return new ViewHolder(itemLayoutView);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        if (viewType == 0) {
+            View view = DataBindingUtil.inflate(inflater, R.layout.reminder_list_item, parent, false).getRoot();
+            return new ReminderHolder(view);
+        } else {
+            View view = DataBindingUtil.inflate(inflater, R.layout.shopping_list_item, parent, false).getRoot();
+            return new ShoppingHolder(view);
+        }
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        final ReminderModel item = mDataList.get(holder.getAdapterPosition());
-        String title = item.getTitle();
-        String type = item.getType();
-        String number = item.getNumber();
-        long due = item.getDue();
-        double lat = item.getPlace()[0];
-        double lon = item.getPlace()[1];
-        int isDone = item.getCompleted();
-        long repeat = item.getRepeat();
-        String exclusion = item.getExclusion();
-        int archived = item.getArchived();
-        int categoryColor = item.getCatColor();
-
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+        final ReminderItem item = (ReminderItem) mDataList.get(position).getObject();
+        int isDone = item.getStatus();
+        long due = item.getDateTime();
         String simpleDate = TimeUtil.getSimpleDate(due);
-        holder.itemCard.setCardBackgroundColor(cs.getColor(cs.getCategoryColor(categoryColor)));
-
-        if (archived == 1){
-            if (position > 0 && simpleDate.equals(TimeUtil.getSimpleDate(mDataList.get(position - 1).getDue()))) {
-                holder.listHeader.setVisibility(View.GONE);
-            } else {
-                if (due == 0){
-                    simpleDate = mContext.getString(R.string.permanent);
+        ReminderItem prevItem = null;
+        try {
+            prevItem = (ReminderItem) mDataList.get(position - 1).getObject();
+        } catch (ArrayIndexOutOfBoundsException e) {}
+        if (holder instanceof ReminderHolder) {
+            ReminderHolder reminderHolder = (ReminderHolder) holder;
+            if (prevItem != null) {
+                if (isDone == 1 && position > 0 && prevItem.getStatus() == 0) {
+                    simpleDate = mContext.getString(R.string.disabled);
+                    reminderHolder.listHeader.setText(simpleDate);
+                    reminderHolder.listHeader.setVisibility(View.VISIBLE);
+                } else if (isDone == 1 && position > 0 && prevItem.getStatus() == 1) {
+                    reminderHolder.listHeader.setVisibility(View.GONE);
+                } else if (isDone == 1 && position == 0) {
+                    simpleDate = mContext.getString(R.string.disabled);
+                    reminderHolder.listHeader.setText(simpleDate);
+                    reminderHolder.listHeader.setVisibility(View.VISIBLE);
+                } else if (isDone == 0 && position > 0 && simpleDate.equals(TimeUtil.getSimpleDate(prevItem.getDateTime()))) {
+                    reminderHolder.listHeader.setVisibility(View.GONE);
                 } else {
-                    if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis()))) {
-                        simpleDate = mContext.getString(R.string.today);
-                    } else if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis() + AlarmManager.INTERVAL_DAY))) {
-                        simpleDate = mContext.getString(R.string.tomorrow);
+                    if (due <= 0 || due < (System.currentTimeMillis() - AlarmManager.INTERVAL_DAY)) {
+                        simpleDate = mContext.getString(R.string.permanent);
+                    } else {
+                        if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis()))) {
+                            simpleDate = mContext.getString(R.string.today);
+                        } else if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis() + AlarmManager.INTERVAL_DAY))) {
+                            simpleDate = mContext.getString(R.string.tomorrow);
+                        }
                     }
+                    reminderHolder.listHeader.setText(simpleDate);
+                    reminderHolder.listHeader.setVisibility(View.VISIBLE);
                 }
-                holder.listHeader.setText(simpleDate);
-                holder.listHeader.setVisibility(View.VISIBLE);
             }
-        } else {
-            if (isDone == 1 && position > 0 && mDataList.get(position - 1).getCompleted() == 0){
-                simpleDate = mContext.getString(R.string.disabled);
-                holder.listHeader.setText(simpleDate);
-                holder.listHeader.setVisibility(View.VISIBLE);
-            } else if (isDone == 1 && position > 0 && mDataList.get(position - 1).getCompleted() == 1){
-                holder.listHeader.setVisibility(View.GONE);
-            } else if (isDone == 1 && position == 0){
-                simpleDate = mContext.getString(R.string.disabled);
-                holder.listHeader.setText(simpleDate);
-                holder.listHeader.setVisibility(View.VISIBLE);
-            } else if (isDone == 0 && position > 0 && simpleDate.equals(TimeUtil.getSimpleDate(mDataList.get(position - 1).getDue()))){
-                holder.listHeader.setVisibility(View.GONE);
-            } else {
-                if (due <= 0 || due < (System.currentTimeMillis() - AlarmManager.INTERVAL_DAY)){
-                    simpleDate = mContext.getString(R.string.permanent);
+            reminderHolder.binding.setItem(item);
+        } else if (holder instanceof ShoppingHolder) {
+            ShoppingHolder shoppingHolder = (ShoppingHolder) holder;
+            if (prevItem != null) {
+                if (isDone == 1 && position > 0 && prevItem.getStatus() == 0) {
+                    simpleDate = mContext.getString(R.string.disabled);
+                    shoppingHolder.listHeader.setText(simpleDate);
+                    shoppingHolder.listHeader.setVisibility(View.VISIBLE);
+                } else if (isDone == 1 && position > 0 && prevItem.getStatus() == 1) {
+                    shoppingHolder.listHeader.setVisibility(View.GONE);
+                } else if (isDone == 1 && position == 0) {
+                    simpleDate = mContext.getString(R.string.disabled);
+                    shoppingHolder.listHeader.setText(simpleDate);
+                    shoppingHolder.listHeader.setVisibility(View.VISIBLE);
+                } else if (isDone == 0 && position > 0 && simpleDate.equals(TimeUtil.getSimpleDate(prevItem.getDateTime()))) {
+                    shoppingHolder.listHeader.setVisibility(View.GONE);
                 } else {
-                    if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis()))) {
-                        simpleDate = mContext.getString(R.string.today);
-                    } else if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis() + AlarmManager.INTERVAL_DAY))) {
-                        simpleDate = mContext.getString(R.string.tomorrow);
+                    if (due <= 0 || due < (System.currentTimeMillis() - AlarmManager.INTERVAL_DAY)) {
+                        simpleDate = mContext.getString(R.string.permanent);
+                    } else {
+                        if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis()))) {
+                            simpleDate = mContext.getString(R.string.today);
+                        } else if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis() + AlarmManager.INTERVAL_DAY))) {
+                            simpleDate = mContext.getString(R.string.tomorrow);
+                        }
                     }
-                }
-                holder.listHeader.setText(simpleDate);
-                holder.listHeader.setVisibility(View.VISIBLE);
-            }
-        }
-
-        if (getItemViewType(position) == ReminderDataProvider.VIEW_REMINDER){
-            holder.reminderContainer.setVisibility(View.VISIBLE);
-            holder.subBackground.setVisibility(View.GONE);
-
-            holder.taskTitle.setText(title);
-            holder.reminder_type.setText(ReminderUtils.getTypeString(mContext, type));
-            holder.reminder_phone.setVisibility(View.VISIBLE);
-            if (type.contains(Constants.TYPE_CALL) || type.contains(Constants.TYPE_MESSAGE)) {
-                String name = Contacts.getNameFromNumber(number, mContext);
-                if (name == null) {
-                    holder.reminder_phone.setText(number);
-                } else {
-                    holder.reminder_phone.setText(name + "(" + number + ")");
-                }
-            } else if (type.matches(Constants.TYPE_APPLICATION)) {
-                PackageManager packageManager = mContext.getPackageManager();
-                ApplicationInfo applicationInfo = null;
-                try {
-                    applicationInfo = packageManager.getApplicationInfo(number, 0);
-                } catch (final PackageManager.NameNotFoundException ignored) {
-                }
-                final String name = (String) ((applicationInfo != null) ? packageManager.getApplicationLabel(applicationInfo) : "???");
-                holder.reminder_phone.setText(name + "/" + number);
-            } else if (type.matches(Constants.TYPE_MAIL)) {
-                String name = Contacts.getNameFromMail(number, mContext);
-                if (name == null) {
-                    holder.reminder_phone.setText(number);
-                } else {
-                    holder.reminder_phone.setText(name + "(" + number + ")");
-                }
-            } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)) {
-                holder.reminder_phone.setText(number);
-            } else {
-                holder.reminder_phone.setVisibility(View.GONE);
-            }
-
-            if (type.contains(Constants.TYPE_LOCATION)) {
-                holder.taskDate.setText(String.format(Locale.getDefault(), "%.5f %.5f (%d)", lat, lon, item.getTotalPlaces()));
-                holder.endContainer.setVisibility(View.GONE);
-            } else {
-                holder.endContainer.setVisibility(View.VISIBLE);
-                holder.taskDate.setText(TimeUtil.getFullDateTime(due, is24));
-                if (isDone == 0) {
-                    holder.leftTime.setText(mCount.getRemaining(due));
-                } else holder.leftTime.setText("");
-
-                if (type.startsWith(Constants.TYPE_MONTHDAY)) {
-                    holder.repeatInterval.setText(String.format(mContext.getString(R.string.xM), 1));
-                } else if (type.startsWith(Constants.TYPE_WEEKDAY)) {
-                    holder.repeatInterval.setText(ReminderUtils.getRepeatString(mContext, item.getWeekdays()));
-                } else {
-                    holder.repeatInterval.setText(IntervalUtil.getInterval(mContext, repeat));
+                    shoppingHolder.listHeader.setText(simpleDate);
+                    shoppingHolder.listHeader.setVisibility(View.VISIBLE);
                 }
             }
-
-            if (type.matches(Constants.TYPE_TIME) && archived == 0){
-                if (exclusion != null){
-                    if (new Recurrence(exclusion).isRange()){
-                        holder.taskDate.setText(R.string.paused);
-                    }
-                }
-            }
-
-            if (isDone == 1) {
-                holder.leftTime.setText("");
-                holder.check.setChecked(false);
-            } else {
-                holder.check.setChecked(true);
-            }
-
-            if (archived > 0) {
-                holder.check.setVisibility(View.GONE);
-                holder.leftTime.setText("");
-            }
-        } else {
-            if (due > 0){
-                holder.shoppingTime.setText(TimeUtil.getFullDateTime(due, is24));
-                holder.shoppingTime.setVisibility(View.VISIBLE);
-            } else {
-                holder.shoppingTime.setVisibility(View.GONE);
-            }
-
-            holder.reminderContainer.setVisibility(View.GONE);
-            holder.subBackground.setVisibility(View.VISIBLE);
-
-            holder.shoppingTitle.setText(title);
-
-            if (title.matches("")) {
-                holder.titleContainer.setVisibility(View.GONE);
-            } else {
-                holder.titleContainer.setVisibility(View.VISIBLE);
-            }
-
-            holder.todoList.setFocusableInTouchMode(false);
-            holder.todoList.setFocusable(false);
-            holder.todoList.removeAllViewsInLayout();
-
-            ShoppingListDataProvider provider = new ShoppingListDataProvider(item.getShoppings(), false);
-            int count = 0;
-            for (ShoppingList list : provider.getData()){
-                View view = LayoutInflater.from(mContext).inflate(R.layout.list_item_task_item_widget, null, false);
-                ImageView checkView = (ImageView) view.findViewById(R.id.checkView);
-                RoboTextView textView = (RoboTextView) view.findViewById(R.id.shopText);
-                checkView.setOnClickListener(v -> {
-                    if (mEventListener != null) {
-                        mEventListener.onItemClicked(holder.getAdapterPosition(), holder.subBackground);
-                    }
-                });
-                if (list.isChecked() == 1) {
-                    if (isDark) checkView.setImageResource(R.drawable.ic_check_box_white_24dp);
-                    else checkView.setImageResource(R.drawable.ic_check_box_black_24dp);
-                    textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                } else {
-                    if (isDark) checkView.setImageResource(R.drawable.ic_check_box_outline_blank_white_24dp);
-                    else checkView.setImageResource(R.drawable.ic_check_box_outline_blank_black_24dp);
-                    textView.setPaintFlags(textView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
-                }
-                count++;
-                if (count == 9) {
-                    checkView.setVisibility(View.INVISIBLE);
-                    textView.setText("...");
-                    holder.todoList.addView(view);
-                    break;
-                } else {
-                    checkView.setVisibility(View.VISIBLE);
-                    textView.setText(list.getTitle());
-                    holder.todoList.addView(view);
-                }
-            }
+            shoppingHolder.binding.setItem(item);
         }
     }
 
@@ -374,7 +255,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
     @Override
     public long getItemId(int position) {
-        return mDataList.get(position).getId();
+        return ((ReminderItem) mDataList.get(position).getObject()).getId();
     }
 
     @Override
@@ -384,5 +265,161 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RemindersRecy
 
     public void setEventListener(RecyclerListener eventListener) {
         mEventListener = eventListener;
+    }
+
+    @BindingAdapter({"app:loadType"})
+    public static void loadType(RoboTextView textView, String type) {
+        textView.setText(ReminderUtils.getTypeString(textView.getContext(), type));
+    }
+
+    @BindingAdapter({"app:loadItems"})
+    public static void loadItems(LinearLayout container, List<JShopping> shoppings) {
+        container.setFocusableInTouchMode(false);
+        container.setFocusable(false);
+        container.removeAllViewsInLayout();
+        ShoppingListDataProvider provider = new ShoppingListDataProvider(shoppings, false);
+        int count = 0;
+        for (ShoppingList list : provider.getData()){
+            View view = LayoutInflater.from(container.getContext()).inflate(R.layout.list_item_task_item_widget, null, false);
+            ImageView checkView = (ImageView) view.findViewById(R.id.checkView);
+            RoboTextView textView = (RoboTextView) view.findViewById(R.id.shopText);
+            if (list.isChecked() == 1) {
+                if (isDark) checkView.setImageResource(R.drawable.ic_check_box_white_24dp);
+                else checkView.setImageResource(R.drawable.ic_check_box_black_24dp);
+                textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            } else {
+                if (isDark) checkView.setImageResource(R.drawable.ic_check_box_outline_blank_white_24dp);
+                else checkView.setImageResource(R.drawable.ic_check_box_outline_blank_black_24dp);
+                textView.setPaintFlags(textView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+            }
+            count++;
+            if (count == 9) {
+                checkView.setVisibility(View.INVISIBLE);
+                textView.setText("...");
+                container.addView(view);
+                break;
+            } else {
+                checkView.setVisibility(View.VISIBLE);
+                textView.setText(list.getTitle());
+                container.addView(view);
+            }
+        }
+    }
+
+    @BindingAdapter({"app:loadCard"})
+    public static void loadCard(CardView cardView, String groupId) {
+        GroupItem item = GroupHelper.getInstance(cardView.getContext()).getGroup(groupId);
+        if (item != null) {
+            cardView.setCardBackgroundColor(cs.getColor(cs.getCategoryColor(item.getColor())));
+        } else {
+            cardView.setCardBackgroundColor(cs.getColor(cs.getCategoryColor(0)));
+        }
+    }
+
+    @BindingAdapter({"app:loadDate"})
+    public static void loadDate(RoboTextView textView, JsonModel model) {
+        JPlace place = model.getPlace();
+        if (model.getType().contains(Constants.TYPE_LOCATION)) {
+            textView.setText(String.format(Locale.getDefault(), "%.5f %.5f (%d)", place.getLatitude(), place.getLongitude(), model.getPlaces().size()));
+        } else {
+            textView.setText(TimeUtil.getFullDateTime(model.getEventTime(), is24));
+        }
+        if (model.getType().matches(Constants.TYPE_TIME)){
+            if (model.getExclusion() != null){
+                if (new Recurrence(model.getExclusion()).isRange()){
+                    textView.setText(R.string.paused);
+                }
+            }
+        }
+    }
+
+    @BindingAdapter({"app:loadShoppingDate"})
+    public static void loadShoppingDate(RoboTextView textView, long due) {
+        if (due > 0){
+            textView.setText(TimeUtil.getFullDateTime(due, is24));
+            textView.setVisibility(View.VISIBLE);
+        } else {
+            textView.setVisibility(View.GONE);
+        }
+    }
+
+    @BindingAdapter({"app:loadShoppingTitle"})
+    public static void loadShoppingTitle(RoboTextView textView, String title) {
+        if (title.matches("")) {
+            textView.setVisibility(View.GONE);
+        } else {
+            textView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @BindingAdapter({"app:loadCheck"})
+    public static void loadCheck(RoboSwitchCompat switchCompat, int status) {
+        if (status == 1) {
+            switchCompat.setChecked(false);
+        } else {
+            switchCompat.setChecked(true);
+        }
+    }
+
+    @BindingAdapter({"app:loadLeft"})
+    public static void loadLeft(RoboTextView textView, long due, int status) {
+        if (status == 0) {
+            textView.setText(TimeCount.getInstance(textView.getContext()).getRemaining(due));
+        } else {
+            textView.setText("");
+        }
+    }
+
+    @BindingAdapter({"app:loadRepeat"})
+    public static void loadRepeat(RoboTextView textView, JsonModel model) {
+        if (model.getType().startsWith(Constants.TYPE_MONTHDAY)) {
+            textView.setText(String.format(textView.getContext().getString(R.string.xM), 1));
+        } else if (model.getType().startsWith(Constants.TYPE_WEEKDAY)) {
+            textView.setText(ReminderUtils.getRepeatString(textView.getContext(), model.getRecurrence().getWeekdays()));
+        } else {
+            textView.setText(IntervalUtil.getInterval(textView.getContext(), model.getRecurrence().getRepeat()));
+        }
+    }
+
+    @BindingAdapter({"app:loadContainer"})
+    public static void loadContainer(LinearLayout layout, String type) {
+        if (type.contains(Constants.TYPE_LOCATION)) {
+            layout.setVisibility(View.GONE);
+        } else {
+            layout.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @BindingAdapter({"app:loadContact"})
+    public static void loadContact(RoboTextView textView, String type, String number) {
+        textView.setVisibility(View.VISIBLE);
+        if (type.contains(Constants.TYPE_CALL) || type.contains(Constants.TYPE_MESSAGE)) {
+            String name = Contacts.getNameFromNumber(number, textView.getContext());
+            if (name == null) {
+                textView.setText(number);
+            } else {
+                textView.setText(name + "(" + number + ")");
+            }
+        } else if (type.matches(Constants.TYPE_APPLICATION)) {
+            PackageManager packageManager = textView.getContext().getPackageManager();
+            ApplicationInfo applicationInfo = null;
+            try {
+                applicationInfo = packageManager.getApplicationInfo(number, 0);
+            } catch (final PackageManager.NameNotFoundException ignored) {
+            }
+            final String name = (String) ((applicationInfo != null) ? packageManager.getApplicationLabel(applicationInfo) : "???");
+            textView.setText(name + "/" + number);
+        } else if (type.matches(Constants.TYPE_MAIL)) {
+            String name = Contacts.getNameFromMail(number, textView.getContext());
+            if (name == null) {
+                textView.setText(number);
+            } else {
+                textView.setText(name + "(" + number + ")");
+            }
+        } else if (type.matches(Constants.TYPE_APPLICATION_BROWSER)) {
+            textView.setText(number);
+        } else {
+            textView.setVisibility(View.GONE);
+        }
     }
 }

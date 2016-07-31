@@ -152,8 +152,7 @@ public class TrashFragment extends Fragment implements RecyclerListener {
 
     public void loaderAdapter(){
         SharedPrefs.getInstance(mContext).putBoolean(Prefs.REMINDER_CHANGED, false);
-        ReminderDataProvider provider = new ReminderDataProvider(mContext, true, null);
-        mAdapter = new RemindersRecyclerAdapter(mContext, provider.getData());
+        mAdapter = new RemindersRecyclerAdapter(mContext, SimpleProvider.getInstance(mContext).getTrashed());
         mAdapter.setEventListener(this);
         currentList.setAdapter(mAdapter);
         currentList.setItemAnimator(new DefaultItemAnimator());
@@ -192,7 +191,7 @@ public class TrashFragment extends Fragment implements RecyclerListener {
     public void onItemLongClicked(final int position, View view) {
         final String[] items = {getString(R.string.edit), getString(R.string.delete)};
         Dialogues.showLCAM(mContext, item -> {
-            ReminderModel item1 = mAdapter.getItem(position);
+            ReminderItem item1 = mAdapter.getItem(position);
             if (item == 0) {
                 Reminder.edit(item1.getId(), mContext);
             }
