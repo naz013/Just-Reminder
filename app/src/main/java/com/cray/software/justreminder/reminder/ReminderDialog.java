@@ -314,8 +314,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 contactPhoto.setVisibility(View.VISIBLE);
                 long conID = Contacts.getIdFromNumber(number, ReminderDialog.this);
                 Uri photo = Contacts.getPhoto(conID);
-                if (photo != null)
-                    contactPhoto.setImageURI(photo);
+                if (photo != null) contactPhoto.setImageURI(photo);
                 else contactPhoto.setVisibility(View.GONE);
                 name = Contacts.getNameFromNumber(number, ReminderDialog.this);
                 if (name == null) name = "";
@@ -340,8 +339,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 contactPhoto.setVisibility(View.VISIBLE);
                 long conID = Contacts.getIdFromNumber(number, ReminderDialog.this);
                 Uri photo = Contacts.getPhoto(conID);
-                if (photo != null)
-                    contactPhoto.setImageURI(photo);
+                if (photo != null) contactPhoto.setImageURI(photo);
                 else contactPhoto.setVisibility(View.GONE);
                 name = Contacts.getNameFromNumber(number, ReminderDialog.this);
                 if (name == null) name = "";
@@ -369,8 +367,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
             int conID = Contacts.getIdFromMail(number, this);
             if (conID != 0) {
                 Uri photo = Contacts.getPhoto(conID);
-                if (photo != null)
-                    contactPhoto.setImageURI(photo);
+                if (photo != null) contactPhoto.setImageURI(photo);
                 else contactPhoto.setVisibility(View.GONE);
                 name = Contacts.getNameFromMail(number, ReminderDialog.this);
                 if (name == null) name = "";
@@ -390,8 +387,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 applicationInfo = packageManager.getApplicationInfo(number, 0);
             } catch (final PackageManager.NameNotFoundException ignored) {
             }
-            final String nameA = (String) ((applicationInfo != null) ?
-                    packageManager.getApplicationLabel(applicationInfo) : "???");
+            final String nameA = (String) ((applicationInfo != null) ? packageManager.getApplicationLabel(applicationInfo) : "???");
             remText.setText(task + "\n\n" + nameA + "\n" + number);
             buttonCall.setVisibility(View.VISIBLE);
             buttonCall.setImageResource(R.drawable.ic_open_in_browser_black_24dp);
@@ -423,24 +419,19 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         }
 
         buttonCancel.setOnClickListener(v -> cancel());
-
         buttonNotification.setOnClickListener(v -> favourite());
-
         buttonOk.setOnClickListener(v -> ok());
-
         buttonEdit.setOnClickListener(v -> {
             Reminder.edit(id, ReminderDialog.this);
             update(1);
             finish();
         });
-
         buttonDelay.setOnClickListener(v -> delay());
         buttonDelayFor.setOnClickListener(v -> {
             showDialog();
             update(0);
         });
         buttonCall.setOnClickListener(v -> call());
-
         if (type.contains(Constants.TYPE_MESSAGE)) {
             if (silentSMS) {
                 sendSMS(number, task);
@@ -464,7 +455,6 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
         if (isRepeat) {
             repeater.setAlarm(ReminderDialog.this, id);
         }
-
         boolean isTTS = prefs.getBoolean(Prefs.TTS);
         if (voice != -1) {
             isTTS = voice == 1;
@@ -478,14 +468,12 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
                 e.printStackTrace();
             }
         }
-
         if (prefs.getBoolean(Prefs.WEAR_SERVICE)) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addApi(Wearable.API)
                     .addConnectionCallbacks(this)
                     .build();
         }
-
         if (LocationUtil.isGooglePlayServicesAvailable(this)) {
             ReminderApp application = (ReminderApp) getApplication();
             mTracker = application.getDefaultTracker();
