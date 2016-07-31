@@ -34,8 +34,6 @@ import java.util.List;
 
 public class ReminderUtils {
 
-    public ReminderUtils(){}
-
     /**
      * Add new event from reminder to Calendar.
      * @param context application context.
