@@ -191,7 +191,8 @@ public class TasksDataBase {
         if (item.getId() == 0) {
             return db.insert(GOOGLE_TASKS_LISTS_TABLE_NAME, null, cv);
         } else {
-            return db.update(GOOGLE_TASKS_LISTS_TABLE_NAME, cv, COLUMN_ID + "=" + item.getId(), null);
+            db.update(GOOGLE_TASKS_LISTS_TABLE_NAME, cv, COLUMN_ID + "=" + item.getId(), null);
+            return item.getId();
         }
     }
 

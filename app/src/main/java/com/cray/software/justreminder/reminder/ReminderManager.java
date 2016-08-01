@@ -840,6 +840,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             mItem.setGroupId(categoryId);
             mItem.setDateTime(item.getEventTime());
             mItem.setGroupId(item.getGroup());
+            mItem.clear();
             remControl.save(mItem);
         } else {
             if (!Reminder.isUuId(this, uuId)) {

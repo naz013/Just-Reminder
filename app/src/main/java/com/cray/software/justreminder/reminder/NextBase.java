@@ -138,7 +138,8 @@ public class NextBase {
         if (item.getId() == 0) {
             return db.insert(TABLE_NAME, null, cv);
         } else {
-            return db.update(TABLE_NAME, cv, _ID + "=" + item.getId(), null);
+            db.update(TABLE_NAME, cv, _ID + "=" + item.getId(), null);
+            return item.getId();
         }
     }
 

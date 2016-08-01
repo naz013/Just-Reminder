@@ -121,7 +121,8 @@ public class NotesBase {
         if (item.getId() == 0) {
             return db.insert(NOTE_TABLE_NAME, null, cv);
         } else {
-            return db.update(NOTE_TABLE_NAME, cv, Constants.COLUMN_ID + "=" + item.getId(), null);
+            db.update(NOTE_TABLE_NAME, cv, Constants.COLUMN_ID + "=" + item.getId(), null);
+            return item.getId();
         }
     }
 

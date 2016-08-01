@@ -77,6 +77,15 @@ public class ReminderItem {
         this.id = id;
     }
 
+    public void clear() {
+        this.list = 0;
+        this.status = 0;
+        this.location = 0;
+        this.reminder = 0;
+        this.notification = 0;
+        this.delay = 0;
+    }
+
     public JsonModel getModel() {
         return model;
     }

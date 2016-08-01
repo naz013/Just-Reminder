@@ -17,11 +17,13 @@ package com.cray.software.justreminder.reminder;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 
 import com.cray.software.justreminder.services.AlarmReceiver;
 
 public class DateType extends Type {
 
+    private static final String TAG = "DateType";
     private Context mContext;
 
     public DateType(Context context, String type, Fragment fragment) {

@@ -167,6 +167,7 @@ public class Reminder {
                     item.setModel(model);
                     item.setDateTime(newTime);
                     item.setStatus(ReminderItem.ENABLED);
+                    item.clear();
                     ReminderHelper.getInstance(context).saveReminder(item);
                     new AlarmReceiver().enableReminder(context, id);
                     res = true;
@@ -188,6 +189,7 @@ public class Reminder {
                     item.setDateTime(nextTime);
                     item.setStatus(ReminderItem.ENABLED);
                     item.setModel(model);
+                    item.clear();
                     ReminderHelper.getInstance(context).saveReminder(item);
                     new AlarmReceiver().enableReminder(context, id);
                     res = true;
@@ -242,6 +244,7 @@ public class Reminder {
             item.setModel(jsonModel);
             item.setUuId(uuID);
             item.setId(0);
+            item.clear();
             if (type.contains(Constants.TYPE_LOCATION)){
                 long ids = ReminderHelper.getInstance(context).saveReminder(item);
                 if (eventTime > 0){

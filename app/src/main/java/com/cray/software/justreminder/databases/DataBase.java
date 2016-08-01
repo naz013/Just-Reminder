@@ -293,7 +293,8 @@ public class DataBase {
         cv.put(Constants.Contacts.COLUMN_UUID, item.getUuId());
         cv.put(Constants.Contacts.COLUMN_VAR, "");
         if (item.getId() != 0) {
-            return db.update(CONTACTS_TABLE_NAME, cv, Constants.Contacts.COLUMN_ID + "=" + item.getId(), null);
+            db.update(CONTACTS_TABLE_NAME, cv, Constants.Contacts.COLUMN_ID + "=" + item.getId(), null);
+            return item.getId();
         } else {
             return db.insert(CONTACTS_TABLE_NAME, null, cv);
         }
@@ -374,7 +375,8 @@ public class DataBase {
         if (placeItem.getId() == 0) {
             return db.insert(LOCATION_TABLE_NAME, null, cv);
         } else {
-            return db.update(LOCATION_TABLE_NAME, cv, Constants.Location.COLUMN_ID + "=" + placeItem.getId(), null);
+            db.update(LOCATION_TABLE_NAME, cv, Constants.Location.COLUMN_ID + "=" + placeItem.getId(), null);
+            return placeItem.getId();
         }
     }
 
@@ -439,7 +441,8 @@ public class DataBase {
         if (templateItem.getId() == 0) {
             return db.insert(MESSAGES_TABLE_NAME, null, cv);
         } else {
-            return db.update(MESSAGES_TABLE_NAME, cv, Constants.COLUMN_ID + "=" + templateItem.getId(), null);
+            db.update(MESSAGES_TABLE_NAME, cv, Constants.COLUMN_ID + "=" + templateItem.getId(), null);
+            return templateItem.getId();
         }
     }
 
@@ -490,7 +493,8 @@ public class DataBase {
         if (groupItem.getId() == 0) {
             return db.insert(CATEGORIES_TABLE_NAME, null, cv);
         } else {
-            return db.update(CATEGORIES_TABLE_NAME, cv, Constants.COLUMN_ID + "=" + groupItem.getId(), null);
+            db.update(CATEGORIES_TABLE_NAME, cv, Constants.COLUMN_ID + "=" + groupItem.getId(), null);
+            return groupItem.getId();
         }
     }
 

@@ -22,6 +22,8 @@
         android:id="@+id/currentList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/recycler_margin_l_r"
+        android:layout_marginRight="@dimen/recycler_margin_l_r"
         android:visibility="visible" />
 
     <include layout="@layout/empty_item_layout" />
