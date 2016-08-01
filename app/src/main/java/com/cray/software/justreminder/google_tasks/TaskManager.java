@@ -286,7 +286,6 @@ public class TaskManager extends AppCompatActivity {
     }
 
     private void saveTask() {
-        String initListId = mItem.getListId();
         SharedPrefs.getInstance(this).putBoolean(Prefs.TASK_CHANGED, true);
         String taskName = editField.getText().toString().trim();
         if (taskName.matches("")) {
@@ -305,6 +304,7 @@ public class TaskManager extends AppCompatActivity {
         if (action.matches(TasksConstants.CREATE)) {
             mItem = new TaskItem();
         }
+        String initListId = mItem.getListId();
         mItem.setListId(listId);
         mItem.setStatus(GTasksHelper.TASKS_NEED_ACTION);
         mItem.setTitle(taskName);
