@@ -166,8 +166,7 @@ public class Contacts {
                     ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
                     new String[]{String.valueOf(id)}, null);
             while (emailCur.moveToNext()) {
-                mail = emailCur.getString(
-                        emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+                mail = emailCur.getString(emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
             }
             emailCur.close();
         }
@@ -182,7 +181,8 @@ public class Contacts {
      */
     public static String getNumber(String name, Context context) {
         String number = "";
-        String selection = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME+" like '%" + name +"%'";
+        if (name != null) name = name.replaceAll("'", "''");
+        String selection = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " like '%" + name + "%'";
         String[] projection = new String[] { ContactsContract.CommonDataKinds.Phone.NUMBER};
         try {
             Cursor c = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
