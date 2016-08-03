@@ -73,8 +73,7 @@ public class NotesFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public RemoteViews getViewAt(int i) {
-        RemoteViews rView = new RemoteViews(mContext.getPackageName(),
-                R.layout.list_item_note_widget);
+        RemoteViews rView = new RemoteViews(mContext.getPackageName(), R.layout.list_item_note_widget);
         ColorSetter cs = new ColorSetter(mContext);
         NoteItem note = notes.get(i);
         rView.setInt(R.id.noteBackground, "setBackgroundColor", cs.getNoteLightColor(note.getColor()));

@@ -67,7 +67,7 @@
             android:id="@+id/reminderTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
+            android:background="?attr/selectableItemBackground"
             android:clickable="true">
 
             <LinearLayout
@@ -130,7 +130,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:background="?android:attr/selectableItemBackground"
+                    android:background="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:gravity="center_vertical"
                     android:paddingBottom="15dp"
@@ -153,7 +153,7 @@
             android:id="@+id/useContacts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
+            android:background="?attr/selectableItemBackground"
             android:clickable="true">
 
             <TextView
@@ -201,7 +201,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:clickable="true"
-            android:foreground="?android:attr/selectableItemBackground"
+            android:foreground="?attr/selectableItemBackground"
             android:gravity="center_vertical"
             android:paddingBottom="15dp"
             android:paddingRight="15dp"

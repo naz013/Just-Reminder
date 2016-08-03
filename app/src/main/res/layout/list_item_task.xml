@@ -35,6 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
+        android:foreground="?attr/selectableItemBackground"
         app:loadTaskCard='@{task.hidden}'
         card_view:cardCornerRadius="0dp"
         card_view:cardElevation="2dp">
