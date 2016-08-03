@@ -128,13 +128,13 @@ dependencies {
     compile 'com.android.support:support-v4:24.1.1'
     compile 'com.android.support:recyclerview-v7:24.1.1'
     compile 'com.android.support:appcompat-v7:24.1.1'
-    compile 'com.google.android.gms:play-services-auth:9.2.1'
-    compile 'com.google.android.gms:play-services-appindexing:9.2.1'
-    compile 'com.google.android.gms:play-services-drive:9.2.1'
-    compile 'com.google.android.gms:play-services-location:9.2.1'
-    compile 'com.google.android.gms:play-services-maps:9.2.1'
-    compile 'com.google.android.gms:play-services-analytics:9.2.1'
-    compile 'com.google.android.gms:play-services-wearable:9.2.1'
+    compile 'com.google.android.gms:play-services-auth:9.4.0'
+    compile 'com.google.android.gms:play-services-appindexing:9.4.0'
+    compile 'com.google.android.gms:play-services-drive:9.4.0'
+    compile 'com.google.android.gms:play-services-location:9.4.0'
+    compile 'com.google.android.gms:play-services-maps:9.4.0'
+    compile 'com.google.android.gms:play-services-analytics:9.4.0'
+    compile 'com.google.android.gms:play-services-wearable:9.4.0'
     compile 'com.android.support:design:24.1.1'
     compile('com.crashlytics.sdk.android:crashlytics:2.5.7@aar') {
         transitive = true;
@@ -163,8 +163,6 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'com.android.support:support-v4:24.1.1'
     compile 'com.github.castorflex.smoothprogressbar:library-circular:1.2.0'
-    compile 'com.google.android.gms:play-services-analytics:9.2.1'
-    compile 'com.google.android.gms:play-services-auth:9.2.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
