@@ -515,4 +515,5 @@
     <string name="no_calls_found">Istoria este gol</string>
     <string name="sending_message">Trimite mesaj</string>
     <string name="all_permissions_are_enabled">All permissions are enabled</string>
+    <string name="stock_android_calendar_not_found">Stock Android calendar not found</string>
 </resources>

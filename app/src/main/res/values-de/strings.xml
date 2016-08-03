@@ -515,4 +515,5 @@
     <string name="no_calls_found">Die Geschichte ist leer</string>
     <string name="sending_message">Nachricht senden</string>
     <string name="all_permissions_are_enabled">All permissions are enabled</string>
+    <string name="stock_android_calendar_not_found">Stock Android calendar not found</string>
 </resources>

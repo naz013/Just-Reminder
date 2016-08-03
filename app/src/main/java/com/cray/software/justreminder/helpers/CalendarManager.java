@@ -16,6 +16,7 @@
 
 package com.cray.software.justreminder.helpers;
 
+import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -120,7 +121,11 @@ public class CalendarManager {
                         (60 * 1000 * SharedPrefs.getInstance(mContext).getInt(Prefs.EVENT_DURATION)))
                 .putExtra(CalendarContract.Events.TITLE, summary)
                 .putExtra(CalendarContract.Events.DESCRIPTION, mContext.getString(R.string.from_reminder));
-        mContext.startActivity(intent);
+        try {
+            mContext.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(mContext, R.string.stock_android_calendar_not_found, Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
