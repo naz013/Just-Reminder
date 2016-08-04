@@ -136,19 +136,22 @@ dependencies {
     compile 'com.google.android.gms:play-services-analytics:9.4.0'
     compile 'com.google.android.gms:play-services-wearable:9.4.0'
     compile 'com.android.support:design:24.1.1'
-    compile('com.crashlytics.sdk.android:crashlytics:2.5.7@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.1@aar') {
         transitive = true;
     }
     compile 'com.android.support:support-v13:24.1.1'
-    compile ('com.google.apis:google-api-services-calendar:v3-rev196-1.22.0') {
+    // https://mvnrepository.com/artifact/com.google.apis/google-api-services-calendar
+    compile ('com.google.apis:google-api-services-calendar:v3-rev204-1.22.0') {
         exclude module: 'httpclient'
     }
     compile ('com.google.api-client:google-api-client-android:1.22.0') {
         exclude module: 'httpclient'
     }
-    compile ('com.google.apis:google-api-services-drive:v3-rev32-1.22.0') {
+    // https://mvnrepository.com/artifact/com.google.apis/google-api-services-drive
+    compile ('com.google.apis:google-api-services-drive:v3-rev35-1.22.0') {
         exclude module: 'httpclient'
     }
+    // https://mvnrepository.com/artifact/com.google.apis/google-api-services-tasks
     compile ('com.google.apis:google-api-services-tasks:v1-rev45-1.22.0') {
         exclude module: 'httpclient'
     }
@@ -157,9 +160,9 @@ dependencies {
     }
     compile 'com.android.support:multidex:1.0.1'
     compile 'jp.wasabeef:picasso-transformations:2.1.0'
-    compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.3.0'
+    compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.4.1'
     compile 'com.github.deano2390:MaterialShowcaseView:1.1.0'
-    compile 'de.hdodenhof:circleimageview:2.0.0'
+    compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'com.android.support:support-v4:24.1.1'
     compile 'com.github.castorflex.smoothprogressbar:library-circular:1.2.0'

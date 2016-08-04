@@ -45,6 +45,13 @@
       <sourceFolder url="file://$MODULE_DIR$/src/proDebug/jni" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/proDebug/rs" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/proDebug/shaders" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/build/data-binding-info/androidTest/pro/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/r/androidTest/pro/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/aidl/androidTest/pro/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/buildConfig/androidTest/pro/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/rs/androidTest/pro/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/rs/androidTest/pro/debug" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/resValues/androidTest/pro/debug" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/testProDebug/res" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/testProDebug/resources" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/testProDebug/assets" type="java-test-resource" />
@@ -53,13 +60,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src/testProDebug/jni" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/testProDebug/rs" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/testProDebug/shaders" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/data-binding-info/androidTest/pro/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/r/androidTest/pro/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/aidl/androidTest/pro/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/buildConfig/androidTest/pro/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/rs/androidTest/pro/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/rs/androidTest/pro/debug" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/resValues/androidTest/pro/debug" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/pro/res" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/pro/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/pro/assets" type="java-resource" />
@@ -143,9 +143,9 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/support-v4/24.1.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/24.1.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.crashlytics.sdk.android/answers/1.3.8/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.crashlytics.sdk.android/beta/1.1.6/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.crashlytics.sdk.android/beta/1.2.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.crashlytics.sdk.android/crashlytics-core/2.3.10/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.crashlytics.sdk.android/crashlytics/2.5.7/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.crashlytics.sdk.android/crashlytics/2.6.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.github.castorflex.smoothprogressbar/library-circular/1.2.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.github.deano2390/MaterialShowcaseView/1.1.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-analytics-impl/9.4.0/jars" />
@@ -165,8 +165,9 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.firebase/firebase-common/9.4.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.firebase/firebase-core/9.4.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.firebase/firebase-iid/9.4.0/jars" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/de.hdodenhof/circleimageview/2.0.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/de.hdodenhof/circleimageview/2.1.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/io.fabric.sdk.android/fabric/1.3.12/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/jp.co.cyberagent.android.gpuimage/gpuimage-library/1.4.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/jp.wasabeef/picasso-transformations/2.1.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental-safeguard" />
@@ -192,7 +193,6 @@
     <orderEntry type="library" exported="" name="play-services-base-9.4.0" level="project" />
     <orderEntry type="library" exported="" name="guava-jdk5-17.0" level="project" />
     <orderEntry type="library" exported="" name="library-circular-1.2.0" level="project" />
-    <orderEntry type="library" exported="" name="gpuimage-library-1.3.0" level="project" />
     <orderEntry type="library" exported="" name="kenburnsview-1.0.7" level="project" />
     <orderEntry type="library" exported="" name="animated-vector-drawable-24.1.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-wearable-9.4.0" level="project" />
@@ -203,15 +203,16 @@
     <orderEntry type="library" exported="" name="MaterialShowcaseView-1.1.0" level="project" />
     <orderEntry type="library" exported="" name="firebase-iid-9.4.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="multidex-instrumentation-1.0.1" level="project" />
+    <orderEntry type="library" exported="" name="crashlytics-2.6.1" level="project" />
     <orderEntry type="library" exported="" name="fabric-1.3.12" level="project" />
     <orderEntry type="library" exported="" name="library-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="compiler-1.0-rc4" level="project" />
     <orderEntry type="library" exported="" name="google-api-client-1.22.0" level="project" />
     <orderEntry type="library" exported="" name="support-v13-24.1.1" level="project" />
     <orderEntry type="library" exported="" name="baseLibrary-1.0-rc4" level="project" />
-    <orderEntry type="library" exported="" name="beta-1.1.6" level="project" />
     <orderEntry type="library" exported="" name="jackson-core-2.1.3" level="project" />
     <orderEntry type="library" exported="" name="play-services-tasks-9.4.0" level="project" />
+    <orderEntry type="library" exported="" name="circleimageview-2.1.0" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-24.1.1" level="project" />
     <orderEntry type="library" exported="" name="support-vector-drawable-24.1.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-auth-9.4.0" level="project" />
@@ -224,8 +225,9 @@
     <orderEntry type="library" exported="" name="google-api-client-android-1.22.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-24.1.1" level="project" />
     <orderEntry type="library" exported="" name="picasso-2.5.2" level="project" />
+    <orderEntry type="library" exported="" name="google-api-services-drive-v3-rev35-1.22.0" level="project" />
     <orderEntry type="library" exported="" name="json_simple-1.1" level="project" />
-    <orderEntry type="library" exported="" name="google-api-services-drive-v3-rev32-1.22.0" level="project" />
+    <orderEntry type="library" exported="" name="gpuimage-library-1.4.1" level="project" />
     <orderEntry type="library" exported="" name="firebase-analytics-impl-9.4.0" level="project" />
     <orderEntry type="library" exported="" name="design-24.1.1" level="project" />
     <orderEntry type="library" exported="" name="firebase-core-9.4.0" level="project" />
@@ -241,15 +243,14 @@
     <orderEntry type="library" exported="" name="play-services-analytics-9.4.0" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-24.1.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-auth-base-9.4.0" level="project" />
-    <orderEntry type="library" exported="" name="google-api-services-calendar-v3-rev196-1.22.0" level="project" />
-    <orderEntry type="library" exported="" name="crashlytics-2.5.7" level="project" />
     <orderEntry type="library" exported="" name="google-http-client-1.22.0" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-24.1.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-basement-9.4.0" level="project" />
     <orderEntry type="library" exported="" name="rfc5545-datetime-0.2.4" level="project" />
     <orderEntry type="library" exported="" name="picasso-transformations-2.1.0" level="project" />
-    <orderEntry type="library" exported="" name="circleimageview-2.0.0" level="project" />
+    <orderEntry type="library" exported="" name="google-api-services-calendar-v3-rev204-1.22.0" level="project" />
     <orderEntry type="library" exported="" name="google-http-client-jackson2-1.22.0" level="project" />
+    <orderEntry type="library" exported="" name="beta-1.2.1" level="project" />
     <orderEntry type="library" exported="" name="multidex-1.0.1" level="project" />
     <orderEntry type="library" exported="" name="firebase-analytics-9.4.0" level="project" />
     <orderEntry type="module" module-name="shared" exported="" />
