@@ -16,13 +16,13 @@
 
 package com.cray.software.justreminder.settings;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -83,7 +83,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
             }
             SettingsFragment firstFragment = new SettingsFragment();
             firstFragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, firstFragment).commit();
+            getFragmentManager().beginTransaction().add(R.id.fragment_container, firstFragment).commit();
         }
     }
 
@@ -115,7 +115,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
             GeneralSettingsFragment newFragment = new GeneralSettingsFragment();
             Bundle args = new Bundle();
             newFragment.setArguments(args);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, newFragment);
             transaction.addToBackStack(null);
             transaction.commit();
@@ -123,7 +123,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
             ExportSettingsFragment newFragment = new ExportSettingsFragment();
             Bundle args = new Bundle();
             newFragment.setArguments(args);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, newFragment);
             transaction.addToBackStack("export");
             transaction.commit();
@@ -131,7 +131,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
             CalendarSettingsFragment newFragment = new CalendarSettingsFragment();
             Bundle args = new Bundle();
             newFragment.setArguments(args);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, newFragment);
             transaction.addToBackStack(null);
             transaction.commit();
@@ -139,7 +139,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
             BirthdaysSettingsFragment newFragment = new BirthdaysSettingsFragment();
             Bundle args = new Bundle();
             newFragment.setArguments(args);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, newFragment);
             transaction.addToBackStack("birth");
             transaction.commit();
@@ -147,7 +147,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
             NotificationSettingsFragment newFragment = new NotificationSettingsFragment();
             Bundle args = new Bundle();
             newFragment.setArguments(args);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, newFragment);
             transaction.addToBackStack(null);
             transaction.commit();
@@ -155,7 +155,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
             ExtraSettingsFragment newFragment = new ExtraSettingsFragment();
             Bundle args = new Bundle();
             newFragment.setArguments(args);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, newFragment);
             transaction.addToBackStack(null);
             transaction.commit();
@@ -163,7 +163,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
             LocationSettingsFragment newFragment = new LocationSettingsFragment();
             Bundle args = new Bundle();
             newFragment.setArguments(args);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, newFragment);
             transaction.addToBackStack(null);
             transaction.commit();
@@ -171,7 +171,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
             NotesSettingsFragment newFragment = new NotesSettingsFragment();
             Bundle args = new Bundle();
             newFragment.setArguments(args);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, newFragment);
             transaction.addToBackStack(null);
             transaction.commit();
@@ -179,7 +179,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
             VoiceSettingsFragment newFragment = new VoiceSettingsFragment();
             Bundle args = new Bundle();
             newFragment.setArguments(args);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, newFragment);
             transaction.addToBackStack(null);
             transaction.commit();
@@ -187,7 +187,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
             OtherSettingsFragment newFragment = new OtherSettingsFragment();
             Bundle args = new Bundle();
             newFragment.setArguments(args);
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, newFragment);
             transaction.addToBackStack(null);
             transaction.commit();
@@ -199,9 +199,9 @@ public class SettingsActivity extends AppCompatActivity implements SettingsFragm
         BirthdaysSettingsFragment newFragment = new BirthdaysSettingsFragment();
         Bundle args = new Bundle();
         newFragment.setArguments(args);
-        FragmentManager fm = getSupportFragmentManager();
+        FragmentManager fm = getFragmentManager();
         fm.popBackStack("birth", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, newFragment);
         transaction.addToBackStack("birth");
         transaction.commit();

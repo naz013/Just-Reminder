@@ -16,12 +16,12 @@
 
 package com.cray.software.justreminder.settings.fragments;
 
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -37,7 +37,7 @@ import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.views.PrefsView;
 
-public class ExtraSettingsFragment extends Fragment implements 
+public class ExtraSettingsFragment extends Fragment implements
         View.OnClickListener, DialogInterface.OnDismissListener {
 
     private SharedPrefs sPrefs;

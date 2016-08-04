@@ -16,12 +16,12 @@
 
 package com.cray.software.justreminder.settings.fragments;
 
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Looper;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
@@ -240,7 +240,7 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
             case R.id.reminderTime:
                 new BirthdayAlarm().cancelAlarm(getActivity());
                 DialogFragment timePickerFragment = new TimePickerFragment();
-                timePickerFragment.show(getActivity().getSupportFragmentManager(), "timePicker");
+                timePickerFragment.show(getActivity().getFragmentManager(), "timePicker");
                 break;
             case R.id.useContacts:
                 setContactsSwitch();
@@ -276,7 +276,7 @@ public class BirthdaysSettingsFragment extends Fragment implements View.OnClickL
                 BirthdayNotificationSettingsFragment newFragment = new BirthdayNotificationSettingsFragment();
                 Bundle args = new Bundle();
                 newFragment.setArguments(args);
-                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                FragmentTransaction transaction = getActivity().getFragmentManager().beginTransaction();
                 transaction.replace(R.id.fragment_container, newFragment);
                 transaction.addToBackStack("birth_notif");
                 transaction.commit();
