@@ -16,9 +16,9 @@
 
 package com.cray.software.justreminder.google_tasks;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.support.v13.app.FragmentStatePagerAdapter;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.cray.software.justreminder.datas.models.TaskListData;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;

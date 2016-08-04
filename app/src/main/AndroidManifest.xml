@@ -75,7 +75,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CalendarActivity"
+            android:name=".calendar.CalendarActivity"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden" >
             <intent-filter>
@@ -414,7 +414,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.EventsImport"
+            android:name=".calendar.EventsImport"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />

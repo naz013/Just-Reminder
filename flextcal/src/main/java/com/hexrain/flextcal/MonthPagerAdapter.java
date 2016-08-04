@@ -1,8 +1,8 @@
 package com.hexrain.flextcal;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import java.util.ArrayList;
 
@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * @author thomasdao
  * 
  */
-public class MonthPagerAdapter extends FragmentPagerAdapter {
+public class MonthPagerAdapter extends FragmentStatePagerAdapter {
 
 	private ArrayList<DateGridFragment> fragments;
 

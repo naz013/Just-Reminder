@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.fragments;
+package com.cray.software.justreminder.calendar;
 
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,9 +34,7 @@ import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.adapters.CalendarPagerAdapter;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.datas.EventsDataProvider;
-import com.cray.software.justreminder.datas.models.EventsItem;
-import com.cray.software.justreminder.datas.models.EventsPagerItem;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 
@@ -115,6 +113,7 @@ public class EventsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_calendar, container, false);
+        rootView.findViewById(R.id.wrapper).setBackgroundColor(new ColorSetter(mContext).getBackgroundStyle());
         pager = (ViewPager) rootView.findViewById(R.id.pager);
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());

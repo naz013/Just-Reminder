@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.activities;
+package com.cray.software.justreminder.calendar;
 
 import android.app.AlarmManager;
 import android.app.ProgressDialog;

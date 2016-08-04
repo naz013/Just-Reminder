@@ -18,10 +18,10 @@ package com.cray.software.justreminder.google_tasks;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -124,6 +124,7 @@ public class TasksFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_calendar, container, false);
         pager = (ViewPager) rootView.findViewById(R.id.pager);
+        rootView.findViewById(R.id.wrapper).setBackgroundColor(new ColorSetter(mContext).getBackgroundStyle());
         loadData();
         onCreate = true;
         return rootView;
@@ -256,7 +257,7 @@ public class TasksFragment extends Fragment {
         }
         Log.d(TAG, "loadData: " + colors.toString());
         int pos = SharedPrefs.getInstance(mContext).getInt(Prefs.LAST_LIST);
-        final TasksPagerAdapter pagerAdapter = new TasksPagerAdapter(getFragmentManager(), taskListDatum, colors);
+        final TasksPagerAdapter pagerAdapter = new TasksPagerAdapter(getChildFragmentManager(), taskListDatum, colors);
         pagerAdapter.setCallbacks(mCallbacks);
         pager.setAdapter(pagerAdapter);
         pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {

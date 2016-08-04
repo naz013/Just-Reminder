@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.datas.models;
+package com.cray.software.justreminder.calendar;
 
 import java.util.ArrayList;
 

@@ -108,8 +108,8 @@
     <orderEntry type="library" exported="" name="support-v13-24.1.1" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-24.1.1" level="project" />
     <orderEntry type="library" exported="" name="android-observablescrollview-1.6.0" level="project" />
-    <orderEntry type="library" exported="" name="support-annotations-24.1.1" level="project" />
     <orderEntry type="library" exported="" name="kenburnsview-1.0.7" level="project" />
+    <orderEntry type="library" exported="" name="support-annotations-24.1.1" level="project" />
     <orderEntry type="library" exported="" name="animated-vector-drawable-24.1.1" level="project" />
     <orderEntry type="library" exported="" name="support-vector-drawable-24.1.1" level="project" />
     <orderEntry type="library" exported="" name="date4j" level="project" />

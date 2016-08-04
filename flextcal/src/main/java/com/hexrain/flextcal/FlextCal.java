@@ -16,12 +16,11 @@
 
 package com.hexrain.flextcal;
 
-
 import android.annotation.TargetApi;
-import android.app.Fragment;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.text.format.DateUtils;
@@ -49,7 +48,6 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import hirondelle.date4j.DateTime;
-
 
 /**
  * A simple {@link Fragment} subclass.

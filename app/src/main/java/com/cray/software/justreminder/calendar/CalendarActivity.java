@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder;
+package com.cray.software.justreminder.calendar;
 
 import android.app.AlarmManager;
 import android.content.Intent;
@@ -30,12 +30,10 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
+import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.CalendarPagerAdapter;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.datas.EventsDataProvider;
-import com.cray.software.justreminder.datas.models.EventsItem;
-import com.cray.software.justreminder.datas.models.EventsPagerItem;
 import com.cray.software.justreminder.dialogs.ActionPickerDialog;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Recognize;
@@ -186,7 +184,7 @@ public class CalendarActivity extends AppCompatActivity {
         pager.setVisibility(View.VISIBLE);
 
         progress.setVisibility(View.GONE);
-        CalendarPagerAdapter pagerAdapter = new CalendarPagerAdapter(getFragmentManager(), pagerData);
+        CalendarPagerAdapter pagerAdapter = new CalendarPagerAdapter(getSupportFragmentManager(), pagerData);
         pager.setAdapter(pagerAdapter);
         pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

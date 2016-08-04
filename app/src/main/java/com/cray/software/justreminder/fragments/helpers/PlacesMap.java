@@ -18,7 +18,6 @@ package com.cray.software.justreminder.fragments.helpers;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -27,6 +26,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -64,6 +64,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -389,9 +390,9 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         mColor = new ColorSetter(mContext);
         isDark = mColor.isDark();
 
-        com.google.android.gms.maps.MapFragment fragment = com.google.android.gms.maps.MapFragment.newInstance();
+        SupportMapFragment fragment = SupportMapFragment.newInstance();
         fragment.getMapAsync(mMapCallback);
-        getFragmentManager().beginTransaction()
+        getChildFragmentManager().beginTransaction()
                 .add(R.id.map, fragment)
                 .commit();
 

@@ -18,12 +18,12 @@ package com.cray.software.justreminder.notes;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -127,7 +127,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         enableGrid = SharedPrefs.getInstance(mContext).getBoolean(Prefs.REMINDER_CHANGED);
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
         currentList.setLayoutManager(new LinearLayoutManager(mContext));
-
+        rootView.findViewById(R.id.backgroundFragment).setBackgroundColor(new ColorSetter(mContext).getBackgroundStyle());
         emptyItem = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
         RoboTextView emptyText = (RoboTextView) rootView.findViewById(R.id.emptyText);

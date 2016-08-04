@@ -16,10 +16,10 @@
 package com.cray.software.justreminder.reminder;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -141,6 +141,7 @@ public class TrashFragment extends Fragment implements RecyclerListener {
         } else {
             emptyImage.setImageResource(R.drawable.ic_delete_black_vector);
         }
+        rootView.findViewById(R.id.backgroundFragment).setBackgroundColor(new ColorSetter(mContext).getBackgroundStyle());
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.currentList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -205,6 +206,7 @@ public class TrashFragment extends Fragment implements RecyclerListener {
             mCallbacks.onListChanged(mRecyclerView);
         }
         reloadView();
+        getActivity().invalidateOptionsMenu();
     }
 
     private void reloadView() {

@@ -21,8 +21,6 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -37,6 +35,8 @@ import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -49,6 +49,9 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.cray.software.justreminder.activities.Help;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
+import com.cray.software.justreminder.calendar.CalendarViewFragment;
+import com.cray.software.justreminder.calendar.DateCallback;
+import com.cray.software.justreminder.calendar.EventsFragment;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
@@ -58,7 +61,6 @@ import com.cray.software.justreminder.dialogs.ChangeDialog;
 import com.cray.software.justreminder.enums.QuickReturnViewType;
 import com.cray.software.justreminder.feedback.SendReportActivity;
 import com.cray.software.justreminder.fragments.BackupsFragment;
-import com.cray.software.justreminder.fragments.EventsFragment;
 import com.cray.software.justreminder.fragments.NavigationDrawerFragment;
 import com.cray.software.justreminder.google_tasks.DelayedAsync;
 import com.cray.software.justreminder.google_tasks.GetTasksListsAsync;
@@ -121,7 +123,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
 
-public class ScreenManager extends AppCompatActivity implements NavigationCallbacks {
+public class ScreenManager extends AppCompatActivity implements NavigationCallbacks, DateCallback {
 
     private Toolbar toolbar;
     private RoboEditText quickNote;
@@ -176,7 +178,6 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         setTheme(cSetter.getStyle());
         setContentView(R.layout.activity_screen_manager);
         setRequestedOrientation(cSetter.getRequestOrientation());
-
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(cSetter.getColor(cSetter.colorPrimaryDark()));
         }
@@ -188,7 +189,6 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         mTitle = getTitle().toString();
 
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
-
         quickNote = (RoboEditText) findViewById(R.id.quickNote);
 
         noteCard = (CardView) findViewById(R.id.noteCard);
@@ -347,9 +347,10 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
     }
 
     private void replace(Fragment fragment, String tag) {
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.container, fragment, tag);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        ft.addToBackStack(null);
         ft.commitAllowingStateLoss();
         mTag = tag;
         SharedPrefs.getInstance(this).putString(Prefs.LAST_FRAGMENT, tag);
@@ -381,10 +382,8 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
                     replace(GeolocationFragment.newInstance(), tag);
                 }
             } else if (tag.matches(ACTION_CALENDAR)) {
-                showMonth();
                 SharedPrefs.getInstance(this).putInt(Prefs.LAST_CALENDAR_VIEW, 1);
-                mTag = tag;
-                SharedPrefs.getInstance(this).putString(Prefs.LAST_FRAGMENT, tag);
+                replace(CalendarViewFragment.newInstance(), ACTION_CALENDAR);
             } else if (tag.matches(FRAGMENT_EVENTS)) {
                 Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis(System.currentTimeMillis());
@@ -501,71 +500,6 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         }
     }
 
-    private void showMonth() {
-        FlextCal calendarView = new FlextCal();
-        Bundle args = new Bundle();
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(System.currentTimeMillis());
-        args.putInt(FlextCal.MONTH, cal.get(Calendar.MONTH) + 1);
-        args.putInt(FlextCal.YEAR, cal.get(Calendar.YEAR));
-        if (SharedPrefs.getInstance(this).getInt(Prefs.START_DAY) == 0) {
-            args.putInt(FlextCal.START_DAY_OF_WEEK, FlextCal.SUNDAY);
-        } else {
-            args.putInt(FlextCal.START_DAY_OF_WEEK, FlextCal.MONDAY);
-        }
-        args.putBoolean(FlextCal.ENABLE_IMAGES, SharedPrefs.getInstance(this).getBoolean(Prefs.CALENDAR_IMAGE));
-        args.putBoolean(FlextCal.DARK_THEME, cSetter.isDark());
-        calendarView.setArguments(args);
-        calendarView.setBackgroundForToday(cSetter.getColor(cSetter.colorCurrentCalendar()));
-        replace(calendarView, mTag);
-
-        final FlextListener listener = new FlextListener() {
-
-            @Override
-            public void onClickDate(Date date, View view) {
-                eventsDate = date;
-                onItemSelected(FRAGMENT_EVENTS);
-            }
-
-            @Override
-            public void onLongClickDate(Date date, View view) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(System.currentTimeMillis());
-                int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                int minute = calendar.get(Calendar.MINUTE);
-                calendar.setTime(date);
-                calendar.set(Calendar.HOUR_OF_DAY, hour);
-                calendar.set(Calendar.MINUTE, minute);
-                long dateMills = calendar.getTimeInMillis();
-                startActivity(new Intent(ScreenManager.this, ActionPickerDialog.class)
-                        .putExtra("date", dateMills));
-            }
-
-            @Override
-            public void onMonthChanged(int month, int year) {
-
-            }
-
-            @Override
-            public void onCaldroidViewCreated() {
-            }
-
-        };
-
-        calendarView.setCaldroidListener(listener);
-        calendarView.refreshView();
-
-        boolean isReminder = SharedPrefs.getInstance(this).getBoolean(Prefs.REMINDERS_IN_CALENDAR);
-        boolean isFeature = SharedPrefs.getInstance(this).getBoolean(Prefs.CALENDAR_FEATURE_TASKS);
-        calendarView.setEvents(new ReminderDataProvider(this, isReminder, isFeature).getEvents());
-        replace(calendarView, mTag);
-
-        SharedPrefs.getInstance(this).putInt(Prefs.LAST_CALENDAR_VIEW, 1);
-        mTitle = getString(R.string.calendar);
-        toolbar.setTitle(mTitle);
-        invalidateOptionsMenu();
-    }
-
     protected Dialog marketDialog() {
         return new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.buy_pro))
@@ -640,24 +574,19 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         super.onResume();
         SharedPrefs sPrefs = SharedPrefs.getInstance(this);
         if (sPrefs.getBoolean(Prefs.UI_CHANGED)) recreate();
-
         setRequestedOrientation(cSetter.getRequestOrientation());
         showRate();
-
         if (Module.isPro() && !sPrefs.getBoolean(Prefs.THANKS_SHOWN) && hasChanges()) {
             thanksDialog().show();
         }
-
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(cSetter.getColor(cSetter.colorPrimaryDark()));
         }
-
         if (mTag != null) onItemSelected(mTag);
         if (sPrefs.getBoolean(Prefs.STATUS_BAR_NOTIFICATION))
             new Notifier(this).recreatePermanent();
         isChangesShown();
         new DelayedAsync(this, null).execute();
-
         if (LocationUtil.isGooglePlayServicesAvailable(this)) {
             mTracker.setScreenName("Main activity");
             mTracker.send(new HitBuilders.ScreenViewBuilder().build());
@@ -671,8 +600,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
     }
 
     private void showChanges() {
-        startActivity(new Intent(this, ChangeDialog.class)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        startActivity(new Intent(this, ChangeDialog.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     private void isChangesShown() {
@@ -759,13 +687,11 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         InputMethodManager imm = (InputMethodManager) getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(quickNote.getWindowToken(), 0);
-
         new Handler().postDelayed(() -> {
             if (!isNoteVisible()) {
                 askNotification(note, id);
             }
         }, 300);
-
         if (mTag.matches(FRAGMENT_NOTE) || mTag.matches(FRAGMENT_ACTIVE)) {
             onItemSelected(mTag);
         }
@@ -780,7 +706,6 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
                 new Handler().postDelayed(() -> askReminder(note, id), 300);
             }
         });
-
         buttonNo.setOnClickListener(v -> {
             ViewUtils.hideReveal(noteStatusCard);
             if (SharedPrefs.getInstance(this).getBoolean(Prefs.QUICK_NOTE_REMINDER)) {
@@ -894,7 +819,6 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
             new Recognize(this).parseResults(matches, false);
             super.onActivityResult(requestCode, resultCode, data);
         }
-
         if (requestCode == REQUEST_AUTHORIZATION && resultCode == RESULT_OK) {
             accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
             GoogleAccountManager gam = new GoogleAccountManager(this);
@@ -927,5 +851,10 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         if (SharedPrefs.getInstance(this).getBoolean(Prefs.EXPORT_SETTINGS)) {
             SharedPrefs.getInstance(this).savePrefsBackup();
         }
+    }
+
+    @Override
+    public void dateSelect(Date date) {
+        this.eventsDate = date;
     }
 }

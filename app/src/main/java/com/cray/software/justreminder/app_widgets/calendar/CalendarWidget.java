@@ -29,7 +29,7 @@ import android.support.annotation.NonNull;
 import android.text.format.DateUtils;
 import android.widget.RemoteViews;
 
-import com.cray.software.justreminder.CalendarActivity;
+import com.cray.software.justreminder.calendar.CalendarActivity;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.reminder.ReminderManager;
 import com.cray.software.justreminder.dialogs.VoiceWidgetDialog;

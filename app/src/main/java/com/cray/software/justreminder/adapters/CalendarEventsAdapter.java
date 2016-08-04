@@ -27,7 +27,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.contacts.Contacts;
-import com.cray.software.justreminder.datas.models.EventsItem;
+import com.cray.software.justreminder.calendar.EventsItem;
 import com.cray.software.justreminder.enums.EventType;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;

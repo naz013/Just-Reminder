@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.fragments;
+package com.cray.software.justreminder.calendar;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,7 +35,6 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.birthdays.AddBirthdayActivity;
 import com.cray.software.justreminder.adapters.CalendarEventsAdapter;
 import com.cray.software.justreminder.birthdays.BirthdayHelper;
-import com.cray.software.justreminder.datas.models.EventsItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.interfaces.SimpleListener;
