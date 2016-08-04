@@ -17,11 +17,11 @@
 package com.cray.software.justreminder.creator;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,7 +96,7 @@ public class PlacesFragment extends BaseFragment implements MapCallback {
         placesMap.setCallback(this);
         placesMap.setRadius(prefs.getInt(Prefs.LOCATION_RADIUS));
         placesMap.setMarkerStyle(prefs.getInt(Prefs.MARKER_STYLE));
-        FragmentManager fragMan = getChildFragmentManager();
+        FragmentManager fragMan = getFragmentManager();
         FragmentTransaction fragTransaction = fragMan.beginTransaction();
         fragTransaction.replace(R.id.mapPlace, placesMap);
         fragTransaction.commitAllowingStateLoss();

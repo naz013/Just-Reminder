@@ -15,9 +15,9 @@
  */
 package com.cray.software.justreminder.reminder;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 
 import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.services.GeolocationService;

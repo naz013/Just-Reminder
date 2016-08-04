@@ -17,12 +17,12 @@
 package com.cray.software.justreminder.creator;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.location.Address;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -144,7 +144,8 @@ public class LocationFragment extends BaseFragment implements GeocoderTask.Geoco
         mapFragment.setCallback(this);
         mapFragment.setMarkerStyle(SharedPrefs.getInstance(mContext).getInt(Prefs.MARKER_STYLE));
         mapFragment.setMarkerTitle(eventTask);
-        FragmentManager fragMan = getChildFragmentManager();
+
+        FragmentManager fragMan = getFragmentManager();
         FragmentTransaction fragTransaction = fragMan.beginTransaction();
         fragTransaction.replace(R.id.map, mapFragment);
         fragTransaction.commitAllowingStateLoss();

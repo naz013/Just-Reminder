@@ -74,7 +74,7 @@ public class AddPlaceActivity extends AppCompatActivity implements MapListener, 
         mGoogleMap.setListener(this);
         mGoogleMap.setCallback(this);
 
-        getSupportFragmentManager().beginTransaction()
+        getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, mGoogleMap)
                 .addToBackStack(null)
                 .commit();

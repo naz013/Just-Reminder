@@ -15,8 +15,8 @@
  */
 package com.cray.software.justreminder.reminder;
 
+import android.app.Fragment;
 import android.content.Context;
-import android.support.v4.app.Fragment;
 
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.constants.Prefs;

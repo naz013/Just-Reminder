@@ -18,6 +18,7 @@ package com.cray.software.justreminder.fragments.helpers;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -26,7 +27,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,11 +42,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.places.GooglePlacesAdapter;
-import com.cray.software.justreminder.places.PlacesTask;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.places.GooglePlaceItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Permissions;
@@ -54,8 +51,11 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.ExecutionListener;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.interfaces.SimpleListener;
-import com.cray.software.justreminder.reminder.json.JPlace;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.places.GooglePlaceItem;
+import com.cray.software.justreminder.places.GooglePlacesAdapter;
+import com.cray.software.justreminder.places.PlacesTask;
+import com.cray.software.justreminder.reminder.json.JPlace;
 import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
@@ -64,7 +64,6 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -390,7 +389,11 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         mColor = new ColorSetter(mContext);
         isDark = mColor.isDark();
 
-        ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMapAsync(mMapCallback);
+        com.google.android.gms.maps.MapFragment fragment = com.google.android.gms.maps.MapFragment.newInstance();
+        fragment.getMapAsync(mMapCallback);
+        getFragmentManager().beginTransaction()
+                .add(R.id.map, fragment)
+                .commit();
 
         initViews(view);
         cardSearch = (RoboEditText) view.findViewById(R.id.cardSearch);

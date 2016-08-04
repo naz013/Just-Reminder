@@ -18,9 +18,9 @@ package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -234,8 +234,7 @@ public class EventsFragment extends Fragment {
             position++;
             calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
         }
-        final CalendarPagerAdapter pagerAdapter =
-                new CalendarPagerAdapter(getChildFragmentManager(), pagerData);
+        final CalendarPagerAdapter pagerAdapter = new CalendarPagerAdapter(getFragmentManager(), pagerData);
         pager.setAdapter(pagerAdapter);
         pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

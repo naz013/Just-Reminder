@@ -186,7 +186,7 @@ public class CalendarActivity extends AppCompatActivity {
         pager.setVisibility(View.VISIBLE);
 
         progress.setVisibility(View.GONE);
-        CalendarPagerAdapter pagerAdapter = new CalendarPagerAdapter(getSupportFragmentManager(), pagerData);
+        CalendarPagerAdapter pagerAdapter = new CalendarPagerAdapter(getFragmentManager(), pagerData);
         pager.setAdapter(pagerAdapter);
         pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

@@ -15,6 +15,9 @@
  */
 package com.cray.software.justreminder.reminder;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -25,9 +28,6 @@ import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -470,7 +470,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     };
 
     private void addFragment(int res, Fragment fragment) {
-        FragmentManager fragMan = getSupportFragmentManager();
+        FragmentManager fragMan = getFragmentManager();
         FragmentTransaction ft = fragMan.beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.replace(res, fragment);

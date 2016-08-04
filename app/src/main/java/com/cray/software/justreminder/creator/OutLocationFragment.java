@@ -17,14 +17,14 @@
 package com.cray.software.justreminder.creator;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -155,7 +155,7 @@ public class OutLocationFragment extends BaseFragment implements MapListener,
         mapFragment.setMarkerStyle(SharedPrefs.getInstance(mContext).getInt(Prefs.MARKER_STYLE));
         mapFragment.setMarkerTitle(eventTask);
         mapFragment.setCallback(this);
-        FragmentManager fragMan = getChildFragmentManager();
+        FragmentManager fragMan = getFragmentManager();
         FragmentTransaction fragTransaction = fragMan.beginTransaction();
         fragTransaction.replace(R.id.mapOut, mapFragment);
         fragTransaction.commitAllowingStateLoss();

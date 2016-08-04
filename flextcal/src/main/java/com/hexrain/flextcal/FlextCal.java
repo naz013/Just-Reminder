@@ -18,10 +18,10 @@ package com.hexrain.flextcal;
 
 
 import android.annotation.TargetApi;
+import android.app.Fragment;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.text.format.DateUtils;
@@ -422,7 +422,7 @@ public class FlextCal extends Fragment {
         // InfinitePagerAdapter only recycles fragment provided by this
         // MonthPagerAdapter
         final MonthPagerAdapter pagerAdapter = new MonthPagerAdapter(
-                getChildFragmentManager());
+                getFragmentManager());
 
         // Provide initial data to the fragments, before they are attached to
         // view.

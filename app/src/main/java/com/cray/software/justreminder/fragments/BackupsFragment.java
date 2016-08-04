@@ -17,11 +17,11 @@
 package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -172,7 +172,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     }
 
     private void addFragment(Fragment fragment) {
-        FragmentManager fragMan = getChildFragmentManager();
+        FragmentManager fragMan = getFragmentManager();
         FragmentTransaction ft = fragMan.beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.replace(R.id.windowBackground, fragment);
