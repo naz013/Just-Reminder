@@ -52,14 +52,12 @@ public class OtherSettingsFragment extends Fragment {
         TextView about = (TextView) rootView.findViewById(R.id.about);
         about.setOnClickListener(v -> getActivity().getApplicationContext()
                 .startActivity(new Intent(getActivity().getApplicationContext(),
-                        AboutDialog.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
+                        AboutDialog.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
 
         TextView changes = (TextView) rootView.findViewById(R.id.changes);
         changes.setOnClickListener(v -> getActivity().getApplicationContext()
                 .startActivity(new Intent(getActivity().getApplicationContext(),
-                        ChangeDialog.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
+                        ChangeDialog.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
 
         TextView rateApp = (TextView) rootView.findViewById(R.id.rateApp);
         rateApp.setOnClickListener(v -> Dialogues.rateDialog(getActivity()));
@@ -67,20 +65,17 @@ public class OtherSettingsFragment extends Fragment {
         TextView thanks = (TextView) rootView.findViewById(R.id.thanks);
         thanks.setOnClickListener(v -> getActivity().getApplicationContext()
                 .startActivity(new Intent(getActivity().getApplicationContext(),
-                        ThanksDialog.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
+                        ThanksDialog.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
 
         TextView help = (TextView) rootView.findViewById(R.id.help);
         help.setOnClickListener(v -> getActivity().getApplicationContext()
                 .startActivity(new Intent(getActivity().getApplicationContext(),
-                        Help.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
+                        Help.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
 
         TextView menuFeedback = (TextView) rootView.findViewById(R.id.menuFeedback);
         menuFeedback.setOnClickListener(v -> getActivity().getApplicationContext()
                 .startActivity(new Intent(getActivity().getApplicationContext(),
-                        SendReportActivity.class)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
+                        SendReportActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
 
         TextView menuShare = (TextView) rootView.findViewById(R.id.menuShare);
         menuShare.setOnClickListener(v -> {
@@ -97,8 +92,7 @@ public class OtherSettingsFragment extends Fragment {
         TextView permissionExplain = (TextView) rootView.findViewById(R.id.permissionExplain);
         permissionExplain.setOnClickListener(v -> getActivity().getApplicationContext()
                 .startActivity(new Intent(getActivity().getApplicationContext(), ThanksDialog.class)
-                        .putExtra("int", 1)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
+                        .putExtra("int", 1).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
 
         TextView permissionEnable = (TextView) rootView.findViewById(R.id.permissionEnable);
         permissionEnable.setOnClickListener(v -> getActivity().getApplicationContext()

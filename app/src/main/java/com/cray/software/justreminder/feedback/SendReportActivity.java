@@ -86,26 +86,39 @@ public class SendReportActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int ids = item.getItemId();
-        if (ids == R.id.action_refresh) {
-            mWeb.reload();
-            return true;
-        }
-        if (ids == R.id.action_forward) {
-            if (mWeb.canGoForward()) {
-                mWeb.goForward();
-            }
-            return true;
-        }
-        if (ids == R.id.action_back) {
-            if (mWeb.canGoBack()) {
-                mWeb.goBack();
-            }
-            return true;
-        }
-        if (ids == android.R.id.home){
-            finish();
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                mWeb.reload();
+                return true;
+            case R.id.action_forward:
+                if (mWeb.canGoForward()) {
+                    mWeb.goForward();
+                }
+                return true;
+            case R.id.action_back:
+                if (mWeb.canGoBack()) {
+                    mWeb.goBack();
+                }
+                return true;
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.action_email:
+                sendEmail();
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void sendEmail() {
+        final Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setType("plain/text");
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"feedback.cray@gmail.com"});
+        if (Module.isPro()) {
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Reminder PRO");
+        } else {
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Reminder");
+        }
+        startActivity(Intent.createChooser(emailIntent, "Send mail..."));
     }
 }

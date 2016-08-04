@@ -22,6 +22,12 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/action_email"
+        android:icon="@drawable/ic_email_white_24dp"
+        android:title="@string/e_mail"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_back"
         android:icon="@drawable/ic_keyboard_arrow_left_white_24dp"
         android:title="@string/move_backward"
