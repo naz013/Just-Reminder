@@ -47,6 +47,7 @@ import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.roboto_views.RoboButton;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
+import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -135,6 +136,7 @@ public class CloudDrives extends AppCompatActivity {
     }
 
     private void switchGdrive() {
+        if (!LocationUtil.checkGooglePlayServicesAvailability(this)) return;
         if (gdx.isLinked()){
             gdx.unlink();
             setUpButton();

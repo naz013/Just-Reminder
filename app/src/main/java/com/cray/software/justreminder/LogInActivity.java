@@ -52,6 +52,7 @@ import com.cray.software.justreminder.reminder.ReminderHelper;
 import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
+import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.views.PaperButton;
 import com.google.android.gms.auth.GoogleAuthException;
@@ -132,6 +133,7 @@ public class LogInActivity extends Activity implements LoginListener {
 
         connectGDrive.setOnClickListener(v -> {
             if (enabled) {
+                if (!LocationUtil.checkGooglePlayServicesAvailability(this)) return;
                 if (Permissions.checkPermission(LogInActivity.this, Permissions.GET_ACCOUNTS,
                         Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL, Permissions.ACCESS_FINE_LOCATION)) {
                     Intent intent = AccountPicker.newChooseAccountIntent(null, null,

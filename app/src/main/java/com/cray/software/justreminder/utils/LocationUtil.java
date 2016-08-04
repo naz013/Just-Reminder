@@ -87,12 +87,7 @@ public class LocationUtil {
         if (resultCode != ConnectionResult.SUCCESS) {
             Dialog dialog = GooglePlayServicesUtil.getErrorDialog(resultCode, a, 69);
             dialog.setCancelable(false);
-            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    dialog.dismiss();
-                }
-            });
+            dialog.setOnDismissListener(DialogInterface::dismiss);
             dialog.show();
             return false;
         } else {
