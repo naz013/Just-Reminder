@@ -17,6 +17,7 @@ package com.cray.software.justreminder.reminder;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -26,6 +27,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,6 +43,8 @@ import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.async.SyncTask;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.contacts.FilterCallback;
+import com.cray.software.justreminder.datas.AdapterItem;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -75,17 +79,45 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
      * List of group identifiers.
      */
     private ArrayList<String> mGroupsIds;
+    private List<AdapterItem> mDataList;
 
     /**
      * Last selected group identifier.
      */
     private String mLastGroupId;
 
+    private SearchView mSearchView = null;
+    private MenuItem mSearchMenu = null;
+
     /**
      * Navigation drawer callbacks.
      */
     private NavigationCallbacks mCallbacks;
     private Activity mContext;
+
+    private SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            if (mAdapter != null) mAdapter.filter(query, mDataList);
+            if (mSearchMenu != null) {
+                mSearchMenu.collapseActionView();
+            }
+            return false;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            if (mAdapter != null) mAdapter.filter(newText, mDataList);
+            return false;
+        }
+    };
+    private FilterCallback mFilterCallback = new FilterCallback() {
+        @Override
+        public void filter(int size) {
+            mRecyclerView.scrollToPosition(0);
+            reloadView();
+        }
+    };
 
     /**
      * Fragment default instance.
@@ -110,6 +142,15 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     @Override
     public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_active_menu, menu);
+        mSearchMenu = menu.findItem(R.id.action_search);
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        if (mSearchMenu != null) {
+            mSearchView = (SearchView) mSearchMenu.getActionView();
+        }
+        if (mSearchView != null) {
+            mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+            mSearchView.setOnQueryTextListener(queryTextListener);
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -129,9 +170,6 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                 break;
             case R.id.action_exit:
                 mContext.finish();
-                break;
-            case R.id.action_search:
-                // TODO: 31.07.2016 New search functionality
                 break;
             default:
                 break;
@@ -213,10 +251,13 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     public void loaderAdapter(final String groupId, long time){
         mLastGroupId = groupId;
         SharedPrefs.getInstance(mContext).putBoolean(Prefs.REMINDER_CHANGED, false);
+        mDataList = new ArrayList<>();
         if (groupId != null) {
-            mAdapter = new RemindersRecyclerAdapter(mContext, SimpleProvider.getInstance(mContext).getActiveByGroup(groupId));
+            mDataList = SimpleProvider.getInstance(mContext).getActiveByGroup(groupId);
+            mAdapter = new RemindersRecyclerAdapter(mContext, mDataList, mFilterCallback);
         } else {
-            mAdapter = new RemindersRecyclerAdapter(mContext, SimpleProvider.getInstance(mContext).getActive());
+            mDataList = SimpleProvider.getInstance(mContext).getActive();
+            mAdapter = new RemindersRecyclerAdapter(mContext, mDataList, mFilterCallback);
         }
         mAdapter.setEventListener(this);
         mRecyclerView.setHasFixedSize(true);

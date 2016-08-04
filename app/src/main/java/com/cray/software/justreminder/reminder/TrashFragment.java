@@ -16,12 +16,14 @@
 package com.cray.software.justreminder.reminder;
 
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,6 +36,8 @@ import android.widget.LinearLayout;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.contacts.FilterCallback;
+import com.cray.software.justreminder.datas.AdapterItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -41,14 +45,45 @@ import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 
+import java.util.List;
+
 public class TrashFragment extends Fragment implements RecyclerListener {
 
-    private RecyclerView currentList;
+    private RecyclerView mRecyclerView;
     private LinearLayout emptyItem;
+
+    private List<AdapterItem> mDataList;
     private RemindersRecyclerAdapter mAdapter;
 
     private NavigationCallbacks mCallbacks;
     private Activity mContext;
+
+    private SearchView mSearchView = null;
+    private MenuItem mSearchMenu = null;
+
+    private SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            if (mAdapter != null) mAdapter.filter(query, mDataList);
+            if (mSearchMenu != null) {
+                mSearchMenu.collapseActionView();
+            }
+            return false;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            if (mAdapter != null) mAdapter.filter(newText, mDataList);
+            return false;
+        }
+    };
+    private FilterCallback mFilterCallback = new FilterCallback() {
+        @Override
+        public void filter(int size) {
+            mRecyclerView.scrollToPosition(0);
+            reloadView();
+        }
+    };
 
     public static TrashFragment newInstance() {
         return new TrashFragment();
@@ -66,6 +101,15 @@ public class TrashFragment extends Fragment implements RecyclerListener {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.archive_menu, menu);
+        mSearchMenu = menu.findItem(R.id.action_search);
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        if (mSearchMenu != null) {
+            mSearchView = (SearchView) mSearchMenu.getActionView();
+        }
+        if (mSearchView != null) {
+            mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+            mSearchView.setOnQueryTextListener(queryTextListener);
+        }
         if (ReminderHelper.getInstance(mContext).getRemindersArchived().size() == 0){
             menu.findItem(R.id.action_delete_all).setVisible(false);
         }
@@ -97,9 +141,9 @@ public class TrashFragment extends Fragment implements RecyclerListener {
         } else {
             emptyImage.setImageResource(R.drawable.ic_delete_black_vector);
         }
-        currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.currentList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
-        currentList.setLayoutManager(mLayoutManager);
+        mRecyclerView.setLayoutManager(mLayoutManager);
         loaderAdapter();
         return rootView;
     }
@@ -152,22 +196,23 @@ public class TrashFragment extends Fragment implements RecyclerListener {
 
     public void loaderAdapter(){
         SharedPrefs.getInstance(mContext).putBoolean(Prefs.REMINDER_CHANGED, false);
-        mAdapter = new RemindersRecyclerAdapter(mContext, SimpleProvider.getInstance(mContext).getTrashed());
+        mDataList = SimpleProvider.getInstance(mContext).getTrashed();
+        mAdapter = new RemindersRecyclerAdapter(mContext, mDataList, mFilterCallback);
         mAdapter.setEventListener(this);
-        currentList.setAdapter(mAdapter);
-        currentList.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         if (mCallbacks != null) {
-            mCallbacks.onListChanged(currentList);
+            mCallbacks.onListChanged(mRecyclerView);
         }
         reloadView();
     }
 
     private void reloadView() {
         if (mAdapter.getItemCount() > 0){
-            currentList.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.VISIBLE);
             emptyItem.setVisibility(View.GONE);
         } else {
-            currentList.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.GONE);
             emptyItem.setVisibility(View.VISIBLE);
         }
     }

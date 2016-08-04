@@ -19,15 +19,16 @@
     tools:context=".ScreenManager">
 
     <item
-        android:id="@+id/action_voice"
-        android:icon="@drawable/ic_mic_white_24dp"
-        android:title="@string/voice_control"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search_white_24dp"
         android:title="@string/search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always|collapseActionView" />
+
+    <item
+        android:id="@+id/action_voice"
+        android:icon="@drawable/ic_mic_white_24dp"
+        android:title="@string/voice_control"
         app:showAsAction="ifRoom" />
 
     <item

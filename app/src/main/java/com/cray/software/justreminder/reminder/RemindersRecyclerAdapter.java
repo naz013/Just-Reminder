@@ -35,6 +35,7 @@ import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.contacts.Contacts;
+import com.cray.software.justreminder.contacts.FilterCallback;
 import com.cray.software.justreminder.databinding.ReminderListItemBinding;
 import com.cray.software.justreminder.databinding.ShoppingListItemBinding;
 import com.cray.software.justreminder.datas.AdapterItem;
@@ -66,11 +67,13 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
     private static ColorSetter cs;
     private List<AdapterItem> mDataList;
     private RecyclerListener mEventListener;
+    private FilterCallback mCallback;
     private static boolean is24;
     private static boolean isDark;
 
-    public RemindersRecyclerAdapter(Context context, List<AdapterItem> list) {
+    public RemindersRecyclerAdapter(Context context, List<AdapterItem> list, FilterCallback callback) {
         this.mContext = context;
+        this.mCallback = callback;
         mDataList = new ArrayList<>(list);
         cs = new ColorSetter(context);
         is24 = SharedPrefs.getInstance(context).getBoolean(Prefs.IS_24_TIME_FORMAT);
@@ -196,6 +199,86 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
             }
             listHeader.setText(simpleDate);
             listHeader.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void filter(String q, List<AdapterItem> list) {
+        List<AdapterItem> res = filter(list, q);
+        animateTo(res);
+        if (mCallback != null) mCallback.filter(res.size());
+    }
+
+    private List<AdapterItem> filter(List<AdapterItem> mData, String q) {
+        q = q.toLowerCase();
+        if (mData == null) mData = new ArrayList<>();
+        List<AdapterItem> filteredModelList = new ArrayList<>();
+        if (q.matches("")) {
+            filteredModelList = new ArrayList<>(mData);
+        } else {
+            filteredModelList.addAll(getFiltered(mData, q));
+        }
+        return filteredModelList;
+    }
+
+    private List<AdapterItem> getFiltered(List<AdapterItem> models, String query) {
+        List<AdapterItem> list = new ArrayList<>();
+        for (AdapterItem model : models) {
+            final String text = ((ReminderItem) model.getObject()).getSummary().toLowerCase();
+            if (text.contains(query)) {
+                list.add(model);
+            }
+        }
+        return list;
+    }
+
+    public AdapterItem remove(int position) {
+        final AdapterItem model = mDataList.remove(position);
+        notifyItemRemoved(position);
+        return model;
+    }
+
+    public void addItem(int position, AdapterItem model) {
+        mDataList.add(position, model);
+        notifyItemInserted(position);
+    }
+
+    public void moveItem(int fromPosition, int toPosition) {
+        final AdapterItem model = mDataList.remove(fromPosition);
+        mDataList.add(toPosition, model);
+        notifyItemMoved(fromPosition, toPosition);
+    }
+
+    public void animateTo(List<AdapterItem> models) {
+        applyAndAnimateRemovals(models);
+        applyAndAnimateAdditions(models);
+        applyAndAnimateMovedItems(models);
+    }
+
+    private void applyAndAnimateRemovals(List<AdapterItem> newModels) {
+        for (int i = mDataList.size() - 1; i >= 0; i--) {
+            final AdapterItem model = mDataList.get(i);
+            if (!newModels.contains(model)) {
+                remove(i);
+            }
+        }
+    }
+
+    private void applyAndAnimateAdditions(List<AdapterItem> newModels) {
+        for (int i = 0, count = newModels.size(); i < count; i++) {
+            final AdapterItem model = newModels.get(i);
+            if (!mDataList.contains(model)) {
+                addItem(i, model);
+            }
+        }
+    }
+
+    private void applyAndAnimateMovedItems(List<AdapterItem> newModels) {
+        for (int toPosition = newModels.size() - 1; toPosition >= 0; toPosition--) {
+            final AdapterItem model = newModels.get(toPosition);
+            final int fromPosition = mDataList.indexOf(model);
+            if (fromPosition >= 0 && fromPosition != toPosition) {
+                moveItem(fromPosition, toPosition);
+            }
         }
     }
 
