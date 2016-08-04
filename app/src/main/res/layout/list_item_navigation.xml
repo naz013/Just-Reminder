@@ -18,7 +18,7 @@
     android:id="@+id/itemBg"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:foreground="?attr/selectableItemBackground"
+    android:foreground="?android:selectableItemBackground"
     android:padding="6dp">
 
     <ImageView
