@@ -39,7 +39,6 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
@@ -49,8 +48,8 @@ public class ContactsFragment extends Fragment implements LoadListener {
     private Context mContext;
     private NumberCallback mCallback;
 
+    private List<ContactData> mDataList;
     private ContactsRecyclerAdapter mAdapter;
-    private List<ContactData> mData;
     private String name = "";
 
     private LinearLayout mEmptyItem;
@@ -65,6 +64,13 @@ public class ContactsFragment extends Fragment implements LoadListener {
                 name = mAdapter.getItem(position).getName();
                 selectNumber();
             }
+        }
+    };
+    private FilterCallback mFilterCallback = new FilterCallback() {
+        @Override
+        public void filter(int size) {
+            mRecyclerView.scrollToPosition(0);
+            refreshView(size);
         }
     };
 
@@ -151,7 +157,7 @@ public class ContactsFragment extends Fragment implements LoadListener {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterContacts(s.toString());
+                if (mAdapter != null) mAdapter.filter(s.toString(), mDataList);
             }
 
             @Override
@@ -159,36 +165,6 @@ public class ContactsFragment extends Fragment implements LoadListener {
 
             }
         });
-    }
-
-    private void filterContacts(String q) {
-        List<ContactData> res = filter(mData, q);
-        mAdapter.animateTo(res);
-        mRecyclerView.scrollToPosition(0);
-        refreshView(res.size());
-    }
-
-    private List<ContactData> filter(List<ContactData> mData, String q) {
-        q = q.toLowerCase();
-        List<ContactData> filteredModelList = new ArrayList<>();
-        if (mData == null) mData = new ArrayList<>();
-        if (q.matches("")) {
-            filteredModelList = new ArrayList<>(mData);
-        } else {
-            filteredModelList.addAll(getFiltered(mData, q));
-        }
-        return filteredModelList;
-    }
-
-    private List<ContactData> getFiltered(List<ContactData> models, String query) {
-        List<ContactData> list = new ArrayList<>();
-        for (ContactData model : models) {
-            final String text = model.getName().toLowerCase();
-            if (text.contains(query)) {
-                list.add(model);
-            }
-        }
-        return list;
     }
 
     private void selectNumber() {
@@ -199,7 +175,6 @@ public class ContactsFragment extends Fragment implements LoadListener {
 
         int phoneIdx = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
         int phoneType = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE);
-
         if (c.getCount() > 1) {
             final CharSequence[] numbers = new CharSequence[c.getCount()];
             int i = 0;
@@ -259,9 +234,9 @@ public class ContactsFragment extends Fragment implements LoadListener {
 
     @Override
     public void onLoaded(List<ContactData> list) {
-        this.mData = list;
+        this.mDataList = list;
         mProgressView.setVisibility(View.GONE);
-        mAdapter = new ContactsRecyclerAdapter(mContext, mData, mClickListener);
+        mAdapter = new ContactsRecyclerAdapter(mContext, list, mClickListener, mFilterCallback);
         mRecyclerView.setAdapter(mAdapter);
         refreshView(mAdapter.getItemCount());
     }

@@ -33,6 +33,7 @@ import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
+import com.cray.software.justreminder.contacts.FilterCallback;
 import com.cray.software.justreminder.contacts.RecyclerClickListener;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
@@ -70,7 +71,15 @@ public class FileExploreActivity extends AppCompatActivity {
     private LinearLayout mPlayerLayout;
     private RoboTextView mMelodyTitle;
     private RoboEditText mSearchView;
+
     private RecyclerClickListener recyclerClick = this::selectFile;
+
+    private FilterCallback mFilterCallback = new FilterCallback() {
+        @Override
+        public void filter(int size) {
+            mFilesList.scrollToPosition(0);
+        }
+    };
 
     private void selectFile(int position) {
         FileDataItem item = mAdapter.getItem(position);
@@ -172,7 +181,7 @@ public class FileExploreActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (mFilter) filterFiles(s.toString());
+                if (mFilter && mAdapter != null) mAdapter.filter(s.toString(), mDataList);
             }
 
             @Override
@@ -202,35 +211,6 @@ public class FileExploreActivity extends AppCompatActivity {
         stopButton.setOnClickListener(mListener);
         playButton.setOnClickListener(mListener);
         clearButton.setOnClickListener(mListener);
-    }
-
-    private void filterFiles(String q) {
-        List<FileDataItem> res = filter(mDataList, q);
-        mAdapter.animateTo(res);
-        mFilesList.scrollToPosition(0);
-    }
-
-    private List<FileDataItem> filter(List<FileDataItem> mData, String q) {
-        q = q.toLowerCase();
-        if (mData == null) mData = new ArrayList<>();
-        List<FileDataItem> filteredModelList = new ArrayList<>();
-        if (q.matches("")) {
-            filteredModelList = new ArrayList<>(mData);
-        } else {
-            filteredModelList.addAll(getFiltered(mData, q));
-        }
-        return filteredModelList;
-    }
-
-    private List<FileDataItem> getFiltered(List<FileDataItem> models, String query) {
-        List<FileDataItem> list = new ArrayList<>();
-        for (FileDataItem model : models) {
-            final String text = model.getFileName().toLowerCase();
-            if (text.contains(query)) {
-                list.add(model);
-            }
-        }
-        return list;
     }
 
     private void loadList() {
@@ -286,7 +266,7 @@ public class FileExploreActivity extends AppCompatActivity {
         if (path.exists()) {
             createFilteredFileList();
         }
-        mAdapter = new FilesRecyclerAdapter(this, mDataList, recyclerClick);
+        mAdapter = new FilesRecyclerAdapter(this, mDataList, recyclerClick, mFilterCallback);
     }
 
     private void createFilteredFileList() {

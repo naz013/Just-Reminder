@@ -42,11 +42,13 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
     private List<ContactData> mDataList;
 
     private RecyclerClickListener mListener;
+    private FilterCallback mCallback;
 
-    public ContactsRecyclerAdapter(Context context, List<ContactData> dataItemList, RecyclerClickListener listener) {
+    public ContactsRecyclerAdapter(Context context, List<ContactData> dataItemList, RecyclerClickListener listener, FilterCallback callback) {
         this.mContext = context;
         this.mDataList = new ArrayList<>(dataItemList);
         this.mListener = listener;
+        this.mCallback = callback;
     }
 
     @Override
@@ -79,6 +81,35 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
                 }
             });
         }
+    }
+
+    public void filter(String q, List<ContactData> list) {
+        List<ContactData> res = filter(list, q);
+        animateTo(res);
+        if (mCallback != null) mCallback.filter(res.size());
+    }
+
+    private List<ContactData> filter(List<ContactData> mData, String q) {
+        q = q.toLowerCase();
+        List<ContactData> filteredModelList = new ArrayList<>();
+        if (mData == null) mData = new ArrayList<>();
+        if (q.matches("")) {
+            filteredModelList = new ArrayList<>(mData);
+        } else {
+            filteredModelList.addAll(getFiltered(mData, q));
+        }
+        return filteredModelList;
+    }
+
+    private List<ContactData> getFiltered(List<ContactData> models, String query) {
+        List<ContactData> list = new ArrayList<>();
+        for (ContactData model : models) {
+            final String text = model.getName().toLowerCase();
+            if (text.contains(query)) {
+                list.add(model);
+            }
+        }
+        return list;
     }
 
     public ContactData removeItem(int position) {

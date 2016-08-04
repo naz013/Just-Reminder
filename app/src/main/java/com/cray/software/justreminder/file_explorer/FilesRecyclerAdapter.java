@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.contacts.FilterCallback;
 import com.cray.software.justreminder.contacts.RecyclerClickListener;
 import com.cray.software.justreminder.databinding.FileListItemBinding;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -42,11 +43,13 @@ public class FilesRecyclerAdapter extends RecyclerView.Adapter<FilesRecyclerAdap
     private List<FileDataItem> mDataList;
 
     private RecyclerClickListener mListener;
+    private FilterCallback mCallback;
 
-    public FilesRecyclerAdapter(Context context, List<FileDataItem> dataItemList, RecyclerClickListener listener) {
+    public FilesRecyclerAdapter(Context context, List<FileDataItem> dataItemList, RecyclerClickListener listener, FilterCallback callback) {
         this.mContext = context;
         this.mDataList = new ArrayList<>(dataItemList);
         this.mListener = listener;
+        this.mCallback = callback;
     }
 
     @Override
@@ -77,6 +80,35 @@ public class FilesRecyclerAdapter extends RecyclerView.Adapter<FilesRecyclerAdap
                 }
             });
         }
+    }
+
+    public void filter(String q, List<FileDataItem> list) {
+        List<FileDataItem> res = filter(list, q);
+        animateTo(res);
+        if (mCallback != null) mCallback.filter(res.size());
+    }
+
+    private List<FileDataItem> filter(List<FileDataItem> mData, String q) {
+        q = q.toLowerCase();
+        if (mData == null) mData = new ArrayList<>();
+        List<FileDataItem> filteredModelList = new ArrayList<>();
+        if (q.matches("")) {
+            filteredModelList = new ArrayList<>(mData);
+        } else {
+            filteredModelList.addAll(getFiltered(mData, q));
+        }
+        return filteredModelList;
+    }
+
+    private List<FileDataItem> getFiltered(List<FileDataItem> models, String query) {
+        List<FileDataItem> list = new ArrayList<>();
+        for (FileDataItem model : models) {
+            final String text = model.getFileName().toLowerCase();
+            if (text.contains(query)) {
+                list.add(model);
+            }
+        }
+        return list;
     }
 
     public FileDataItem getItem(int position) {
