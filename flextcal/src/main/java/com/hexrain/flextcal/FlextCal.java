@@ -33,10 +33,7 @@ import android.widget.TextView;
 
 import com.antonyt.infiniteviewpager.InfinitePagerAdapter;
 import com.antonyt.infiniteviewpager.InfiniteViewPager;
-import com.flaviofaria.kenburnsview.KenBurnsView;
-import com.squareup.picasso.Picasso;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -115,7 +112,6 @@ public class FlextCal extends Fragment {
      */
     private TextView monthTitleTextView;
     private ArrayList<DateGridFragment> fragments;
-    private KenBurnsView image;
 
     /**
      * caldroidData belongs to Caldroid
@@ -297,16 +293,9 @@ public class FlextCal extends Fragment {
         monthYearStringBuilder.setLength(0);
         String monthTitle = DateUtils.formatDateRange(getActivity(),
                 monthYearFormatter, millis, millis, MONTH_YEAR_FLAG).toString();
-
         monthTitleTextView.setText(monthTitle);
-
-        if (image != null && enableImage) {
-            ImageCheck check = new ImageCheck();
-            if (check.isImage(month)){
-                Picasso.with(getActivity()).load(new File(check.getImage(month))).into(image);
-            } else {
-                new LoadAsync(getActivity(), month).execute();
-            }
+        if (caldroidListener != null) {
+            caldroidListener.onMonthSelected(month);
         }
     }
 
@@ -474,7 +463,6 @@ public class FlextCal extends Fragment {
         retrieveInitialArgs();
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_flext_cal, container, false);
-
         CardView card = (CardView) view.findViewById(R.id.card);
         CardView pagerCard = (CardView) view.findViewById(R.id.pagerCard);
         CardView titleCard = (CardView) view.findViewById(R.id.titleCard);
@@ -496,17 +484,11 @@ public class FlextCal extends Fragment {
             pagerCard.setCardBackgroundColor(white);
             titleCard.setCardBackgroundColor(white);
         }
-
-        image = (KenBurnsView) view.findViewById(R.id.imageView);
-
         monthTitleTextView = (TextView) view.findViewById(R.id.monthYear);
-
         GridView weekdayGridView = (GridView) view.findViewById(R.id.weekday_gridview);
         WeekdayArrayAdapter weekdaysAdapter = getNewWeekdayAdapter();
         weekdayGridView.setAdapter(weekdaysAdapter);
-
         setupDateGridPages(view);
-
         refreshView();
 
         // Inform client that all views are created and not null
@@ -514,7 +496,6 @@ public class FlextCal extends Fragment {
         if (caldroidListener != null) {
             caldroidListener.onCaldroidViewCreated();
         }
-
         return view;
     }
 

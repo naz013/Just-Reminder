@@ -55,14 +55,14 @@ public class ReminderDataProvider {
         map = new HashMap<>();
     }
 
-    private void setEvent(long eventTime, String summary, int color) {
+    private void setEvent(long eventTime, String summary, int color, Events.Type type) {
         DateTime key = FlextHelper.convertToDateTime(eventTime);
         if (map.containsKey(key)) {
             Events events = map.get(key);
-            events.addEvent(summary, color);
+            events.addEvent(summary, color, type);
             map.put(key, events);
         } else {
-            Events events = new Events(summary, color);
+            Events events = new Events(summary, color, type);
             map.put(key, events);
         }
     }
@@ -88,7 +88,7 @@ public class ReminderDataProvider {
                     boolean isLimited = limit > 0;
 
                     if (eventTime > 0) {
-                        setEvent(eventTime, summary, rColor);
+                        setEvent(eventTime, summary, rColor, Events.Type.REMINDER);
                     } else continue;
 
                     if (isFeature) {
@@ -106,7 +106,7 @@ public class ReminderDataProvider {
                                 int weekDay = calendar1.get(Calendar.DAY_OF_WEEK);
                                 if (list.get(weekDay - 1) == 1 && eventTime > 0) {
                                     days++;
-                                    setEvent(eventTime, summary, rColor);
+                                    setEvent(eventTime, summary, rColor, Events.Type.REMINDER);
                                 }
                             } while (days < max);
                         } else if (mType.startsWith(Constants.TYPE_MONTHDAY)) {
@@ -119,7 +119,7 @@ public class ReminderDataProvider {
                                 calendar1.setTimeInMillis(eventTime);
                                 if (eventTime > 0) {
                                     days++;
-                                    setEvent(eventTime, summary, rColor);
+                                    setEvent(eventTime, summary, rColor, Events.Type.REMINDER);
                                 }
                             } while (days < max);
                         } else {
@@ -131,7 +131,7 @@ public class ReminderDataProvider {
                                 calendar1.setTimeInMillis(calendar1.getTimeInMillis() + repeatTime);
                                 eventTime = calendar1.getTimeInMillis();
                                 days++;
-                                setEvent(eventTime, summary, rColor);
+                                setEvent(eventTime, summary, rColor, Events.Type.REMINDER);
                             } while (days < max);
 
                         }
@@ -161,7 +161,7 @@ public class ReminderDataProvider {
                 int i = -1;
                 while (i < 2) {
                     calendar.set(Calendar.YEAR, year + i);
-                    setEvent(calendar.getTimeInMillis(), item.getName(), bColor);
+                    setEvent(calendar.getTimeInMillis(), item.getName(), bColor, Events.Type.BIRTHDAY);
                     i++;
                 }
             }

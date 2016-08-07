@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,6 +21,7 @@ import hirondelle.date4j.DateTime;
  * 
  */
 public class FlextGridAdapter extends BaseAdapter {
+	private static final String TAG = "FlextGridAdapter";
 	protected ArrayList<DateTime> datetimeList;
 	protected int month;
 	protected int year;
@@ -86,8 +86,7 @@ public class FlextGridAdapter extends BaseAdapter {
 	private void populateFromCaldroidData() {
 		startDayOfWeek = (Integer) caldroidData.get(FlextCal.START_DAY_OF_WEEK);
         backgroundForToday = (Integer) caldroidData.get(FlextCal._BACKGROUND_FOR_TODAY_);
-        textMapForEvents = (HashMap<DateTime, Events>) caldroidData
-                .get(FlextCal._EVENTS_);
+        textMapForEvents = (HashMap<DateTime, Events>) caldroidData.get(FlextCal._EVENTS_);
 
 		this.datetimeList = FlextHelper.getFullWeeks(this.month, this.year, startDayOfWeek);
 	}
@@ -99,22 +98,12 @@ public class FlextGridAdapter extends BaseAdapter {
 		return today;
 	}
 
-	protected void setCustomResources(DateTime dateTime, TextView task1, TextView task2) {
+	protected void setCustomResources(DateTime dateTime, DotsView taskView) {
 		if (textMapForEvents != null) {
 			// Set it
 			if (textMapForEvents.containsKey(dateTime)) {
 				Events events = textMapForEvents.get(dateTime);
-				if (events.hasNext()) {
-					Events.Event event = events.getNext();
-					task1.setText(event.getTask());
-					task1.setTextColor(event.getColor());
-				}
-				if (events.hasNext()) {
-					Events.Event event = events.getLast();
-					task2.setText(event.getTask());
-					task2.setTextColor(event.getColor());
-				}
-				events.mPosition = 0;
+                taskView.setEvents(events);
 			}
 		}
 	}
@@ -126,10 +115,8 @@ public class FlextGridAdapter extends BaseAdapter {
 	 * To be used only in getView method
      * @param position
      * @param cellView
-     * @param task1
-     * @param task2
      */
-	protected void customizeTextView(int position, TextView cellView, TextView task1, TextView task2) {
+	protected void customizeTextView(int position, DotsView cellView) {
         if (isDark){
             cellView.setTextColor(resources.getColor(android.R.color.white));
         } else {
@@ -155,7 +142,7 @@ public class FlextGridAdapter extends BaseAdapter {
 
 		cellView.setText(String.valueOf(dateTime.getDay()));
 
-		if (!notCurrent) setCustomResources(dateTime, task1, task2);
+		if (!notCurrent) setCustomResources(dateTime, cellView);
 	}
 
 	@Override
@@ -178,15 +165,9 @@ public class FlextGridAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		LayoutInflater inflater = (LayoutInflater) context
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-		View view = inflater.inflate(R.layout.date_cell, null, false);
-
-        TextView cellView = (TextView) view.findViewById(R.id.textView);
-        TextView task1 = (TextView) view.findViewById(R.id.task1);
-        TextView task2 = (TextView) view.findViewById(R.id.task2);
-		customizeTextView(position, cellView, task1, task2);
-		return view;
+		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        DotsView cellView = (DotsView) inflater.inflate(R.layout.date_cell, null, false);
+		customizeTextView(position, cellView);
+		return cellView;
 	}
 }

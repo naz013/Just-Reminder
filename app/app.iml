@@ -68,14 +68,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src/pro/jni" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/pro/rs" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/pro/shaders" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestPro/res" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestPro/resources" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestPro/assets" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestPro/aidl" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestPro/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestPro/jni" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestPro/rs" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestPro/shaders" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/testPro/res" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/testPro/resources" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/testPro/assets" type="java-test-resource" />
@@ -84,6 +76,14 @@
       <sourceFolder url="file://$MODULE_DIR$/src/testPro/jni" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/testPro/rs" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/testPro/shaders" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestPro/res" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestPro/resources" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestPro/assets" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestPro/aidl" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestPro/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestPro/jni" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestPro/rs" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestPro/shaders" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/res" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/assets" type="java-resource" />
@@ -188,8 +188,8 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 24 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="google-http-client-gson-1.22.0" level="project" />
     <orderEntry type="library" exported="" name="google-api-services-tasks-v1-rev45-1.22.0" level="project" />
+    <orderEntry type="library" exported="" name="google-http-client-gson-1.22.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-base-9.4.0" level="project" />
     <orderEntry type="library" exported="" name="guava-jdk5-17.0" level="project" />
     <orderEntry type="library" exported="" name="library-circular-1.2.0" level="project" />
@@ -205,7 +205,6 @@
     <orderEntry type="library" exported="" scope="TEST" name="multidex-instrumentation-1.0.1" level="project" />
     <orderEntry type="library" exported="" name="crashlytics-2.6.1" level="project" />
     <orderEntry type="library" exported="" name="fabric-1.3.12" level="project" />
-    <orderEntry type="library" exported="" name="library-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="compiler-1.0-rc4" level="project" />
     <orderEntry type="library" exported="" name="google-api-client-1.22.0" level="project" />
     <orderEntry type="library" exported="" name="support-v13-24.1.1" level="project" />
@@ -251,6 +250,7 @@
     <orderEntry type="library" exported="" name="google-api-services-calendar-v3-rev204-1.22.0" level="project" />
     <orderEntry type="library" exported="" name="google-http-client-jackson2-1.22.0" level="project" />
     <orderEntry type="library" exported="" name="beta-1.2.1" level="project" />
+    <orderEntry type="library" exported="" name="hirondelle-date4j-1.5.1" level="project" />
     <orderEntry type="library" exported="" name="multidex-1.0.1" level="project" />
     <orderEntry type="library" exported="" name="firebase-analytics-9.4.0" level="project" />
     <orderEntry type="module" module-name="shared" exported="" />

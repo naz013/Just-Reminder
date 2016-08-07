@@ -1,4 +1,4 @@
-package com.hexrain.flextcal;
+package com.cray.software.justreminder.calendar;
 
 import android.os.Environment;
 
@@ -22,7 +22,16 @@ import java.io.File;
  */
 public class ImageCheck {
 
-    public ImageCheck(){
+    private static ImageCheck instance;
+
+    private ImageCheck(){
+    }
+
+    public static ImageCheck getInstance() {
+        if (instance == null) {
+            instance = new ImageCheck();
+        }
+        return instance;
     }
 
     public String getImage(int month){
@@ -33,7 +42,6 @@ public class ImageCheck {
             if (!sdPathDr.exists()) {
                 sdPathDr.mkdirs();
             }
-
             File image = new File(sdPathDr, getImageName(month));
             if (image.exists()) res = image.getAbsolutePath();
             return res;
@@ -48,7 +56,6 @@ public class ImageCheck {
             if (!sdPathDr.exists()) {
                 sdPathDr.mkdirs();
             }
-
             File image = new File(sdPathDr, getImageName(month));
             if (image.exists()) res = true;
             return res;

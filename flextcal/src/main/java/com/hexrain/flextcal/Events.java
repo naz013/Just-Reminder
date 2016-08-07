@@ -32,8 +32,8 @@ public class Events {
         events.add(event);
     }
 
-    public Events(String task, int color) {
-        Event event = new Event(task, color);
+    public Events(String task, int color, Type type) {
+        Event event = new Event(task, color, type);
         if (events != null) {
             events.add(event);
         } else {
@@ -42,8 +42,8 @@ public class Events {
         }
     }
 
-    public int addEvent(String task, int color) {
-        Event event = new Event(task, color);
+    public int addEvent(String task, int color, Type type) {
+        Event event = new Event(task, color, type);
         if (events != null) {
             events.add(event);
         } else {
@@ -54,7 +54,7 @@ public class Events {
     }
 
     public Event getNext() {
-        if (events != null) {
+        if (events != null && mPosition < events.size()) {
             Event event = events.get(mPosition);
             mPosition++;
             return event;
@@ -71,13 +71,32 @@ public class Events {
         return events != null && mPosition < events.size();
     }
 
+    public int count() {
+        return events.size();
+    }
+
+    public enum Type {
+        REMINDER,
+        BIRTHDAY
+    }
+
     public class Event {
         private String task;
         private int color;
+        private Type type;
 
-        Event(String task, int color) {
+        Event(String task, int color, Type type) {
             this.task = task;
             this.color = color;
+            this.type = type;
+        }
+
+        public Type getType() {
+            return type;
+        }
+
+        public void setType(Type type) {
+            this.type = type;
         }
 
         public int getColor() {

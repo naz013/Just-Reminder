@@ -1,4 +1,4 @@
-package com.hexrain.flextcal;
+package com.cray.software.justreminder.calendar;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -33,22 +33,20 @@ public class LoadAsync extends AsyncTask<Void, Void, Void> {
 
     private Context context;
     private int month;
-    private ImageCheck imageCheck;
 
     public LoadAsync(Context context, int month){
         this.context = context;
         this.month = month;
-        imageCheck = new ImageCheck();
     }
 
     @Override
     protected Void doInBackground(Void... params) {
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if (!imageCheck.isImage(month) && mWifi.isConnected()){
+        if (!ImageCheck.getInstance().isImage(month) && mWifi.isConnected()){
             try {
                 Bitmap bitmap = Picasso.with(context)
-                        .load(imageCheck.getImageUrl(month))
+                        .load(ImageCheck.getInstance().getImageUrl(month))
                         .resize(1920, 1080)
                         .get();
                 File sdPath = Environment.getExternalStorageDirectory();
@@ -57,7 +55,7 @@ public class LoadAsync extends AsyncTask<Void, Void, Void> {
                     sdPathDr.mkdirs();
                 }
 
-                File image = new File(sdPathDr, imageCheck.getImageName(month));
+                File image = new File(sdPathDr, ImageCheck.getInstance().getImageName(month));
                 try {
                     if (image.createNewFile()) {
                         FileOutputStream stream = new FileOutputStream(image);

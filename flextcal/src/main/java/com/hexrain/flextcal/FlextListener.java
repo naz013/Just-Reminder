@@ -25,4 +25,5 @@ public interface FlextListener{
     void onLongClickDate(Date date, View view);
     void onMonthChanged(int month, int year);
     void onCaldroidViewCreated();
+    void onMonthSelected(int month);
 }

@@ -27,6 +27,7 @@ public class CalendarViewFragment extends Fragment {
 
     private Activity mContext;
     private DateCallback mCallback;
+    private boolean isImage;
 
     public CalendarViewFragment() {
     }
@@ -44,7 +45,9 @@ public class CalendarViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_calendar_view, container, false);
+        View view = inflater.inflate(R.layout.fragment_calendar_view, container, false);
+        isImage = SharedPrefs.getInstance(mContext).getBoolean(Prefs.CALENDAR_IMAGE);
+        return view;
     }
 
     @Override
@@ -103,7 +106,6 @@ public class CalendarViewFragment extends Fragment {
         } else {
             args.putInt(FlextCal.START_DAY_OF_WEEK, FlextCal.MONDAY);
         }
-        args.putBoolean(FlextCal.ENABLE_IMAGES, SharedPrefs.getInstance(mContext).getBoolean(Prefs.CALENDAR_IMAGE));
         args.putBoolean(FlextCal.DARK_THEME, cSetter.isDark());
         calendarView.setArguments(args);
         calendarView.setBackgroundForToday(cSetter.getColor(cSetter.colorCurrentCalendar()));
@@ -138,6 +140,10 @@ public class CalendarViewFragment extends Fragment {
             public void onCaldroidViewCreated() {
             }
 
+            @Override
+            public void onMonthSelected(int month) {
+                loadImage(month);
+            }
         };
 
         calendarView.setCaldroidListener(listener);
@@ -148,6 +154,21 @@ public class CalendarViewFragment extends Fragment {
         replace(calendarView, ScreenManager.ACTION_CALENDAR);
         SharedPrefs.getInstance(mContext).putInt(Prefs.LAST_CALENDAR_VIEW, 1);
         getActivity().invalidateOptionsMenu();
+    }
+
+    private void loadImage(int month) {
+//        if (mImageView != null && isImage) {
+//            if (ImageCheck.getInstance().isImage(month)){
+//                Picasso.with(getActivity())
+//                        .load(new File(ImageCheck.getInstance().getImage(month)))
+//                        .resize(1080, 1920)
+//                        .centerCrop()
+//                        .onlyScaleDown()
+//                        .into(mImageView);
+//            } else {
+//                new LoadAsync(getActivity(), month).execute();
+//            }
+//        }
     }
 
     private void replace(Fragment fragment, String tag) {
