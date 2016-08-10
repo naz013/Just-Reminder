@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:data="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.cray.software.justreminder.reminder.ReminderItem" />
+
+        <variable
+            name="click"
+            type="com.cray.software.justreminder.reminder.ClickListener" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:orientation="vertical">
+
+        <com.cray.software.justreminder.roboto_views.RoboTextView
+            android:id="@+id/listHeader"
+            style="?android:attr/listSeparatorTextViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:textColor="?attr/colorAccent"
+            android:textSize="14sp"
+            android:visibility="gone"
+            app:font_style="roboto_light" />
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/itemCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:clipChildren="false"
+            android:foreground="?attr/selectableItemBackground"
+            android:onClick="@{click.onClick}"
+            app:cardCornerRadius="3dp"
+            app:cardUseCompatPadding="true"
+            app:contentPadding="1dp"
+            data:loadCard='@{item.groupUuId}'>
+
+            <RelativeLayout
+                android:id="@+id/reminderContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:padding="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:focusable="false"
+                    android:orientation="vertical">
+
+                    <com.cray.software.justreminder.roboto_views.RoboTextView
+                        android:id="@+id/reminder_type"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:singleLine="true"
+                        app:font_style="roboto_light"
+                        data:loadType='@{item.type}' />
+
+                    <com.cray.software.justreminder.roboto_views.RoboTextView
+                        android:id="@+id/taskText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="5dp"
+                        android:focusable="false"
+                        android:gravity="center_vertical"
+                        android:singleLine="true"
+                        android:text="@{item.summary}"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        app:font_style="roboto_medium" />
+
+                    <com.cray.software.justreminder.roboto_views.RoboTextView
+                        android:id="@+id/reminder_phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_weight="0.75"
+                        android:focusable="false"
+                        android:singleLine="true"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        app:font_style="roboto_light"
+                        data:loadContact='@{item.model}' />
+
+                    <com.cray.software.justreminder.roboto_views.RoboTextView
+                        android:id="@+id/taskDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:focusable="false"
+                        android:singleLine="true"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        data:loadDate='@{item.model}' />
+
+                    <LinearLayout
+                        android:id="@+id/endContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:orientation="horizontal"
+                        data:loadContainer='@{item.type}'>
+
+                        <com.cray.software.justreminder.roboto_views.RoboTextView
+                            android:id="@+id/repeatInterval"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:focusable="false"
+                            android:gravity="left"
+                            android:textSize="15sp"
+                            app:font_style="roboto_light"
+                            data:loadLeft='@{item}' />
+
+                        <com.cray.software.justreminder.roboto_views.RoboTextView
+                            android:id="@+id/remainingTime"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_weight="1"
+                            android:focusable="false"
+                            android:gravity="right"
+                            android:singleLine="true"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:textStyle="italic"
+                            android:visibility="visible"
+                            app:font_style="roboto_medium"
+                            data:loadRepeat='@{item.model}' />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
+</layout>

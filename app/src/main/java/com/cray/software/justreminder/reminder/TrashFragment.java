@@ -53,7 +53,7 @@ public class TrashFragment extends Fragment implements RecyclerListener {
     private LinearLayout emptyItem;
 
     private List<AdapterItem> mDataList;
-    private RemindersRecyclerAdapter mAdapter;
+    private TrashRecyclerAdapter mAdapter;
 
     private NavigationCallbacks mCallbacks;
     private Activity mContext;
@@ -198,7 +198,7 @@ public class TrashFragment extends Fragment implements RecyclerListener {
     public void loaderAdapter(){
         SharedPrefs.getInstance(mContext).putBoolean(Prefs.REMINDER_CHANGED, false);
         mDataList = SimpleProvider.getInstance(mContext).getTrashed();
-        mAdapter = new RemindersRecyclerAdapter(mContext, mDataList, mFilterCallback);
+        mAdapter = new TrashRecyclerAdapter(mContext, mDataList, mFilterCallback);
         mAdapter.setEventListener(this);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
