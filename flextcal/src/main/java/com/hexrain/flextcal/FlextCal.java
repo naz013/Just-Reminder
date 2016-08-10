@@ -27,7 +27,6 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
@@ -123,13 +122,13 @@ public class FlextCal extends Fragment {
 
     protected int startDayOfWeek = SUNDAY;
 
-    private AdapterView.OnItemClickListener dateItemClickListener;
+    private FlextGridAdapter.OnItemClickListener dateItemClickListener;
 
     /**
      * dateItemLongClickListener is fired when user does a longclick on the date
      * cell
      */
-    private AdapterView.OnItemLongClickListener dateItemLongClickListener;
+    private FlextGridAdapter.OnItemLongClickListener dateItemLongClickListener;
 
     /**
      * caldroidListener inform library client of the event happens inside
@@ -232,22 +231,19 @@ public class FlextCal extends Fragment {
      *
      * @return OnItemClick listener
      */
-    private AdapterView.OnItemClickListener getDateItemClickListener() {
+    private FlextGridAdapter.OnItemClickListener getDateItemClickListener() {
         if (dateItemClickListener == null) {
-            dateItemClickListener = new AdapterView.OnItemClickListener() {
+            dateItemClickListener = new FlextGridAdapter.OnItemClickListener() {
                 @Override
-                public void onItemClick(AdapterView<?> parent, View view,
-                                        int position, long id) {
+                public void onItemClick(View view, int position) {
                     DateTime dateTime = dateInMonthsList.get(position);
                     if (caldroidListener != null) {
-                        Date date = FlextHelper
-                                .convertDateTimeToDate(dateTime);
+                        Date date = FlextHelper.convertDateTimeToDate(dateTime);
                         caldroidListener.onClickDate(date, view);
                     }
                 }
             };
         }
-
         return dateItemClickListener;
     }
 
@@ -257,20 +253,17 @@ public class FlextCal extends Fragment {
      *
      * @return OnItemLongClick listener
      */
-    private AdapterView.OnItemLongClickListener getDateItemLongClickListener() {
+    private FlextGridAdapter.OnItemLongClickListener getDateItemLongClickListener() {
         if (dateItemLongClickListener == null) {
-            dateItemLongClickListener = new AdapterView.OnItemLongClickListener() {
+            dateItemLongClickListener = new FlextGridAdapter.OnItemLongClickListener() {
                 @Override
-                public boolean onItemLongClick(AdapterView<?> parent,
-                                               View view, int position, long id) {
+                public void onItemLongClick(View view, int position) {
                     DateTime dateTime = dateInMonthsList.get(position);
                     if (caldroidListener != null) {
                         Date date = FlextHelper
                                 .convertDateTimeToDate(dateTime);
                         caldroidListener.onLongClickDate(date, view);
                     }
-
-                    return true;
                 }
             };
         }
@@ -419,8 +412,7 @@ public class FlextCal extends Fragment {
             FlextGridAdapter adapter = datePagerAdapters.get(i);
             dateGridFragment.setGridAdapter(adapter);
             dateGridFragment.setOnItemClickListener(getDateItemClickListener());
-            dateGridFragment
-                    .setOnItemLongClickListener(getDateItemLongClickListener());
+            dateGridFragment.setOnItemLongClickListener(getDateItemLongClickListener());
         }
 
         // Setup InfinitePagerAdapter to wrap around MonthPagerAdapter

@@ -2,12 +2,11 @@ package com.hexrain.flextcal;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.GridView;
 
 /**
  * DateGridFragment contains only 1 gridview with 7 columns to display all the
@@ -20,24 +19,24 @@ import android.widget.GridView;
  * 
  */
 public class DateGridFragment extends Fragment {
-	private GridView gridView;
+	private RecyclerView gridView;
 	private FlextGridAdapter gridAdapter;
-	private OnItemClickListener onItemClickListener;
-	private OnItemLongClickListener onItemLongClickListener;
+	private FlextGridAdapter.OnItemClickListener onItemClickListener;
+	private FlextGridAdapter.OnItemLongClickListener onItemLongClickListener;
 
-	public OnItemClickListener getOnItemClickListener() {
+	public FlextGridAdapter.OnItemClickListener getOnItemClickListener() {
 		return onItemClickListener;
 	}
 
-	public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+	public void setOnItemClickListener(FlextGridAdapter.OnItemClickListener onItemClickListener) {
 		this.onItemClickListener = onItemClickListener;
 	}
 	
-	public OnItemLongClickListener getOnItemLongClickListener() {
+	public FlextGridAdapter.OnItemLongClickListener getOnItemLongClickListener() {
 		return onItemLongClickListener;
 	}
 	
-	public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
+	public void setOnItemLongClickListener(FlextGridAdapter.OnItemLongClickListener onItemLongClickListener) {
 		this.onItemLongClickListener = onItemLongClickListener;
 	}
 
@@ -49,7 +48,7 @@ public class DateGridFragment extends Fragment {
 		this.gridAdapter = gridAdapter;
 	}
 
-	public GridView getGridView() {
+	public RecyclerView getGridView() {
 		return gridView;
 	}
 
@@ -59,17 +58,17 @@ public class DateGridFragment extends Fragment {
 		View v = inflater.inflate(R.layout.date_grid_fragment,
 				container, false);
 
-		gridView = (GridView) v.findViewById(R.id.calendar_gridview);
-
+		gridView = (RecyclerView) v.findViewById(R.id.calendar_gridview);
+		gridView.setLayoutManager(new GridLayoutManager(getActivity(), 7));
+        gridView.setHasFixedSize(true);
 		if (gridAdapter != null) {
 			gridView.setAdapter(gridAdapter);
 		}
-
 		if (onItemClickListener != null) {
-			gridView.setOnItemClickListener(onItemClickListener);
+            gridAdapter.setOnItemClickListener(onItemClickListener);
 		}
 		if(onItemLongClickListener != null) {
-			gridView.setOnItemLongClickListener(onItemLongClickListener);
+            gridAdapter.setOnItemLongClickListener(onItemLongClickListener);
 		}
 		return v;
 	}
