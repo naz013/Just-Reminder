@@ -88,8 +88,8 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
                     }
                 }
             }*/
-            Log.d(TAG, "enableReminder: " + due);
         }
+        Log.d(TAG, "enableReminder: " + due);
         if (due == 0) return;
         PendingIntent alarmIntent = PendingIntent.getBroadcast(context, i, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
