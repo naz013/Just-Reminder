@@ -31,7 +31,6 @@ import android.view.ViewGroup;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
-import com.cray.software.justreminder.adapters.CalendarPagerAdapter;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -41,6 +40,7 @@ import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class EventsFragment extends Fragment {
 
@@ -219,17 +219,13 @@ public class EventsFragment extends Fragment {
             int mDay = calendar.get(Calendar.DAY_OF_MONTH);
             int mMonth = calendar.get(Calendar.MONTH);
             int mYear = calendar.get(Calendar.YEAR);
-
-            ArrayList<EventsItem> datas =
-                    provider.getMatches(mDay, mMonth, mYear);
-
+            List<EventsItem> datas = provider.getMatches(mDay, mMonth, mYear);
             if (mDay == targetDay && mMonth == targetMonth && mYear == targetYear){
                 targetPosition = position;
                 pagerData.add(new EventsPagerItem(datas, position, 1, mDay, mMonth, mYear));
             } else {
                 pagerData.add(new EventsPagerItem(datas, position, 0, mDay, mMonth, mYear));
             }
-
             position++;
             calendar.setTimeInMillis(calendar.getTimeInMillis() + AlarmManager.INTERVAL_DAY);
         }

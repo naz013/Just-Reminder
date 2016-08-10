@@ -17,6 +17,10 @@ package com.cray.software.justreminder.datas;
  */
 public class AdapterItem {
 
+    public static final int REMINDER = 0;
+    public static final int SHOPPING = 1;
+    public static final int BIRTHDAY = 2;
+
     private int viewType;
     private Object object;
 

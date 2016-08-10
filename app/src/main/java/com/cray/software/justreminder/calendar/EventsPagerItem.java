@@ -16,14 +16,14 @@
 
 package com.cray.software.justreminder.calendar;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class EventsPagerItem {
     private int position, current;
-    private ArrayList<EventsItem> datas;
+    private List<EventsItem> datas;
     private int day, month, year;
 
-    public EventsPagerItem(ArrayList<EventsItem> datas, int position, int current, int day, int month, int year){
+    public EventsPagerItem(List<EventsItem> datas, int position, int current, int day, int month, int year){
         this.datas = datas;
         this.current = current;
         this.position = position;
@@ -72,11 +72,11 @@ public class EventsPagerItem {
         this.current = current;
     }
 
-    public ArrayList<EventsItem> getDatas(){
+    public List<EventsItem> getDatas(){
         return datas;
     }
 
-    public void setDatas(ArrayList<EventsItem> datas){
+    public void setDatas(List<EventsItem> datas){
         this.datas = datas;
     }
 }

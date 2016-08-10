@@ -33,26 +33,28 @@ import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.birthdays.AddBirthdayActivity;
-import com.cray.software.justreminder.adapters.CalendarEventsAdapter;
 import com.cray.software.justreminder.birthdays.BirthdayHelper;
+import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.reminder.Reminder;
+import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class EventsListFragment extends Fragment implements SimpleListener {
 
-    private ArrayList<EventsItem> mDataList;
+    private List<EventsItem> mDataList;
     static final String ARGUMENT_PAGE_NUMBER = "arg_page_number";
     private RecyclerView mEventsList;
     private LinearLayout mEmptyItem;
     private boolean isCreate = false;
     private Context mContext;
 
-    public void setData(ArrayList<EventsItem> datas){
+    public void setData(List<EventsItem> datas){
         this.mDataList = new ArrayList<>(datas);
     }
 
@@ -129,19 +131,21 @@ public class EventsListFragment extends Fragment implements SimpleListener {
 
     @Override
     public void onItemClicked(int position, View view) {
-        if (mDataList.get(position).getType().matches("birthday")) {
+        Object object = mDataList.get(position).getObject();
+        if (object instanceof BirthdayItem) {
             startActivity(new Intent(mContext, AddBirthdayActivity.class)
-                    .putExtra("BDid", mDataList.get(position).getId())
+                    .putExtra("BDid", ((BirthdayItem) object).getId())
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         } else {
-            Reminder.edit(mDataList.get(position).getId(), mContext);
+            Reminder.edit(((ReminderItem) object).getId(), mContext);
         }
     }
 
     @Override
     public void onItemLongClicked(int position, View view) {
-        if (mDataList.get(position).getType().matches("birthday")) {
-            BirthdayHelper.getInstance(mContext).deleteBirthday(mDataList.get(position).getId());
+        Object object = mDataList.get(position).getObject();
+        if (object instanceof BirthdayItem) {
+            BirthdayHelper.getInstance(mContext).deleteBirthday(((BirthdayItem) object).getId());
             mDataList.remove(position);
             loaderAdapter();
             Messages.toast(mContext, getString(R.string.deleted));

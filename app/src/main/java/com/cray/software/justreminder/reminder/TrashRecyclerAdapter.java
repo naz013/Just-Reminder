@@ -15,7 +15,6 @@
  */
 package com.cray.software.justreminder.reminder;
 
-import android.app.AlarmManager;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.CardView;
@@ -26,38 +25,28 @@ import android.view.ViewGroup;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.contacts.FilterCallback;
 import com.cray.software.justreminder.databinding.ShoppingListItemBinding;
 import com.cray.software.justreminder.databinding.TrashListItemBinding;
 import com.cray.software.justreminder.datas.AdapterItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.roboto_views.RoboTextView;
-import com.cray.software.justreminder.utils.TimeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TrashRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Context mContext;
     private static ColorSetter cs;
     private List<AdapterItem> mDataList;
     private RecyclerListener mEventListener;
     private FilterCallback mCallback;
-    private static boolean is24;
-    private static boolean isDark;
 
     public TrashRecyclerAdapter(Context context, List<AdapterItem> list, FilterCallback callback) {
-        this.mContext = context;
         this.mCallback = callback;
         mDataList = new ArrayList<>(list);
         cs = new ColorSetter(context);
-        is24 = SharedPrefs.getInstance(context).getBoolean(Prefs.IS_24_TIME_FORMAT);
-        isDark = cs.isDark();
         setHasStableIds(true);
     }
 
@@ -76,14 +65,13 @@ public class TrashRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public class ReminderHolder extends RecyclerView.ViewHolder {
-        public RoboTextView listHeader;
+
         public CardView itemCard;
         public TrashListItemBinding binding;
 
         public ReminderHolder(View v) {
             super(v);
             binding = DataBindingUtil.bind(v);
-            listHeader = binding.listHeader;
             itemCard = binding.itemCard;
             itemCard.setCardBackgroundColor(cs.getCardStyle());
             if (Module.isLollipop()) {
@@ -109,22 +97,19 @@ public class TrashRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public class ShoppingHolder extends RecyclerView.ViewHolder {
-        public RoboTextView listHeader;
-        public CardView itemCard;
+
         public ShoppingListItemBinding binding;
 
         public ShoppingHolder(View v) {
             super(v);
             binding = DataBindingUtil.bind(v);
-            listHeader = binding.listHeader;
-            itemCard = binding.itemCard;
-            itemCard.setCardBackgroundColor(cs.getCardStyle());
+            binding.itemCard.setCardBackgroundColor(cs.getCardStyle());
             if (Module.isLollipop()) {
-                itemCard.setCardElevation(Configs.CARD_ELEVATION);
+                binding.itemCard.setCardElevation(Configs.CARD_ELEVATION);
             }
             binding.itemCard.setOnLongClickListener(view -> {
                 if (mEventListener != null) {
-                    mEventListener.onItemLongClicked(getAdapterPosition(), itemCard);
+                    mEventListener.onItemLongClicked(getAdapterPosition(), binding.itemCard);
                 }
                 return true;
             });
@@ -138,42 +123,6 @@ public class TrashRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
                         break;
                 }
             });
-        }
-    }
-
-    private void initLabel(RoboTextView listHeader, int position) {
-        ReminderItem item = (ReminderItem) mDataList.get(position).getObject();
-        long due = item.getDateTime();
-        String simpleDate = TimeUtil.getSimpleDate(due);
-        int isDone = item.getStatus();
-        ReminderItem prevItem = null;
-        try {
-            prevItem = (ReminderItem) mDataList.get(position - 1).getObject();
-        } catch (ArrayIndexOutOfBoundsException e) {}
-        if (isDone == 1 && position > 0 && (prevItem != null && prevItem.getStatus() == 0)) {
-            simpleDate = mContext.getString(R.string.disabled);
-            listHeader.setText(simpleDate);
-            listHeader.setVisibility(View.VISIBLE);
-        } else if (isDone == 1 && position > 0 && (prevItem != null && prevItem.getStatus() == 1)) {
-            listHeader.setVisibility(View.GONE);
-        } else if (isDone == 1 && position == 0) {
-            simpleDate = mContext.getString(R.string.disabled);
-            listHeader.setText(simpleDate);
-            listHeader.setVisibility(View.VISIBLE);
-        } else if (isDone == 0 && position > 0 && (prevItem != null && simpleDate.equals(TimeUtil.getSimpleDate(prevItem.getDateTime())))) {
-            listHeader.setVisibility(View.GONE);
-        } else {
-            if (due <= 0 || due < (System.currentTimeMillis() - AlarmManager.INTERVAL_DAY)) {
-                simpleDate = mContext.getString(R.string.permanent);
-            } else {
-                if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis()))) {
-                    simpleDate = mContext.getString(R.string.today);
-                } else if (simpleDate.equals(TimeUtil.getSimpleDate(System.currentTimeMillis() + AlarmManager.INTERVAL_DAY))) {
-                    simpleDate = mContext.getString(R.string.tomorrow);
-                }
-            }
-            listHeader.setText(simpleDate);
-            listHeader.setVisibility(View.VISIBLE);
         }
     }
 
@@ -260,7 +209,7 @@ public class TrashRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        if (viewType == 0) {
+        if (viewType == AdapterItem.REMINDER) {
             View view = DataBindingUtil.inflate(inflater, R.layout.trash_list_item, parent, false).getRoot();
             return new ReminderHolder(view);
         } else {
@@ -275,11 +224,9 @@ public class TrashRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (holder instanceof ReminderHolder) {
             ReminderHolder reminderHolder = (ReminderHolder) holder;
             reminderHolder.binding.setItem(item);
-            initLabel(reminderHolder.listHeader, position);
         } else if (holder instanceof ShoppingHolder) {
             ShoppingHolder shoppingHolder = (ShoppingHolder) holder;
             shoppingHolder.binding.setItem(item);
-            initLabel(shoppingHolder.listHeader, position);
         }
     }
 

@@ -23,9 +23,10 @@ import com.cray.software.justreminder.birthdays.BirthdayHelper;
 import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.enums.EventType;
+import com.cray.software.justreminder.datas.AdapterItem;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.reminder.ReminderHelper;
 import com.cray.software.justreminder.reminder.ReminderItem;
@@ -44,7 +45,7 @@ import java.util.Map;
 
 public class EventsDataProvider {
 
-    private ArrayList<EventsItem> data = new ArrayList<>();
+    private List<EventsItem> data = new ArrayList<>();
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
     private int hour, minute;
     private boolean isFeature;
@@ -74,22 +75,18 @@ public class EventsDataProvider {
         this.isFeature = isFeature;
     }
 
-    public ArrayList<EventsItem> getData(){
+    public List<EventsItem> getData(){
         return data;
     }
 
-    public EventsItem getItem(int position){
-        return data.get(position);
-    }
-
-    public ArrayList<EventsItem> getMatches(int day, int month, int year){
-        ArrayList<EventsItem> res = new ArrayList<>();
+    public List<EventsItem> getMatches(int day, int month, int year){
+        List<EventsItem> res = new ArrayList<>();
         for (EventsItem item : data){
             int mDay = item.getDay();
             int mMonth = item.getMonth();
             int mYear = item.getYear();
-            EventType type = item.getInn();
-            if (type == EventType.birthday && mDay == day && mMonth == month){
+            int type = item.getViewType();
+            if (type == AdapterItem.BIRTHDAY && mDay == day && mMonth == month){
                 res.add(item);
             } else {
                 if (mDay == day && mMonth == month && mYear == year) res.add(item);
@@ -105,10 +102,9 @@ public class EventsDataProvider {
 
     public void loadBirthdays(){
         List<BirthdayItem> list = BirthdayHelper.getInstance(mContext).getAll();
+        ColorSetter cs = new ColorSetter(mContext);
+        int color = cs.getColor(cs.colorBirthdayCalendar());
         for (BirthdayItem item : list) {
-            String name = item.getName();
-            long id = item.getId();
-            String number = item.getNumber();
             Date date = null;
             try {
                 date = format.parse(item.getDate());
@@ -126,8 +122,7 @@ public class EventsDataProvider {
                 calendar1.set(Calendar.DAY_OF_MONTH, bDay);
                 calendar1.set(Calendar.HOUR_OF_DAY, hour);
                 calendar1.set(Calendar.MINUTE, minute);
-                data.add(new EventsItem("birthday", name, number, id, calendar1.getTimeInMillis(),
-                        bDay, bMonth, bYear, EventType.birthday, 0));
+                data.add(new EventsItem(AdapterItem.BIRTHDAY, item, bDay, bMonth, bYear, color));
             }
         }
     }
@@ -141,10 +136,8 @@ public class EventsDataProvider {
         List<ReminderItem> reminders = ReminderHelper.getInstance(mContext).getRemindersEnabled();
         for (ReminderItem item : reminders) {
             String mType = item.getType();
-            String summary = item.getSummary();
             String category = item.getGroupUuId();
             long eventTime = item.getDateTime();
-            long id = item.getId();
             int color = 0;
             if (map.containsKey(category)) color = map.get(category);
             if (!mType.contains(Constants.TYPE_LOCATION)) {
@@ -156,7 +149,8 @@ public class EventsDataProvider {
                 int myDay = jRecurrence.getMonthday();
                 boolean isLimited = limit > 0;
                 String number = jsonModel.getAction().getTarget();
-
+                int viewType = AdapterItem.REMINDER;
+                if (mType.matches(Constants.TYPE_SHOPPING_LIST)) viewType = AdapterItem.SHOPPING;
                 Calendar calendar1 = Calendar.getInstance();
                 calendar1.setTimeInMillis(eventTime);
                 int mDay = calendar1.get(Calendar.DAY_OF_MONTH);
@@ -164,8 +158,7 @@ public class EventsDataProvider {
                 int mYear = calendar1.get(Calendar.YEAR);
                 if (eventTime > 0) {
                     if (number == null) number = "0";
-                    data.add(new EventsItem("reminder", summary, number, id, eventTime, mDay,
-                            mMonth, mYear, EventType.reminder, color));
+                    data.add(new EventsItem(viewType, item, mDay, mMonth, mYear, color));
                 }
                 if (isFeature) {
                     if (mType.startsWith(Constants.TYPE_WEEKDAY)) {
@@ -184,8 +177,7 @@ public class EventsDataProvider {
                                 mYear = calendar1.get(Calendar.YEAR);
                                 days++;
                                 if (number == null) number = "0";
-                                data.add(new EventsItem("reminder", summary, number, id, eventTime, mDay,
-                                        mMonth, mYear, EventType.reminder, color));
+                                data.add(new EventsItem(viewType, item, mDay, mMonth, mYear, color));
                             }
                         } while (days < max);
                     } else if (mType.startsWith(Constants.TYPE_MONTHDAY)) {
@@ -202,8 +194,7 @@ public class EventsDataProvider {
                             if (eventTime > 0) {
                                 days++;
                                 if (number == null) number = "0";
-                                data.add(new EventsItem("reminder", summary, number, id, eventTime, mDay,
-                                        mMonth, mYear, EventType.reminder, color));
+                                data.add(new EventsItem(viewType, item, mDay, mMonth, mYear, color));
                             }
                         } while (days < max);
                     } else {
@@ -221,8 +212,7 @@ public class EventsDataProvider {
                             if (eventTime > 0) {
                                 days++;
                                 if (number == null) number = "0";
-                                data.add(new EventsItem("reminder", summary, number, id, eventTime, mDay,
-                                        mMonth, mYear, EventType.reminder, color));
+                                data.add(new EventsItem(viewType, item, mDay, mMonth, mYear, color));
                             }
                         } while (days < max);
 

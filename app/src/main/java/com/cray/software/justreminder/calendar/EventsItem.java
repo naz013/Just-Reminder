@@ -16,198 +16,49 @@
 
 package com.cray.software.justreminder.calendar;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import com.cray.software.justreminder.datas.AdapterItem;
 
-import com.cray.software.justreminder.enums.EventType;
+public class EventsItem extends AdapterItem {
 
-public class EventsItem implements Parcelable {
-
-    /**
-     * Strings.
-     */
-    private String type, name, number, time;
-
-    /**
-     * Date in mills and event identifier.
-     */
-    private long id, date;
-
-    /**
-     * Day, month, year and event color.
-     */
     private int day, month, year, color;
 
-    /**
-     * Event type field.
-     */
-    private EventType inn;
-
-    /**
-     * Event item constructor.
-     * @param type type.
-     * @param name title.
-     * @param number event phone number.
-     * @param id event identifier.
-     * @param date event date in milliseconds.
-     * @param day event day of month.
-     * @param month event month.
-     * @param year event year.
-     * @param inn event type enum.
-     * @param color event color.
-     */
-    public EventsItem(final String type, final String name, final String number,
-                      final long id, final long date, final int day,
-                      final int month, final int year, final EventType inn,
-                      final int color) {
-        this.type = type;
-        this.name = name;
-        this.id = id;
-        this.date = date;
-        this.number = number;
+    public EventsItem(int viewType, Object object, int day, int month, int year, int color) {
+        super(viewType, object);
         this.day = day;
         this.month = month;
         this.year = year;
-        this.inn = inn;
         this.color = color;
     }
 
-    public final int getColor() {
-        return color;
-    }
-
-    public final void setColor(final int color) {
-        this.color = color;
-    }
-
-    public final EventType getInn(){
-        return inn;
-    }
-
-    public final void setInn(final EventType inn){
-        this.inn = inn;
-    }
-
-    public final int getYear(){
-        return year;
-    }
-
-    public final void setYear(final int year){
-        this.year = year;
-    }
-
-    public final int getMonth(){
-        return month;
-    }
-
-    public final void setMonth(final int month){
-        this.month = month;
-    }
-
-    public final int getDay(){
+    public int getDay() {
         return day;
     }
 
-    public final void setDay(final int day){
+    public void setDay(int day) {
         this.day = day;
     }
 
-    public final String getTime(){
-        return time;
+    public int getMonth() {
+        return month;
     }
 
-    public final void setTime(final String time){
-        this.time = time;
+    public void setMonth(int month) {
+        this.month = month;
     }
 
-    public final long getId(){
-        return id;
+    public int getYear() {
+        return year;
     }
 
-    public final void setId(final long id){
-        this.id = id;
+    public void setYear(int year) {
+        this.year = year;
     }
 
-    public final long getDate(){
-        return date;
+    public int getColor() {
+        return color;
     }
 
-    public final void setDate(final long date){
-        this.date = date;
-    }
-
-    public final String getType(){
-        return type;
-    }
-
-    public final void setType(final String type){
-        this.type = type;
-    }
-
-    public final String getName(){
-        return name;
-    }
-
-    public final void setName(final String name){
-        this.name = name;
-    }
-
-    public final String getNumber(){
-        return number;
-    }
-
-    public final void setNumber(final String number){
-        this.number = number;
-    }
-
-    public EventsItem(final Parcel in) {
-        super();
-        readFromParcel(in);
-    }
-
-    public final Creator<EventsItem> CREATOR = new Creator<EventsItem>() {
-        public EventsItem createFromParcel(final Parcel in) {
-            return new EventsItem(in);
-        }
-
-        public EventsItem[] newArray(final int size) {
-
-            return new EventsItem[size];
-        }
-
-    };
-
-    public void readFromParcel(final Parcel in) {
-        type = in.readString();
-        name = in.readString();
-        number = in.readString();
-        time = in.readString();
-        id = in.readLong();
-        date = in.readLong();
-        day = in.readInt();
-        month = in.readInt();
-        year = in.readInt();
-        color = in.readInt();
-        inn = (EventType) in.readValue(EventType.class.getClassLoader());
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(final Parcel dest, final int flags) {
-        dest.writeString(type);
-        dest.writeString(name);
-        dest.writeString(number);
-        dest.writeString(time);
-        dest.writeLong(id);
-        dest.writeLong(date);
-        dest.writeInt(day);
-        dest.writeInt(month);
-        dest.writeInt(year);
-        dest.writeInt(color);
-        dest.writeValue(inn);
+    public void setColor(int color) {
+        this.color = color;
     }
 }

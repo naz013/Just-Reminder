@@ -1,4 +1,4 @@
-package com.cray.software.justreminder.reminder;
+package com.cray.software.justreminder.utils;
 
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -22,14 +22,18 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Recurrence;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
+import com.cray.software.justreminder.reminder.ReminderItem;
+import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.reminder.json.JPlace;
 import com.cray.software.justreminder.reminder.json.JShopping;
 import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.roboto_views.RoboSwitchCompat;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
-import com.cray.software.justreminder.utils.IntervalUtil;
-import com.cray.software.justreminder.utils.TimeUtil;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -49,6 +53,39 @@ import java.util.Locale;
  * limitations under the License.
  */
 public class BindingMehods {
+
+    private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+    @BindingAdapter({"loadBirthday"})
+    public static void loadBirthday(RoboTextView textView, String fullDate) {
+        Date date = null;
+        int hour = SharedPrefs.getInstance(textView.getContext()).getInt(Prefs.BIRTHDAY_REMINDER_HOUR);
+        int minute = SharedPrefs.getInstance(textView.getContext()).getInt(Prefs.BIRTHDAY_REMINDER_MINUTE);
+        boolean is24 = SharedPrefs.getInstance(textView.getContext()).getBoolean(Prefs.IS_24_TIME_FORMAT);
+        try {
+            date = format.parse(fullDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        long time = System.currentTimeMillis();
+        int year = 0;
+        if (date != null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            int bDay = calendar.get(Calendar.DAY_OF_MONTH);
+            int bMonth = calendar.get(Calendar.MONTH);
+            year = calendar.get(Calendar.YEAR);
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.set(Calendar.MONTH, bMonth);
+            calendar.set(Calendar.DAY_OF_MONTH, bDay);
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minute);
+            time = calendar.getTimeInMillis();
+        }
+        textView.setText(SuperUtil.appendString(TimeUtil.getFullDateTime(time, is24),
+                "\n", TimeUtil.getAgeFormatted(textView.getContext(), year)));
+    }
+
     @BindingAdapter({"loadType"})
     public static void loadType(RoboTextView textView, String type) {
         textView.setText(ReminderUtils.getTypeString(textView.getContext(), type));

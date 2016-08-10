@@ -26,13 +26,11 @@ import android.view.ViewGroup;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.contacts.FilterCallback;
 import com.cray.software.justreminder.databinding.ReminderListItemBinding;
 import com.cray.software.justreminder.databinding.ShoppingListItemBinding;
 import com.cray.software.justreminder.datas.AdapterItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
@@ -48,16 +46,12 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
     private List<AdapterItem> mDataList;
     private RecyclerListener mEventListener;
     private FilterCallback mCallback;
-    private static boolean is24;
-    private static boolean isDark;
 
     public RemindersRecyclerAdapter(Context context, List<AdapterItem> list, FilterCallback callback) {
         this.mContext = context;
         this.mCallback = callback;
         mDataList = new ArrayList<>(list);
         cs = new ColorSetter(context);
-        is24 = SharedPrefs.getInstance(context).getBoolean(Prefs.IS_24_TIME_FORMAT);
-        isDark = cs.isDark();
         setHasStableIds(true);
     }
 
@@ -265,7 +259,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        if (viewType == 0) {
+        if (viewType == AdapterItem.REMINDER) {
             View view = DataBindingUtil.inflate(inflater, R.layout.reminder_list_item, parent, false).getRoot();
             return new ReminderHolder(view);
         } else {

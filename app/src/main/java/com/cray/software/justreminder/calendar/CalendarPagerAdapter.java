@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.adapters;
+package com.cray.software.justreminder.calendar;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

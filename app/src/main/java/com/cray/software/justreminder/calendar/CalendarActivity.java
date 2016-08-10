@@ -31,7 +31,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.adapters.CalendarPagerAdapter;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.dialogs.ActionPickerDialog;
@@ -47,6 +46,7 @@ import com.cray.software.justreminder.views.CircularProgress;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class CalendarActivity extends AppCompatActivity {
 
@@ -165,10 +165,7 @@ public class CalendarActivity extends AppCompatActivity {
             int mDay = calendar.get(Calendar.DAY_OF_MONTH);
             int mMonth = calendar.get(Calendar.MONTH);
             int mYear = calendar.get(Calendar.YEAR);
-
-            ArrayList<EventsItem> datas =
-                    provider.getMatches(mDay, mMonth, mYear);
-
+            List<EventsItem> datas = provider.getMatches(mDay, mMonth, mYear);
             if (mDay == targetDay && mMonth == targetMonth && mYear == targetYear){
                 targetPosition = position;
                 pagerData.add(new EventsPagerItem(datas, position, 1, mDay, mMonth, mYear));
@@ -194,12 +191,7 @@ public class CalendarActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int i) {
-                int day = pagerData.get(i).getDay();
-                int month = pagerData.get(i).getMonth();
-                int year = pagerData.get(i).getYear();
-                currentEvent.setText(SuperUtil.appendString(String.valueOf(day), "/", String.valueOf(month + 1), "/", String.valueOf(year)));
-                ArrayList<EventsItem> data = pagerData.get(i).getDatas();
-                if (data.size() > 0) dateMills = data.get(0).getDate();
+                updateLastTime(i);
                 lastPosition = i;
             }
 
@@ -210,17 +202,22 @@ public class CalendarActivity extends AppCompatActivity {
         });
 
         pager.setCurrentItem(lastPosition != -1 ? lastPosition : targetPosition);
-
-        int i = pager.getCurrentItem();
-        int day = pagerData.get(i).getDay();
-        int month = pagerData.get(i).getMonth();
-        int year = pagerData.get(i).getYear();
-        currentEvent.setText(SuperUtil.appendString(String.valueOf(day), "/", String.valueOf(month + 1), "/", String.valueOf(year)));
-        ArrayList<EventsItem> data = pagerData.get(i).getDatas();
-        if (data.size() > 0) dateMills = data.get(0).getDate();
-
+        updateLastTime(pager.getCurrentItem());
         currentEvent.setClickable(false);
         title.setText(R.string.events);
+    }
+
+    private void updateLastTime(int i) {
+        EventsPagerItem item = pagerData.get(i);
+        if (item != null) {
+            int day = item.getDay();
+            int month = item.getMonth();
+            int year = item.getYear();
+            currentEvent.setText(SuperUtil.appendString(String.valueOf(day), "/", String.valueOf(month + 1), "/", String.valueOf(year)));
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(item.getYear(), item.getMonth(), item.getDay());
+            dateMills = calendar.getTimeInMillis();
+        }
     }
 
     @Override
@@ -229,13 +226,11 @@ public class CalendarActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         if (dateMills != 0){
             calendar.setTimeInMillis(dateMills);
-            showEvents(calendar.getTime());
-            SharedPrefs.getInstance(this).putInt(Prefs.LAST_CALENDAR_VIEW, 0);
         } else {
             calendar.setTimeInMillis(System.currentTimeMillis());
-            showEvents(calendar.getTime());
-            SharedPrefs.getInstance(this).putInt(Prefs.LAST_CALENDAR_VIEW, 0);
         }
+        showEvents(calendar.getTime());
+        SharedPrefs.getInstance(this).putInt(Prefs.LAST_CALENDAR_VIEW, 0);
     }
 
     @Override

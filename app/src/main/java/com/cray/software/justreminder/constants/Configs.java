@@ -31,7 +31,7 @@ public class Configs {
     /**
      * Max day for event calculating.
      */
-    public static final int MAX_DAYS_COUNT = 61;
+    public static final int MAX_DAYS_COUNT = 121;
 
     /**
      * Max volume.
