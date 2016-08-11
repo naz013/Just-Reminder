@@ -46,7 +46,7 @@ public class TargetRadius extends Activity implements View.OnTouchListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(TargetRadius.this);
+        ColorSetter cs = ColorSetter.getInstance(TargetRadius.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.radius_dialog_layout);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

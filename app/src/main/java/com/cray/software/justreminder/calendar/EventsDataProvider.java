@@ -102,7 +102,7 @@ public class EventsDataProvider {
 
     public void loadBirthdays(){
         List<BirthdayItem> list = BirthdayHelper.getInstance(mContext).getAll();
-        ColorSetter cs = new ColorSetter(mContext);
+        ColorSetter cs = ColorSetter.getInstance(mContext);
         int color = cs.getColor(cs.colorBirthdayCalendar());
         for (BirthdayItem item : list) {
             Date date = null;

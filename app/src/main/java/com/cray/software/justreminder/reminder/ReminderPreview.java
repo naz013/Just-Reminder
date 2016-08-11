@@ -140,7 +140,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
         JPlace place = item.getModel().getPlace();
         double lat = place.getLatitude();
         double lon = place.getLongitude();
-        ColorSetter cs = new ColorSetter(this);
+        ColorSetter cs = ColorSetter.getInstance(this);
         if (lat != 0.0 && lon != 0.0) {
             if (item.getType().matches(Constants.TYPE_PLACES)) {
                 location.setText(String.format(Locale.getDefault(),
@@ -211,7 +211,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cSetter = new ColorSetter(this);
+        ColorSetter cSetter = ColorSetter.getInstance(this);
         setTheme(cSetter.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
@@ -264,7 +264,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
         mapContainer = (LinearLayout) findViewById(R.id.mapContainer);
         mapContainer.setVisibility(View.GONE);
 
-        if (new ColorSetter(this).isDark()) {
+        if (ColorSetter.getInstance(this).isDark()) {
             time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_alarm_white_24dp, 0, 0, 0);
             type.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_assignment_white_24dp, 0, 0, 0);
             group.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_local_offer_white_24dp, 0, 0, 0);
@@ -364,7 +364,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
             GroupItem group = GroupHelper.getInstance(this).getGroup(item.getGroupUuId());
             int catColor = 0;
             if (group != null) catColor = group.getColor();
-            ColorSetter setter = new ColorSetter(this);
+            ColorSetter setter = ColorSetter.getInstance(this);
             int mColor = ViewUtils.getColor(this, setter.getCategoryColor(catColor));
             toolbar.setBackgroundColor(mColor);
             toolbarLayout.setBackgroundColor(mColor);
@@ -537,7 +537,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
 
     @BindingAdapter({"loadCard"})
     public static void loadCard(CardView cardView, int color) {
-        cardView.setCardBackgroundColor(new ColorSetter(cardView.getContext()).getNoteLightColor(color));
+        cardView.setCardBackgroundColor(ColorSetter.getInstance(cardView.getContext()).getNoteLightColor(color));
         if (Module.isLollipop()) {
             cardView.setCardElevation(Configs.CARD_ELEVATION);
         }
@@ -554,7 +554,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
             title = substring + "...";
         }
         textView.setText(title);
-        textView.setTypeface(new ColorSetter(textView.getContext()).getTypeface(note.getStyle()));
+        textView.setTypeface(ColorSetter.getInstance(textView.getContext()).getTypeface(note.getStyle()));
         textView.setTextSize(SharedPrefs.getInstance(textView.getContext()).getInt(Prefs.TEXT_SIZE) + 12);
     }
 
@@ -574,9 +574,9 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
     public static void loadMarker(View view, String listId) {
         TaskListItem listItem = TasksHelper.getInstance(view.getContext()).getTaskList(listId);
         if (listItem != null) {
-            view.setBackgroundColor(new ColorSetter(view.getContext()).getNoteColor(listItem.getColor()));
+            view.setBackgroundColor(ColorSetter.getInstance(view.getContext()).getNoteColor(listItem.getColor()));
         } else {
-            view.setBackgroundColor(new ColorSetter(view.getContext()).getNoteColor(8));
+            view.setBackgroundColor(ColorSetter.getInstance(view.getContext()).getNoteColor(8));
         }
     }
 
@@ -593,7 +593,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
 
     @BindingAdapter({"loadTaskCard"})
     public static void loadTaskCard(CardView cardView, int i) {
-        cardView.setCardBackgroundColor(new ColorSetter(cardView.getContext()).getCardStyle());
+        cardView.setCardBackgroundColor(ColorSetter.getInstance(cardView.getContext()).getCardStyle());
         if (Module.isLollipop()) {
             cardView.setCardElevation(Configs.CARD_ELEVATION);
         }

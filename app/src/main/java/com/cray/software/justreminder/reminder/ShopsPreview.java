@@ -68,7 +68,7 @@ public class ShopsPreview extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cSetter = new ColorSetter(this);
+        cSetter = ColorSetter.getInstance(this);
         setTheme(cSetter.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));

@@ -201,7 +201,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         int selection = SharedPrefs.getInstance(this).getInt(Prefs.LAST_USED_REMINDER);
         if (!Module.isPro() && selection == 12) selection = 0;
 
-        colorSetter = new ColorSetter(ReminderManager.this);
+        colorSetter = ColorSetter.getInstance(ReminderManager.this);
         setTheme(colorSetter.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, colorSetter.colorPrimaryDark()));
@@ -1673,7 +1673,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     public void showShowcase() {
         if (!SharedPrefs.getInstance(this).getBoolean(HAS_SHOWCASE)) {
             SharedPrefs.getInstance(this).putBoolean(HAS_SHOWCASE, true);
-            ColorSetter coloring = new ColorSetter(this);
+            ColorSetter coloring = ColorSetter.getInstance(this);
             ShowcaseConfig config = new ShowcaseConfig();
             config.setDelay(350);
             config.setMaskColor(coloring.getColor(coloring.colorAccent()));

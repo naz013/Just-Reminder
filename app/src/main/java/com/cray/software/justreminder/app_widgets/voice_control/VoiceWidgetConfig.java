@@ -70,7 +70,7 @@ public class VoiceWidgetConfig extends AppCompatActivity {
 
         setResult(RESULT_CANCELED, resultValue);
 
-        ColorSetter cSetter = new ColorSetter(VoiceWidgetConfig.this);
+        ColorSetter cSetter = ColorSetter.getInstance(VoiceWidgetConfig.this);
         setTheme(cSetter.getStyle());
         setContentView(R.layout.voice_widget_config_layout);
         if (Module.isLollipop()) {

@@ -42,7 +42,7 @@ import java.util.Calendar;
 import java.util.List;
 
 public class TaskManager extends AppCompatActivity {
-    private ColorSetter cSetter = new ColorSetter(TaskManager.this);
+    private ColorSetter cSetter;
 
     private Toolbar toolbar;
     private RoboEditText editField, noteField;
@@ -69,7 +69,7 @@ public class TaskManager extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cSetter = new ColorSetter(TaskManager.this);
+        cSetter = ColorSetter.getInstance(TaskManager.this);
         setTheme(cSetter.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));

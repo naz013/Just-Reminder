@@ -53,7 +53,7 @@ public class PlacesActivity extends AppCompatActivity implements SimpleListener 
 
     private RecyclerView mRecyclerView;
     private LinearLayout mEmptyView;
-    private ColorSetter cs = new ColorSetter(PlacesActivity.this);
+    private ColorSetter cs = ColorSetter.getInstance(PlacesActivity.this);
     private FloatingActionButton mFab;
 
     private PlaceRecyclerAdapter mAdapter;

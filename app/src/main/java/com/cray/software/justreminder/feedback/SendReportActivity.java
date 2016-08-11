@@ -39,7 +39,7 @@ public class SendReportActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cSetter = new ColorSetter(this);
+        ColorSetter cSetter = ColorSetter.getInstance(this);
         setTheme(cSetter.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));

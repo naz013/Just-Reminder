@@ -122,7 +122,7 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
         CardView card1 = (CardView) view.findViewById(R.id.card1);
         CardView card2 = (CardView) view.findViewById(R.id.card2);
         CardView card3 = (CardView) view.findViewById(R.id.card3);
-        ColorSetter colorSetter = new ColorSetter(mContext);
+        ColorSetter colorSetter = ColorSetter.getInstance(mContext);
         card1.setCardBackgroundColor(colorSetter.getCardStyle());
         card2.setCardBackgroundColor(colorSetter.getCardStyle());
         card3.setCardBackgroundColor(colorSetter.getCardStyle());

@@ -333,7 +333,7 @@ public class CalendarThemeFragment extends Fragment{
                 convertView = inflater.inflate(R.layout.month_view_grid, null);
             }
 
-            ColorSetter cs = new ColorSetter(context);
+            ColorSetter cs = ColorSetter.getInstance(context);
 
             int selDay = datetimeList.get(position).getDay();
 

@@ -70,13 +70,13 @@ public class PlacesFragment extends Fragment implements SimpleListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
-        rootView.findViewById(R.id.backgroundFragment).setBackgroundColor(new ColorSetter(mContext).getBackgroundStyle());
+        rootView.findViewById(R.id.backgroundFragment).setBackgroundColor(ColorSetter.getInstance(mContext).getBackgroundStyle());
         emptyItem = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
         RoboTextView emptyText = (RoboTextView) rootView.findViewById(R.id.emptyText);
         emptyText.setText(mContext.getString(R.string.no_places));
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (new ColorSetter(mContext).isDark()) {
+        if (ColorSetter.getInstance(mContext).isDark()) {
             emptyImage.setImageResource(R.drawable.ic_place_white_vector);
         } else {
             emptyImage.setImageResource(R.drawable.ic_place_black_vector);

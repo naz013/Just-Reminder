@@ -110,7 +110,7 @@ public class NotesManager extends AppCompatActivity {
     private ImageButton discardReminder;
     private ImageView noteImage;
 
-    private ColorSetter cSetter = new ColorSetter(NotesManager.this);
+    private ColorSetter cSetter;
 
     private NoteItem mItem;
     private Toolbar toolbar;
@@ -122,7 +122,7 @@ public class NotesManager extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cSetter = new ColorSetter(NotesManager.this);
+        cSetter = ColorSetter.getInstance(NotesManager.this);
         setTheme(cSetter.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
@@ -487,7 +487,7 @@ public class NotesManager extends AppCompatActivity {
     }
 
     private void setImages(){
-        if (new ColorSetter(this).isDark()){
+        if (ColorSetter.getInstance(this).isDark()){
             discardReminder.setImageResource(R.drawable.ic_clear_white_vector);
         } else {
             discardReminder.setImageResource(R.drawable.ic_clear_black_vector);

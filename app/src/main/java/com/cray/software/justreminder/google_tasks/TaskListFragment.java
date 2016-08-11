@@ -67,7 +67,7 @@ public class TaskListFragment extends Fragment implements SyncListener {
         emptyText.setText(R.string.no_google_tasks);
         emptyItem.setVisibility(View.VISIBLE);
         ImageView emptyImage = (ImageView) view.findViewById(R.id.emptyImage);
-        if (new ColorSetter(getActivity()).isDark()) {
+        if (ColorSetter.getInstance(getActivity()).isDark()) {
             emptyImage.setImageResource(R.drawable.ic_clear_white_vector);
         } else {
             emptyImage.setImageResource(R.drawable.ic_clear_black_vector);

@@ -40,7 +40,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class AddPlaceActivity extends AppCompatActivity implements MapListener, MapCallback {
 
-    private ColorSetter cs = new ColorSetter(AddPlaceActivity.this);
+    private ColorSetter cs = ColorSetter.getInstance(AddPlaceActivity.this);
     private RoboEditText placeName;
     private MapFragment mGoogleMap;
 

@@ -51,7 +51,7 @@ public class TimesOfDay extends AppCompatActivity implements View.OnClickListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(TimesOfDay.this);
+        ColorSetter cs = ColorSetter.getInstance(TimesOfDay.this);
         setTheme(cs.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));

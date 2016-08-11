@@ -70,7 +70,7 @@ public class QuickReminderWidgetConfig extends AppCompatActivity {
 
         setResult(RESULT_CANCELED, resultValue);
 
-        ColorSetter cSetter = new ColorSetter(QuickReminderWidgetConfig.this);
+        ColorSetter cSetter = ColorSetter.getInstance(QuickReminderWidgetConfig.this);
         setTheme(cSetter.getStyle());
         setContentView(R.layout.quick_reminder_widget_config_layout);
         if (Module.isLollipop()) {

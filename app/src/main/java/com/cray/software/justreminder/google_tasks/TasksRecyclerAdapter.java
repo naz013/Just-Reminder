@@ -56,7 +56,7 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
         this.mDataset = myDataset;
         this.mContext = context;
         TasksRecyclerAdapter.colors = colors;
-        cs = new ColorSetter(context);
+        cs = ColorSetter.getInstance(context);
     }
 
     public void setListener(SyncListener listener) {

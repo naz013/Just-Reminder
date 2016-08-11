@@ -64,7 +64,7 @@ public class CalendarEventsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
      */
     public CalendarEventsAdapter(final Context context, List<EventsItem> list) {
         mDataList = new ArrayList<>(list);
-        cs = new ColorSetter(context);
+        cs = ColorSetter.getInstance(context);
     }
 
     /**

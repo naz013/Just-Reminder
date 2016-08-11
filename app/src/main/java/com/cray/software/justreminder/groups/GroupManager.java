@@ -42,7 +42,7 @@ import org.json.JSONException;
 
 public class GroupManager extends AppCompatActivity {
 
-    private ColorSetter cs = new ColorSetter(GroupManager.this);
+    private ColorSetter cs = ColorSetter.getInstance(GroupManager.this);
     private RoboEditText editField;
     private ImageButton red_checkbox, violet_checkbox, green_checkbox, light_green_checkbox,
             blue_checkbox, light_blue_checkbox, yellow_checkbox, orange_checkbox, grey_checkbox,

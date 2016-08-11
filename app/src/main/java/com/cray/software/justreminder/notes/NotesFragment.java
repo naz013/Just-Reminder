@@ -127,14 +127,14 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         enableGrid = SharedPrefs.getInstance(mContext).getBoolean(Prefs.REMINDER_CHANGED);
         currentList = (RecyclerView) rootView.findViewById(R.id.currentList);
         currentList.setLayoutManager(new LinearLayoutManager(mContext));
-        rootView.findViewById(R.id.backgroundFragment).setBackgroundColor(new ColorSetter(mContext).getBackgroundStyle());
+        rootView.findViewById(R.id.backgroundFragment).setBackgroundColor(ColorSetter.getInstance(mContext).getBackgroundStyle());
         emptyItem = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
         RoboTextView emptyText = (RoboTextView) rootView.findViewById(R.id.emptyText);
         emptyText.setText(mContext.getString(R.string.no_notes));
         emptyItem.setVisibility(View.VISIBLE);
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (new ColorSetter(mContext).isDark()) {
+        if (ColorSetter.getInstance(mContext).isDark()) {
             emptyImage.setImageResource(R.drawable.ic_event_note_white_vector);
         } else {
             emptyImage.setImageResource(R.drawable.ic_event_note_black_vector);

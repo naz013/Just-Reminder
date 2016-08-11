@@ -46,7 +46,7 @@ public class TrashRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     public TrashRecyclerAdapter(Context context, List<AdapterItem> list, FilterCallback callback) {
         this.mCallback = callback;
         mDataList = new ArrayList<>(list);
-        cs = new ColorSetter(context);
+        cs = ColorSetter.getInstance(context);
         setHasStableIds(true);
     }
 

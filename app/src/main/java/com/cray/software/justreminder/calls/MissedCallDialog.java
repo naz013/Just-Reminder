@@ -72,7 +72,7 @@ public class MissedCallDialog extends Activity implements GoogleApiClient.Connec
 
     private MissedCallAlarm alarm = new MissedCallAlarm();
     private long id;
-    private ColorSetter cs = new ColorSetter(MissedCallDialog.this);
+    private ColorSetter cs = ColorSetter.getInstance(MissedCallDialog.this);
     private Notifier notifier = new Notifier(MissedCallDialog.this);
 
     private String number;

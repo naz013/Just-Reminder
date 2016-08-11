@@ -40,7 +40,7 @@ public class SelectVolume extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(SelectVolume.this);
+        ColorSetter cs = ColorSetter.getInstance(SelectVolume.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.volume_dialog_layout);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

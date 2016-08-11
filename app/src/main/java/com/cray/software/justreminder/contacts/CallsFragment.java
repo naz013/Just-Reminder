@@ -132,7 +132,7 @@ public class CallsFragment extends Fragment implements CallsLogListener {
         RoboTextView emptyText = (RoboTextView) view.findViewById(R.id.emptyText);
         emptyText.setText(getString(R.string.no_calls_found));
         ImageView mEmptyIcon = (ImageView) view.findViewById(R.id.emptyImage);
-        if (new ColorSetter(mContext).isDark()) {
+        if (ColorSetter.getInstance(mContext).isDark()) {
             mEmptyIcon.setImageResource(R.drawable.account_off_white);
         } else {
             mEmptyIcon.setImageResource(R.drawable.account_off);

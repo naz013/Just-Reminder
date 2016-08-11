@@ -65,7 +65,7 @@ public class PlaceRecyclerAdapter extends RecyclerView.Adapter<PlaceRecyclerAdap
                                 boolean showMarker) {
         this.mDataList = new ArrayList<>(provider);
         this.showMarker = showMarker;
-        cs = new ColorSetter(context);
+        cs = ColorSetter.getInstance(context);
         setHasStableIds(true);
     }
 

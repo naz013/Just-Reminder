@@ -45,7 +45,7 @@ public class LedColor extends Activity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(LedColor.this);
+        ColorSetter cs = ColorSetter.getInstance(LedColor.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.music_list_dilog);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

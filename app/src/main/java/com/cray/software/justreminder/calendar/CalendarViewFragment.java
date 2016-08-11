@@ -94,7 +94,7 @@ public class CalendarViewFragment extends Fragment {
     }
 
     private void showCalendar() {
-        ColorSetter cSetter = new ColorSetter(mContext);
+        ColorSetter cSetter = ColorSetter.getInstance(mContext);
         FlextCal calendarView = new FlextCal();
         Bundle args = new Bundle();
         Calendar cal = Calendar.getInstance();

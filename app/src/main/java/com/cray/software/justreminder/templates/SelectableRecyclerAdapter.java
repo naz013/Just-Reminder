@@ -40,7 +40,7 @@ public class SelectableRecyclerAdapter extends RecyclerView.Adapter<SelectableRe
 
     public SelectableRecyclerAdapter(Context context, List<TemplateItem> list) {
         this.mDataList = new ArrayList<>(list);
-        cs = new ColorSetter(context);
+        cs = ColorSetter.getInstance(context);
         setHasStableIds(true);
     }
 

@@ -72,7 +72,7 @@ import java.util.Locale;
 
 public class LogInActivity extends Activity implements LoginListener {
 
-    private ColorSetter cs = new ColorSetter(LogInActivity.this);
+    private ColorSetter cs = ColorSetter.getInstance(LogInActivity.this);
     private PaperButton connectGDrive, connectDropbox;
     private RoboCheckBox checkBox;
     private RoboTextView skipButton;

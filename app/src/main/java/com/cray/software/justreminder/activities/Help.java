@@ -39,7 +39,7 @@ public class Help extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cSetter = new ColorSetter(Help.this);
+        ColorSetter cSetter = ColorSetter.getInstance(Help.this);
         setTheme(cSetter.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));

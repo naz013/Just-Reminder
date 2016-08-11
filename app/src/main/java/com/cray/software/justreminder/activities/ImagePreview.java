@@ -36,8 +36,7 @@ public class ImagePreview extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(ImagePreview.this);
-        setTheme(cs.getFullscreenStyle());
+        setTheme(ColorSetter.getInstance(this).getFullscreenStyle());
         setContentView(R.layout.activity_image_preview);
 
         ImageView mImageView = (ImageView) findViewById(R.id.iv_photo);

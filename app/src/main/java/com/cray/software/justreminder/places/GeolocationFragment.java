@@ -68,7 +68,7 @@ public class GeolocationFragment extends Fragment implements SimpleListener {
         View rootView = inflater.inflate(R.layout.fragment_geolocation_layout, container, false);
 
         fragment = MapFragment.newInstance(false, true, false, false, false, false,
-                new ColorSetter(mContext).isDark());
+                ColorSetter.getInstance(mContext).isDark());
         fragment.setAdapter(loadPlaces());
 
         getFragmentManager().beginTransaction()

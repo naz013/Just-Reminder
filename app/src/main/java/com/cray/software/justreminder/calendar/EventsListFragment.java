@@ -90,7 +90,7 @@ public class EventsListFragment extends Fragment implements SimpleListener {
         RoboTextView emptyText = (RoboTextView) view.findViewById(R.id.emptyText);
         emptyText.setText(getString(R.string.no_events));
         ImageView emptyImage = (ImageView) view.findViewById(R.id.emptyImage);
-        if (new ColorSetter(mContext).isDark()) {
+        if (ColorSetter.getInstance(mContext).isDark()) {
             emptyImage.setImageResource(R.drawable.ic_today_white_vector);
         } else {
             emptyImage.setImageResource(R.drawable.ic_today_black_vector);

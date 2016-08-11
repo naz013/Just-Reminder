@@ -57,13 +57,13 @@ import java.util.Calendar;
 public class SettingsActivity extends AppCompatActivity implements SettingsFragment.OnHeadlineSelectedListener,
         TimePickerFragment.TimePickedListener{
 
-    private ColorSetter cSetter = new ColorSetter(SettingsActivity.this);
+    private ColorSetter cSetter;
     private boolean isCreate = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cSetter = new ColorSetter(SettingsActivity.this);
+        cSetter = ColorSetter.getInstance(SettingsActivity.this);
         setTheme(cSetter.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));

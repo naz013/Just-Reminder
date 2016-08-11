@@ -48,7 +48,7 @@ public class TemplatesActivity extends AppCompatActivity implements SimpleListen
 
     private RecyclerView listView;
     private LinearLayout emptyItem;
-    private ColorSetter cs = new ColorSetter(TemplatesActivity.this);
+    private ColorSetter cs = ColorSetter.getInstance(TemplatesActivity.this);
     private FloatingActionButton mFab;
     private List<TemplateItem> mDataList;
 

@@ -76,7 +76,7 @@ public class ShowBirthdayActivity extends Activity implements View.OnClickListen
         TextToSpeech.OnInitListener, GoogleApiClient.ConnectionCallbacks, DataApi.DataListener {
 
     private BirthdayItem mItem;
-    private ColorSetter cs = new ColorSetter(ShowBirthdayActivity.this);
+    private ColorSetter cs = ColorSetter.getInstance(ShowBirthdayActivity.this);
     private Notifier notifier = new Notifier(ShowBirthdayActivity.this);
 
     private int currVolume;

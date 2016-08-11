@@ -53,7 +53,7 @@ public class GooglePlacesAdapter extends RecyclerView.Adapter<GooglePlacesAdapte
      */
     public GooglePlacesAdapter(final Context context, List<GooglePlaceItem> array) {
         this.array = array;
-        isDark = new ColorSetter(context).isDark();
+        isDark = ColorSetter.getInstance(context).isDark();
         setHasStableIds(true);
     }
 

@@ -73,7 +73,7 @@ public class CalendarWidgetConfig extends AppCompatActivity {
 
         setResult(RESULT_CANCELED, resultValue);
 
-        ColorSetter cSetter = new ColorSetter(CalendarWidgetConfig.this);
+        ColorSetter cSetter = ColorSetter.getInstance(CalendarWidgetConfig.this);
         setTheme(cSetter.getStyle());
         setContentView(R.layout.calendar_widget_config_layout);
         if (Module.isLollipop()) {

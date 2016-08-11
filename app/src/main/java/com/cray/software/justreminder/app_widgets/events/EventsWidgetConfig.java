@@ -78,7 +78,7 @@ public class EventsWidgetConfig extends AppCompatActivity {
 
         setResult(RESULT_CANCELED, resultValue);
 
-        ColorSetter cSetter = new ColorSetter(EventsWidgetConfig.this);
+        ColorSetter cSetter = ColorSetter.getInstance(EventsWidgetConfig.this);
         setTheme(cSetter.getStyle());
         setContentView(R.layout.current_widget_config_layout);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

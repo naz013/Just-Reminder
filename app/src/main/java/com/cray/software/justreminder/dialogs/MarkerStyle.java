@@ -36,7 +36,7 @@ public class MarkerStyle extends Activity implements View.OnClickListener{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(MarkerStyle.this);
+        ColorSetter cs = ColorSetter.getInstance(MarkerStyle.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.marker_style_layout);
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());

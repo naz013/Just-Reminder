@@ -326,7 +326,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
 
     public void showShowcase() {
         if (!SharedPrefs.getInstance(mContext).getBoolean(HAS_SHOWCASE)) {
-            ColorSetter coloring = new ColorSetter(mContext);
+            ColorSetter coloring = ColorSetter.getInstance(mContext);
             ShowcaseConfig config = new ShowcaseConfig();
             config.setDelay(350);
             config.setMaskColor(coloring.getColor(coloring.colorAccent()));
@@ -387,7 +387,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         mRadius = prefs.getInt(Prefs.LOCATION_RADIUS);
         mMapType = prefs.getInt(Prefs.MAP_TYPE);
 
-        mColor = new ColorSetter(mContext);
+        mColor = ColorSetter.getInstance(mContext);
         isDark = mColor.isDark();
 
         SupportMapFragment fragment = SupportMapFragment.newInstance();
@@ -552,7 +552,7 @@ public class PlacesMap extends Fragment implements View.OnClickListener, Executi
         for (int i = 0; i < ColorSetter.NUM_OF_MARKERS; i++) {
             ImageButton ib = new ImageButton(mContext);
             ib.setBackgroundResource(android.R.color.transparent);
-            ib.setImageResource(new ColorSetter(mContext).getMarkerStyle(i));
+            ib.setImageResource(ColorSetter.getInstance(mContext).getMarkerStyle(i));
             ib.setId(i + ColorSetter.NUM_OF_MARKERS);
             ib.setOnClickListener(this);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(

@@ -35,7 +35,7 @@ public class ContactsActivity extends AppCompatActivity implements NumberCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(this);
+        ColorSetter cs = ColorSetter.getInstance(this);
         setTheme(cs.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));

@@ -119,7 +119,7 @@ public class ShoppingFragment extends BaseFragment {
         todoList = (RecyclerView) view.findViewById(R.id.todoList);
         todoList.setLayoutManager(new LinearLayoutManager(getActivity()));
         CardView cardContainer = (CardView) view.findViewById(R.id.cardContainer);
-        cardContainer.setCardBackgroundColor(new ColorSetter(getActivity()).getCardStyle());
+        cardContainer.setCardBackgroundColor(ColorSetter.getInstance(getActivity()).getCardStyle());
 
         shoppingTimeContainer = (RelativeLayout) view.findViewById(R.id.shoppingTimeContainer);
 

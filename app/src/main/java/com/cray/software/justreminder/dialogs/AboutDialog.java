@@ -34,7 +34,7 @@ public class AboutDialog extends Activity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(this);
+        ColorSetter cs = ColorSetter.getInstance(this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.about_dialog_layout);
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());

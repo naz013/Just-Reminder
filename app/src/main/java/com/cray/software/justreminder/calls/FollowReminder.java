@@ -92,7 +92,7 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(FollowReminder.this);
+        ColorSetter cs = ColorSetter.getInstance(FollowReminder.this);
         runOnUiThread(() -> getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD));
@@ -211,7 +211,7 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
     }
 
     private void setStyles() {
-        ColorSetter cs = new ColorSetter(this);
+        ColorSetter cs = ColorSetter.getInstance(this);
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
         ((CardView)findViewById(R.id.card1)).setCardBackgroundColor(cs.getCardStyle());
         ((CardView)findViewById(R.id.card2)).setCardBackgroundColor(cs.getCardStyle());

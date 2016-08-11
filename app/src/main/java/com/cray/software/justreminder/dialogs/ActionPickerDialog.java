@@ -42,7 +42,7 @@ public class ActionPickerDialog extends Activity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(ActionPickerDialog.this);
+        ColorSetter cs = ColorSetter.getInstance(ActionPickerDialog.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.dialog_action_picker);
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());

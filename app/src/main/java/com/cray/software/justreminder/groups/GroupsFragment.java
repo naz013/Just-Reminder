@@ -64,7 +64,7 @@ public class GroupsFragment extends Fragment implements SimpleListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_screen_manager, container, false);
-        rootView.findViewById(R.id.backgroundFragment).setBackgroundColor(new ColorSetter(mContext).getBackgroundStyle());
+        rootView.findViewById(R.id.backgroundFragment).setBackgroundColor(ColorSetter.getInstance(mContext).getBackgroundStyle());
         LinearLayout emptyItem = (LinearLayout) rootView.findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.GONE);
         listView = (RecyclerView) rootView.findViewById(R.id.currentList);

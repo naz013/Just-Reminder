@@ -53,7 +53,7 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
         this.mDataList = list;
         mEncrypt = SharedPrefs.getInstance(context).getBoolean(Prefs.NOTE_ENCRYPT);
         mTextSize = SharedPrefs.getInstance(context).getInt(Prefs.TEXT_SIZE) + 12;
-        cs = new ColorSetter(context);
+        cs = ColorSetter.getInstance(context);
         setHasStableIds(true);
     }
 

@@ -51,7 +51,7 @@ public class RemindersRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         this.mContext = context;
         this.mCallback = callback;
         mDataList = new ArrayList<>(list);
-        cs = new ColorSetter(context);
+        cs = ColorSetter.getInstance(context);
         setHasStableIds(true);
     }
 

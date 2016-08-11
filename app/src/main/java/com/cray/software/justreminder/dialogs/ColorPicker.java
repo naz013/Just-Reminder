@@ -34,7 +34,7 @@ public class ColorPicker extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(ColorPicker.this);
+        ColorSetter cs = ColorSetter.getInstance(ColorPicker.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.color_picker_layout);
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());

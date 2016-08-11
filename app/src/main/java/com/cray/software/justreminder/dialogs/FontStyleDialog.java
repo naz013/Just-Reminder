@@ -45,7 +45,7 @@ public class FontStyleDialog extends Activity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(FontStyleDialog.this);
+        ColorSetter cs = ColorSetter.getInstance(FontStyleDialog.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.music_list_dilog);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -116,7 +116,7 @@ public class FontStyleDialog extends Activity{
         }
 
         private void loadTypeFace(){
-            ColorSetter cs = new ColorSetter(cContext);
+            ColorSetter cs = ColorSetter.getInstance(cContext);
             typeface = cs.getTypeface(0);
             typeface1 = cs.getTypeface(1);
             typeface2 = cs.getTypeface(2);

@@ -38,9 +38,17 @@ public class ColorSetter {
     public static final int NUM_OF_MARKERS = 16;
 
     private Context mContext;
+    private static ColorSetter instance;
 
-    public ColorSetter(Context context){
+    private ColorSetter(Context context){
         this.mContext = context;
+    }
+
+    public static ColorSetter getInstance(Context context) {
+        if (instance == null) {
+            instance = new ColorSetter(context);
+        }
+        return instance;
     }
 
     /**

@@ -66,7 +66,7 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
         this.list = new ArrayList<>();
         this.list.clear();
         this.list = list;
-        cs = new ColorSetter(context);
+        cs = ColorSetter.getInstance(context);
         setHasStableIds(true);
         isDark = cs.isDark();
     }

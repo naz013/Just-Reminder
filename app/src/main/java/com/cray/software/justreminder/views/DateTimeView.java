@@ -23,12 +23,13 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.TimeUtil;
 
 import java.util.Calendar;
@@ -36,8 +37,8 @@ import java.util.Calendar;
 public class DateTimeView extends RelativeLayout implements
         DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
-    private TextView date;
-    private TextView time;
+    private RoboTextView date;
+    private RoboTextView time;
     private long mills;
     private Context mContext;
     private OnSelectListener listener;
@@ -66,9 +67,15 @@ public class DateTimeView extends RelativeLayout implements
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
                 LayoutParams.WRAP_CONTENT);
         setLayoutParams(params);
-        date = (TextView) findViewById(R.id.dateField);
-        time = (TextView) findViewById(R.id.timeField);
-
+        date = (RoboTextView) findViewById(R.id.dateField);
+        time = (RoboTextView) findViewById(R.id.timeField);
+        if (ColorSetter.getInstance(context).isDark()) {
+            date.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_event_white_24dp, 0, 0, 0);
+            time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_access_time_white_24dp, 0, 0, 0);
+        } else {
+            date.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_event_black_24dp, 0, 0, 0);
+            time.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_access_time_black_24dp, 0, 0, 0);
+        }
         date.setOnClickListener(v -> dateDialog());
         time.setOnClickListener(v -> timeDialog());
 

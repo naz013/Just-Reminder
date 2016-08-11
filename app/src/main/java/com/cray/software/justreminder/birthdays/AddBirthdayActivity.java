@@ -100,7 +100,7 @@ public class AddBirthdayActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(AddBirthdayActivity.this);
+        ColorSetter cs = ColorSetter.getInstance(AddBirthdayActivity.this);
         setTheme(cs.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));

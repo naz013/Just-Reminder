@@ -43,7 +43,7 @@ public class TitleNavigationAdapter extends BaseAdapter {
                                   ArrayList<SpinnerItem> spinnerNavItem) {
         this.spinnerNavItem = spinnerNavItem;
         this.context = context;
-        cs = new ColorSetter(context);
+        cs = ColorSetter.getInstance(context);
     }
 
     @Override
@@ -94,7 +94,7 @@ public class TitleNavigationAdapter extends BaseAdapter {
         txtTitle = (RoboTextView) convertView.findViewById(R.id.txtTitle);
 
         imgIcon.setImageResource(spinnerNavItem.get(position).getIcon());
-        if (new ColorSetter(context).isDark()){
+        if (cs.isDark()){
             txtTitle.setTextColor(cs.getColor(R.color.whitePrimary));
         } else txtTitle.setTextColor(cs.getColor(R.color.blackPrimary));
         txtTitle.setText(spinnerNavItem.get(position).getTitle());

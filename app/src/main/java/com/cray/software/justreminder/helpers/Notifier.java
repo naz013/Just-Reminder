@@ -679,7 +679,7 @@ public class Notifier {
             remoteViews.setTextViewText(R.id.text, mContext.getString(R.string.no_events));
             remoteViews.setViewVisibility(R.id.featured, View.GONE);
         }
-        ColorSetter cs = new ColorSetter(mContext);
+        ColorSetter cs = ColorSetter.getInstance(mContext);
         remoteViews.setInt(R.id.notificationBg, "setBackgroundColor", cs.getColor(cs.colorPrimary()));
         NotificationManagerCompat notifier = NotificationManagerCompat.from(mContext);
         notifier.notify(1, notification.build());

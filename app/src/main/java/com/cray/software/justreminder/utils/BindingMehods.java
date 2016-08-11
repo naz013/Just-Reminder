@@ -93,7 +93,7 @@ public class BindingMehods {
 
     @BindingAdapter({"loadItems"})
     public static void loadItems(LinearLayout container, List<JShopping> shoppings) {
-        boolean isDark = new ColorSetter(container.getContext()).isDark();
+        boolean isDark = ColorSetter.getInstance(container.getContext()).isDark();
         container.setFocusableInTouchMode(false);
         container.setFocusable(false);
         container.removeAllViewsInLayout();
@@ -128,7 +128,7 @@ public class BindingMehods {
 
     @BindingAdapter({"loadCard"})
     public static void loadCard(CardView cardView, String groupId) {
-        ColorSetter cs = new ColorSetter(cardView.getContext());
+        ColorSetter cs = ColorSetter.getInstance(cardView.getContext());
         GroupItem item = GroupHelper.getInstance(cardView.getContext()).getGroup(groupId);
         if (item != null) {
             cardView.setCardBackgroundColor(cs.getColor(cs.getCategoryColor(item.getColor())));

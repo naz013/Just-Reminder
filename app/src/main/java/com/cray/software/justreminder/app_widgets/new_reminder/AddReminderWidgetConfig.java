@@ -70,7 +70,7 @@ public class AddReminderWidgetConfig extends AppCompatActivity {
 
         setResult(RESULT_CANCELED, resultValue);
 
-        ColorSetter cSetter = new ColorSetter(AddReminderWidgetConfig.this);
+        ColorSetter cSetter = ColorSetter.getInstance(AddReminderWidgetConfig.this);
         setTheme(cSetter.getStyle());
         setContentView(R.layout.add_reminder_widget_config_layout);
         if (Module.isLollipop()) {

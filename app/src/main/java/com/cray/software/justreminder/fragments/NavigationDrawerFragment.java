@@ -108,8 +108,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
-
-        rootView.findViewById(R.id.drawerBg).setBackgroundColor(new ColorSetter(mContext).getBackgroundStyle());
+        rootView.findViewById(R.id.drawerBg).setBackgroundColor(ColorSetter.getInstance(mContext).getBackgroundStyle());
         image = (ImageView) rootView.findViewById(R.id.image);
         appNameBanner = (RoboTextView) rootView.findViewById(R.id.appNameBanner);
         String appName;
@@ -174,7 +173,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         if (!Module.isPro()){
             RelativeLayout ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);
             ImageView basket = (ImageView) rootView.findViewById(R.id.basket);
-            if (new ColorSetter(mContext).isDark()){
+            if (ColorSetter.getInstance(mContext).isDark()){
                 basket.setImageResource(R.drawable.market_icon_white);
             } else {
                 basket.setImageResource(R.drawable.market_icon);
@@ -227,7 +226,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
     }
 
     private void loadMenu() {
-        if (!new ColorSetter(mContext).isDark()){
+        if (!ColorSetter.getInstance(mContext).isDark()){
             activeScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_notifications_black_24dp, 0, 0, 0);
             archiveScreen.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_delete_black_24dp, 0, 0, 0);
             calendar.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_today_black_vector, 0, 0, 0);

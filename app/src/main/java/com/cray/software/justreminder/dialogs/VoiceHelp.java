@@ -38,7 +38,7 @@ public class VoiceHelp extends Activity {
     @Override
     protected final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(this);
+        ColorSetter cs = ColorSetter.getInstance(this);
         setTheme(cs.getDialogStyle());
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle(getString(R.string.help));

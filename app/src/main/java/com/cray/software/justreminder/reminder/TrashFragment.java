@@ -136,12 +136,12 @@ public class TrashFragment extends Fragment implements RecyclerListener {
         RoboTextView emptyText = (RoboTextView) rootView.findViewById(R.id.emptyText);
         emptyText.setText(R.string.trash_is_empty);
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (new ColorSetter(mContext).isDark()) {
+        if (ColorSetter.getInstance(mContext).isDark()) {
             emptyImage.setImageResource(R.drawable.ic_delete_white_vector);
         } else {
             emptyImage.setImageResource(R.drawable.ic_delete_black_vector);
         }
-        rootView.findViewById(R.id.backgroundFragment).setBackgroundColor(new ColorSetter(mContext).getBackgroundStyle());
+        rootView.findViewById(R.id.backgroundFragment).setBackgroundColor(ColorSetter.getInstance(mContext).getBackgroundStyle());
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.currentList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);

@@ -35,14 +35,10 @@ import com.cray.software.justreminder.utils.ViewUtils;
  */
 public final class ThanksDialog extends AppCompatActivity {
 
-    /**
-     * Helper method initialization.
-     */
-    private ColorSetter cSetter = new ColorSetter(ThanksDialog.this);
-
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ColorSetter cSetter = ColorSetter.getInstance(this);
         setTheme(cSetter.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));

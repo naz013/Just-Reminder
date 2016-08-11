@@ -38,7 +38,7 @@ import com.cray.software.justreminder.utils.ViewUtils;
 
 public class TemplateManager extends AppCompatActivity {
 
-    private ColorSetter cs = new ColorSetter(TemplateManager.this);
+    private ColorSetter cs = ColorSetter.getInstance(TemplateManager.this);
     private EditText placeName;
     private TextView leftCharacters;
     private TemplateItem mItem;

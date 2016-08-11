@@ -186,12 +186,12 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         RoboTextView emptyText = (RoboTextView) rootView.findViewById(R.id.emptyText);
         emptyText.setText(getString(R.string.no_events));
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
-        if (new ColorSetter(mContext).isDark()) {
+        if (ColorSetter.getInstance(mContext).isDark()) {
             emptyImage.setImageResource(R.drawable.ic_alarm_off_white_vector);
         } else {
             emptyImage.setImageResource(R.drawable.ic_alarm_off_black_vector);
         }
-        rootView.findViewById(R.id.backgroundFragment).setBackgroundColor(new ColorSetter(mContext).getBackgroundStyle());
+        rootView.findViewById(R.id.backgroundFragment).setBackgroundColor(ColorSetter.getInstance(mContext).getBackgroundStyle());
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.currentList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);

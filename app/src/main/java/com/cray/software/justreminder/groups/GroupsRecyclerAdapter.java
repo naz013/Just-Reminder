@@ -41,7 +41,7 @@ public class GroupsRecyclerAdapter extends RecyclerView.Adapter<GroupsRecyclerAd
 
     public GroupsRecyclerAdapter(Context context, List<GroupItem> list) {
         this.mDataList = new ArrayList<>(list);
-        cs = new ColorSetter(context);
+        cs = ColorSetter.getInstance(context);
         setHasStableIds(true);
     }
 

@@ -69,7 +69,7 @@ public class TasksWidgetConfig extends AppCompatActivity {
 
         setResult(RESULT_CANCELED, resultValue);
 
-        ColorSetter cSetter = new ColorSetter(TasksWidgetConfig.this);
+        ColorSetter cSetter = ColorSetter.getInstance(TasksWidgetConfig.this);
         setTheme(cSetter.getStyle());
         setContentView(R.layout.tasks_widget_config_layout);
         if (Module.isLollipop()) {

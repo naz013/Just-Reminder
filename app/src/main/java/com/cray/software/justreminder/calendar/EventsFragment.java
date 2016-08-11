@@ -113,7 +113,7 @@ public class EventsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_calendar, container, false);
-        rootView.findViewById(R.id.wrapper).setBackgroundColor(new ColorSetter(mContext).getBackgroundStyle());
+        rootView.findViewById(R.id.wrapper).setBackgroundColor(ColorSetter.getInstance(mContext).getBackgroundStyle());
         pager = (ViewPager) rootView.findViewById(R.id.pager);
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());

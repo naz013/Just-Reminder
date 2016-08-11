@@ -69,7 +69,7 @@ public class NotesWidgetConfig extends AppCompatActivity {
 
         setResult(RESULT_CANCELED, resultValue);
 
-        ColorSetter cSetter = new ColorSetter(NotesWidgetConfig.this);
+        ColorSetter cSetter = ColorSetter.getInstance(NotesWidgetConfig.this);
         setTheme(cSetter.getStyle());
         setContentView(R.layout.note_widget_config_layout);
         if (Module.isLollipop()) {

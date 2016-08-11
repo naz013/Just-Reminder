@@ -43,7 +43,7 @@ public class CalendarStyle extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(CalendarStyle.this);
+        ColorSetter cs = ColorSetter.getInstance(CalendarStyle.this);
         setTheme(cs.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));

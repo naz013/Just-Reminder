@@ -73,7 +73,7 @@ public class AddReminderActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(AddReminderActivity.this);
+        cs = ColorSetter.getInstance(AddReminderActivity.this);
         setTheme(cs.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));

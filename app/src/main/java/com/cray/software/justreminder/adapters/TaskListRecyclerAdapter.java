@@ -69,7 +69,7 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
         this.mContext = context;
         this.provider = provider;
         this.listener = listener;
-        isDark = new ColorSetter(context).isDark();
+        isDark = ColorSetter.getInstance(context).isDark();
         setHasStableIds(true);
     }
 

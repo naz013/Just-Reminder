@@ -46,7 +46,7 @@ public class PermissionsList extends Activity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(PermissionsList.this);
+        ColorSetter cs = ColorSetter.getInstance(PermissionsList.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.music_list_dilog);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

@@ -30,6 +30,8 @@
             android:layout_toLeftOf="@+id/timeField"
             android:text="Tue, 5 Nov 2015"
             android:textSize="@dimen/create_text_size_normal"
+            android:drawablePadding="8dp"
+            android:drawableLeft="@drawable/ic_event_black_24dp"
             app:font_style="roboto_medium" />
 
         <com.cray.software.justreminder.roboto_views.RoboTextView
@@ -39,6 +41,8 @@
             android:layout_alignParentRight="true"
             android:text="14:05"
             android:textSize="@dimen/create_text_size_normal"
+            android:drawablePadding="8dp"
+            android:drawableLeft="@drawable/ic_timer_black_24dp"
             app:font_style="roboto_medium" />
 
     </RelativeLayout>

@@ -41,7 +41,7 @@ import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.utils.ViewUtils;
 
 public class TaskListManager extends AppCompatActivity {
-    private ColorSetter cSetter = new ColorSetter(TaskListManager.this);
+    private ColorSetter cSetter;
     private ImageButton red_checkbox, violet_checkbox, green_checkbox, light_green_checkbox,
             blue_checkbox, light_blue_checkbox, yellow_checkbox, orange_checkbox, grey_checkbox,
             pink_checkbox, sand_checkbox, brown_checkbox, deepPurple, indigoCheckbox, limeCheckbox,
@@ -58,7 +58,7 @@ public class TaskListManager extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cSetter = new ColorSetter(TaskListManager.this);
+        cSetter = ColorSetter.getInstance(TaskListManager.this);
         setTheme(cSetter.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));

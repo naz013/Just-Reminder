@@ -50,7 +50,7 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(ExclusionPickerDialog.this);
+        ColorSetter cs = ColorSetter.getInstance(ExclusionPickerDialog.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.dialog_select_exlusion);
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
@@ -171,7 +171,7 @@ public class ExclusionPickerDialog extends Activity implements CompoundButton.On
     }
 
     private void colorify(ToggleButton... buttons){
-        ColorSetter cs = new ColorSetter(this);
+        ColorSetter cs = ColorSetter.getInstance(this);
         for (ToggleButton button : buttons){
             button.setBackgroundDrawable(cs.toggleDrawable());
         }

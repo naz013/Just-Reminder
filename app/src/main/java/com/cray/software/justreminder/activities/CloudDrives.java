@@ -79,7 +79,7 @@ public class CloudDrives extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(CloudDrives.this);
+        ColorSetter cs = ColorSetter.getInstance(CloudDrives.this);
         setTheme(cs.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
@@ -217,7 +217,7 @@ public class CloudDrives extends AppCompatActivity {
     }
 
     private void setImage(){
-        if (!new ColorSetter(this).isDark()){
+        if (!ColorSetter.getInstance(this).isDark()){
             dropboxTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.dropbox_icon, 0, 0, 0);
             gDriveTitle.setCompoundDrawablesWithIntrinsicBounds(R.drawable.google_grey, 0, 0, 0);
         } else {

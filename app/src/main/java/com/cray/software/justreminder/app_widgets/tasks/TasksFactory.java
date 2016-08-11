@@ -57,7 +57,7 @@ public class TasksFactory implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public void onCreate() {
         mData = new ArrayList<>();
-        cs = new ColorSetter(mContext);
+        cs = ColorSetter.getInstance(mContext);
         map = new HashMap<>();
     }
 

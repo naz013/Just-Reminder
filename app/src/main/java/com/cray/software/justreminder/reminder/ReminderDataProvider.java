@@ -68,7 +68,7 @@ public class ReminderDataProvider {
     }
 
     public HashMap<DateTime, Events> getEvents() {
-        ColorSetter cs = new ColorSetter(mContext);
+        ColorSetter cs = ColorSetter.getInstance(mContext);
         int bColor = cs.getColor(cs.colorBirthdayCalendar());
 
         if (isReminder) {

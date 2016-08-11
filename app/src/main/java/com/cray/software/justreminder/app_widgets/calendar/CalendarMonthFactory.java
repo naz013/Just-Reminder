@@ -197,7 +197,7 @@ public class CalendarMonthFactory implements RemoteViewsService.RemoteViewsFacto
         RemoteViews rView = new RemoteViews(mContext.getPackageName(),
                 R.layout.month_view_grid);
 
-        ColorSetter cs = new ColorSetter(mContext);
+        ColorSetter cs = ColorSetter.getInstance(mContext);
 
         int selDay = mDateTimeList.get(i).getDay();
         int selMonth = mDateTimeList.get(i).getMonth();

@@ -201,7 +201,7 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
 
     private void themeView(){
         int loadedColor = sPrefs.getInt(Prefs.APP_THEME);
-        themeColorPrefs.setViewResource(new ColorSetter(getActivity()).getIndicator(loadedColor));
+        themeColorPrefs.setViewResource(ColorSetter.getInstance(getActivity()).getIndicator(loadedColor));
     }
 
     @Override

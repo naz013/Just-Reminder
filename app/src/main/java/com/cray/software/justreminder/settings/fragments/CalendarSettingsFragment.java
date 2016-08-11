@@ -150,17 +150,17 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
     }
 
     private void reminderColor(){
-        reminderColorPrefs.setViewResource(new ColorSetter(getActivity())
+        reminderColorPrefs.setViewResource(ColorSetter.getInstance(getActivity())
                 .getIndicator(mPrefs.getInt(Prefs.REMINDER_COLOR)));
     }
 
     private void currentColor(){
-        todayColorPrefs.setViewResource(new ColorSetter(getActivity())
+        todayColorPrefs.setViewResource(ColorSetter.getInstance(getActivity())
                 .getIndicator(mPrefs.getInt(Prefs.TODAY_COLOR)));
     }
 
     private void birthdayColor(){
-        birthdayColorPrefs.setViewResource(new ColorSetter(getActivity())
+        birthdayColorPrefs.setViewResource(ColorSetter.getInstance(getActivity())
                 .getIndicator(mPrefs.getInt(Prefs.BIRTH_COLOR)));
     }
 

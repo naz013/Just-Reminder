@@ -71,7 +71,7 @@ public class AddBirthdayWidgetConfig extends AppCompatActivity {
 
         setResult(RESULT_CANCELED, resultValue);
 
-        ColorSetter cSetter = new ColorSetter(AddBirthdayWidgetConfig.this);
+        ColorSetter cSetter = ColorSetter.getInstance(AddBirthdayWidgetConfig.this);
         setTheme(cSetter.getStyle());
         setContentView(R.layout.add_birthday_widget_config_layout);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

@@ -90,7 +90,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.backup_manager_layout, container, false);
-        rootView.findViewById(R.id.windowBackground).setBackgroundColor(new ColorSetter(mContext).getBackgroundStyle());
+        rootView.findViewById(R.id.windowBackground).setBackgroundColor(ColorSetter.getInstance(mContext).getBackgroundStyle());
         toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
         spinner = (Spinner) inflater.inflate(R.layout.spinner, null);
         toolbar.addView(spinner);
@@ -123,7 +123,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
 
     private void setNavigation(){
         navIds.clear();
-        boolean isDark = new ColorSetter(mContext).isDark();
+        boolean isDark = ColorSetter.getInstance(mContext).isDark();
         if (isDark) {
             navIds.add(new Item(new SpinnerItem(getString(R.string.local),
                     R.drawable.ic_sd_storage_white_24dp), LOCAL_INT,

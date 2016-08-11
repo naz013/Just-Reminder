@@ -78,7 +78,7 @@ public class ActionView extends LinearLayout {
                 ViewUtils.showOver(actionBlock);
                 selectNumber = (ImageButton) findViewById(R.id.selectNumber);
                 selectNumber.setOnClickListener(contactClick);
-                ViewUtils.setImage(selectNumber, new ColorSetter(context).isDark());
+                ViewUtils.setImage(selectNumber, ColorSetter.getInstance(context).isDark());
 
                 numberView = (RoboEditText) findViewById(R.id.numberView);
                 numberView.setFocusableInTouchMode(true);

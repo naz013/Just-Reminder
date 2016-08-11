@@ -124,7 +124,7 @@ public class TasksFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_calendar, container, false);
         pager = (ViewPager) rootView.findViewById(R.id.pager);
-        rootView.findViewById(R.id.wrapper).setBackgroundColor(new ColorSetter(mContext).getBackgroundStyle());
+        rootView.findViewById(R.id.wrapper).setBackgroundColor(ColorSetter.getInstance(mContext).getBackgroundStyle());
         loadData();
         onCreate = true;
         return rootView;
@@ -268,24 +268,7 @@ public class TasksFragment extends Fragment {
 
             @Override
             public void onPageSelected(int i) {
-                if (mCallbacks != null) {
-                    ColorSetter mColor = new ColorSetter(mContext);
-                    if (i == 0) {
-                        mCallbacks.onTitleChanged(getString(R.string.all));
-                        mCallbacks.onUiChanged(ViewUtils.getColor(mContext, mColor.colorPrimary()),
-                                ViewUtils.getColor(mContext, mColor.colorPrimaryDark()),
-                                ViewUtils.getColor(mContext, mColor.colorAccent()));
-                        mCallbacks.onListIdChanged(0);
-                    } else {
-                        TaskListItem taskList = taskListDatum.get(i).getTaskList();
-                        mCallbacks.onTitleChanged(taskList.getTitle());
-                        int tmp = taskList.getColor();
-                        mCallbacks.onUiChanged(mColor.getNoteColor(tmp), mColor.getNoteDarkColor(tmp),
-                                ViewUtils.getColor(mContext, mColor.colorAccent(tmp)));
-                        long idS = taskList.getId();
-                        mCallbacks.onListIdChanged(idS);
-                    }
-                }
+                updateScreen(i);
                 SharedPrefs.getInstance(mContext).putInt(Prefs.LAST_LIST, i);
                 currentPos = i;
                 mContext.invalidateOptionsMenu();
@@ -297,8 +280,12 @@ public class TasksFragment extends Fragment {
             }
         });
         pager.setCurrentItem(pos < taskListDatum.size() ? pos : 0);
+        updateScreen(pos);
+    }
+
+    private void updateScreen(int pos) {
         if (mCallbacks != null) {
-            ColorSetter mColor = new ColorSetter(mContext);
+            ColorSetter mColor = ColorSetter.getInstance(mContext);
             if (pos == 0) {
                 mCallbacks.onTitleChanged(getString(R.string.all));
                 mCallbacks.onUiChanged(ViewUtils.getColor(mContext, mColor.colorPrimary()),

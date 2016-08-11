@@ -93,7 +93,7 @@ public class NotePreview extends AppCompatActivity {
             getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
         }
         super.onCreate(savedInstanceState);
-        cSetter = new ColorSetter(this);
+        cSetter = ColorSetter.getInstance(this);
         setTheme(cSetter.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));

@@ -39,14 +39,13 @@ public class ThemerDialog extends AppCompatActivity {
             amber, orange, pink, teal, deepPurple, deepOrange, indigo, lime;
     private FloatingActionButton mFab;
 
-    private ColorSetter cs;
     private Toolbar toolbar;
     private int prevId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cs = new ColorSetter(ThemerDialog.this);
+        ColorSetter cs = ColorSetter.getInstance(ThemerDialog.this);
         setTheme(cs.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
@@ -215,7 +214,7 @@ public class ThemerDialog extends AppCompatActivity {
                 saveColor(15);
                 break;
         }
-        cs = new ColorSetter(ThemerDialog.this);
+        ColorSetter cs = ColorSetter.getInstance(ThemerDialog.this);
         toolbar.setBackgroundColor(ViewUtils.getColor(this, cs.colorPrimary()));
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));

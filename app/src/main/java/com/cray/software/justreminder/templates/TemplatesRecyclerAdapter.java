@@ -41,7 +41,7 @@ public class TemplatesRecyclerAdapter extends RecyclerView.Adapter<TemplatesRecy
 
     public TemplatesRecyclerAdapter(Context context, List<TemplateItem> list) {
         this.provider = new ArrayList<>(list);
-        cs = new ColorSetter(context);
+        cs = ColorSetter.getInstance(context);
         setHasStableIds(true);
     }
 

@@ -130,7 +130,7 @@ public class ReminderDialog extends Activity implements TextToSpeech.OnInitListe
 
     private ShoppingListDataProvider provider;
 
-    private ColorSetter cs = new ColorSetter(ReminderDialog.this);
+    private ColorSetter cs = ColorSetter.getInstance(ReminderDialog.this);
     private Notifier notifier = new Notifier(ReminderDialog.this);
     private TextToSpeech tts;
     private Handler handler = new Handler();

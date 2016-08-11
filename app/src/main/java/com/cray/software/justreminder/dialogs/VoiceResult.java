@@ -50,7 +50,7 @@ import com.cray.software.justreminder.utils.TimeUtil;
 
 public class VoiceResult extends Activity {
 
-    private ColorSetter cs = new ColorSetter(VoiceResult.this);
+    private ColorSetter cs = ColorSetter.getInstance(VoiceResult.this);
     private long id;
 
     @Override

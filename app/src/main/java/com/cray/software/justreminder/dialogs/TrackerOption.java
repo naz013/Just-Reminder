@@ -36,7 +36,7 @@ public class TrackerOption extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorSetter cs = new ColorSetter(TrackerOption.this);
+        ColorSetter cs = ColorSetter.getInstance(TrackerOption.this);
         setTheme(cs.getDialogStyle());
         setContentView(R.layout.tracker_settings_layout);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

@@ -133,7 +133,7 @@ public class WeekFragment extends BaseFragment implements CompoundButton.OnCheck
         timeField.setText(TimeUtil.getTime(updateTime(System.currentTimeMillis(), false),
                 SharedPrefs.getInstance(getActivity()).getBoolean(Prefs.IS_24_TIME_FORMAT)));
 
-        ColorSetter cs = new ColorSetter(getActivity());
+        ColorSetter cs = ColorSetter.getInstance(getActivity());
         mondayCheck = (ToggleButton) view.findViewById(R.id.mondayCheck);
         tuesdayCheck = (ToggleButton) view.findViewById(R.id.tuesdayCheck);
         wednesdayCheck = (ToggleButton) view.findViewById(R.id.wednesdayCheck);

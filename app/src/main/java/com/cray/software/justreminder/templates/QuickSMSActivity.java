@@ -44,7 +44,7 @@ public class QuickSMSActivity extends Activity {
     private RecyclerView messagesList;
     private SelectableRecyclerAdapter mAdapter;
     private String number;
-    private ColorSetter cs = new ColorSetter(QuickSMSActivity.this);
+    private ColorSetter cs = ColorSetter.getInstance(QuickSMSActivity.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

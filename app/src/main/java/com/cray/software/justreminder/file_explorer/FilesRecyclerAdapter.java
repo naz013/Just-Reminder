@@ -168,7 +168,7 @@ public class FilesRecyclerAdapter extends RecyclerView.Adapter<FilesRecyclerAdap
 
     @BindingAdapter("loadImage")
     public static void loadImage(ImageView imageView, int v) {
-        boolean isDark = new ColorSetter(imageView.getContext()).isDark();
+        boolean isDark = ColorSetter.getInstance(imageView.getContext()).isDark();
         Picasso.with(imageView.getContext())
                 .load(v)
                 .resize(100, 100)

@@ -135,7 +135,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
     private FloatingActionButton mFab;
     private ReturnScrollListener listener;
 
-    private ColorSetter cSetter = new ColorSetter(this);
+    private ColorSetter cSetter = ColorSetter.getInstance(this);
 
     public static final String FRAGMENT_ACTIVE = "fragment_active";
     public static final String FRAGMENT_ARCHIVE = "fragment_archive";
