@@ -16,10 +16,12 @@
 
 package com.cray.software.justreminder.activities;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.ImageView;
 
 import com.cray.software.justreminder.R;
@@ -29,18 +31,17 @@ import java.io.File;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 
-public class ImagePreview extends Activity {
+public class ImagePreview extends AppCompatActivity {
 
     private String photoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(ColorSetter.getInstance(this).getFullscreenStyle());
+        setTheme(ColorSetter.getInstance(this).getStyle());
         setContentView(R.layout.activity_image_preview);
-
+        initActionBar();
         ImageView mImageView = (ImageView) findViewById(R.id.iv_photo);
-
         photoPath = getIntent().getStringExtra("image");
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
@@ -49,6 +50,25 @@ public class ImagePreview extends Activity {
 
         PhotoViewAttacher mAttacher = new PhotoViewAttacher(mImageView);
         mAttacher.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+    }
+
+    private void initActionBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        toolbar.setTitle("");
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,19 +27,14 @@ import android.view.ViewGroup;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.cloud.GTasksHelper;
-import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databinding.ListItemTaskBinding;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.SyncListener;
-import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
-import com.cray.software.justreminder.roboto_views.RoboTextView;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdapter.ViewHolder>  {
@@ -49,7 +43,6 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
     private Context mContext;
     private static ColorSetter cs;
     private static SyncListener listener;
-    private static SimpleDateFormat full24Format = new SimpleDateFormat("EEE,\ndd/MM", Locale.getDefault());
     private static Map<String, Integer> colors;
 
     public TasksRecyclerAdapter(Context context, List<TaskItem> myDataset, Map<String, Integer> colors) {
@@ -107,18 +100,6 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
         new SwitchTaskAsync(context, listId, taskId, isDone, listener).execute();
     }
 
-    @BindingAdapter({"loadDue"})
-    public static void loadDue(RoboTextView view, long due) {
-        java.util.Calendar calendar = java.util.Calendar.getInstance();
-        if (due != 0) {
-            calendar.setTimeInMillis(due);
-            String update = full24Format.format(calendar.getTime());
-            view.setText(update);
-        } else {
-            view.setVisibility(View.INVISIBLE);
-        }
-    }
-
     @BindingAdapter({"loadMarker"})
     public static void loadMarker(View view, String listId) {
         if (colors.containsKey(listId)) {
@@ -135,13 +116,5 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
         }
         checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> switchTask(checkBox.getContext(),
                 item.getId(), isChecked, item.getListId(), item.getTaskId()));
-    }
-
-    @BindingAdapter({"loadTaskCard"})
-    public static void loadTaskCard(CardView cardView, int i) {
-        cardView.setCardBackgroundColor(cs.getCardStyle());
-        if (Module.isLollipop()) {
-            cardView.setCardElevation(Configs.CARD_ELEVATION);
-        }
     }
 }

@@ -257,23 +257,24 @@ public class CalendarStyle extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (SharedPrefs.getInstance(this).getBoolean(Prefs.STATUS_BAR_NOTIFICATION)) {
-            new Notifier(CalendarStyle.this).recreatePermanent();
-        }
-        finish();
+        closeScreen();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (SharedPrefs.getInstance(this).getBoolean(Prefs.STATUS_BAR_NOTIFICATION)) {
-                    new Notifier(CalendarStyle.this).recreatePermanent();
-                }
-                finish();
+                closeScreen();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void closeScreen() {
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.STATUS_BAR_NOTIFICATION)) {
+            new Notifier(CalendarStyle.this).recreatePermanent();
+        }
+        finish();
     }
 }

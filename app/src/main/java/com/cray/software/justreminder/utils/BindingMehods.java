@@ -1,16 +1,21 @@
 package com.cray.software.justreminder.utils;
 
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.databinding.BindingAdapter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Paint;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.contacts.Contacts;
@@ -21,7 +26,10 @@ import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Recurrence;
 import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
+import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.notes.NoteItem;
 import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.cray.software.justreminder.reminder.json.JPlace;
@@ -55,6 +63,65 @@ import java.util.Locale;
 public class BindingMehods {
 
     private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    private static SimpleDateFormat full24Format = new SimpleDateFormat("EEE,\ndd/MM", Locale.getDefault());
+
+    @BindingAdapter({"loadDue"})
+    public static void loadDue(RoboTextView view, long due) {
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        if (due != 0) {
+            calendar.setTimeInMillis(due);
+            String update = full24Format.format(calendar.getTime());
+            view.setText(update);
+        } else {
+            view.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @BindingAdapter({"loadTaskCard"})
+    public static void loadTaskCard(CardView cardView, int i) {
+        cardView.setCardBackgroundColor(ColorSetter.getInstance(cardView.getContext()).getCardStyle());
+        if (Module.isLollipop()) {
+            cardView.setCardElevation(Configs.CARD_ELEVATION);
+        }
+    }
+
+    @BindingAdapter({"loadNote"})
+    public static void loadNote(TextView textView, NoteItem note) {
+        String title = note.getNote();
+        Context context = textView.getContext();
+        if (SharedPrefs.getInstance(context).getBoolean(Prefs.NOTE_ENCRYPT)) {
+            title = SyncHelper.decrypt(title);
+        }
+        if (title.length() > 500) {
+            String substring = title.substring(0, 500);
+            title = substring + "...";
+        }
+        textView.setText(title);
+        textView.setTypeface(ColorSetter.getInstance(context).getTypeface(note.getStyle()));
+        textView.setTextSize(SharedPrefs.getInstance(context).getInt(Prefs.TEXT_SIZE) + 12);
+    }
+
+    @BindingAdapter({"loadImage"})
+    public static void loadImage(ImageView imageView, byte[] image) {
+        if (image != null) {
+            Bitmap photo = BitmapFactory.decodeByteArray(image, 0, image.length);
+            if (photo != null) {
+                imageView.setImageBitmap(photo);
+            } else {
+                imageView.setImageDrawable(null);
+            }
+        } else {
+            imageView.setImageDrawable(null);
+        }
+    }
+
+    @BindingAdapter({"loadNoteCard"})
+    public static void loadNoteCard(CardView cardView, int color) {
+        cardView.setCardBackgroundColor(ColorSetter.getInstance(cardView.getContext()).getNoteLightColor(color));
+        if (Module.isLollipop()) {
+            cardView.setCardElevation(Configs.CARD_ELEVATION);
+        }
+    }
 
     @BindingAdapter({"loadBirthday"})
     public static void loadBirthday(RoboTextView textView, String fullDate) {

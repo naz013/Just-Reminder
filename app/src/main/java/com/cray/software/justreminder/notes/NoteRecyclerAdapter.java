@@ -17,43 +17,25 @@
 package com.cray.software.justreminder.notes;
 
 import android.content.Context;
-import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.constants.Configs;
-import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databinding.ItemNoteLayoutBinding;
-import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.SimpleListener;
-import com.cray.software.justreminder.modules.Module;
 
 import java.util.List;
 
 public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapter.ViewHolder> {
 
-    private static ColorSetter cs;
     private List<NoteItem> mDataList;
     private SimpleListener mEventListener;
-    private static int mTextSize;
-    private static boolean mEncrypt;
 
     public NoteRecyclerAdapter(Context context, List<NoteItem> list) {
         this.mDataList = list;
-        mEncrypt = SharedPrefs.getInstance(context).getBoolean(Prefs.NOTE_ENCRYPT);
-        mTextSize = SharedPrefs.getInstance(context).getInt(Prefs.TEXT_SIZE) + 12;
-        cs = ColorSetter.getInstance(context);
         setHasStableIds(true);
     }
 
@@ -111,42 +93,5 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
 
     public void setEventListener(SimpleListener eventListener) {
         mEventListener = eventListener;
-    }
-
-    @BindingAdapter({"loadCard"})
-    public static void loadCard(CardView cardView, int color) {
-        cardView.setCardBackgroundColor(cs.getNoteLightColor(color));
-        if (Module.isLollipop()) {
-            cardView.setCardElevation(Configs.CARD_ELEVATION);
-        }
-    }
-
-    @BindingAdapter({"loadNote"})
-    public static void loadNote(TextView textView, NoteItem note) {
-        String title = note.getNote();
-        if (mEncrypt) {
-            title = SyncHelper.decrypt(title);
-        }
-        if (title.length() > 500) {
-            String substring = title.substring(0, 500);
-            title = substring + "...";
-        }
-        textView.setText(title);
-        textView.setTypeface(cs.getTypeface(note.getStyle()));
-        textView.setTextSize(mTextSize);
-    }
-
-    @BindingAdapter({"loadImage"})
-    public static void loadImage(ImageView imageView, byte[] image) {
-        if (image != null) {
-            Bitmap photo = BitmapFactory.decodeByteArray(image, 0, image.length);
-            if (photo != null) {
-                imageView.setImageBitmap(photo);
-            } else {
-                imageView.setImageDrawable(null);
-            }
-        } else {
-            imageView.setImageDrawable(null);
-        }
     }
 }

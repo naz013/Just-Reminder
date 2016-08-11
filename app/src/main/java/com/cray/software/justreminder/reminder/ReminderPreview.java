@@ -22,8 +22,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,19 +30,15 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.cloud.GTasksHelper;
-import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
@@ -59,7 +53,6 @@ import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.ActionCallbacks;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.notes.NoteHelper;
@@ -84,7 +77,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -106,8 +98,6 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
     private ReminderItem item;
     private static NoteItem mNoteItem;
     private static TaskItem mTaskItem;
-
-    private static SimpleDateFormat full24Format = new SimpleDateFormat("EEE,\ndd/MM", Locale.getDefault());
 
     private OnMapReadyCallback mMapCallback = googleMap -> {
         googleMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -521,55 +511,6 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
         startActivity(new Intent(this, NotePreview.class).putExtra(Constants.EDIT_ID, id));
     }
 
-    @BindingAdapter({"loadImage"})
-    public static void loadImage(ImageView imageView, byte[] image) {
-        if (image != null) {
-            Bitmap photo = BitmapFactory.decodeByteArray(image, 0, image.length);
-            if (photo != null) {
-                imageView.setImageBitmap(photo);
-            } else {
-                imageView.setImageDrawable(null);
-            }
-        } else {
-            imageView.setImageDrawable(null);
-        }
-    }
-
-    @BindingAdapter({"loadCard"})
-    public static void loadCard(CardView cardView, int color) {
-        cardView.setCardBackgroundColor(ColorSetter.getInstance(cardView.getContext()).getNoteLightColor(color));
-        if (Module.isLollipop()) {
-            cardView.setCardElevation(Configs.CARD_ELEVATION);
-        }
-    }
-
-    @BindingAdapter({"loadNote"})
-    public static void loadNote(TextView textView, NoteItem note) {
-        String title = note.getNote();
-        if (SharedPrefs.getInstance(textView.getContext()).getBoolean(Prefs.NOTE_ENCRYPT)) {
-            title = SyncHelper.decrypt(title);
-        }
-        if (title.length() > 500) {
-            String substring = title.substring(0, 500);
-            title = substring + "...";
-        }
-        textView.setText(title);
-        textView.setTypeface(ColorSetter.getInstance(textView.getContext()).getTypeface(note.getStyle()));
-        textView.setTextSize(SharedPrefs.getInstance(textView.getContext()).getInt(Prefs.TEXT_SIZE) + 12);
-    }
-
-    @BindingAdapter({"loadDue"})
-    public static void loadDue(RoboTextView view, long due) {
-        java.util.Calendar calendar = java.util.Calendar.getInstance();
-        if (due != 0) {
-            calendar.setTimeInMillis(due);
-            String update = full24Format.format(calendar.getTime());
-            view.setText(update);
-        } else {
-            view.setVisibility(View.INVISIBLE);
-        }
-    }
-
     @BindingAdapter({"loadMarker"})
     public static void loadMarker(View view, String listId) {
         TaskListItem listItem = TasksHelper.getInstance(view.getContext()).getTaskList(listId);
@@ -589,14 +530,6 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
         }
         checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> switchTask(checkBox.getContext(),
                 item.getId(), isChecked, item.getListId(), item.getTaskId()));
-    }
-
-    @BindingAdapter({"loadTaskCard"})
-    public static void loadTaskCard(CardView cardView, int i) {
-        cardView.setCardBackgroundColor(ColorSetter.getInstance(cardView.getContext()).getCardStyle());
-        if (Module.isLollipop()) {
-            cardView.setCardElevation(Configs.CARD_ELEVATION);
-        }
     }
 
     private static void switchTask(Context context, long id, boolean isDone, String listId, String taskId) {
