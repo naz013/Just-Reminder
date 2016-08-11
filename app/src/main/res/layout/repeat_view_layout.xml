@@ -18,60 +18,75 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <RelativeLayout
+        <ImageView
+            android:id="@+id/viewIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_refresh_black_24dp" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="left|center">
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@+id/viewIcon"
+            android:orientation="vertical">
 
-            <com.cray.software.justreminder.roboto_views.RoboTextView
-                android:id="@+id/text1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:gravity="center|left"
-                android:text="@string/repeat"
-                android:textSize="@dimen/create_text_size_normal"
-                app:font_style="roboto_light" />
-
-            <com.cray.software.justreminder.roboto_views.RoboEditText
-                android:id="@+id/repeatTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/create_margin"
-                android:layout_marginRight="10dp"
-                android:layout_toRightOf="@+id/text1"
-                android:gravity="center"
-                android:inputType="number"
-                android:maxLength="3"
-                android:minWidth="50dp"
-                android:textSize="@dimen/create_text_size_normal"
-                app:edit_font_style="roboto_medium" />
-
-            <com.cray.software.justreminder.roboto_views.RoboTextView
-                android:id="@+id/repeatType"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/repeatTitle"
-                android:gravity="center|left"
-                android:text="@string/days"
-                android:textSize="@dimen/create_text_size_normal"
-                app:font_style="roboto_light" />
+                android:gravity="left|center">
 
-        </RelativeLayout>
+                <com.cray.software.justreminder.roboto_views.RoboTextView
+                    android:id="@+id/text1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:gravity="center|left"
+                    android:text="@string/repeat"
+                    android:textSize="@dimen/create_text_size_normal"
+                    app:font_style="roboto_light" />
 
-        <SeekBar
-            android:id="@+id/repeatViewSeek"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="365" />
+                <com.cray.software.justreminder.roboto_views.RoboEditText
+                    android:id="@+id/repeatTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/create_margin"
+                    android:layout_marginRight="10dp"
+                    android:layout_toRightOf="@+id/text1"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:maxLength="3"
+                    android:minWidth="50dp"
+                    android:textSize="@dimen/create_text_size_normal"
+                    app:edit_font_style="roboto_medium" />
 
-    </LinearLayout>
+                <com.cray.software.justreminder.roboto_views.RoboTextView
+                    android:id="@+id/repeatType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/repeatTitle"
+                    android:gravity="center|left"
+                    android:text="@string/days"
+                    android:textSize="@dimen/create_text_size_normal"
+                    app:font_style="roboto_light" />
+
+            </RelativeLayout>
+
+            <SeekBar
+                android:id="@+id/repeatViewSeek"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="365" />
+
+        </LinearLayout>
+    </RelativeLayout>
 </merge>

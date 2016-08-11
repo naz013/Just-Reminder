@@ -97,7 +97,7 @@
                 android:layout_marginTop="5dp"
                 android:layout_toRightOf="@+id/changeExtra"
                 android:drawableLeft="@drawable/ic_local_offer_white_24dp"
-                android:drawablePadding="30dp"
+                android:drawablePadding="8dp"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:padding="2dp"
                 android:textColor="@color/whitePrimary"

@@ -26,11 +26,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.helpers.ColorSetter;
 
 public class RepeatView extends LinearLayout implements SeekBar.OnSeekBarChangeListener, TextWatcher {
     private EditText repeatTitle;
@@ -62,10 +64,8 @@ public class RepeatView extends LinearLayout implements SeekBar.OnSeekBarChangeL
         repeatTitle = (EditText) findViewById(R.id.repeatTitle);
         TextView repeatType = (TextView) findViewById(R.id.repeatType);
         repeatViewSeek = (SeekBar) findViewById(R.id.repeatViewSeek);
-
         repeatViewSeek.setOnSeekBarChangeListener(this);
         repeatTitle.addTextChangedListener(this);
-
         repeatTitle.setOnFocusChangeListener((v, hasFocus) -> {
             imm = (InputMethodManager) mContext.getSystemService(
                     Context.INPUT_METHOD_SERVICE);
@@ -82,10 +82,14 @@ public class RepeatView extends LinearLayout implements SeekBar.OnSeekBarChangeL
                 imm.showSoftInput(repeatTitle, 0);
             }
         });
-
         repeatViewSeek.setProgress(0);
         repeatTitle.setText(String.valueOf(0));
-
+        ImageView iconView = (ImageView) findViewById(R.id.viewIcon);
+        if (ColorSetter.getInstance(context).isDark()) {
+            iconView.setImageResource(R.drawable.ic_refresh_white_24dp);
+        } else {
+            iconView.setImageResource(R.drawable.ic_refresh_black_24dp);
+        }
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(
                     attrs, R.styleable.RepeatView, 0, 0);
