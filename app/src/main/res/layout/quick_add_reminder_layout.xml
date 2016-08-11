@@ -57,124 +57,34 @@
             android:layout_marginTop="@dimen/create_margin"
             android:orientation="vertical">
 
-            <TableLayout
+            <com.cray.software.justreminder.views.DateTimeView
+                android:id="@+id/dateView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp">
-
-                <TableRow>
-
-                    <ImageView
-                        android:id="@+id/timeIcon"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginRight="15dp"
-                        android:scaleType="center"
-                        android:src="@drawable/ic_alarm_black_24dp" />
-
-                    <com.cray.software.justreminder.roboto_views.RoboTextView
-                        android:id="@+id/dateField"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginRight="15dp"
-                        android:text="Tue, 5 Nov 2015"
-                        android:textSize="@dimen/create_text_size_normal"
-                        app:font_style="roboto_medium" />
-
-                    <com.cray.software.justreminder.roboto_views.RoboTextView
-                        android:id="@+id/timeField"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text="14:05"
-                        android:textSize="@dimen/create_text_size_normal"
-                        app:font_style="roboto_medium" />
-                </TableRow>
-            </TableLayout>
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginBottom="15dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
                 android:background="?attr/colorAccent" />
 
-            <RelativeLayout
+            <com.cray.software.justreminder.views.RepeatView
+                android:id="@+id/repeatView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp">
-
-                <ImageView
-                    android:id="@+id/repeatIcon"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginRight="15dp"
-                    android:scaleType="center"
-                    android:src="@drawable/ic_refresh_black_24dp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/repeatIcon"
-                    android:orientation="vertical">
-
-                    <TableLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <TableRow>
-
-                            <com.cray.software.justreminder.roboto_views.RoboTextView
-                                android:id="@+id/text1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/repeat"
-                                android:textSize="@dimen/create_text_size_normal"
-                                app:font_style="roboto_light" />
-
-                            <com.cray.software.justreminder.roboto_views.RoboEditText
-                                android:id="@+id/repeatDays"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="5dp"
-                                android:layout_marginRight="5dp"
-                                android:background="@android:color/transparent"
-                                android:inputType="number"
-                                android:maxLength="3"
-                                android:minWidth="45dp"
-                                android:textSize="@dimen/create_text_size_primary"
-                                app:edit_font_style="roboto_medium" />
-
-                            <com.cray.software.justreminder.roboto_views.RoboTextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/days"
-                                android:textSize="@dimen/create_text_size_normal"
-                                app:font_style="roboto_light" />
-
-                        </TableRow>
-
-                    </TableLayout>
-
-                    <SeekBar
-                        android:id="@+id/repeatDateInt"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="@dimen/create_margin"
-                        android:layout_marginTop="15dp"
-                        android:max="4" />
-
-                </LinearLayout>
-
-            </RelativeLayout>
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                app:repeat_type_text="@string/days" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginBottom="15dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
                 android:background="?attr/colorAccent" />
 
             <com.cray.software.justreminder.roboto_views.RoboCheckBox
@@ -182,8 +92,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/create_margin"
-                android:layout_marginTop="@dimen/create_margin"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
                 android:gravity="center"
                 android:text="@string/google_tasks"
                 android:textSize="@dimen/checkbox_text_size"
