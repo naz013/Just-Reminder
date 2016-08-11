@@ -148,6 +148,14 @@ public class MemoryUtil {
     }
 
     /**
+     * Get directory with cached images.
+     * @return Directory
+     */
+    public static File getImageCacheDir() {
+        return getDir(Constants.DIR_IMAGE_CACHE);
+    }
+
+    /**
      * Get application parent directory on SD Card.
      * @return Directory
      */

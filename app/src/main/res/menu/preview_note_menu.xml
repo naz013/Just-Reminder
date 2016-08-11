@@ -19,6 +19,12 @@
     tools:context="com.cray.software.justreminder.app.MainActivity">
 
     <item
+        android:id="@+id/action_edit"
+        android:icon="@drawable/ic_create_white_24dp"
+        android:title="@string/edit"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_status"
         android:icon="@drawable/ic_favorite_white_24dp"
         android:title="@string/show_in_status_bar"

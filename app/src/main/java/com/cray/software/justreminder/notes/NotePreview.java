@@ -22,10 +22,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -34,14 +31,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.activities.ImagePreview;
@@ -60,11 +53,11 @@ import com.cray.software.justreminder.reminder.ReminderHelper;
 import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.roboto_views.RoboButton;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
+import com.cray.software.justreminder.utils.MemoryUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -77,15 +70,14 @@ public class NotePreview extends AppCompatActivity {
     private NoteItem mItem;
     private ColorSetter cSetter;
     private Bitmap img;
-    private float prevPercent;
+    private long mId;
 
     private Toolbar toolbar;
     private ScrollView scrollContent;
-    private LinearLayout reminderContainer, buttonContainer;
+    private LinearLayout reminderContainer;
     private ImageView imageView;
     private RoboTextView reminderTime;
     private TextView noteText;
-    private FloatingActionButton mFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,38 +90,48 @@ public class NotePreview extends AppCompatActivity {
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
+        mId = getIntent().getLongExtra(Constants.EDIT_ID, 0);
         setContentView(R.layout.activity_note_preview);
         setRequestedOrientation(cSetter.getRequestOrientation());
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
-        }
-
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        toolbar.setTitle("");
-        toolbar.setOnMenuItemClickListener(item -> {
-                    switch (item.getItemId()) {
-                        case R.id.action_share:
-                            shareNote();
-                            return true;
-                        case R.id.action_delete:
-                            deleteDialog();
-                            return true;
-                        case R.id.action_status:
-                            moveToStatus();
-                            return true;
-                        default:
-                            return false;
-                    }
-                });
-
-        toolbar.inflateMenu(R.menu.preview_note_menu);
-        long id = getIntent().getLongExtra(Constants.EDIT_ID, 0);
-        mItem = NoteHelper.getInstance(this).getNote(id);
-
+        initActionBar();
         findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
+        initScrollView();
+        initImageView();
+        noteText = (TextView) findViewById(R.id.noteText);
+        initReminderCard();
+    }
+
+    private void initReminderCard() {
+        reminderContainer = (LinearLayout) findViewById(R.id.reminderContainer);
+        reminderContainer.setVisibility(View.GONE);
+        reminderTime = (RoboTextView) findViewById(R.id.reminderTime);
+        RoboButton editReminder = (RoboButton) findViewById(R.id.editReminder);
+        editReminder.setOnClickListener(v -> {
+            if (mItem.getLinkId() != 0) {
+                Reminder.edit(mItem.getLinkId(), NotePreview.this);
+            }
+        });
+        RoboButton deleteReminder = (RoboButton) findViewById(R.id.deleteReminder);
+        deleteReminder.setOnClickListener(v -> {
+            if (mItem.getLinkId() != 0) {
+                showReminderDeleteDialog();
+            }
+        });
+    }
+
+    private void initImageView() {
+        imageView = (ImageView) findViewById(R.id.imageView);
+        if (Module.isLollipop()) imageView.setTransitionName("image");
+        imageView.setOnClickListener(v -> {
+            if (Permissions.checkPermission(NotePreview.this, Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL)) {
+                openImage();
+            } else {
+                Permissions.requestPermission(NotePreview.this, REQUEST_SD_CARD, Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);
+            }
+        });
+    }
+
+    private void initScrollView() {
         scrollContent = (ScrollView) findViewById(R.id.scrollContent);
         scrollContent.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
@@ -140,19 +142,6 @@ public class NotePreview extends AppCompatActivity {
                 } else {
                     toolbar.getBackground().setAlpha(255);
                 }
-                float percent = getCurrentPercent(scrollY);
-                if (percent >= 60.0 && prevPercent < 60.0){
-                    ViewUtils.hide(NotePreview.this, mFab);
-                }
-                if (percent <= 75.0 && prevPercent > 75.0){
-                    ViewUtils.show(NotePreview.this, mFab);
-                }
-                prevPercent = percent;
-            }
-
-            private float getCurrentPercent(int scrollY){
-                int maxDist = QuickReturnUtils.dp2px(NotePreview.this, 200);
-                return (((float)scrollY / (float)maxDist) * 100.0f);
             }
 
             private int getAlphaForActionBar(int scrollY) {
@@ -166,74 +155,52 @@ public class NotePreview extends AppCompatActivity {
                 }
             }
         });
+    }
 
-        reminderContainer = (LinearLayout) findViewById(R.id.reminderContainer);
-        reminderContainer.setVisibility(View.GONE);
-        buttonContainer = (LinearLayout) findViewById(R.id.buttonContainer);
-        buttonContainer.setVisibility(View.GONE);
-
-        imageView = (ImageView) findViewById(R.id.imageView);
-        if (Module.isLollipop()) imageView.setTransitionName("image");
-
-        imageView.setOnClickListener(v -> {
-            if (Permissions.checkPermission(NotePreview.this, Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL)) {
-                openImage();
-            } else {
-                Permissions.requestPermission(NotePreview.this, REQUEST_SD_CARD, Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);
+    private void initActionBar() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        toolbar.setTitle("");
+        toolbar.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.action_share:
+                    shareNote();
+                    return true;
+                case R.id.action_delete:
+                    showDeleteDialog();
+                    return true;
+                case R.id.action_status:
+                    moveToStatus();
+                    return true;
+                case R.id.action_edit:
+                    editNote();
+                    return true;
+                default:
+                    return false;
             }
         });
-        noteText = (TextView) findViewById(R.id.noteText);
-        reminderTime = (RoboTextView) findViewById(R.id.reminderTime);
-        reminderTime.setOnClickListener(v -> {
-            if (buttonContainer.getVisibility() == View.VISIBLE) {
-                ViewUtils.collapse(buttonContainer);
-            } else {
-                ViewUtils.expand(buttonContainer);
-            }
-        });
+        toolbar.inflateMenu(R.menu.preview_note_menu);
+    }
 
-        mFab = (FloatingActionButton) findViewById(R.id.fab);
-        mFab.setVisibility(View.GONE);
-
-        mFab.setOnClickListener(v -> startActivity(new Intent(NotePreview.this, NotesManager.class)
-                .putExtra(Constants.EDIT_ID, mItem.getId())));
-
-        RoboButton editReminder = (RoboButton) findViewById(R.id.editReminder);
-        editReminder.setOnClickListener(v -> {
-            if (mItem.getLinkId() != 0) {
-                Reminder.edit(mItem.getLinkId(), NotePreview.this);
-            }
-        });
-        RoboButton deleteReminder = (RoboButton) findViewById(R.id.deleteReminder);
-        deleteReminder.setOnClickListener(v -> {
-            if (mItem.getLinkId() != 0) {
-                Reminder.delete(mItem.getLinkId(), NotePreview.this);
-                reminderContainer.setVisibility(View.GONE);
-            }
-        });
-
-        new Handler().postDelayed(() -> ViewUtils.show(NotePreview.this, mFab), 500);
+    private void editNote() {
+        startActivity(new Intent(NotePreview.this, NotesManager.class)
+                .putExtra(Constants.EDIT_ID, mItem.getId()));
     }
 
     private void openImage() {
         if (mItem.getImage() != null) {
-            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            img.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-            byte[] image = bytes.toByteArray();
-            if (image == null) {
-                Toast.makeText(this, "Unsigned error!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            File sdPath = Environment.getExternalStorageDirectory();
-            File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_IMAGE_CACHE);
-            boolean isDirectory = false;
-            if (!sdPathDr.exists()) {
-                isDirectory = sdPathDr.mkdirs();
+            File path = MemoryUtil.getImageCacheDir();
+            boolean isDirectory = true;
+            if (!path.exists()) {
+                isDirectory = path.mkdirs();
             }
             if (isDirectory) {
                 String fileName = SyncHelper.generateID() + FileConfig.FILE_NAME_IMAGE;
-                File f = new File(sdPathDr + File.separator + fileName);
+                File f = new File(path + File.separator + fileName);
                 boolean isFile = false;
                 try {
                     isFile = f.createNewFile();
@@ -249,7 +216,7 @@ public class NotePreview extends AppCompatActivity {
                     }
                     if (fo != null) {
                         try {
-                            fo.write(image);
+                            fo.write(mItem.getImage());
                             fo.close();
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -282,63 +249,59 @@ public class NotePreview extends AppCompatActivity {
 
     private void loadData(){
         img = null;
+        mItem = NoteHelper.getInstance(this).getNote(mId);
         if (mItem != null){
-            mItem = NoteHelper.getInstance(this).getNote(mItem.getId());
-            String note = mItem.getNote();
-            if (SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT)){
-                note = SyncHelper.decrypt(note);
-            }
-            noteText.setText(note);
-            int color = mItem.getColor();
-            int style = mItem.getStyle();
-            noteText.setTypeface(cSetter.getTypeface(style));
-            if (Module.isLollipop()) {
-                getWindow().setStatusBarColor(cSetter.getNoteDarkColor(color));
-            }
-
-            mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorAccent(color), cSetter.colorAccent(color)));
-            RelativeLayout.LayoutParams paramsR = (RelativeLayout.LayoutParams) mFab.getLayoutParams();
-            paramsR.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            paramsR.setMargins(0, -(QuickReturnUtils.dp2px(NotePreview.this, 28)), QuickReturnUtils.dp2px(NotePreview.this, 16), 0);
-
-            byte[] imageByte = mItem.getImage();
-            if (imageByte != null){
-                img = BitmapFactory.decodeByteArray(imageByte, 0,
-                        imageByte.length);
-                imageView.setImageBitmap(img);
-                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) imageView.getLayoutParams();
-                params.height = QuickReturnUtils.dp2px(this, 256);
-                imageView.setLayoutParams(params);
-                paramsR.addRule(RelativeLayout.BELOW, R.id.imageView);
-                toolbar.setBackgroundColor(cSetter.getNoteColor(color));
-                toolbar.getBackground().setAlpha(0);
-            } else {
-                imageView.setBackgroundColor(cSetter.getNoteColor(color));
-                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) imageView.getLayoutParams();
-                params.height = QuickReturnUtils.dp2px(this, 256);
-                imageView.setLayoutParams(params);
-                imageView.setVisibility(View.INVISIBLE);
-                paramsR.addRule(RelativeLayout.BELOW, R.id.imageView);
-                toolbar.setBackgroundColor(cSetter.getNoteColor(color));
-                toolbar.getBackground().setAlpha(255);
-            }
-
-            if (mItem.getLinkId() != 0){
-                ReminderItem reminderItem = ReminderHelper.getInstance(this).getReminder(mItem.getLinkId());
-                if (reminderItem != null){
-                    long feature = reminderItem.getDateTime();
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTimeInMillis(System.currentTimeMillis());
-                    if (feature != 0) {
-                        calendar.setTimeInMillis(feature);
-                    }
-                    reminderTime.setText(TimeUtil.getDateTime(calendar.getTime(),
-                            SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
-                    reminderContainer.setVisibility(View.VISIBLE);
-                }
-            }
+            showNote();
+            showImage();
+            showReminder();
         } else {
             finish();
+        }
+    }
+
+    private void showNote() {
+        String note = mItem.getNote();
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT)){
+            note = SyncHelper.decrypt(note);
+        }
+        noteText.setText(note);
+        int color = mItem.getColor();
+        int style = mItem.getStyle();
+        noteText.setTypeface(cSetter.getTypeface(style));
+        if (Module.isLollipop()) {
+            getWindow().setStatusBarColor(cSetter.getNoteDarkColor(color));
+        }
+    }
+
+    private void showReminder() {
+        if (mItem.getLinkId() != 0){
+            ReminderItem reminderItem = ReminderHelper.getInstance(this).getReminder(mItem.getLinkId());
+            if (reminderItem != null){
+                long feature = reminderItem.getDateTime();
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                if (feature != 0) {
+                    calendar.setTimeInMillis(feature);
+                }
+                reminderTime.setText(TimeUtil.getDateTime(calendar.getTime(),
+                        SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
+                reminderContainer.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    private void showImage() {
+        byte[] imageByte = mItem.getImage();
+        if (imageByte != null){
+            img = BitmapFactory.decodeByteArray(imageByte, 0, imageByte.length);
+            imageView.setImageBitmap(img);
+            imageView.setVisibility(View.VISIBLE);
+            toolbar.setBackgroundColor(cSetter.getNoteColor(mItem.getColor()));
+            toolbar.getBackground().setAlpha(0);
+        } else {
+            imageView.setVisibility(View.GONE);
+            toolbar.setBackgroundColor(cSetter.getNoteColor(mItem.getColor()));
+            toolbar.getBackground().setAlpha(255);
         }
     }
 
@@ -368,27 +331,35 @@ public class NotePreview extends AppCompatActivity {
     }
 
     private void closeWindow() {
-        new Handler().post(() -> {
-            Animation slide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.scale_zoom_out);
-            mFab.startAnimation(slide);
-            mFab.setVisibility(View.GONE);
-        });
-        new Handler().postDelayed(() -> {
-            if (Module.isLollipop()) {
-                finishAfterTransition();
-            } else {
-                finish();
-            }
-        }, 300);
+        if (Module.isLollipop()) {
+            finishAfterTransition();
+        } else {
+            finish();
+        }
     }
 
-    private void deleteDialog() {
+    private void showDeleteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.delete_this_note));
         builder.setPositiveButton(getString(R.string.yes), (dialog, which) -> {
             dialog.dismiss();
             deleteNote();
             closeWindow();
+        });
+        builder.setNegativeButton(getString(R.string.no), (dialog, which) -> {
+            dialog.dismiss();
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void showReminderDeleteDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.delete_this_reminder);
+        builder.setPositiveButton(getString(R.string.yes), (dialog, which) -> {
+            dialog.dismiss();
+            Reminder.delete(mItem.getLinkId(), NotePreview.this);
+            reminderContainer.setVisibility(View.GONE);
         });
         builder.setNegativeButton(getString(R.string.no), (dialog, which) -> {
             dialog.dismiss();

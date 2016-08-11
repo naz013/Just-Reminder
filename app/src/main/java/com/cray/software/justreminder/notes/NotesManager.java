@@ -31,7 +31,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -67,12 +66,13 @@ import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.Telephony;
-import com.cray.software.justreminder.reminder.ReminderItem;
-import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
+import com.cray.software.justreminder.reminder.ReminderItem;
+import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.LocationUtil;
+import com.cray.software.justreminder.utils.MemoryUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
@@ -194,34 +194,7 @@ public class NotesManager extends AppCompatActivity {
 
         noteImage = (ImageView) findViewById(R.id.noteImage);
         noteImage.setOnClickListener(v -> {
-            try {
-                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                Bitmap _bitmapScaled = img;
-                _bitmapScaled.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-
-                File sdPath = Environment.getExternalStorageDirectory();
-                File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_IMAGE_CACHE);
-                boolean isDirectory = false;
-                if (!sdPathDr.exists()) {
-                    isDirectory = sdPathDr.mkdirs();
-                }
-                if (isDirectory) {
-                    String fileName = SyncHelper.generateID() + FileConfig.FILE_NAME_IMAGE;
-                    File f = new File(sdPathDr
-                            + File.separator + fileName);
-                    boolean isCreated = f.createNewFile();
-                    if (isCreated) {
-                        FileOutputStream fo = new FileOutputStream(f);
-                        fo.write(bytes.toByteArray());
-                        fo.close();
-
-                        startActivity(new Intent(NotesManager.this, ImagePreview.class)
-                                .putExtra("image", f.toString()));
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            openImage();
         });
 
         discardReminder = (ImageButton) findViewById(R.id.discardReminder);
@@ -341,6 +314,33 @@ public class NotesManager extends AppCompatActivity {
         if (LocationUtil.isGooglePlayServicesAvailable(this)) {
             ReminderApp application = (ReminderApp) getApplication();
             mTracker = application.getDefaultTracker();
+        }
+    }
+
+    private void openImage() {
+        try {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            Bitmap _bitmapScaled = img;
+            _bitmapScaled.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+            File path = MemoryUtil.getImageCacheDir();
+            boolean isDirectory = true;
+            if (!path.exists()) {
+                isDirectory = path.mkdirs();
+            }
+            if (isDirectory) {
+                String fileName = SyncHelper.generateID() + FileConfig.FILE_NAME_IMAGE;
+                File f = new File(path + File.separator + fileName);
+                boolean isCreated = f.createNewFile();
+                if (isCreated) {
+                    FileOutputStream fo = new FileOutputStream(f);
+                    fo.write(bytes.toByteArray());
+                    fo.close();
+                    startActivity(new Intent(NotesManager.this, ImagePreview.class)
+                            .putExtra("image", f.toString()));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -610,7 +610,6 @@ public class NotesManager extends AppCompatActivity {
             }
         }
     }
-
 
     private void updateTextStyle() {
         Typeface typeface = cSetter.getTypeface(mItem.getStyle());
