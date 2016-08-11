@@ -25,9 +25,6 @@ import android.databinding.DataBindingUtil;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -88,9 +85,6 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
     private RoboSwitchCompat statusSwitch;
     private LinearLayout mapContainer;
     private Toolbar toolbar;
-    private CollapsingToolbarLayout toolbarLayout;
-    private FloatingActionButton mFab;
-    private AppBarLayout appBarLayout;
     private LinearLayout mContainer;
 
     private long id;
@@ -206,31 +200,26 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cSetter.colorPrimaryDark()));
         }
+        id = getIntent().getLongExtra(Constants.EDIT_ID, 0);
         setContentView(R.layout.activity_reminder_preview);
         setRequestedOrientation(cSetter.getRequestOrientation());
-
-        appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
         mContainer = (LinearLayout) findViewById(R.id.dataContainer);
-        toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
+        initActionBar();
+        findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
+        initViews();
+    }
+
+    private void initActionBar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setTitle("");
+    }
 
-        id = getIntent().getLongExtra(Constants.EDIT_ID, 0);
-
-        findViewById(R.id.windowBackground).setBackgroundColor(cSetter.getBackgroundStyle());
-
-        mFab = (FloatingActionButton) findViewById(R.id.fab);
-        mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorAccent(), cSetter.colorAccent()));
-        mFab.setOnClickListener(v -> {
-            if (id != 0) {
-                Reminder.edit(id, ReminderPreview.this);
-            }
-        });
-
-        initViews();
+    private void editReminder() {
+        if (id != 0) {
+            Reminder.edit(id, ReminderPreview.this);
+        }
     }
 
     private void initViews() {
@@ -357,14 +346,9 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
             ColorSetter setter = ColorSetter.getInstance(this);
             int mColor = ViewUtils.getColor(this, setter.getCategoryColor(catColor));
             toolbar.setBackgroundColor(mColor);
-            toolbarLayout.setBackgroundColor(mColor);
-            toolbarLayout.setContentScrimColor(mColor);
-            appBarLayout.setBackgroundColor(mColor);
             if (Module.isLollipop()) {
                 getWindow().setStatusBarColor(setter.getNoteDarkColor(catColor));
             }
-            mFab.setBackgroundTintList(ViewUtils.getFabState(this, setter.colorAccent(catColor),
-                    setter.colorAccent(catColor)));
             mContainer.removeAllViewsInLayout();
             findNote();
             findTask();
@@ -437,6 +421,9 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
             case R.id.action_make_copy:
                 makeCopy();
                 return true;
+            case R.id.action_edit:
+                editReminder();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -496,14 +483,14 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
 
     @Override
     public void showSnackbar(int message, int actionTitle, View.OnClickListener listener) {
-        Snackbar.make(mFab, message, Snackbar.LENGTH_LONG)
+        Snackbar.make(mContainer, message, Snackbar.LENGTH_LONG)
                 .setAction(actionTitle, listener)
                 .show();
     }
 
     @Override
     public void showSnackbar(int message) {
-        Snackbar.make(mFab, message, Snackbar.LENGTH_LONG)
+        Snackbar.make(mContainer, message, Snackbar.LENGTH_LONG)
                 .show();
     }
 

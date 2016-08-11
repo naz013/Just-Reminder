@@ -14,48 +14,185 @@
   ~ limitations under the License.
   -->
 
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/windowBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context=".reminder.ReminderPreview">
+    android:orientation="vertical">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/app_bar"
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:fitsSystemWindows="true"
-        android:theme="@style/HomeWhite.Blue.AppBarOverlay">
+        android:layout_height="match_parent">
 
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/toolbar_layout"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            android:layout_height="wrap_content">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="parallax"
-                app:popupTheme="@style/HomeWhite.Blue.PopupOverlay" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        </android.support.design.widget.CollapsingToolbarLayout>
-    </android.support.design.widget.AppBarLayout>
+                <RelativeLayout
+                    android:id="@+id/switchWrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/reminder_preview_container_padding"
+                    android:layout_marginRight="@dimen/reminder_preview_container_padding"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true">
 
-    <include layout="@layout/content_reminder_preview" />
+                    <com.cray.software.justreminder.roboto_views.RoboTextView
+                        android:id="@+id/statusText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@+id/statusSwitch"
+                        android:paddingLeft="35dp"
+                        android:textSize="20sp"
+                        app:font_style="roboto_regular" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_create_white_24dp"
-        app:layout_anchor="@id/app_bar"
-        app:layout_anchorGravity="bottom|end" />
+                    <com.cray.software.justreminder.roboto_views.RoboSwitchCompat
+                        android:id="@+id/statusSwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="5dp"
+                        android:clickable="false"
+                        app:switch_font_style="roboto_medium" />
 
-</android.support.design.widget.CoordinatorLayout>
+                </RelativeLayout>
+
+                <com.cray.software.justreminder.roboto_views.RoboTextView
+                    android:id="@+id/time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/reminder_preview_container_padding"
+                    android:layout_marginRight="@dimen/reminder_preview_container_padding"
+                    android:layout_marginTop="@dimen/reminder_preview_margin_top"
+                    android:drawableLeft="@drawable/ic_access_time_black_24dp"
+                    android:drawablePadding="@dimen/reminder_preview_margin_top"
+                    android:textSize="18sp"
+                    app:font_style="roboto_regular" />
+
+                <com.cray.software.justreminder.roboto_views.RoboTextView
+                    android:id="@+id/location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/reminder_preview_container_padding"
+                    android:layout_marginRight="@dimen/reminder_preview_container_padding"
+                    android:layout_marginTop="@dimen/reminder_preview_margin_top"
+                    android:drawableLeft="@drawable/ic_navigation_black_24dp"
+                    android:drawablePadding="@dimen/reminder_preview_margin_top"
+                    android:textSize="18sp"
+                    app:font_style="roboto_regular" />
+
+                <com.cray.software.justreminder.roboto_views.RoboTextView
+                    android:id="@+id/group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/reminder_preview_container_padding"
+                    android:layout_marginRight="@dimen/reminder_preview_container_padding"
+                    android:layout_marginTop="@dimen/reminder_preview_margin_top"
+                    android:drawableLeft="@drawable/ic_local_offer_black_24dp"
+                    android:drawablePadding="@dimen/reminder_preview_margin_top"
+                    android:textSize="18sp"
+                    app:font_style="roboto_regular" />
+
+                <com.cray.software.justreminder.roboto_views.RoboTextView
+                    android:id="@+id/type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/reminder_preview_container_padding"
+                    android:layout_marginRight="@dimen/reminder_preview_container_padding"
+                    android:layout_marginTop="@dimen/reminder_preview_margin_top"
+                    android:drawableLeft="@drawable/ic_assignment_black_24dp"
+                    android:drawablePadding="@dimen/reminder_preview_margin_top"
+                    android:textSize="18sp"
+                    app:font_style="roboto_regular" />
+
+                <com.cray.software.justreminder.roboto_views.RoboTextView
+                    android:id="@+id/number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/reminder_preview_container_padding"
+                    android:layout_marginRight="@dimen/reminder_preview_container_padding"
+                    android:layout_marginTop="@dimen/reminder_preview_margin_top"
+                    android:drawableLeft="@drawable/ic_account_circle_black_24dp"
+                    android:drawablePadding="@dimen/reminder_preview_margin_top"
+                    android:textSize="18sp"
+                    app:font_style="roboto_regular" />
+
+                <com.cray.software.justreminder.roboto_views.RoboTextView
+                    android:id="@+id/melody"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/reminder_preview_container_padding"
+                    android:layout_marginRight="@dimen/reminder_preview_container_padding"
+                    android:layout_marginTop="@dimen/reminder_preview_margin_top"
+                    android:drawableLeft="@drawable/ic_music_note_black_24dp"
+                    android:drawablePadding="@dimen/reminder_preview_margin_top"
+                    android:textSize="18sp"
+                    app:font_style="roboto_regular" />
+
+                <com.cray.software.justreminder.roboto_views.RoboTextView
+                    android:id="@+id/repeat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/reminder_preview_container_padding"
+                    android:layout_marginRight="@dimen/reminder_preview_container_padding"
+                    android:layout_marginTop="@dimen/reminder_preview_margin_top"
+                    android:drawableLeft="@drawable/ic_refresh_black_24dp"
+                    android:drawablePadding="@dimen/reminder_preview_margin_top"
+                    android:textSize="18sp"
+                    app:font_style="roboto_regular" />
+
+                <LinearLayout
+                    android:id="@+id/mapContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/reminder_preview_container_padding"
+                    android:layout_marginRight="@dimen/reminder_preview_container_padding"
+                    android:layout_marginTop="@dimen/reminder_preview_margin_top"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <fragment
+                        android:id="@+id/map"
+                        android:name="com.google.android.gms.maps.SupportMapFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:clickable="true" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/dataContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:orientation="vertical">
+
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+
+        <com.cray.software.justreminder.views.CircularProgress
+            android:id="@+id/progress"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:circular_progress_color="?attr/colorPrimaryDark"
+            app:circular_progress_size="Small" />
+
+    </RelativeLayout>
+</LinearLayout>
