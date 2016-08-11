@@ -41,6 +41,8 @@ import com.cray.software.justreminder.views.RepeatView;
 public class MessageFragment extends BaseFragment implements
         CompoundButton.OnCheckedChangeListener {
 
+    private RepeatView repeatView;
+
     private DateTimeView.OnSelectListener mCallbacks;
     private RepeatView.OnRepeatListener mRepeatCallbacks;
 
@@ -113,8 +115,28 @@ public class MessageFragment extends BaseFragment implements
             }
         });
 
+        repeatView = (RepeatView) view.findViewById(R.id.repeatView);
+        repeatView.setListener(mRepeatCallbacks);
+        repeatView.setMax(Configs.REPEAT_SEEKBAR_MAX);
+
         DateTimeView dateView = (DateTimeView) view.findViewById(R.id.dateView);
-        dateView.setListener(mCallbacks);
+        dateView.setListener(new DateTimeView.OnSelectListener() {
+            @Override
+            public void onDateSelect(long mills, int day, int month, int year) {
+                if (mCallbacks != null) {
+                    mCallbacks.onDateSelect(mills, day, month, year);
+                }
+                if (repeatView != null) repeatView.setDateTime(mYear, mMonth, mDay, mHour, mMinute);
+            }
+
+            @Override
+            public void onTimeSelect(long mills, int hour, int minute) {
+                if (mCallbacks != null) {
+                    mCallbacks.onTimeSelect(mills, hour, minute);
+                }
+                if (repeatView != null) repeatView.setDateTime(mYear, mMonth, mDay, mHour, mMinute);
+            }
+        });
         eventTime = System.currentTimeMillis();
         dateView.setDateTime(updateCalendar(eventTime, false));
 
@@ -125,11 +147,6 @@ public class MessageFragment extends BaseFragment implements
         if (hasTasks) dateTaskExport.setVisibility(View.VISIBLE);
         dateExport.setOnCheckedChangeListener(this);
         dateTaskExport.setOnCheckedChangeListener(this);
-
-        RepeatView repeatView = (RepeatView) view.findViewById(R.id.repeatView);
-        repeatView.setListener(mRepeatCallbacks);
-        repeatView.setMax(Configs.REPEAT_SEEKBAR_MAX);
-
         if (item != null) {
             JExport jExport = item.getExport();
             int exp = jExport.getCalendar();

@@ -196,6 +196,7 @@ public class TimerFragment extends BaseFragment implements
         RepeatView repeatView = (RepeatView) view.findViewById(R.id.repeatView);
         repeatView.setListener(mRepeatCallbacks);
         repeatView.setMax(120);
+        repeatView.enablePrediction(false);
 
         if (item != null) {
             JExport jExport = item.getExport();

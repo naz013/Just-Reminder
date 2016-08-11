@@ -51,12 +51,13 @@ public class AddReminderActivity extends AppCompatActivity {
 
     private RoboEditText task_text;
     private RoboCheckBox taskExport;
+    private RepeatView repeatView;
 
-    private int myHour = 0;
-    private int myMinute = 0;
-    private int myYear = 0;
-    private int myMonth = 0;
-    private int myDay = 1;
+    private int mHour = 0;
+    private int mMinute = 0;
+    private int mYear = 0;
+    private int mMonth = 0;
+    private int mDay = 1;
     private long mRepeat;
 
     private GTasksHelper gtx = new GTasksHelper(AddReminderActivity.this);
@@ -64,15 +65,17 @@ public class AddReminderActivity extends AppCompatActivity {
     private DateTimeView.OnSelectListener mDateTimeCallback = new DateTimeView.OnSelectListener() {
         @Override
         public void onDateSelect(long mills, int day, int month, int year) {
-            myYear = year;
-            myMonth = month;
-            myDay = day;
+            mYear = year;
+            mMonth = month;
+            mDay = day;
+            if (repeatView != null) repeatView.setDateTime(mYear, mMonth, mDay, mHour, mMinute);
         }
 
         @Override
         public void onTimeSelect(long mills, int hour, int minute) {
-            myHour = hour;
-            myMinute = minute;
+            mHour = hour;
+            mMinute = minute;
+            if (repeatView != null) repeatView.setDateTime(mYear, mMonth, mDay, mHour, mMinute);
         }
     };
     private RepeatView.OnRepeatListener mRepeatCallback = new RepeatView.OnRepeatListener() {
@@ -108,30 +111,31 @@ public class AddReminderActivity extends AppCompatActivity {
         } else {
             c.setTimeInMillis(System.currentTimeMillis());
         }
-        myHour = c.get(Calendar.HOUR_OF_DAY);
-        myMinute = c.get(Calendar.MINUTE);
-        myYear = c.get(Calendar.YEAR);
-        myMonth = c.get(Calendar.MONTH);
-        myDay = c.get(Calendar.DAY_OF_MONTH);
+        mHour = c.get(Calendar.HOUR_OF_DAY);
+        mMinute = c.get(Calendar.MINUTE);
+        mYear = c.get(Calendar.YEAR);
+        mMonth = c.get(Calendar.MONTH);
+        mDay = c.get(Calendar.DAY_OF_MONTH);
+
+        repeatView = (RepeatView) findViewById(R.id.repeatView);
+        repeatView.setListener(mRepeatCallback);
+        repeatView.setMax(Configs.REPEAT_SEEKBAR_MAX);
 
         DateTimeView dateView = (DateTimeView) findViewById(R.id.dateView);
         dateView.setListener(mDateTimeCallback);
         dateView.setDateTime(updateCalendar(c.getTimeInMillis(), false));
-        RepeatView repeatView = (RepeatView) findViewById(R.id.repeatView);
-        repeatView.setListener(mRepeatCallback);
-        repeatView.setMax(Configs.REPEAT_SEEKBAR_MAX);
     }
 
     protected long updateCalendar(long millis, boolean deny) {
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(millis);
-        if (myYear > 0 && !deny) cal.set(myYear, myMonth, myDay, myHour, myMinute);
+        if (mYear > 0 && !deny) cal.set(mYear, mMonth, mDay, mHour, mMinute);
         else {
-            myYear = cal.get(Calendar.YEAR);
-            myMonth = cal.get(Calendar.MONTH);
-            myDay = cal.get(Calendar.DAY_OF_MONTH);
-            myHour = cal.get(Calendar.HOUR_OF_DAY);
-            myMinute = cal.get(Calendar.MINUTE);
+            mYear = cal.get(Calendar.YEAR);
+            mMonth = cal.get(Calendar.MONTH);
+            mDay = cal.get(Calendar.DAY_OF_MONTH);
+            mHour = cal.get(Calendar.HOUR_OF_DAY);
+            mMinute = cal.get(Calendar.MINUTE);
         }
         return cal.getTimeInMillis();
     }
@@ -151,7 +155,7 @@ public class AddReminderActivity extends AppCompatActivity {
         }
         String type = Constants.TYPE_REMINDER;
         String categoryId = GroupHelper.getInstance(this).getDefaultUuId();
-        long startTime = ReminderUtils.getTime(myDay, myMonth, myYear, myHour, myMinute, 0);
+        long startTime = ReminderUtils.getTime(mDay, mMonth, mYear, mHour, mMinute, 0);
         boolean isCalendar = SharedPrefs.getInstance(this).getBoolean(Prefs.EXPORT_TO_CALENDAR);
         boolean isStock = SharedPrefs.getInstance(this).getBoolean(Prefs.EXPORT_TO_STOCK);
         boolean isTasks = gtx.isLinked() && taskExport.isChecked();

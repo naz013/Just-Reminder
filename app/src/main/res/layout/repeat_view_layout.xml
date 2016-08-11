@@ -87,6 +87,30 @@
                 android:layout_height="wrap_content"
                 android:max="365" />
 
+            <LinearLayout
+                android:id="@+id/predictionView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.cray.software.justreminder.roboto_views.RoboTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/next_event"
+                    android:textColor="?attr/colorAccent"
+                    app:font_style="roboto_light" />
+
+                <com.cray.software.justreminder.roboto_views.RoboTextView
+                    android:id="@+id/eventView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/next_event"
+                    android:textSize="18sp"
+                    app:font_style="roboto_medium" />
+
+            </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
 </merge>

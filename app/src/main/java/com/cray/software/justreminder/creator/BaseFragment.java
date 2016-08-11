@@ -57,11 +57,11 @@ public class BaseFragment extends Fragment {
     protected boolean isDark;
     protected boolean hasTasks;
 
-    protected int myHour = 0;
-    protected int myMinute = 0;
-    protected int myYear = 0;
-    protected int myMonth = 0;
-    protected int myDay = 1;
+    protected int mHour = 0;
+    protected int mMinute = 0;
+    protected int mYear = 0;
+    protected int mMonth = 0;
+    protected int mDay = 1;
     protected long eventTime;
 
     public void setEventTime(long eventTime) {
@@ -140,13 +140,13 @@ public class BaseFragment extends Fragment {
     protected long updateCalendar(long millis, boolean deny) {
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(millis);
-        if (myYear > 0 && !deny) cal.set(myYear, myMonth, myDay, myHour, myMinute);
+        if (mYear > 0 && !deny) cal.set(mYear, mMonth, mDay, mHour, mMinute);
         else {
-            myYear = cal.get(Calendar.YEAR);
-            myMonth = cal.get(Calendar.MONTH);
-            myDay = cal.get(Calendar.DAY_OF_MONTH);
-            myHour = cal.get(Calendar.HOUR_OF_DAY);
-            myMinute = cal.get(Calendar.MINUTE);
+            mYear = cal.get(Calendar.YEAR);
+            mMonth = cal.get(Calendar.MONTH);
+            mDay = cal.get(Calendar.DAY_OF_MONTH);
+            mHour = cal.get(Calendar.HOUR_OF_DAY);
+            mMinute = cal.get(Calendar.MINUTE);
         }
         return cal.getTimeInMillis();
     }
@@ -154,13 +154,13 @@ public class BaseFragment extends Fragment {
     protected Date updateTime(long millis, boolean deny) {
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(millis);
-        if (myYear > 0 && !deny) cal.set(myYear, myMonth, myDay, myHour, myMinute);
+        if (mYear > 0 && !deny) cal.set(mYear, mMonth, mDay, mHour, mMinute);
         else {
-            myYear = cal.get(Calendar.YEAR);
-            myMonth = cal.get(Calendar.MONTH);
-            myDay = cal.get(Calendar.DAY_OF_MONTH);
-            myHour = cal.get(Calendar.HOUR_OF_DAY);
-            myMinute = cal.get(Calendar.MINUTE);
+            mYear = cal.get(Calendar.YEAR);
+            mMonth = cal.get(Calendar.MONTH);
+            mDay = cal.get(Calendar.DAY_OF_MONTH);
+            mHour = cal.get(Calendar.HOUR_OF_DAY);
+            mMinute = cal.get(Calendar.MINUTE);
         }
         return cal.getTime();
     }

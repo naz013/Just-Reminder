@@ -41,7 +41,6 @@ import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.DateTimeView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ShoppingFragment extends BaseFragment {
@@ -134,11 +133,11 @@ public class ShoppingFragment extends BaseFragment {
                 ViewUtils.hide(shoppingTimeContainer);
             }
             ViewUtils.show(shoppingNoTime);
-            myYear = 0;
-            myMonth = 0;
-            myDay = 0;
-            myHour = 0;
-            myMinute = 0;
+            mYear = 0;
+            mMonth = 0;
+            mDay = 0;
+            mHour = 0;
+            mMinute = 0;
             isShoppingReminder = false;
         });
         if (isDark) shopTimeIcon.setImageResource(R.drawable.ic_alarm_white_24dp);

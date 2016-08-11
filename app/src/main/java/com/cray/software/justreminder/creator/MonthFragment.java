@@ -70,12 +70,12 @@ public class MonthFragment extends BaseFragment implements
     /**
      * Click listener for date fields.
      */
-    public View.OnClickListener dateClick = v -> new DatePickerDialog(getActivity(), MonthFragment.this, myYear, myMonth, myDay).show();
+    public View.OnClickListener dateClick = v -> new DatePickerDialog(getActivity(), MonthFragment.this, mYear, mMonth, mDay).show();
 
     /**
      * Click listener for time fields.
      */
-    public View.OnClickListener timeClick = v -> new TimePickerDialog(getActivity(), MonthFragment.this, myHour, myMinute,
+    public View.OnClickListener timeClick = v -> new TimePickerDialog(getActivity(), MonthFragment.this, mHour, mMinute,
             SharedPrefs.getInstance(getActivity()).getBoolean(Prefs.IS_24_TIME_FORMAT)).show();
 
     public static MonthFragment newInstance(JsonModel item, boolean isDark, boolean hasCalendar,
@@ -135,9 +135,9 @@ public class MonthFragment extends BaseFragment implements
                 SharedPrefs.getInstance(getActivity()).getBoolean(Prefs.IS_24_TIME_FORMAT)));
 
         String dayStr;
-        if (myDay > 28) myDay = 28;
-        if (myDay < 10) dayStr = "0" + myDay;
-        else dayStr = String.valueOf(myDay);
+        if (mDay > 28) mDay = 28;
+        if (mDay < 10) dayStr = "0" + mDay;
+        else dayStr = String.valueOf(mDay);
 
         monthDayField.setText(dayStr);
 
@@ -166,9 +166,9 @@ public class MonthFragment extends BaseFragment implements
             timeField.setText(TimeUtil.getTime(updateTime(eventTime, true),
                     SharedPrefs.getInstance(getActivity()).getBoolean(Prefs.IS_24_TIME_FORMAT)));
 
-            if (myDay == 0) myDay = 1;
-            if (myDay < 10) dayStr = "0" + myDay;
-            else dayStr = String.valueOf(myDay);
+            if (mDay == 0) mDay = 1;
+            if (mDay < 10) dayStr = "0" + mDay;
+            else dayStr = String.valueOf(mDay);
             monthDayField.setText(dayStr);
 
             if (type.matches(Constants.TYPE_MONTHDAY)){
@@ -231,15 +231,15 @@ public class MonthFragment extends BaseFragment implements
                     ViewUtils.expand(monthDayField);
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(System.currentTimeMillis());
-                    myDay = calendar.get(Calendar.DAY_OF_MONTH);
-                    if (myDay > 28) myDay = 1;
+                    mDay = calendar.get(Calendar.DAY_OF_MONTH);
+                    if (mDay > 28) mDay = 1;
                 }
                 break;
             case R.id.lastCheck:
                 if (lastCheck.isChecked()) {
                     dayCheck.setChecked(false);
                     ViewUtils.collapse(monthDayField);
-                    myDay = 0;
+                    mDay = 0;
                 }
                 break;
         }
@@ -247,19 +247,19 @@ public class MonthFragment extends BaseFragment implements
 
     @Override
     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-        myDay = dayOfMonth;
-        myMonth = monthOfYear;
-        myYear = year;
+        mDay = dayOfMonth;
+        mMonth = monthOfYear;
+        mYear = year;
         final Calendar cal = Calendar.getInstance();
         cal.set(year, monthOfYear, dayOfMonth);
 
-        if (myDay > 28 && mActionCallbacks != null)
+        if (mDay > 28 && mActionCallbacks != null)
             mActionCallbacks.showSnackbar(R.string.max_day_supported);
 
         String dayStr;
-        if (myDay > 28) myDay = 28;
-        if (myDay < 10) dayStr = "0" + myDay;
-        else dayStr = String.valueOf(myDay);
+        if (mDay > 28) mDay = 28;
+        if (mDay < 10) dayStr = "0" + mDay;
+        else dayStr = String.valueOf(mDay);
 
         monthDayField.setText(dayStr);
 
@@ -270,8 +270,8 @@ public class MonthFragment extends BaseFragment implements
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        myHour = hourOfDay;
-        myMinute = minute;
+        mHour = hourOfDay;
+        mMinute = minute;
 
         Calendar c = Calendar.getInstance();
         c.set(Calendar.HOUR_OF_DAY, hourOfDay);
