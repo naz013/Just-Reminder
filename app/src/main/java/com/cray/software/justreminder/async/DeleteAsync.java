@@ -50,8 +50,7 @@ public class DeleteAsync extends AsyncTask<String, Void, Integer> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        progressDialog =
-                ProgressDialog.show(mContext, null, mContext.getString(R.string.deleting), false);
+        progressDialog = ProgressDialog.show(mContext, null, mContext.getString(R.string.deleting), false);
     }
 
     @Override

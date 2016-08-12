@@ -30,16 +30,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.cray.software.justreminder.groups.GroupManager;
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.birthdays.AddBirthdayActivity;
 import com.cray.software.justreminder.adapters.FileRecyclerAdapter;
 import com.cray.software.justreminder.async.DeleteAsync;
 import com.cray.software.justreminder.async.UserInfoAsync;
+import com.cray.software.justreminder.birthdays.AddBirthdayActivity;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
@@ -48,6 +46,7 @@ import com.cray.software.justreminder.datas.models.FileModel;
 import com.cray.software.justreminder.datas.models.UserModel;
 import com.cray.software.justreminder.graph.PieGraph;
 import com.cray.software.justreminder.graph.PieSlice;
+import com.cray.software.justreminder.groups.GroupManager;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.interfaces.DataListener;
@@ -225,41 +224,41 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
             if (photoLink != null) {
                 loadImage(photoLink);
             }
-
-            long quota = model.quota;
-            if (quota != 0) {
-                final long availQ = quota - (model.used);
-                final float free = (int) ((availQ * 100.0f) / quota);
-                final float used = (int) ((model.used * 100.0f) / quota);
-
-                cloudContainer.setVisibility(View.VISIBLE);
-                pieChart.removeSlices();
-                PieSlice slice = new PieSlice();
-                final String usTitle = String.format(getString(R.string.used_x), used);
-                slice.setTitle(usTitle);
-                slice.setColor(ViewUtils.getColor(mContext, R.color.redPrimary));
-                slice.setValue(used);
-                pieChart.addSlice(slice);
-                slice = new PieSlice();
-                final String avTitle = String.format(getString(R.string.available_x), free);
-                slice.setTitle(avTitle);
-                slice.setColor(ViewUtils.getColor(mContext, R.color.greenPrimary));
-                slice.setValue(free);
-                pieChart.addSlice(slice);
-
-                usedSpace.setText(String.format(getString(R.string.used_x),
-                        MemoryUtil.humanReadableByte(model.used, false)));
-                freeSpace.setText(String.format(getString(R.string.available_x),
-                        MemoryUtil.humanReadableByte(availQ, false)));
-            }
-
+            showQuota(model);
             cloudCount.setText(String.valueOf(model.count));
+            if (cloudContainer.getVisibility() != View.VISIBLE) {
+                new android.os.Handler().postDelayed(() -> {
+                    ViewUtils.expand(cloudContainer);
+                    isDeleted = false;
+                }, 400);
+            }
+        }
+    }
 
-            new android.os.Handler().postDelayed(() -> {
-                pieChart.setAnimation(new ScaleAnimation(0f, 100f, 0f, 100f, 50f, 50f));
-                pieChart.getAnimation().setDuration(500);
-                pieChart.animate();
-            }, 500);
+    private void showQuota(UserModel model) {
+        long quota = model.quota;
+        if (quota != 0) {
+            final long availQ = quota - (model.used);
+            final float free = (int) ((availQ * 100.0f) / quota);
+            final float used = (int) ((model.used * 100.0f) / quota);
+            cloudContainer.setVisibility(View.VISIBLE);
+            pieChart.removeSlices();
+            PieSlice slice = new PieSlice();
+            final String usTitle = String.format(getString(R.string.used_x), used);
+            slice.setTitle(usTitle);
+            slice.setColor(ViewUtils.getColor(mContext, R.color.redPrimary));
+            slice.setValue(used);
+            pieChart.addSlice(slice);
+            slice = new PieSlice();
+            final String avTitle = String.format(getString(R.string.available_x), free);
+            slice.setTitle(avTitle);
+            slice.setColor(ViewUtils.getColor(mContext, R.color.greenPrimary));
+            slice.setValue(free);
+            pieChart.addSlice(slice);
+            usedSpace.setText(String.format(getString(R.string.used_x),
+                    MemoryUtil.humanReadableByte(model.used, false)));
+            freeSpace.setText(String.format(getString(R.string.available_x),
+                    MemoryUtil.humanReadableByte(availQ, false)));
         }
     }
 
@@ -270,36 +269,33 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
             Picasso.with(mContext).load(image).transform(new CropCircleTransformation()).into(userPhoto);
             userPhoto.setVisibility(View.VISIBLE);
         } else {
-            new Thread(() -> {
-                try {
-                    Bitmap bitmap = Picasso.with(mContext)
-                            .load(photoLink)
-                            .get();
-                    try {
-                        File dir1 = MemoryUtil.getImagesDir();
-                        File image1 = new File(dir1, FILE_NAME);
-                        if (image1.createNewFile()) {
-                            FileOutputStream stream = new FileOutputStream(image1);
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                            stream.close();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            Picasso.with(mContext).load(photoLink).transform(new CropCircleTransformation()).into(userPhoto);
+            userPhoto.setVisibility(View.VISIBLE);
+            saveImageFile(photoLink);
+        }
+    }
 
-                mContext.runOnUiThread(() -> {
+    private void saveImageFile(String photoLink) {
+        new Thread(() -> {
+            try {
+                Bitmap bitmap = Picasso.with(mContext)
+                        .load(photoLink)
+                        .get();
+                try {
                     File dir1 = MemoryUtil.getImagesDir();
                     File image1 = new File(dir1, FILE_NAME);
-                    if (image1.exists()) {
-                        Picasso.with(mContext).load(image1).into(userPhoto);
-                        userPhoto.setVisibility(View.VISIBLE);
+                    if (image1.createNewFile()) {
+                        FileOutputStream stream = new FileOutputStream(image1);
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                        stream.close();
                     }
-                });
-            }).start();
-        }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     @Override
