@@ -24,4 +24,6 @@ dependencies {
     compile 'com.darwinsys:hirondelle-date4j:1.5.1'
     compile 'com.android.support:cardview-v7:24.1.1'
     compile 'com.android.support:recyclerview-v7:24.1.1'
+    compile 'com.flaviofaria:kenburnsview:1.0.7'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }

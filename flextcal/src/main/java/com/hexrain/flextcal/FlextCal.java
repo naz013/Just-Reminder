@@ -32,7 +32,10 @@ import android.widget.TextView;
 
 import com.antonyt.infiniteviewpager.InfinitePagerAdapter;
 import com.antonyt.infiniteviewpager.InfiniteViewPager;
+import com.flaviofaria.kenburnsview.KenBurnsView;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -111,6 +114,7 @@ public class FlextCal extends Fragment {
      */
     private TextView monthTitleTextView;
     private ArrayList<DateGridFragment> fragments;
+    private KenBurnsView image;
 
     /**
      * caldroidData belongs to Caldroid
@@ -289,6 +293,15 @@ public class FlextCal extends Fragment {
         monthTitleTextView.setText(monthTitle);
         if (caldroidListener != null) {
             caldroidListener.onMonthSelected(month);
+        }
+
+        if (image != null && enableImage) {
+            ImageCheck check = ImageCheck.getInstance();
+            if (check.isImage(month)){
+                Picasso.with(getActivity()).load(new File(check.getImage(month))).resize(1280, 768).into(image);
+            } else {
+                new LoadAsync(getActivity(), month).execute();
+            }
         }
     }
 
@@ -476,6 +489,7 @@ public class FlextCal extends Fragment {
             pagerCard.setCardBackgroundColor(white);
             titleCard.setCardBackgroundColor(white);
         }
+        image = (KenBurnsView) view.findViewById(R.id.imageView);
         monthTitleTextView = (TextView) view.findViewById(R.id.monthYear);
         GridView weekdayGridView = (GridView) view.findViewById(R.id.weekday_gridview);
         WeekdayArrayAdapter weekdaysAdapter = getNewWeekdayAdapter();

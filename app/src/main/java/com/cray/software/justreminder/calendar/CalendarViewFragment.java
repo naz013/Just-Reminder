@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import java.util.Date;
 
 public class CalendarViewFragment extends Fragment {
 
+    private static final String TAG = "CalendarViewFragment";
     private Activity mContext;
     private DateCallback mCallback;
     private boolean isImage;
@@ -86,6 +88,7 @@ public class CalendarViewFragment extends Fragment {
     public void onResume() {
         super.onResume();
         showCalendar();
+        Log.d(TAG, "onResume: ");
     }
 
     @Override
@@ -107,6 +110,7 @@ public class CalendarViewFragment extends Fragment {
             args.putInt(FlextCal.START_DAY_OF_WEEK, FlextCal.MONDAY);
         }
         args.putBoolean(FlextCal.DARK_THEME, cSetter.isDark());
+        args.putBoolean(FlextCal.ENABLE_IMAGES, SharedPrefs.getInstance(mContext).getBoolean(Prefs.CALENDAR_IMAGE));
         calendarView.setArguments(args);
         calendarView.setBackgroundForToday(cSetter.getColor(cSetter.colorCurrentCalendar()));
         replace(calendarView, ScreenManager.ACTION_CALENDAR);

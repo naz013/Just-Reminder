@@ -167,7 +167,6 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'com.github.castorflex.smoothprogressbar:library-circular:1.2.0'
-    compile 'com.flaviofaria:kenburnsview:1.0.7'
 }
 
 apply plugin: 'com.google.gms.google-services'
