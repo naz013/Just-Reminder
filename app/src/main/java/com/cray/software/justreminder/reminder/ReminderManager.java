@@ -227,8 +227,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 uuId = mItem.getUuId();
                 readReminder();
             } else {
-                Messages.toast(this, getString(R.string.something_went_wrong));
-                finish();
+                errorClose();
             }
         } else {
             mItem = new ReminderItem();
@@ -416,10 +415,12 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 }
             }
         } else {
-            Messages.toast(this, getString(R.string.something_went_wrong));
-            finish();
+            errorClose();
         }
 
+        if (type == null) {
+            errorClose();
+        }
         if (type.matches(Constants.TYPE_REMINDER)) {
             spinner.setSelection(0);
         } else if (type.matches(Constants.TYPE_TIME)){
@@ -449,6 +450,11 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         } else {
             spinner.setSelection(0);
         }
+    }
+
+    private void errorClose() {
+        Messages.toast(this, getString(R.string.something_went_wrong));
+        finish();
     }
 
     private void showLimit() {
