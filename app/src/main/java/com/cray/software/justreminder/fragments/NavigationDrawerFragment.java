@@ -169,24 +169,25 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             disableItem(ScreenManager.FRAGMENT_TEMPLATES);
         });
         reloadItems();
+        loadAds(rootView);
+        loadMenu();
+        return rootView;
+    }
 
+    private void loadAds(View view) {
         if (!Module.isPro()){
-            RelativeLayout ads_container = (RelativeLayout) rootView.findViewById(R.id.ads_container);
-            ImageView basket = (ImageView) rootView.findViewById(R.id.basket);
+            RelativeLayout ads_container = (RelativeLayout) view.findViewById(R.id.ads_container);
+            ImageView basket = (ImageView) view.findViewById(R.id.basket);
             if (ColorSetter.getInstance(mContext).isDark()){
                 basket.setImageResource(R.drawable.market_icon_white);
             } else {
                 basket.setImageResource(R.drawable.market_icon);
             }
-
             if (!isAppInstalled("com.cray.software.justreminderpro")){
                 ads_container.setVisibility(View.VISIBLE);
                 ads_container.setOnClickListener(v -> selectItem(ScreenManager.MARKET, false));
             }
         }
-
-        loadMenu();
-        return rootView;
     }
 
     private void reloadItems(){

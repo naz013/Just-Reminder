@@ -280,12 +280,6 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         }
     }
 
-    private void collapseViews() {
-        if (isNoteVisible()) {
-            ViewUtils.hideReveal(noteCard);
-        }
-    }
-
     @Override
     public void onTitleChanged(String string) {
         if (string != null) {
