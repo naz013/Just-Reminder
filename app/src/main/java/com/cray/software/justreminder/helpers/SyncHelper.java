@@ -727,7 +727,7 @@ public class SyncHelper {
             id = decrypt(jsonObj.getString(key));
         }
         int contactId = 0;
-        if (id != null) {
+        if (id != null && !id.matches("null")) {
             contactId = Integer.parseInt(id);
         }
         int day = 0;
