@@ -21,7 +21,7 @@ public class FileConfig {
     /**
      * File extensions for reminder.
      */
-    public static final String FILE_NAME_REMINDER = ".json";
+    public static final String FILE_NAME_REMINDER = ".event";
 
     /**
      * File extension for note.

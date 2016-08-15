@@ -163,7 +163,7 @@ public class GDriveHelper {
                     fileMetadata.setName(file.getName());
                     fileMetadata.setDescription("Reminder Backup");
                     fileMetadata.setParents(Collections.singletonList(folderId));
-                    FileContent mediaContent = new FileContent("application/json", file);
+                    FileContent mediaContent = new FileContent("text/plain", file);
                     driveService.files().create(fileMetadata, mediaContent)
                             .setFields("id")
                             .execute();
@@ -279,7 +279,7 @@ public class GDriveHelper {
             File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + Constants.DIR_SD_GDRIVE_TMP);
             Drive.Files.List request;
             try {
-                request = driveService.files().list().setQ("mimeType = 'application/json'").setFields("nextPageToken, files"); // .setQ("mimeType=\"text/plain\"");
+                request = driveService.files().list().setQ("mimeType = 'text/plain'").setFields("nextPageToken, files"); // .setQ("mimeType=\"text/plain\"");
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
@@ -498,6 +498,7 @@ public class GDriveHelper {
     }
 
     public void deleteReminderFile(String id){
+        Log.d(TAG, "deleteReminderFile: ");
         if (isLinked()) {
             authorize();
             try {
@@ -513,6 +514,7 @@ public class GDriveHelper {
      * @param title file name.
      */
     public void deleteReminderFileByName(String title){
+        Log.d(TAG, "deleteReminderFileByName: ");
         if (title != null) {
             String[] strs = title.split(".");
             if (strs.length != 0) {
@@ -523,7 +525,7 @@ public class GDriveHelper {
             authorize();
             Drive.Files.List request = null;
             try {
-                request = driveService.files().list().setQ("mimeType = 'application/json'");
+                request = driveService.files().list().setQ("mimeType = 'text/plain'");
             } catch (IOException e) {
                 e.printStackTrace();
             }
