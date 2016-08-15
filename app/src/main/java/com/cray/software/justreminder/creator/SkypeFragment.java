@@ -151,6 +151,9 @@ public class SkypeFragment extends BaseFragment implements
         dateView.setListener(new DateTimeView.OnSelectListener() {
             @Override
             public void onDateSelect(long mills, int day, int month, int year) {
+                mYear = year;
+                mMonth = month;
+                mDay = day;
                 if (mCallbacks != null) {
                     mCallbacks.onDateSelect(mills, day, month, year);
                 }
@@ -159,6 +162,8 @@ public class SkypeFragment extends BaseFragment implements
 
             @Override
             public void onTimeSelect(long mills, int hour, int minute) {
+                mHour = hour;
+                mMinute = minute;
                 if (mCallbacks != null) {
                     mCallbacks.onTimeSelect(mills, hour, minute);
                 }
