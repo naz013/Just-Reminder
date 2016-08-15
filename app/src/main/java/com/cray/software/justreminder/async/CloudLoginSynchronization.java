@@ -72,18 +72,18 @@ public class CloudLoginSynchronization extends AsyncTask<Void, String, Void> {
         if (MemoryUtil.isSdPresent()) {
             IOHelper ioHelper = new IOHelper(mContext);
             publishProgress(mContext.getString(R.string.syncing_groups));
-            ioHelper.restoreGroup(true);
+            ioHelper.restoreGroup(true, false);
             checkGroups();
             //import reminders
             publishProgress(mContext.getString(R.string.syncing_reminders));
-            ioHelper.restoreReminder(true);
+            ioHelper.restoreReminder(true, false);
             //import notes
             publishProgress(mContext.getString(R.string.syncing_notes));
-            ioHelper.restoreNote(true);
+            ioHelper.restoreNote(true, false);
             //import birthdays
             if (isChecked) {
                 publishProgress(mContext.getString(R.string.syncing_birthdays));
-                ioHelper.restoreBirthday(true);
+                ioHelper.restoreBirthday(true, false);
             }
         }
         //getting Google Tasks

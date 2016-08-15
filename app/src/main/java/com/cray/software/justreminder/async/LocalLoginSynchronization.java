@@ -61,18 +61,18 @@ public class LocalLoginSynchronization extends AsyncTask<Void, String, Void> {
     protected Void doInBackground(Void... params) {
         IOHelper ioHelper = new IOHelper(mContext);
         publishProgress(mContext.getString(R.string.syncing_groups));
-        ioHelper.restoreGroup(false);
+        ioHelper.restoreGroup(false, false);
         checkGroups();
         //import reminders
         publishProgress(mContext.getString(R.string.syncing_reminders));
-        ioHelper.restoreReminder(false);
+        ioHelper.restoreReminder(false, false);
         //import notes
         publishProgress(mContext.getString(R.string.syncing_notes));
-        ioHelper.restoreNote(false);
+        ioHelper.restoreNote(false, false);
         //import birthdays
         if (isChecked) {
             publishProgress(mContext.getString(R.string.syncing_birthdays));
-            ioHelper.restoreBirthday(false);
+            ioHelper.restoreBirthday(false, false);
         }
         return null;
     }

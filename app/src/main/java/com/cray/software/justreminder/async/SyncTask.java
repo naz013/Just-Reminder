@@ -77,7 +77,7 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
     @Override
     protected Boolean doInBackground(Void... params) {
         IOHelper ioHelper = new IOHelper(mContext);
-        ioHelper.restoreGroup(true);
+        ioHelper.restoreGroup(true, true);
         ioHelper.backupGroup(true);
         GroupHelper helper = GroupHelper.getInstance(mContext);
         List<GroupItem> list = helper.getAll();
@@ -95,21 +95,21 @@ public class SyncTask extends AsyncTask<Void, String, Boolean> {
         }
         //export & import reminders
         publishProgress(mContext.getString(R.string.syncing_reminders));
-        ioHelper.restoreReminder(true);
+        ioHelper.restoreReminder(true, true);
         ioHelper.backupReminder(true);
 
         //export & import notes
         SharedPrefs prefs = SharedPrefs.getInstance(mContext);
         if (prefs.getBoolean(Prefs.SYNC_NOTES)) {
             publishProgress(mContext.getString(R.string.syncing_notes));
-            ioHelper.restoreNote(true);
+            ioHelper.restoreNote(true, true);
             ioHelper.backupNote(true);
         }
 
         //export & import birthdays
         if (prefs.getBoolean(Prefs.SYNC_BIRTHDAYS)) {
             publishProgress(mContext.getString(R.string.syncing_birthdays));
-            ioHelper.restoreBirthday(true);
+            ioHelper.restoreBirthday(true, true);
             ioHelper.backupBirthday(true);
         }
         return true;

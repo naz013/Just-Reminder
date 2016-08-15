@@ -22,12 +22,12 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.cloud.DropboxHelper;
 import com.cray.software.justreminder.cloud.GDriveHelper;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 
 import org.json.JSONException;
 
@@ -60,30 +60,23 @@ public class SyncNotesAsync extends AsyncTask<Void, Void, Boolean> {
     protected Boolean doInBackground(Void... params) {
         SyncHelper sHelp = new SyncHelper(mContext);
         try {
-            sHelp.noteToJson();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        try {
             sHelp.noteFromJson(null, null);
+            sHelp.noteToJson();
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         boolean isConnected = SyncHelper.isConnected(mContext);
         if (isConnected) {
+            new DropboxHelper(mContext).downloadNote();
             new DropboxHelper(mContext).uploadNote();
             try {
+                new GDriveHelper(mContext).downloadNote(false);
                 new GDriveHelper(mContext).saveNoteToDrive();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            new DropboxHelper(mContext).downloadNote();
-            try {
-                new GDriveHelper(mContext).downloadNote();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
         }
         return true;
     }

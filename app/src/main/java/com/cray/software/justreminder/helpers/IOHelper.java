@@ -108,7 +108,7 @@ public class IOHelper {
      * Restore all groups from backup files.
      * @param isCloud restore from cloud.
      */
-    public void restoreGroup(boolean isCloud){
+    public void restoreGroup(boolean isCloud, boolean delete){
         File dir = MemoryUtil.getGroupsDir();
         if (dir != null && dir.exists()) {
             File[] files = dir.listFiles();
@@ -123,7 +123,7 @@ public class IOHelper {
         if (isConnected && isCloud) {
             new DropboxHelper(mContext).downloadGroup();
             try {
-                new GDriveHelper(mContext).downloadGroup();
+                new GDriveHelper(mContext).downloadGroup(delete);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -154,7 +154,7 @@ public class IOHelper {
      * Restore all reminder from backup files.
      * @param isCloud restore from cloud.
      */
-    public void restoreReminder(boolean isCloud){
+    public void restoreReminder(boolean isCloud, boolean delete){
         try {
             new SyncHelper(mContext).reminderFromJson(null);
         } catch (JSONException e) {
@@ -163,7 +163,7 @@ public class IOHelper {
         if (isConnected && isCloud) {
             new DropboxHelper(mContext).downloadReminder();
             try {
-                new GDriveHelper(mContext).downloadReminder();
+                new GDriveHelper(mContext).downloadReminder(delete);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -194,7 +194,7 @@ public class IOHelper {
      * Restore all notes from backup files.
      * @param isCloud restore from cloud.
      */
-    public void restoreNote(boolean isCloud){
+    public void restoreNote(boolean isCloud, boolean delete){
         try {
             new SyncHelper(mContext).noteFromJson(null, null);
         } catch (JSONException e) {
@@ -203,7 +203,7 @@ public class IOHelper {
         if (isConnected && isCloud) {
             new DropboxHelper(mContext).downloadNote();
             try {
-                new GDriveHelper(mContext).downloadNote();
+                new GDriveHelper(mContext).downloadNote(delete);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -234,7 +234,7 @@ public class IOHelper {
      * Restore all birthdays from backup files.
      * @param isCloud restore from cloud.
      */
-    public void restoreBirthday(boolean isCloud){
+    public void restoreBirthday(boolean isCloud, boolean delete){
         try {
             new SyncHelper(mContext).birthdayFromJson(null);
         } catch (JSONException e) {
@@ -243,7 +243,7 @@ public class IOHelper {
         if (isConnected && isCloud) {
             new DropboxHelper(mContext).downloadBirthday();
             try {
-                new GDriveHelper(mContext).downloadBirthday();
+                new GDriveHelper(mContext).downloadBirthday(delete);
             } catch (IOException e) {
                 e.printStackTrace();
             }

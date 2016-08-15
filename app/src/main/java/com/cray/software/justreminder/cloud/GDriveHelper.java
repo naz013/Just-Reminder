@@ -271,7 +271,7 @@ public class GDriveHelper {
      * Download on SD Card all reminder backup files stored on Google Drive.
      * @throws IOException
      */
-    public void downloadReminder() throws IOException {
+    public void downloadReminder(boolean deleteBackup) throws IOException {
         Log.d(TAG, "downloadReminder: ");
         if (isLinked()) {
             authorize();
@@ -318,7 +318,7 @@ public class GDriveHelper {
                         if (file.exists()) {
                             file.delete();
                         }
-                        deleteReminderFile(f.getId());
+                        if (deleteBackup) deleteReminderFile(f.getId());
                     }
                 }
                 request.setPageToken(files.getNextPageToken());
@@ -330,7 +330,7 @@ public class GDriveHelper {
      * Download on SD Card all note backup files stored on Google Drive.
      * @throws IOException
      */
-    public void downloadNote() throws IOException {
+    public void downloadNote(boolean deleteBackup) throws IOException {
         if (isLinked()) {
             authorize();
             File sdPath = Environment.getExternalStorageDirectory();
@@ -375,7 +375,7 @@ public class GDriveHelper {
                         if (file.exists()) {
                             file.delete();
                         }
-                        deleteNoteFile(f.getId());
+                        if (deleteBackup) deleteNoteFile(f.getId());
                     }
                 }
                 request.setPageToken(files.getNextPageToken());
@@ -387,7 +387,7 @@ public class GDriveHelper {
      * Download on SD Card all group backup files stored on Google Drive.
      * @throws IOException
      */
-    public void downloadGroup() throws IOException {
+    public void downloadGroup(boolean deleteBackup) throws IOException {
         if (isLinked()) {
             authorize();
             File sdPath = Environment.getExternalStorageDirectory();
@@ -432,7 +432,7 @@ public class GDriveHelper {
                         if (file.exists()) {
                             file.delete();
                         }
-                        deleteGroupFile(f.getId());
+                        if (deleteBackup) deleteGroupFile(f.getId());
                     }
                 }
                 request.setPageToken(files.getNextPageToken());
@@ -444,7 +444,7 @@ public class GDriveHelper {
      * Download on SD Card all birthday backup files stored on Google Drive.
      * @throws IOException
      */
-    public void downloadBirthday() throws IOException {
+    public void downloadBirthday(boolean deleteBackup) throws IOException {
         if (isLinked()) {
             authorize();
             File sdPath = Environment.getExternalStorageDirectory();
@@ -489,7 +489,7 @@ public class GDriveHelper {
                         if (file.exists()) {
                             file.delete();
                         }
-                        deleteBirthdayFile(f.getId());
+                        if (deleteBackup) deleteBirthdayFile(f.getId());
                     }
                 }
                 request.setPageToken(files.getNextPageToken());

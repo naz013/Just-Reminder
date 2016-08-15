@@ -144,7 +144,7 @@ public class SyncHelper {
             jObjectData.put(encrypt(Constants.Contacts.COLUMN_NAME), name);
             jObjectData.put(encrypt(Constants.Contacts.COLUMN_BIRTHDATE), encrypt(item.getDate()));
             jObjectData.put(encrypt(Constants.Contacts.COLUMN_NUMBER), number != null ? encrypt(number) : encrypt(" "));
-            jObjectData.put(encrypt(Constants.Contacts.COLUMN_CONTACT_ID), encrypt(String.valueOf(item.getUuId())));
+            jObjectData.put(encrypt(Constants.Contacts.COLUMN_CONTACT_ID), encrypt(String.valueOf(item.getContactId())));
 
             File dir = MemoryUtil.getBDir();
             if (dir != null) {
