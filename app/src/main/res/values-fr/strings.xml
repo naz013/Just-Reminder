@@ -514,7 +514,7 @@
     <string name="no_contacts_found">Aucun contact trouvé</string>
     <string name="no_calls_found">L\'histoire est vide</string>
     <string name="sending_message">Envoyer le message</string>
-    <string name="all_permissions_are_enabled">All permissions are enabled</string>
-    <string name="stock_android_calendar_not_found">Stock Android calendar not found</string>
-    <string name="delete_this_reminder">Delete this reminder?</string>
+    <string name="all_permissions_are_enabled">Toutes les autorisations sont activées</string>
+    <string name="stock_android_calendar_not_found">Par défaut calendrier Android introuvable</string>
+    <string name="delete_this_reminder">Supprimer ce rappel?</string>
 </resources>
