@@ -517,4 +517,6 @@
     <string name="all_permissions_are_enabled">Toutes les autorisations sont activées</string>
     <string name="stock_android_calendar_not_found">Par défaut calendrier Android introuvable</string>
     <string name="delete_this_reminder">Supprimer ce rappel?</string>
+    <string name="main_image">Main image</string>
+    <string name="default_image">Default image</string>
 </resources>

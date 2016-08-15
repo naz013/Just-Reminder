@@ -46,6 +46,7 @@ import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.places.PlacesHelper;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.templates.TemplateHelper;
+import com.cray.software.justreminder.theme.RetrofitBuilder;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.squareup.picasso.Picasso;
@@ -191,16 +192,25 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
     }
 
     private void reloadItems(){
-        appNameBanner.setTextColor(ViewUtils.getColor(mContext, R.color.whitePrimary));
-        DisplayMetrics metrics = new DisplayMetrics();
-        mContext.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        double width = metrics.widthPixels * 0.5;
-        int height = QuickReturnUtils.dp2px(mContext, 275);
-        Picasso.with(mContext)
-                .load(R.drawable.photo_main)
-                .resize((int) width, height)
-                .into(image);
-        image.setVisibility(View.VISIBLE);
+        String path = SharedPrefs.getInstance(mContext).getString(Prefs.MAIN_IMAGE_PATH);
+        long id = SharedPrefs.getInstance(mContext).getLong(Prefs.MAIN_IMAGE_ID);
+        if (id != 0 || !path.matches("")) {
+            appNameBanner.setTextColor(ViewUtils.getColor(mContext, R.color.whitePrimary));
+        }
+        if (id != 0) {
+            path = RetrofitBuilder.getImageLink(id);
+        }
+        if (!path.isEmpty()) {
+            DisplayMetrics metrics = new DisplayMetrics();
+            mContext.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            double width = metrics.widthPixels * 0.5;
+            int height = QuickReturnUtils.dp2px(mContext, 275);
+            Picasso.with(mContext)
+                    .load(path)
+                    .resize((int) width, height)
+                    .into(image);
+            image.setVisibility(View.VISIBLE);
+        } else image.setVisibility(View.GONE);
         if (new GTasksHelper(mContext).isLinked()) {
             googleTasks.setVisibility(View.VISIBLE);
         }

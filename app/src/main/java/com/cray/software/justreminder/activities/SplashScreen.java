@@ -62,6 +62,7 @@ import com.cray.software.justreminder.services.AlarmReceiver;
 import com.cray.software.justreminder.services.CheckPosition;
 import com.cray.software.justreminder.services.GeolocationService;
 import com.cray.software.justreminder.tests.TestActivity;
+import com.cray.software.justreminder.theme.MainImageActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -108,7 +109,6 @@ public class SplashScreen extends AppCompatActivity {
             uiEd.putInt(Prefs.TEXT_SIZE, 4);
             uiEd.putInt(Prefs.VOLUME, 25);
             uiEd.putInt(Prefs.LAST_CALENDAR_VIEW, 1);
-
             String localeCheck = Locale.getDefault().toString().toLowerCase();
             int locale;
             if (localeCheck.startsWith("uk")) {
@@ -116,15 +116,13 @@ public class SplashScreen extends AppCompatActivity {
             } else if (localeCheck.startsWith("ru")) {
                 locale = 1;
             } else locale = 0;
-
             uiEd.putInt(Prefs.VOICE_LOCALE, locale);
             uiEd.putString(Prefs.TIME_MORNING, "7:0");
             uiEd.putString(Prefs.TIME_DAY, "12:0");
             uiEd.putString(Prefs.TIME_EVENING, "19:0");
             uiEd.putString(Prefs.TIME_NIGHT, "23:0");
-
             uiEd.putString(Prefs.TTS_LOCALE, Language.ENGLISH);
-
+            uiEd.putString(Prefs.MAIN_IMAGE_PATH, MainImageActivity.DEFAULT_PHOTO);
             uiEd.putInt(Prefs.START_DAY, 1);
             uiEd.putInt(Prefs.DAYS_TO_BIRTHDAY, 0);
             uiEd.putInt(Prefs.NOTIFICATION_REPEAT_INTERVAL, 15);
@@ -135,6 +133,7 @@ public class SplashScreen extends AppCompatActivity {
             uiEd.putInt(Prefs.AUTO_BACKUP_INTERVAL, 6);
             uiEd.putInt(Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL, 6);
             uiEd.putInt(Prefs.SOUND_STREAM, 5);
+            uiEd.putLong(Prefs.MAIN_IMAGE_ID, 0);
             uiEd.putBoolean(Prefs.TRACKING_NOTIFICATION, true);
             uiEd.putBoolean(Prefs.RATE_SHOW, false);
             uiEd.putBoolean(Prefs.IS_CREATE_SHOWN, false);
@@ -169,7 +168,6 @@ public class SplashScreen extends AppCompatActivity {
             uiEd.putBoolean(Prefs.SYSTEM_VOLUME, false);
             uiEd.putBoolean(Prefs.INCREASING_VOLUME, false);
             uiEd.putBoolean(Prefs.DAY_NIGHT, false);
-
             if (Module.isPro()) {
                 uiEd.putBoolean(Prefs.BIRTHDAY_LED_STATUS, false);
                 uiEd.putBoolean(Prefs.LED_STATUS, true);
@@ -545,6 +543,12 @@ public class SplashScreen extends AppCompatActivity {
         }
         if (!prefs.hasKey(Prefs.INCREASING_VOLUME)){
             prefs.putBoolean(Prefs.INCREASING_VOLUME, false);
+        }
+        if (!prefs.hasKey(Prefs.MAIN_IMAGE_ID)){
+            prefs.putLong(Prefs.MAIN_IMAGE_ID, 0);
+        }
+        if (!prefs.hasKey(Prefs.MAIN_IMAGE_PATH)){
+            prefs.putString(Prefs.MAIN_IMAGE_PATH, MainImageActivity.DEFAULT_PHOTO);
         }
 
         if (Module.isPro()) {

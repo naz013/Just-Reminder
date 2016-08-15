@@ -29,7 +29,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.activities.ThemerDialog;
+import com.cray.software.justreminder.theme.MainImageActivity;
+import com.cray.software.justreminder.theme.ThemerDialog;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -88,6 +89,9 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
 
         TextView screenOrientation = (TextView) rootView.findViewById(R.id.screenOrientation);
         screenOrientation.setOnClickListener(this);
+
+        TextView mainImagePrefs = (TextView) rootView.findViewById(R.id.mainImagePrefs);
+        mainImagePrefs.setOnClickListener(this);
 
         wearPrefs = (PrefsView) rootView.findViewById(R.id.wearPrefs);
         wearPrefs.setChecked(sPrefs.getBoolean(Prefs.WEAR_SERVICE));
@@ -237,7 +241,14 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
             case R.id.screenOrientation:
                 Dialogues.orientationDialog(getActivity(), this);
                 break;
+            case R.id.mainImagePrefs:
+                changeImage();
+                break;
         }
+    }
+
+    private void changeImage() {
+        getActivity().startActivity(new Intent(getActivity(), MainImageActivity.class));
     }
 
     @Override

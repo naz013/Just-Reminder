@@ -517,4 +517,6 @@
     <string name="all_permissions_are_enabled">Toate permisiunile sunt activate</string>
     <string name="stock_android_calendar_not_found">Default Calendar Android nu a fost găsit</string>
     <string name="delete_this_reminder">Șterge acest memento?</string>
+    <string name="main_image">Main image</string>
+    <string name="default_image">Default image</string>
 </resources>

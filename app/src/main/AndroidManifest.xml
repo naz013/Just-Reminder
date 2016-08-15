@@ -238,7 +238,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.ThemerDialog"
+            android:name=".theme.ThemerDialog"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".theme.MainImageActivity"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />

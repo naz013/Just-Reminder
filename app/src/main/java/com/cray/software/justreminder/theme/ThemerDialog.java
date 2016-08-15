@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.cray.software.justreminder.activities;
+package com.cray.software.justreminder.theme;
 
 import android.os.Bundle;
 import android.support.annotation.ColorRes;

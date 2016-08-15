@@ -517,4 +517,6 @@
     <string name="all_permissions_are_enabled">सभी अनुमतियाँ सक्षम हैं</string>
     <string name="stock_android_calendar_not_found">डिफ़ॉल्ट Android कैलेंडर नहीं मिला</string>
     <string name="delete_this_reminder">इस अनुस्मारक मिटाना चाहते हैं?</string>
+    <string name="main_image">Main image</string>
+    <string name="default_image">Default image</string>
 </resources>

@@ -517,4 +517,6 @@
     <string name="all_permissions_are_enabled">Jsou povolena všechna oprávnění</string>
     <string name="stock_android_calendar_not_found">Výchozí kalendář Android nenalezen</string>
     <string name="delete_this_reminder">Smazat toto připomenutí?</string>
+    <string name="main_image">Main image</string>
+    <string name="default_image">Default image</string>
 </resources>

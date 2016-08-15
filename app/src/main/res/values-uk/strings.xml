@@ -533,4 +533,6 @@
     <string name="all_permissions_are_enabled">Всі дозволи включені</string>
     <string name="stock_android_calendar_not_found">За замовчуванням Android календар не знайдено</string>
     <string name="delete_this_reminder">Видалити це нагадування?</string>
+    <string name="main_image">Main image</string>
+    <string name="default_image">Default image</string>
 </resources>
