@@ -37,6 +37,8 @@ import com.cray.software.justreminder.reminder.json.JShopping;
 import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.roboto_views.RoboSwitchCompat;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
+import com.cray.software.justreminder.theme.RetrofitBuilder;
+import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -316,5 +318,15 @@ public class BindingMehods {
         } else {
             textView.setVisibility(View.GONE);
         }
+    }
+
+    @BindingAdapter("loadPhoto")
+    public static void loadPhoto(ImageView imageView, long id) {
+        boolean isDark = ColorSetter.getInstance(imageView.getContext()).isDark();
+        String url = RetrofitBuilder.getImageLink(id, 800, 480);
+        Picasso.with(imageView.getContext())
+                .load(url)
+                .error(isDark ? R.drawable.ic_broken_image_white : R.drawable.ic_broken_image)
+                .into(imageView);
     }
 }

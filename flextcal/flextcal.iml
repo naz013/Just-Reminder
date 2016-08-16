@@ -106,7 +106,7 @@
     <orderEntry type="library" exported="" name="support-v4-24.1.1" level="project" />
     <orderEntry type="library" exported="" name="picasso-2.5.2" level="project" />
     <orderEntry type="library" exported="" name="cardview-v7-24.1.1" level="project" />
-    <orderEntry type="library" exported="" name="support-annotations-24.1.1" level="project" />
     <orderEntry type="library" exported="" name="kenburnsview-1.0.7" level="project" />
+    <orderEntry type="library" exported="" name="support-annotations-24.1.1" level="project" />
   </component>
 </module>

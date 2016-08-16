@@ -28,7 +28,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,8 +45,6 @@ import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.places.PlacesHelper;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.templates.TemplateHelper;
-import com.cray.software.justreminder.theme.RetrofitBuilder;
-import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.squareup.picasso.Picasso;
 
@@ -193,21 +190,12 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 
     private void reloadItems(){
         String path = SharedPrefs.getInstance(mContext).getString(Prefs.MAIN_IMAGE_PATH);
-        long id = SharedPrefs.getInstance(mContext).getLong(Prefs.MAIN_IMAGE_ID);
-        if (id != 0 || !path.matches("")) {
+        if (!path.matches("")) {
             appNameBanner.setTextColor(ViewUtils.getColor(mContext, R.color.whitePrimary));
         }
-        if (id != 0) {
-            path = RetrofitBuilder.getImageLink(id);
-        }
         if (!path.isEmpty()) {
-            DisplayMetrics metrics = new DisplayMetrics();
-            mContext.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-            double width = metrics.widthPixels * 0.5;
-            int height = QuickReturnUtils.dp2px(mContext, 275);
             Picasso.with(mContext)
                     .load(path)
-                    .resize((int) width, height)
                     .into(image);
             image.setVisibility(View.VISIBLE);
         } else image.setVisibility(View.GONE);

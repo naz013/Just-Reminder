@@ -1,5 +1,9 @@
 package com.cray.software.justreminder.theme;
 
+import android.graphics.Rect;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+
 /**
  * Copyright 2016 Nazar Suhovich
  * <p>
@@ -15,6 +19,20 @@ package com.cray.software.justreminder.theme;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public interface ImageSelectListener {
-    void onItemSelect(int position, ImageItem item);
+public class GridMarginDecoration extends RecyclerView.ItemDecoration {
+
+    private int space;
+
+    public GridMarginDecoration(int space) {
+        this.space = space;
+    }
+
+    @Override
+    public void getItemOffsets(Rect outRect, View view,
+                               RecyclerView parent, RecyclerView.State state) {
+        outRect.left = space;
+        outRect.top = space;
+        outRect.right = space;
+        outRect.bottom = space;
+    }
 }

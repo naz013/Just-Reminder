@@ -133,7 +133,7 @@ public class SplashScreen extends AppCompatActivity {
             uiEd.putInt(Prefs.AUTO_BACKUP_INTERVAL, 6);
             uiEd.putInt(Prefs.AUTO_CHECK_FOR_EVENTS_INTERVAL, 6);
             uiEd.putInt(Prefs.SOUND_STREAM, 5);
-            uiEd.putLong(Prefs.MAIN_IMAGE_ID, 0);
+            uiEd.putInt(Prefs.MAIN_IMAGE_ID, -1);
             uiEd.putBoolean(Prefs.TRACKING_NOTIFICATION, true);
             uiEd.putBoolean(Prefs.RATE_SHOW, false);
             uiEd.putBoolean(Prefs.IS_CREATE_SHOWN, false);
@@ -545,7 +545,7 @@ public class SplashScreen extends AppCompatActivity {
             prefs.putBoolean(Prefs.INCREASING_VOLUME, false);
         }
         if (!prefs.hasKey(Prefs.MAIN_IMAGE_ID)){
-            prefs.putLong(Prefs.MAIN_IMAGE_ID, 0);
+            prefs.putInt(Prefs.MAIN_IMAGE_ID, -1);
         }
         if (!prefs.hasKey(Prefs.MAIN_IMAGE_PATH)){
             prefs.putString(Prefs.MAIN_IMAGE_PATH, MainImageActivity.DEFAULT_PHOTO);

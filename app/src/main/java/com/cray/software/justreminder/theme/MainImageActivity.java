@@ -18,10 +18,12 @@ package com.cray.software.justreminder.theme;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
+import android.widget.RadioGroup;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Prefs;
@@ -31,14 +33,79 @@ import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.roboto_views.RoboRadioButton;
 import com.cray.software.justreminder.utils.ViewUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MainImageActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
     public static final String DEFAULT_PHOTO = "https://hd.unsplash.com/photo-1460500063983-994d4c27756c";
     private static final String NONE_PHOTO = "";
     private static final String TAG = "MainImageActivity";
+    private static final int START_SIZE = 50;
 
     private Toolbar toolbar;
+    private RadioGroup selectGroup;
+    private RecyclerView imagesList;
+    private ImagesRecyclerAdapter mAdapter;
 
-    private long id;
+    private List<ImageItem> mPhotoList = new ArrayList<>();
+    private int mPointer;
+
+    private int position = -1;
+    private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
+            int visiblePosition = layoutManager.findLastVisibleItemPosition();
+            int count = mAdapter.getItemCount();
+            if (visiblePosition >= count - 10 && mPointer < count + (START_SIZE / 2) - 1) {
+                List<ImageItem> nextChunk = mPhotoList.subList(mPointer, mPointer + (START_SIZE / 2));
+                mPointer += (START_SIZE / 2);
+                mAdapter.addItems(nextChunk);
+            }
+        }
+    };
+    private Call<List<ImageItem>> mCall;
+    private Callback<List<ImageItem>> mPhotoCallback = new Callback<List<ImageItem>>() {
+        @Override
+        public void onResponse(Call<List<ImageItem>> call, Response<List<ImageItem>> response) {
+            if (response.code() == Api.OK) {
+                mPhotoList = new ArrayList<>(response.body());
+                if (position != -1) mPhotoList.get(position).setSelected(true);
+                loadDataToList();
+            }
+        }
+
+        @Override
+        public void onFailure(Call<List<ImageItem>> call, Throwable t) {
+
+        }
+    };
+    private SelectListener mListener = new SelectListener() {
+        @Override
+        public void onImageSelected(boolean b) {
+            if (b) {
+                selectGroup.clearCheck();
+            } else {
+                ((RoboRadioButton) findViewById(R.id.defaultCheck)).setChecked(true);
+            }
+        }
+
+        @Override
+        public void deselectOverItem(int position) {
+            mPhotoList.get(position).setSelected(false);
+        }
+    };
+
+    private void loadDataToList() {
+        mPointer = START_SIZE - 1;
+        mAdapter = new ImagesRecyclerAdapter(this, mPhotoList.subList(0, mPointer), mListener);
+        mAdapter.setPrevSelected(position);
+        imagesList.setAdapter(mAdapter);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,17 +123,50 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setTitle(getString(R.string.main_image));
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
+
+        selectGroup = (RadioGroup) findViewById(R.id.selectGroup);
         RoboRadioButton defaultCheck = (RoboRadioButton) findViewById(R.id.defaultCheck);
         RoboRadioButton noneCheck = (RoboRadioButton) findViewById(R.id.noneCheck);
         defaultCheck.setOnCheckedChangeListener(this);
         noneCheck.setOnCheckedChangeListener(this);
-        id = SharedPrefs.getInstance(this).getLong(Prefs.MAIN_IMAGE_ID);
+        position = SharedPrefs.getInstance(this).getInt(Prefs.MAIN_IMAGE_ID);
         String path = SharedPrefs.getInstance(this).getString(Prefs.MAIN_IMAGE_PATH);
-        if (id == 0 && path.matches(DEFAULT_PHOTO)) {
+        if (position == -1 && path.matches(DEFAULT_PHOTO)) {
             defaultCheck.setChecked(true);
-        } else {
+        } else if (position == -1 && path.matches(NONE_PHOTO)) {
             noneCheck.setChecked(true);
         }
+        initRecyclerView();
+    }
+
+    private void initRecyclerView() {
+        imagesList = (RecyclerView) findViewById(R.id.imagesList);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                switch (position % 6) {
+                    case 5:
+                        return 3;
+                    case 3:
+                        return 2;
+                    default:
+                        return 1;
+                }
+            }
+        });
+        imagesList.setLayoutManager(gridLayoutManager);
+        imagesList.addItemDecoration(new GridMarginDecoration(
+                getResources().getDimensionPixelSize(R.dimen.grid_item_spacing)));
+        imagesList.setHasFixedSize(true);
+        imagesList.setOnScrollListener(mOnScrollListener);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mCall = RetrofitBuilder.getApi().getAllImages();
+        mCall.enqueue(mPhotoCallback);
     }
 
     @Override
@@ -77,6 +177,14 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mCall != null && !mCall.isExecuted()) {
+            mCall.cancel();
         }
     }
 

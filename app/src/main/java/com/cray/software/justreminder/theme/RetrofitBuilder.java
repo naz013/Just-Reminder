@@ -44,4 +44,8 @@ public class RetrofitBuilder {
     public static String getImageLink(long id){
         return Api.BASE_URL + "/1280/768?image=" + id;
     }
+
+    public static String getImageLink(long id, int width, int height){
+        return Api.BASE_URL + "/" + width + "/" + height + "?image=" + id;
+    }
 }

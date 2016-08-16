@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/tools"
+    xmlns:card="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.cray.software.justreminder.theme.ImageItem" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="156dp"
+        android:foreground="?attr/selectableItemBackground"
+        card:cardElevation="2dp"
+        card:cardUseCompatPadding="true">
+
+        <RelativeLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/photoView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                app:loadPhoto='@{item.id}' />
+
+            <com.cray.software.justreminder.roboto_views.RoboTextView
+                android:layout_width="wrap_content"
+                android:text="@{item.author}"
+                android:gravity="right"
+                android:padding="8dp"
+                android:layout_alignParentRight="true"
+                card:font_style="roboto_light_italic"
+                android:layout_alignParentBottom="true"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/whitePrimary30"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_check_mark_green"
+                android:visibility="@{item.selected ? View.VISIBLE : View.GONE}" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+</layout>

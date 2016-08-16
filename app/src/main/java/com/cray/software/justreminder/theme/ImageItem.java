@@ -44,146 +44,76 @@ public class ImageItem {
     @Expose
     private String postUrl;
 
-    /**
-     *
-     * @return
-     * The format
-     */
+    private boolean selected;
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public boolean getSelected() {
+        return selected;
+    }
+
     public String getFormat() {
         return format;
     }
 
-    /**
-     *
-     * @param format
-     * The format
-     */
     public void setFormat(String format) {
         this.format = format;
     }
 
-    /**
-     *
-     * @return
-     * The width
-     */
     public long getWidth() {
         return width;
     }
 
-    /**
-     *
-     * @param width
-     * The width
-     */
     public void setWidth(long width) {
         this.width = width;
     }
 
-    /**
-     *
-     * @return
-     * The height
-     */
     public long getHeight() {
         return height;
     }
 
-    /**
-     *
-     * @param height
-     * The height
-     */
     public void setHeight(long height) {
         this.height = height;
     }
 
-    /**
-     *
-     * @return
-     * The filename
-     */
     public String getFilename() {
         return filename;
     }
 
-    /**
-     *
-     * @param filename
-     * The filename
-     */
     public void setFilename(String filename) {
         this.filename = filename;
     }
 
-    /**
-     *
-     * @return
-     * The id
-     */
     public long getId() {
         return id;
     }
 
-    /**
-     *
-     * @param id
-     * The id
-     */
     public void setId(long id) {
         this.id = id;
     }
 
-    /**
-     *
-     * @return
-     * The author
-     */
     public String getAuthor() {
         return author;
     }
 
-    /**
-     *
-     * @param author
-     * The author
-     */
     public void setAuthor(String author) {
         this.author = author;
     }
 
-    /**
-     *
-     * @return
-     * The authorUrl
-     */
     public String getAuthorUrl() {
         return authorUrl;
     }
 
-    /**
-     *
-     * @param authorUrl
-     * The author_url
-     */
     public void setAuthorUrl(String authorUrl) {
         this.authorUrl = authorUrl;
     }
 
-    /**
-     *
-     * @return
-     * The postUrl
-     */
     public String getPostUrl() {
         return postUrl;
     }
 
-    /**
-     *
-     * @param postUrl
-     * The post_url
-     */
     public void setPostUrl(String postUrl) {
         this.postUrl = postUrl;
     }
