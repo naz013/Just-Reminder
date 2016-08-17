@@ -18,6 +18,7 @@ package com.cray.software.justreminder.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -45,6 +46,7 @@ import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.places.PlacesHelper;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.templates.TemplateHelper;
+import com.cray.software.justreminder.theme.MainImageActivity;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.squareup.picasso.Picasso;
 
@@ -109,6 +111,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         rootView.findViewById(R.id.drawerBg).setBackgroundColor(ColorSetter.getInstance(mContext).getBackgroundStyle());
         image = (ImageView) rootView.findViewById(R.id.image);
         appNameBanner = (RoboTextView) rootView.findViewById(R.id.appNameBanner);
+        appNameBanner.setOnClickListener(view -> mContext.startActivity(new Intent(mContext, MainImageActivity.class)));
         String appName;
         if (Module.isPro()) {
             appName = getString(R.string.app_name_pro);

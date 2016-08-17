@@ -61,9 +61,13 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
             GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
             int visiblePosition = layoutManager.findLastVisibleItemPosition();
             int count = mAdapter.getItemCount();
-            if (visiblePosition >= count - 10 && mPointer < count + (START_SIZE / 2) - 1) {
-                List<ImageItem> nextChunk = mPhotoList.subList(mPointer, mPointer + (START_SIZE / 2));
+            if (visiblePosition >= count - 10 && mPointer < mPhotoList.size() -1 && mPointer < count + (START_SIZE / 2) - 1) {
+                int endPoint = mPointer + (START_SIZE / 2);
+                boolean last = endPoint >= mPhotoList.size();
+                if (last) endPoint = mPhotoList.size() - 1;
+                List<ImageItem> nextChunk = mPhotoList.subList(mPointer, endPoint);
                 mPointer += (START_SIZE / 2);
+                if (last) mPointer = mPhotoList.size() - 1;
                 mAdapter.addItems(nextChunk);
             }
         }
