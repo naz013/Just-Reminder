@@ -18,11 +18,15 @@ package com.cray.software.justreminder.theme;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 
 import com.cray.software.justreminder.R;
@@ -31,6 +35,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.roboto_views.RoboRadioButton;
+import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.ArrayList;
@@ -46,7 +51,7 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
     private static final String TAG = "MainImageActivity";
     private static final int START_SIZE = 50;
 
-    private Toolbar toolbar;
+    private LinearLayout emptyItem;
     private RadioGroup selectGroup;
     private RecyclerView imagesList;
     private ImagesRecyclerAdapter mAdapter;
@@ -109,6 +114,8 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
         mAdapter = new ImagesRecyclerAdapter(this, mPhotoList.subList(0, mPointer), mListener);
         mAdapter.setPrevSelected(position);
         imagesList.setAdapter(mAdapter);
+        emptyItem.setVisibility(View.GONE);
+        imagesList.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -121,7 +128,7 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
         }
         setContentView(R.layout.activity_main_image_layout);
         setRequestedOrientation(cs.getRequestOrientation());
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
@@ -139,6 +146,16 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
             defaultCheck.setChecked(true);
         } else if (position == -1 && path.matches(NONE_PHOTO)) {
             noneCheck.setChecked(true);
+        }
+        emptyItem = (LinearLayout) findViewById(R.id.emptyItem);
+        emptyItem.setVisibility(View.VISIBLE);
+        RoboTextView emptyText = (RoboTextView) findViewById(R.id.emptyText);
+        emptyText.setText(R.string.no_images);
+        ImageView emptyImage = (ImageView) findViewById(R.id.emptyImage);
+        if (ColorSetter.getInstance(this).isDark()) {
+            emptyImage.setImageResource(R.drawable.ic_broken_image_white);
+        } else {
+            emptyImage.setImageResource(R.drawable.ic_broken_image);
         }
         initRecyclerView();
     }
@@ -163,7 +180,9 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
         imagesList.addItemDecoration(new GridMarginDecoration(
                 getResources().getDimensionPixelSize(R.dimen.grid_item_spacing)));
         imagesList.setHasFixedSize(true);
+        imagesList.setItemAnimator(new DefaultItemAnimator());
         imagesList.setOnScrollListener(mOnScrollListener);
+        imagesList.setVisibility(View.GONE);
     }
 
     @Override

@@ -519,4 +519,5 @@
     <string name="delete_this_reminder">Excluir este lembrete?</string>
     <string name="main_image">Main image</string>
     <string name="default_image">Default image</string>
+    <string name="no_images">No images</string>
 </resources>

@@ -132,7 +132,6 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         emptyItem.setVisibility(View.VISIBLE);
         RoboTextView emptyText = (RoboTextView) rootView.findViewById(R.id.emptyText);
         emptyText.setText(mContext.getString(R.string.no_notes));
-        emptyItem.setVisibility(View.VISIBLE);
         ImageView emptyImage = (ImageView) rootView.findViewById(R.id.emptyImage);
         if (ColorSetter.getInstance(mContext).isDark()) {
             emptyImage.setImageResource(R.drawable.ic_event_note_white_vector);

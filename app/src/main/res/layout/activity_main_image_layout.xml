@@ -17,8 +17,8 @@
             android:id="@+id/selectGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_margin="8dp"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <com.cray.software.justreminder.roboto_views.RoboRadioButton
@@ -37,6 +37,8 @@
         </RadioGroup>
 
     </android.support.v7.widget.CardView>
+
+    <include layout="@layout/empty_item_layout" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/imagesList"
