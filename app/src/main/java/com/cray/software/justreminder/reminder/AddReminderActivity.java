@@ -51,6 +51,7 @@ public class AddReminderActivity extends AppCompatActivity {
 
     private RoboEditText task_text;
     private RoboCheckBox taskExport;
+    private RoboCheckBox calendarExport;
     private RepeatView repeatView;
 
     private int mHour = 0;
@@ -100,6 +101,12 @@ public class AddReminderActivity extends AppCompatActivity {
         initActionBar();
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
         task_text = (RoboEditText) findViewById(R.id.task_text);
+        calendarExport = (RoboCheckBox) findViewById(R.id.calendarExport);
+        boolean isCalendar = SharedPrefs.getInstance(this).getBoolean(Prefs.EXPORT_TO_CALENDAR);
+        boolean isStock = SharedPrefs.getInstance(this).getBoolean(Prefs.EXPORT_TO_STOCK);
+        if (isCalendar || isStock) {
+            calendarExport.setVisibility(View.VISIBLE);
+        }
         taskExport = (RoboCheckBox) findViewById(R.id.taskExport);
         if (gtx.isLinked()) {
             taskExport.setVisibility(View.VISIBLE);
@@ -165,7 +172,7 @@ public class AddReminderActivity extends AppCompatActivity {
         JsonModel jsonModel = new JsonModel(text, type, categoryId,
                 SyncHelper.generateID(), startTime, startTime, jRecurrence, null, jExport);
         long remId = new DateType(AddReminderActivity.this, Constants.TYPE_REMINDER).save(new ReminderItem(jsonModel));
-        if (isCalendar || isStock) {
+        if (isCalendar || isStock && calendarExport.isChecked()) {
             ReminderUtils.exportToCalendar(this, text, startTime, remId, isCalendar, isStock);
         }
         if (isTasks) {

@@ -88,6 +88,18 @@
                 android:background="?attr/colorAccent" />
 
             <com.cray.software.justreminder.roboto_views.RoboCheckBox
+                android:id="@+id/calendarExport"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:text="@string/add_to_calendar"
+                android:textSize="@dimen/checkbox_text_size"
+                android:visibility="gone"
+                android:gravity="center"
+                app:check_font_style="roboto_light" />
+
+            <com.cray.software.justreminder.roboto_views.RoboCheckBox
                 android:id="@+id/taskExport"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
