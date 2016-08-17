@@ -47,8 +47,12 @@ import com.cray.software.justreminder.places.PlacesHelper;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.templates.TemplateHelper;
 import com.cray.software.justreminder.theme.MainImageActivity;
+import com.cray.software.justreminder.theme.SaveAsync;
+import com.cray.software.justreminder.utils.MemoryUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.squareup.picasso.Picasso;
+
+import java.io.File;
 
 public class NavigationDrawerFragment extends Fragment implements View.OnClickListener {
 
@@ -197,10 +201,21 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             appNameBanner.setTextColor(ViewUtils.getColor(mContext, R.color.whitePrimary));
         }
         if (!path.isEmpty()) {
-            Picasso.with(mContext)
-                    .load(path)
-                    .into(image);
-            image.setVisibility(View.VISIBLE);
+            int index = path.indexOf("=");
+            String fileName = path.substring(index);
+            File file = new File(MemoryUtil.getImageCacheDir(), fileName + ".jpg");
+            if (file.exists()) {
+                Picasso.with(mContext)
+                        .load(file)
+                        .into(image);
+                image.setVisibility(View.VISIBLE);
+            } else {
+                Picasso.with(mContext)
+                        .load(path)
+                        .into(image);
+                image.setVisibility(View.VISIBLE);
+                new SaveAsync(mContext).execute(path);
+            }
         } else image.setVisibility(View.GONE);
         if (new GTasksHelper(mContext).isLinked()) {
             googleTasks.setVisibility(View.VISIBLE);
