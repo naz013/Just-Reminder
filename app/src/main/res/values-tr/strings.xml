@@ -517,7 +517,7 @@
     <string name="all_permissions_are_enabled">Tüm izinler etkindir</string>
     <string name="stock_android_calendar_not_found">Standart Android takvim bulunamadı</string>
     <string name="delete_this_reminder">Bu hatırlatma silinsin mi?</string>
-    <string name="main_image">Main image</string>
-    <string name="default_image">Default image</string>
-    <string name="no_images">No images</string>
+    <string name="main_image">Ana resim</string>
+    <string name="default_image">"Varsayılan"</string>
+    <string name="no_images">Resim yok</string>
 </resources>

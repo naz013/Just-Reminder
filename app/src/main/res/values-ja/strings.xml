@@ -518,7 +518,7 @@
     <string name="all_permissions_are_enabled">すべてのアクセス許可が有効になっています</string>
     <string name="stock_android_calendar_not_found">デフォルトのAndroidのカレンダーが見つかりません。</string>
     <string name="delete_this_reminder">このリマインダーを削除しますか？</string>
-    <string name="main_image">Main image</string>
-    <string name="default_image">Default image</string>
-    <string name="no_images">No images</string>
+    <string name="main_image">メイン画像</string>
+    <string name="default_image">"デフォルト"</string>
+    <string name="no_images">いいえ写真はありません</string>
 </resources>

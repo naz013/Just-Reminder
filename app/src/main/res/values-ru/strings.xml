@@ -533,7 +533,7 @@
     <string name="all_permissions_are_enabled">Все разрешения включены</string>
     <string name="stock_android_calendar_not_found">По умолчанию Android календарь не найден</string>
     <string name="delete_this_reminder">Удалить это напоминание?</string>
-    <string name="main_image">Main image</string>
-    <string name="default_image">Default image</string>
-    <string name="no_images">No images</string>
+    <string name="main_image">Основное изображение</string>
+    <string name="default_image">"По умолчанию"</string>
+    <string name="no_images">Нет фотографий</string>
 </resources>

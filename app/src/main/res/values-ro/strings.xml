@@ -250,7 +250,7 @@
     <string name="open_source_licenses">"Open source software"</string>
     <string name="tell_friends">"Spune prietenilor"</string>
     <string name="auto_language">"Automată a limbii"</string>
-    <string name="default_string">"lipsă"</string>
+    <string name="default_string">"Lipsă"</string>
     <string name="morning">"Dimineaţă"</string>
     <string name="day">"Zi"</string>
     <string name="evening">"Seară"</string>
@@ -517,7 +517,7 @@
     <string name="all_permissions_are_enabled">Toate permisiunile sunt activate</string>
     <string name="stock_android_calendar_not_found">Default Calendar Android nu a fost găsit</string>
     <string name="delete_this_reminder">Șterge acest memento?</string>
-    <string name="main_image">Main image</string>
-    <string name="default_image">Default image</string>
-    <string name="no_images">No images</string>
+    <string name="main_image">Imaginea principală</string>
+    <string name="default_image">"Lipsă"</string>
+    <string name="no_images">Nu există imagini</string>
 </resources>

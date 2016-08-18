@@ -517,7 +517,7 @@
     <string name="all_permissions_are_enabled">Todos los permisos están habilitados</string>
     <string name="stock_android_calendar_not_found">Calendario predeterminado de Android no encontrado</string>
     <string name="delete_this_reminder">Eliminar este recordatorio?</string>
-    <string name="main_image">Main image</string>
-    <string name="default_image">Default image</string>
-    <string name="no_images">No images</string>
+    <string name="main_image">La imagen principal</string>
+    <string name="default_image">"Defecto"</string>
+    <string name="no_images">No fotos</string>
 </resources>

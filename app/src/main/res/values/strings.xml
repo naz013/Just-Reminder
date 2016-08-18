@@ -519,7 +519,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="delete_this_reminder">Delete this reminder?</string>
-    <string name="main_image">Main image</string>
-    <string name="default_image">Default image</string>
-    <string name="no_images">No images</string>
+    <string name="main_image">The main picture</string>
+    <string name="default_image">Default </string>
+    <string name="no_images">No pictures</string>
 </resources>
