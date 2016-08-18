@@ -46,7 +46,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainImageActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
-    public static final String DEFAULT_PHOTO = "https://hd.unsplash.com/photo-1460500063983-994d4c27756c";
+    public static final String DEFAULT_PHOTO = Api.BASE_URL + "/1280/768?image=33";
     private static final String NONE_PHOTO = "";
     private static final String TAG = "MainImageActivity";
     private static final int START_SIZE = 50;
@@ -215,16 +215,16 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         switch (compoundButton.getId()) {
             case R.id.defaultCheck:
-                if (b) setImageUrl(DEFAULT_PHOTO, 0);
+                if (b) setImageUrl(DEFAULT_PHOTO, -1);
                 break;
             case R.id.noneCheck:
-                if (b) setImageUrl(NONE_PHOTO, 0);
+                if (b) setImageUrl(NONE_PHOTO, -1);
                 break;
         }
     }
 
-    private void setImageUrl(String imageUrl, long id) {
+    private void setImageUrl(String imageUrl, int id) {
         SharedPrefs.getInstance(this).putString(Prefs.MAIN_IMAGE_PATH, imageUrl);
-        SharedPrefs.getInstance(this).putLong(Prefs.MAIN_IMAGE_ID, id);
+        SharedPrefs.getInstance(this).putInt(Prefs.MAIN_IMAGE_ID, id);
     }
 }
