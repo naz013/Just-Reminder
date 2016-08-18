@@ -271,6 +271,7 @@ public class NotePreview extends AppCompatActivity {
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(cSetter.getNoteDarkColor(color));
         }
+        scrollContent.setBackgroundColor(cSetter.getNoteLightColor(color));
     }
 
     private void showReminder() {

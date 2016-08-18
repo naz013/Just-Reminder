@@ -296,7 +296,7 @@ public class NotesManager extends AppCompatActivity {
             }
             if (mItem.getLinkId() != 0) {
                 ReminderItem item = ReminderHelper.getInstance(this).getReminder(mItem.getLinkId());
-                if (mItem != null) {
+                if (item != null) {
                     setDateTime(item.getDateTime());
                     ViewUtils.expand(remindContainer);
                 }
