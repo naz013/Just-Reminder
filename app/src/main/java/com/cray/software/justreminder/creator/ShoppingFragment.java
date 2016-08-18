@@ -55,6 +55,7 @@ public class ShoppingFragment extends BaseFragment {
     private RelativeLayout shoppingTimeContainer;
     private DateTimeView dateViewShopping;
     private RecyclerView todoList;
+    private ImageView shopTimeIcon;
 
     private TaskListRecyclerAdapter shoppingAdapter;
     private ShoppingListDataProvider shoppingLists;
@@ -127,30 +128,16 @@ public class ShoppingFragment extends BaseFragment {
         eventTime = System.currentTimeMillis();
         dateViewShopping.setDateTime(updateCalendar(eventTime, false));
 
-        ImageView shopTimeIcon = (ImageView) view.findViewById(R.id.shopTimeIcon);
+        shopTimeIcon = (ImageView) view.findViewById(R.id.shopTimeIcon);
         shopTimeIcon.setOnClickListener(v -> {
-            if (shoppingTimeContainer.getVisibility() == View.VISIBLE) {
-                ViewUtils.hide(shoppingTimeContainer);
-            }
-            ViewUtils.show(shoppingNoTime);
-            mYear = 0;
-            mMonth = 0;
-            mDay = 0;
-            mHour = 0;
-            mMinute = 0;
-            isShoppingReminder = false;
+            switchDateTimeView(false);
         });
         if (isDark) shopTimeIcon.setImageResource(R.drawable.ic_alarm_white_24dp);
         else shopTimeIcon.setImageResource(R.drawable.ic_alarm_black_24dp);
 
         shoppingNoTime  = (RoboTextView) view.findViewById(R.id.shoppingNoTime);
         shoppingNoTime.setOnClickListener(v -> {
-            if (shoppingNoTime.getVisibility() == View.VISIBLE) {
-                ViewUtils.hide(shoppingNoTime);
-            }
-            ViewUtils.show(shoppingTimeContainer);
-            dateViewShopping.setDateTime(updateCalendar(System.currentTimeMillis(), false));
-            isShoppingReminder = true;
+            switchDateTimeView(true);
         });
 
         shopEdit = (RoboEditText) view.findViewById(R.id.shopEdit);
@@ -191,23 +178,46 @@ public class ShoppingFragment extends BaseFragment {
             shoppingLists = new ShoppingListDataProvider(item.getShoppings(), true);
             loadShoppings();
             eventTime = item.getStartTime();
-
             if (eventTime > 0) {
                 dateViewShopping.setDateTime(updateCalendar(eventTime, true));
-                if (shoppingNoTime.getVisibility() == View.VISIBLE)
+                if (shoppingNoTime.getVisibility() == View.VISIBLE) {
                     ViewUtils.hide(shoppingNoTime);
-
+                }
+                if (isDark) shopTimeIcon.setImageResource(R.drawable.ic_clear_white_vector);
+                else shopTimeIcon.setImageResource(R.drawable.ic_clear_black_vector);
                 ViewUtils.show(shoppingTimeContainer);
                 isShoppingReminder = true;
             } else {
-                if (shoppingTimeContainer.getVisibility() == View.VISIBLE)
-                    ViewUtils.hide(shoppingTimeContainer);
-
-                ViewUtils.show(shoppingNoTime);
-                isShoppingReminder = false;
+                switchDateTimeView(false);
             }
         }
         return view;
+    }
+
+    private void switchDateTimeView(boolean b) {
+        if (!b) {
+            mYear = 0;
+            mMonth = 0;
+            mDay = 0;
+            mHour = 0;
+            mMinute = 0;
+            if (shoppingTimeContainer.getVisibility() == View.VISIBLE) {
+                ViewUtils.hide(shoppingTimeContainer);
+            }
+            if (isDark) shopTimeIcon.setImageResource(R.drawable.ic_alarm_white_24dp);
+            else shopTimeIcon.setImageResource(R.drawable.ic_alarm_black_24dp);
+            ViewUtils.show(shoppingNoTime);
+            isShoppingReminder = false;
+        } else {
+            if (isDark) shopTimeIcon.setImageResource(R.drawable.ic_clear_white_vector);
+            else shopTimeIcon.setImageResource(R.drawable.ic_clear_black_vector);
+            if (shoppingNoTime.getVisibility() == View.VISIBLE) {
+                ViewUtils.hide(shoppingNoTime);
+            }
+            ViewUtils.show(shoppingTimeContainer);
+            dateViewShopping.setDateTime(updateCalendar(System.currentTimeMillis(), false));
+            isShoppingReminder = true;
+        }
     }
 
     private void loadShoppings() {
