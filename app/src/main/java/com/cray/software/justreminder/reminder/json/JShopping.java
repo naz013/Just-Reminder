@@ -16,6 +16,8 @@
 
 package com.cray.software.justreminder.reminder.json;
 
+import com.cray.software.justreminder.utils.TimeUtil;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,6 +36,19 @@ public class JShopping {
     private String summary;
     private String uuId;
     private long dateTime;
+
+    /**
+     * Get current JSON object.
+     * @return JSON object string
+     */
+    @Override
+    public String toString(){
+        return "JShopping->Summary: " + summary +
+                "->Date: " + TimeUtil.getFullDateTime(dateTime, true) +
+                "->UUID: " + uuId +
+                "->Status: " + status +
+                "->Deleted: " + deleted;
+    }
 
     /**
      * JSON object.
@@ -120,16 +135,6 @@ public class JShopping {
      */
     public JSONObject getJsonObject() {
         return jsonObject;
-    }
-
-    /**
-     * Get current JSON object.
-     * @return JSON object string
-     */
-    @Override
-    public String toString(){
-        if (jsonObject != null) return jsonObject.toString();
-        else return null;
     }
 
     /**

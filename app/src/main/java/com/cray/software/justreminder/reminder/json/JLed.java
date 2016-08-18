@@ -34,6 +34,16 @@ public class JLed {
      */
     private JSONObject jsonObject;
 
+    /**
+     * Get current JSON object.
+     * @return JSON object string
+     */
+    @Override
+    public String toString(){
+        return "JLed->Color: " + color +
+                "->Status: " + status;
+    }
+
     public JLed(JSONObject jsonObject){
         if (jsonObject != null) {
             this.jsonObject = jsonObject;
@@ -87,16 +97,6 @@ public class JLed {
      */
     public JSONObject getJsonObject() {
         return jsonObject;
-    }
-
-    /**
-     * Get current JSON object.
-     * @return JSON object string
-     */
-    @Override
-    public String toString(){
-        if (jsonObject != null) return jsonObject.toString();
-        else return null;
     }
 
     /**

@@ -51,6 +51,16 @@ public class JPlace {
      */
     private JSONObject jsonObject;
 
+    /**
+     * Get current JSON object.
+     * @return JSON object string
+     */
+    @Override
+    public String toString(){
+        if (jsonObject != null) return jsonObject.toString();
+        else return null;
+    }
+
     public JPlace(JSONObject jsonObject){
         if (jsonObject != null) {
             this.jsonObject = jsonObject;
@@ -183,16 +193,6 @@ public class JPlace {
      */
     public JSONObject getJsonObject() {
         return jsonObject;
-    }
-
-    /**
-     * Get current JSON object.
-     * @return JSON object string
-     */
-    @Override
-    public String toString(){
-        if (jsonObject != null) return jsonObject.toString();
-        else return null;
     }
 
     /**

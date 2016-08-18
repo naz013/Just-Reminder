@@ -24,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.List;
 
 public class JExclusion {
@@ -42,6 +43,17 @@ public class JExclusion {
      * JSON object.
      */
     private JSONObject jsonObject;
+
+    /**
+     * Get current JSON object.
+     * @return JSON object string
+     */
+    @Override
+    public String toString(){
+        return "JExclusion->From: " + from +
+                "->To: " + to +
+                "->Hours: " + Arrays.asList(hours);
+    }
 
     public JExclusion(JSONObject jsonObject){
         if (jsonObject != null) {
@@ -103,16 +115,6 @@ public class JExclusion {
      */
     public JSONObject getJsonObject() {
         return jsonObject;
-    }
-
-    /**
-     * Get current JSON object.
-     * @return JSON object string
-     */
-    @Override
-    public String toString(){
-        if (jsonObject != null) return jsonObject.toString();
-        else return null;
     }
 
     /**

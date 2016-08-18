@@ -37,6 +37,19 @@ public class JAction {
     private int auto;
 
     /**
+     * Get current JSON object.
+     * @return JSON object string
+     */
+    @Override
+    public String toString(){
+        return "JAction->Type: " + type +
+                "->Target: " + target +
+                "->Subject: " + subject +
+                "->Attachment: " + attachment +
+                "->Auto: " + auto;
+    }
+
+    /**
      * JSON object.
      */
     private JSONObject jsonObject;
@@ -117,16 +130,6 @@ public class JAction {
      */
     public JSONObject getJsonObject() {
         return jsonObject;
-    }
-
-    /**
-     * Get current JSON object.
-     * @return JSON object string
-     */
-    @Override
-    public String toString(){
-        if (jsonObject != null) return jsonObject.toString();
-        else return null;
     }
 
     /**

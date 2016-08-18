@@ -18,6 +18,7 @@ package com.cray.software.justreminder.reminder;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
@@ -55,6 +56,8 @@ import java.util.List;
  */
 public class Reminder {
 
+    private static final String TAG = "Reminder";
+
     public Reminder(){
     }
 
@@ -82,6 +85,7 @@ public class Reminder {
             long repeat = jRecurrence.getRepeat();
             long limit = jRecurrence.getLimit();
             long count = model.getCount() + 1;
+            Log.d(TAG, "update: " + jRecurrence.toString());
             if ((repeat == 0 || (limit > 0 && (limit - count - 1 == 0)))  &&
                     !type.startsWith(Constants.TYPE_WEEKDAY) &&
                     !type.contains(Constants.TYPE_MONTHDAY)){
@@ -105,6 +109,7 @@ public class Reminder {
                 model.setEventTime(eventTime);
                 model.setCount(count);
                 item.setModel(model);
+                item.setDateTime(eventTime);
                 ReminderHelper.getInstance(context).saveReminder(item);
                 int exp = model.getExport().getCalendar();
                 new AlarmReceiver().enableReminder(context, id);

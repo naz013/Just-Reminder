@@ -35,6 +35,16 @@ public class JMelody {
      */
     private JSONObject jsonObject;
 
+    /**
+     * Get current JSON object.
+     * @return JSON object string
+     */
+    @Override
+    public String toString(){
+        return "JMelody->Volume: " + volume +
+                "->Melody: " + melodyPath;
+    }
+
     public JMelody(JSONObject jsonObject){
         if (jsonObject != null) {
             this.jsonObject = jsonObject;
@@ -88,16 +98,6 @@ public class JMelody {
      */
     public JSONObject getJsonObject() {
         return jsonObject;
-    }
-
-    /**
-     * Get current JSON object.
-     * @return JSON object string
-     */
-    @Override
-    public String toString(){
-        if (jsonObject != null) return jsonObject.toString();
-        else return null;
     }
 
     /**

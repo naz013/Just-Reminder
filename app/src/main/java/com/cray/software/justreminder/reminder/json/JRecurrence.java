@@ -25,6 +25,8 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class JRecurrence {
@@ -41,6 +43,19 @@ public class JRecurrence {
     private int monthday;
     private long repeat, limit, after;
     private List<Integer> weekdays = new ArrayList<>();
+
+    /**
+     * Get current JSON object.
+     * @return JSON object string
+     */
+    @Override
+    public String toString(){
+        return "JRecurrence->Month day: " + monthday +
+                "->Repeat: " + repeat +
+                "->Limit: " + limit +
+                "->After: " + after +
+                "->Days: " + Arrays.asList(weekdays);
+    }
 
     /**
      * JSON object.
@@ -129,16 +144,6 @@ public class JRecurrence {
      */
     public JSONObject getJsonObject() {
         return jsonObject;
-    }
-
-    /**
-     * Get current JSON object.
-     * @return JSON object string
-     */
-    @Override
-    public String toString(){
-        if (jsonObject != null) return jsonObject.toString();
-        else return null;
     }
 
     /**

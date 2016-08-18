@@ -36,6 +36,17 @@ public class JExport {
      */
     private JSONObject jsonObject;
 
+    /**
+     * Get current JSON object.
+     * @return JSON object string
+     */
+    @Override
+    public String toString(){
+        return "JExport->Calendar: " + calendar +
+                "->GTasks: " + gTasks +
+                "->CalendarId: " + calendarId;
+    }
+
     public JExport(JSONObject jsonObject){
         if (jsonObject != null) {
             this.jsonObject = jsonObject;
@@ -98,16 +109,6 @@ public class JExport {
      */
     public JSONObject getJsonObject() {
         return jsonObject;
-    }
-
-    /**
-     * Get current JSON object.
-     * @return JSON object string
-     */
-    @Override
-    public String toString(){
-        if (jsonObject != null) return jsonObject.toString();
-        else return null;
     }
 
     /**
