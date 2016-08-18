@@ -88,7 +88,6 @@ import com.cray.software.justreminder.places.GeolocationFragment;
 import com.cray.software.justreminder.places.PlacesFragment;
 import com.cray.software.justreminder.reminder.ActiveFragment;
 import com.cray.software.justreminder.reminder.DateType;
-import com.cray.software.justreminder.reminder.ReminderDataProvider;
 import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.reminder.ReminderManager;
 import com.cray.software.justreminder.reminder.TrashFragment;
@@ -101,6 +100,7 @@ import com.cray.software.justreminder.templates.TemplatesFragment;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.SuperUtil;
+import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
 import com.cray.software.justreminder.views.ReturnScrollListener;
 import com.google.android.gms.analytics.HitBuilders;
@@ -112,8 +112,6 @@ import com.google.android.gms.common.AccountPicker;
 import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.tasks.TasksScopes;
-import com.hexrain.flextcal.FlextCal;
-import com.hexrain.flextcal.FlextListener;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -376,6 +374,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
                     replace(GeolocationFragment.newInstance(), tag);
                 }
             } else if (tag.matches(ACTION_CALENDAR)) {
+                this.eventsDate = new Date();
                 SharedPrefs.getInstance(this).putInt(Prefs.LAST_CALENDAR_VIEW, 1);
                 replace(CalendarViewFragment.newInstance(), ACTION_CALENDAR);
             } else if (tag.matches(FRAGMENT_EVENTS)) {
@@ -536,10 +535,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
             if (eventsDate != null) {
                 calendar.setTime(eventsDate);
             }
-            int day = calendar.get(Calendar.DAY_OF_MONTH);
-            int month = calendar.get(Calendar.MONTH);
-            int year = calendar.get(Calendar.YEAR);
-            menu.findItem(R.id.action_day).setTitle(day + "/" + (month + 1) + "/" + year);
+            menu.findItem(R.id.action_day).setTitle(TimeUtil.getDate(calendar.getTimeInMillis()));
         }
         toolbar.setTitle(mTitle);
         reloadButton();

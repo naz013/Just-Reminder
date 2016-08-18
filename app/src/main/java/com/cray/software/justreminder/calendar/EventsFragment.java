@@ -36,6 +36,7 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
+import com.cray.software.justreminder.utils.TimeUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -67,7 +68,6 @@ public class EventsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Bundle intent = getArguments();
         dateMills = intent.getLong("date", 0);
     }
@@ -75,7 +75,6 @@ public class EventsFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true);
     }
 
@@ -115,13 +114,7 @@ public class EventsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_calendar, container, false);
         rootView.findViewById(R.id.wrapper).setBackgroundColor(ColorSetter.getInstance(mContext).getBackgroundStyle());
         pager = (ViewPager) rootView.findViewById(R.id.pager);
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(System.currentTimeMillis());
-        if (dateMills != 0) {
-            cal.setTimeInMillis(dateMills);
-        }
-        updateMenuTitles(cal.get(Calendar.DAY_OF_MONTH) + "/" + (cal.get(Calendar.MONTH) + 1) +
-                "/" + cal.get(Calendar.YEAR));
+        updateMenuTitles();
         SharedPrefs.getInstance(mContext).putInt(Prefs.LAST_CALENDAR_VIEW, 0);
         loadData();
         return rootView;
@@ -165,8 +158,13 @@ public class EventsFragment extends Fragment {
         mCallbacks = null;
     }
 
-    private void updateMenuTitles(String title) {
-        dayString = title;
+    private void updateMenuTitles() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        if (dateMills != 0) {
+            calendar.setTimeInMillis(dateMills);
+        }
+        dayString = TimeUtil.getDate(calendar.getTimeInMillis());
         getActivity().invalidateOptionsMenu();
     }
 
@@ -239,15 +237,11 @@ public class EventsFragment extends Fragment {
 
             @Override
             public void onPageSelected(int i) {
-                int day = pagerData.get(i).getDay();
-                int month = pagerData.get(i).getMonth();
-                int year = pagerData.get(i).getYear();
-                updateMenuTitles(day + "/" + (month + 1) + "/" + year);
+                EventsPagerItem item = pagerData.get(i);
                 Calendar calendar1 = Calendar.getInstance();
-                calendar1.set(Calendar.DAY_OF_MONTH, day);
-                calendar1.set(Calendar.MONTH, month);
-                calendar1.set(Calendar.YEAR, year);
+                calendar1.set(item.getYear(), item.getMonth(), item.getDay());
                 dateMills = calendar1.getTimeInMillis();
+                updateMenuTitles();
                 if (mCallbacks != null) {
                     mCallbacks.onDateChanged(dateMills, i);
                 }
