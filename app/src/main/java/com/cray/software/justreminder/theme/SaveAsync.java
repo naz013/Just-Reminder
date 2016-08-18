@@ -38,13 +38,21 @@ public class SaveAsync extends AsyncTask<String, Void, Void> {
     @Override
     protected Void doInBackground(String... strings) {
         String path = strings[0];
-        int index = path.indexOf("=") + 1;
-        String fileName = path.substring(index);
+        String fileName = path;
+        if (path.contains("=")) {
+            int index = path.indexOf("=");
+            fileName = path.substring(index);
+        }
         File directory = MemoryUtil.getImageCacheDir();
         directory.mkdirs();
         File file = new File(directory, fileName + ".jpg");
         try {
-            Bitmap bitmap = Picasso.with(mContext).load(path).get();
+            Bitmap bitmap;
+            if (!path.contains("=")) {
+                bitmap = Picasso.with(mContext).load(path).resize(1280, 768).get();
+            } else {
+                bitmap = Picasso.with(mContext).load(path).get();
+            }
             try {
                 if (file.createNewFile()) {
                     FileOutputStream stream = new FileOutputStream(file);

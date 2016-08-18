@@ -201,8 +201,11 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             appNameBanner.setTextColor(ViewUtils.getColor(mContext, R.color.whitePrimary));
         }
         if (!path.isEmpty()) {
-            int index = path.indexOf("=");
-            String fileName = path.substring(index);
+            String fileName = path;
+            if (path.contains("=")) {
+                int index = path.indexOf("=");
+                fileName = path.substring(index);
+            }
             File file = new File(MemoryUtil.getImageCacheDir(), fileName + ".jpg");
             if (file.exists()) {
                 Picasso.with(mContext)
