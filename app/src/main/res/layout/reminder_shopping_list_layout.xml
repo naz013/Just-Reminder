@@ -118,6 +118,7 @@
                     android:background="@android:color/transparent"
                     android:hint="@string/task"
                     android:lines="2"
+                    android:imeOptions="actionDone"
                     app:edit_font_style="roboto_light" />
 
                 <ImageButton

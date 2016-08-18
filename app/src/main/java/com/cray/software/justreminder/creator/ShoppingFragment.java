@@ -45,6 +45,7 @@ import java.util.List;
 
 public class ShoppingFragment extends BaseFragment {
 
+    private static final String TAG = "ShoppingFragment";
     private DateTimeView.OnSelectListener mCallbacks;
 
     /**
@@ -129,26 +130,20 @@ public class ShoppingFragment extends BaseFragment {
         dateViewShopping.setDateTime(updateCalendar(eventTime, false));
 
         shopTimeIcon = (ImageView) view.findViewById(R.id.shopTimeIcon);
-        shopTimeIcon.setOnClickListener(v -> {
-            switchDateTimeView(false);
-        });
+        shopTimeIcon.setOnClickListener(v -> switchDateTimeView(false));
         if (isDark) shopTimeIcon.setImageResource(R.drawable.ic_alarm_white_24dp);
         else shopTimeIcon.setImageResource(R.drawable.ic_alarm_black_24dp);
-
         shoppingNoTime  = (RoboTextView) view.findViewById(R.id.shoppingNoTime);
-        shoppingNoTime.setOnClickListener(v -> {
-            switchDateTimeView(true);
-        });
-
+        shoppingNoTime.setOnClickListener(v -> switchDateTimeView(true));
         shopEdit = (RoboEditText) view.findViewById(R.id.shopEdit);
         shopEdit.setOnKeyListener((v, keyCode, event) -> {
-            if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER){
+            if (event.getAction() == KeyEvent.ACTION_DOWN && (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_DPAD_CENTER)){
                 String task = shopEdit.getText().toString().trim();
                 if (task.matches("")) {
                     shopEdit.setError(getString(R.string.must_be_not_empty));
                     return false;
                 } else {
-                    shoppingLists.addItem(new ShoppingList(task));
+                    shoppingLists.addItem(new ShoppingList(task.replaceAll("\n", " ")));
                     shoppingAdapter.notifyDataSetChanged();
                     shopEdit.setText("");
                     return true;
@@ -164,15 +159,12 @@ public class ShoppingFragment extends BaseFragment {
                 shopEdit.setError(getString(R.string.must_be_not_empty));
                 return;
             }
-
             shoppingLists.addItem(new ShoppingList(task));
             shoppingAdapter.notifyDataSetChanged();
             shopEdit.setText("");
         });
-
         shoppingLists = new ShoppingListDataProvider();
         loadShoppings();
-
         if (item != null) {
             shoppingLists.clear();
             shoppingLists = new ShoppingListDataProvider(item.getShoppings(), true);
