@@ -359,6 +359,7 @@ public class NotePreview extends AppCompatActivity {
         builder.setPositiveButton(getString(R.string.yes), (dialog, which) -> {
             dialog.dismiss();
             Reminder.delete(mItem.getLinkId(), NotePreview.this);
+            NoteHelper.getInstance(this).linkReminder(mItem.getId(), 0);
             reminderContainer.setVisibility(View.GONE);
         });
         builder.setNegativeButton(getString(R.string.no), (dialog, which) -> {

@@ -68,6 +68,7 @@ import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.Telephony;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.reminder.DateType;
+import com.cray.software.justreminder.reminder.ReminderHelper;
 import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
@@ -97,11 +98,11 @@ public class NotesManager extends AppCompatActivity {
     private static final String KEY_NOTE = "key_note";
     private static final int REQUEST_SD_CARD = 1112;
 
-    private int myHour = 0;
-    private int myMinute = 0;
-    private int myYear = 0;
-    private int myMonth = 0;
-    private int myDay = 1;
+    private int mHour = 0;
+    private int mMinute = 0;
+    private int mYear = 0;
+    private int mMonth = 0;
+    private int mDay = 1;
     private Bitmap img;
     private Uri mImageUri;
     private RelativeLayout layoutContainer, imageContainer;
@@ -146,7 +147,7 @@ public class NotesManager extends AppCompatActivity {
                             return true;
                         case R.id.action_reminder:
                             if (!isReminderAttached()) {
-                                setDateTime();
+                                setDateTime(System.currentTimeMillis());
                                 ViewUtils.expand(remindContainer);
                             } else {
                                 ViewUtils.collapse(remindContainer);
@@ -193,9 +194,7 @@ public class NotesManager extends AppCompatActivity {
         remindTime.setOnClickListener(v -> timeDialog().show());
 
         noteImage = (ImageView) findViewById(R.id.noteImage);
-        noteImage.setOnClickListener(v -> {
-            openImage();
-        });
+        noteImage.setOnClickListener(v -> openImage());
 
         discardReminder = (ImageButton) findViewById(R.id.discardReminder);
         discardReminder.setOnClickListener(v -> ViewUtils.collapse(remindContainer));
@@ -295,6 +294,13 @@ public class NotesManager extends AppCompatActivity {
             } else {
                 imageContainer.setVisibility(View.GONE);
             }
+            if (mItem.getLinkId() != 0) {
+                ReminderItem item = ReminderHelper.getInstance(this).getReminder(mItem.getLinkId());
+                if (mItem != null) {
+                    setDateTime(item.getDateTime());
+                    ViewUtils.expand(remindContainer);
+                }
+            }
         } else {
             mItem = new NoteItem();
         }
@@ -387,26 +393,15 @@ public class NotesManager extends AppCompatActivity {
         Telephony.sendNote(file, this, text);
     }
 
-    private void setDateTime() {
+    private void setDateTime(long mills) {
         Calendar calendar = Calendar.getInstance();
-        myDay = calendar.get(Calendar.DAY_OF_MONTH);
-        myMonth = calendar.get(Calendar.MONTH);
-        myYear = calendar.get(Calendar.YEAR);
-        myHour = calendar.get(Calendar.HOUR_OF_DAY);
-        myMinute = calendar.get(Calendar.MINUTE);
-        String dayStr;
-        String monthStr;
-        if (myDay < 10) {
-            dayStr = "0" + myDay;
-        } else {
-            dayStr = String.valueOf(myDay);
-        }
-        if (myMonth < 9) {
-            monthStr = "0" + (myMonth + 1);
-        } else {
-            monthStr = String.valueOf(myMonth + 1);
-        }
-        remindDate.setText(dayStr + "/" + monthStr + "/" + String.valueOf(myYear));
+        calendar.setTimeInMillis(mills);
+        mDay = calendar.get(Calendar.DAY_OF_MONTH);
+        mMonth = calendar.get(Calendar.MONTH);
+        mYear = calendar.get(Calendar.YEAR);
+        mHour = calendar.get(Calendar.HOUR_OF_DAY);
+        mMinute = calendar.get(Calendar.MINUTE);
+        remindDate.setText(TimeUtil.getDate(calendar.getTimeInMillis()));
         remindTime.setText(TimeUtil.getTime(calendar.getTime(),
                 SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT)));
     }
@@ -425,14 +420,6 @@ public class NotesManager extends AppCompatActivity {
             taskField.setError(getString(R.string.must_be_not_empty));
             return;
         }
-        Calendar calendar1 = Calendar.getInstance();
-        int day = calendar1.get(Calendar.DAY_OF_MONTH);
-        int month = calendar1.get(Calendar.MONTH);
-        int year = calendar1.get(Calendar.YEAR);
-        int hour = calendar1.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar1.get(Calendar.MINUTE);
-        int seconds = calendar1.get(Calendar.SECOND);
-        String date = year + "/" + month + "/" + day + " " + hour + ":" + minute + ":" + seconds;
         String uuID = mItem.getUuId();
         if (uuID == null || uuID.matches("")) {
             uuID = SyncHelper.generateID();
@@ -443,16 +430,26 @@ public class NotesManager extends AppCompatActivity {
             mItem.setNote(note);
         }
         mItem.setUuId(uuID);
-        mItem.setDate(date);
+        mItem.setDate(TimeUtil.getTimeStamp());
+        boolean hasReminder = isReminderAttached();
+        if (!hasReminder) mItem.setLinkId(0);
         long id = NoteHelper.getInstance(this).saveNote(mItem);
-        if (isReminderAttached()){
-            String categoryId = GroupHelper.getInstance(this).getDefaultUuId();
-            calendar1.set(myYear, myMonth, myDay, myHour, myMinute);
-            long due = calendar1.getTimeInMillis();
-            JsonModel jsonModel = new JsonModel(note, Constants.TYPE_REMINDER, categoryId,
-                    SyncHelper.generateID(), due, due, null, null, null);
-            long remId = new DateType(NotesManager.this, Constants.TYPE_REMINDER).save(new ReminderItem(jsonModel));
-            NoteHelper.getInstance(this).linkReminder(id, remId);
+        if (hasReminder){
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(mYear, mMonth, mDay, mHour, mMinute);
+            if (mItem.getLinkId() != 0) {
+                ReminderItem item = ReminderHelper.getInstance(this).getReminder(mItem.getLinkId());
+                item.getModel().setEventTime(calendar.getTimeInMillis());
+                item.setDateTime(calendar.getTimeInMillis());
+                new DateType(this, Constants.TYPE_REMINDER).save(item);
+            } else {
+                String categoryId = GroupHelper.getInstance(this).getDefaultUuId();
+                long due = calendar.getTimeInMillis();
+                JsonModel jsonModel = new JsonModel(note, Constants.TYPE_REMINDER, categoryId,
+                        SyncHelper.generateID(), due, due, null, null, null);
+                long remId = new DateType(this, Constants.TYPE_REMINDER).save(new ReminderItem(jsonModel));
+                NoteHelper.getInstance(this).linkReminder(id, remId);
+            }
         }
         SharedPrefs.getInstance(this).putBoolean(Prefs.NOTE_CHANGED, true);
         UpdatesHelper.getInstance(this).updateNotesWidget();
@@ -648,40 +645,40 @@ public class NotesManager extends AppCompatActivity {
     }
 
     protected Dialog dateDialog() {
-        return new DatePickerDialog(this, myDateCallBack, myYear, myMonth, myDay);
+        return new DatePickerDialog(this, myDateCallBack, mYear, mMonth, mDay);
     }
 
     DatePickerDialog.OnDateSetListener myDateCallBack = new DatePickerDialog.OnDateSetListener() {
         public void onDateSet(DatePicker view, int year, int monthOfYear,
                               int dayOfMonth) {
-            myYear = year;
-            myMonth = monthOfYear;
-            myDay = dayOfMonth;
+            mYear = year;
+            mMonth = monthOfYear;
+            mDay = dayOfMonth;
             String dayStr;
             String monthStr;
-            if (myDay < 10) {
-                dayStr = "0" + myDay;
+            if (mDay < 10) {
+                dayStr = "0" + mDay;
             } else {
-                dayStr = String.valueOf(myDay);
+                dayStr = String.valueOf(mDay);
             }
-            if (myMonth < 9) {
-                monthStr = "0" + (myMonth + 1);
+            if (mMonth < 9) {
+                monthStr = "0" + (mMonth + 1);
             } else {
-                monthStr = String.valueOf(myMonth + 1);
+                monthStr = String.valueOf(mMonth + 1);
             }
-            remindDate.setText(SuperUtil.appendString(dayStr, "/", monthStr, "/", String.valueOf(myYear)));
+            remindDate.setText(SuperUtil.appendString(dayStr, "/", monthStr, "/", String.valueOf(mYear)));
         }
     };
 
     protected Dialog timeDialog() {
-        return new TimePickerDialog(this, myCallBack, myHour, myMinute,
+        return new TimePickerDialog(this, myCallBack, mHour, mMinute,
                 SharedPrefs.getInstance(this).getBoolean(Prefs.IS_24_TIME_FORMAT));
     }
 
     TimePickerDialog.OnTimeSetListener myCallBack = new TimePickerDialog.OnTimeSetListener() {
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            myHour = hourOfDay;
-            myMinute = minute;
+            mHour = hourOfDay;
+            mMinute = minute;
             Calendar c = Calendar.getInstance();
             c.set(Calendar.HOUR_OF_DAY, hourOfDay);
             c.set(Calendar.MINUTE, minute);

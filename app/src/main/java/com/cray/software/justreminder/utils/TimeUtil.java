@@ -32,6 +32,7 @@ import java.util.Locale;
 public class TimeUtil {
 
     public static final SimpleDateFormat format24 = new SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault());
+    public static final SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZZ", Locale.getDefault());
     public static final SimpleDateFormat format12 = new SimpleDateFormat("dd MMM yyyy, K:mm a", Locale.getDefault());
     public static final SimpleDateFormat fullDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy", Locale.getDefault());
     public static final SimpleDateFormat fullDateTime24 = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm", Locale.getDefault());
@@ -74,6 +75,17 @@ public class TimeUtil {
      * @param date date to convert.
      * @return Date string
      */
+    public static String getDate(long date){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(date);
+        return dateFormat.format(calendar.getTime());
+    }
+
+    /**
+     * Get date and time string from date.
+     * @param date date to convert.
+     * @return Date string
+     */
     public static String getSimpleDateTime(long date, boolean is24){
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(date);
@@ -88,6 +100,14 @@ public class TimeUtil {
      */
     public static String getDate(Date date){
         return fullDateFormat.format(date);
+    }
+
+    /**
+     * Get date and time string from date.
+     * @return Date string
+     */
+    public static String getTimeStamp(){
+        return timeStampFormat.format(new Date());
     }
 
     /**
