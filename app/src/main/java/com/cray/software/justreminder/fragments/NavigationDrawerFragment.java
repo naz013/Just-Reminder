@@ -40,6 +40,7 @@ import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.cloud.GTasksHelper;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.modules.Module;
@@ -207,7 +208,8 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
                 fileName = path.substring(index);
             }
             File file = new File(MemoryUtil.getImageCacheDir(), fileName + ".jpg");
-            if (file.exists()) {
+            boolean readPerm = Permissions.checkPermission(mContext, Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);
+            if (readPerm && file.exists()) {
                 Picasso.with(mContext)
                         .load(file)
                         .into(image);
@@ -217,7 +219,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
                         .load(path)
                         .into(image);
                 image.setVisibility(View.VISIBLE);
-                new SaveAsync(mContext).execute(path);
+                if (readPerm) new SaveAsync(mContext).execute(path);
             }
         } else image.setVisibility(View.GONE);
         if (new GTasksHelper(mContext).isLinked()) {
