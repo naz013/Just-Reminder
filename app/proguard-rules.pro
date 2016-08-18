@@ -30,6 +30,7 @@
 -dontwarn com.squareup.okhttp.**
 -dontwarn android.support.v8.**
 -dontwarn android.support.design.**
+-dontwarn okio.**
 
 -dontnote android.net.http.**
 -dontnote org.apache.http.**

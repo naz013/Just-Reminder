@@ -142,9 +142,9 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
         noneCheck.setOnCheckedChangeListener(this);
         position = SharedPrefs.getInstance(this).getInt(Prefs.MAIN_IMAGE_ID);
         String path = SharedPrefs.getInstance(this).getString(Prefs.MAIN_IMAGE_PATH);
-        if (position == -1 && path.matches(DEFAULT_PHOTO)) {
+        if (path.matches(DEFAULT_PHOTO)) {
             defaultCheck.setChecked(true);
-        } else if (position == -1 && path.matches(NONE_PHOTO)) {
+        } else if (path.matches(NONE_PHOTO)) {
             noneCheck.setChecked(true);
         }
         emptyItem = (LinearLayout) findViewById(R.id.emptyItem);

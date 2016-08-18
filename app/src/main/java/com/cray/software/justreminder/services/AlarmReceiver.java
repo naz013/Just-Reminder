@@ -45,7 +45,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         Intent service = new Intent(context, AlarmReceiver.class);
         context.startService(service);
         ReminderItem item = ReminderHelper.getInstance(context).getReminder(id);
-        String exclusion = item.getModel().getExclusion().toString();
+        String exclusion = item.getModel().getExclusion().getJsonString();
         String type = item.getType();
         if (type.matches(Constants.TYPE_TIME)) {
             if (exclusion != null) {

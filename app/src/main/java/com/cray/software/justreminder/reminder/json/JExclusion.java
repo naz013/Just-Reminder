@@ -55,6 +55,11 @@ public class JExclusion {
                 "->Hours: " + Arrays.asList(hours);
     }
 
+    public String getJsonString() {
+        if (jsonObject != null) return jsonObject.toString();
+        else return null;
+    }
+
     public JExclusion(JSONObject jsonObject){
         if (jsonObject != null) {
             this.jsonObject = jsonObject;

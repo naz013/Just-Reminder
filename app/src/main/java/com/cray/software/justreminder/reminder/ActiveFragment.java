@@ -195,7 +195,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.currentList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        loaderAdapter(mLastGroupId, 0);
+        loaderAdapter(mLastGroupId);
         return rootView;
     }
 
@@ -241,7 +241,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     public void onResume() {
         super.onResume();
         if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.REMINDER_CHANGED)) {
-            loaderAdapter(mLastGroupId, 0);
+            loaderAdapter(mLastGroupId);
         }
     }
 
@@ -249,7 +249,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
      * Load data to recycler view.
      * @param groupId group identifier.
      */
-    public void loaderAdapter(final String groupId, long time){
+    public void loaderAdapter(final String groupId){
         mLastGroupId = groupId;
         SharedPrefs.getInstance(mContext).putBoolean(Prefs.REMINDER_CHANGED, false);
         mDataList = new ArrayList<>();
@@ -301,10 +301,10 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         builder.setTitle(getString(R.string.choose_group));
         builder.setAdapter(arrayAdapter, (dialog, which) -> {
             if (which == 0) {
-                loaderAdapter(null, 0);
+                loaderAdapter(null);
             } else {
                 String catId = mGroupsIds.get(which - 1);
-                loaderAdapter(catId, 0);
+                loaderAdapter(catId);
             }
         });
         AlertDialog alert = builder.create();
@@ -336,7 +336,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                 return;
             }
             Reminder.setNewGroup(mContext, id, catId);
-            loaderAdapter(mLastGroupId, 0);
+            loaderAdapter(mLastGroupId);
         });
         AlertDialog alert = builder.create();
         alert.show();
@@ -375,7 +375,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     @Override
     public void onItemSwitched(final int position, final View switchCompat) {
         boolean is = Reminder.toggle(mAdapter.getItem(position).getId(), mContext, mCallbacks);
-        if (is) loaderAdapter(mLastGroupId, 0);
+        if (is) loaderAdapter(mLastGroupId);
         else mAdapter.notifyItemChanged(position);
     }
 
@@ -389,7 +389,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                 previewReminder(view, item.getId(), item.getType());
             } else {
                 Reminder.toggle(item.getId(), mContext, mCallbacks);
-                loaderAdapter(mLastGroupId, 0);
+                loaderAdapter(mLastGroupId);
             }
         }
     }
@@ -413,7 +413,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
                 case 3:
                     mAdapter.removeItem(position);
                     Reminder.moveToTrash(item1.getId(), mContext, mCallbacks);
-                    //loaderAdapter(null, 0);
+                    loaderAdapter(null);
                     break;
             }
         }, items);
@@ -422,7 +422,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
     @Override
     public void endExecution(final boolean result) {
         if (mContext != null) {
-            loaderAdapter(mLastGroupId, 0);
+            loaderAdapter(mLastGroupId);
         }
     }
 }
