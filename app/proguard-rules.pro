@@ -17,7 +17,14 @@
 -keep class android.support.design.** { *; }
 -keep interface android.support.design.** { *; }
 -keep class com.meg7.widget.** { *; }
+-keep class android.support.v7.widget.** { *; }
+-keep class android.support.v7.widget.SearchView { *; }
+-keep interface android.support.v7.widget.** { *; }
 -keep public class android.support.design.R$* { *; }
+-keep public class * extends android.support.v7.widget.SearchView {
+   public <init>(android.content.Context);
+   public <init>(android.content.Context, android.util.AttributeSet);
+}
 
 -dontwarn org.apache.**
 -dontwarn ch.boye.**
