@@ -79,7 +79,11 @@ public class SharedPrefs {
         try {
             x = prefs.getInt(stringToLoad, 0);
         } catch (ClassCastException e) {
-            x = Integer.parseInt(prefs.getString(stringToLoad, "0"));
+            try {
+                x = Integer.parseInt(prefs.getString(stringToLoad, "0"));
+            } catch (ClassCastException e1) {
+                x = 0;
+            }
         }
         return x;
     }

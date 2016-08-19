@@ -46,7 +46,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainImageActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
-    public static final String DEFAULT_PHOTO = Api.BASE_URL + "/1280/768?image=33";
+    public static final String DEFAULT_PHOTO = "https://unsplash.it/1280/768?image=33";
     private static final String NONE_PHOTO = "";
     private static final String TAG = "MainImageActivity";
     private static final int START_SIZE = 50;
@@ -142,10 +142,10 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
         noneCheck.setOnCheckedChangeListener(this);
         position = SharedPrefs.getInstance(this).getInt(Prefs.MAIN_IMAGE_ID);
         String path = SharedPrefs.getInstance(this).getString(Prefs.MAIN_IMAGE_PATH);
-        if (path.matches(DEFAULT_PHOTO)) {
-            defaultCheck.setChecked(true);
-        } else if (path.matches(NONE_PHOTO)) {
+        if (path.matches(NONE_PHOTO)) {
             noneCheck.setChecked(true);
+        } else if (position == -1 || path.matches(DEFAULT_PHOTO)) {
+            defaultCheck.setChecked(true);
         }
         emptyItem = (LinearLayout) findViewById(R.id.emptyItem);
         emptyItem.setVisibility(View.VISIBLE);
