@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.utils.MemoryUtil;
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -110,6 +111,19 @@ public class SharedPrefs {
             x = Long.parseLong(prefs.getString(stringToLoad, "1000"));
         }
         return x;
+    }
+
+    public void putObject(String key, Object obj) {
+        Gson gson = new Gson();
+        putString(key, gson.toJson(obj));
+    }
+
+    public Object getObject(String key, Class<?> classOfT) {
+        String json = getString(key);
+        Object value = new Gson().fromJson(json, classOfT);
+        if (value == null)
+            throw new NullPointerException();
+        return value;
     }
 
     /**

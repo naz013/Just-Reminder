@@ -17,6 +17,7 @@ import com.cray.software.justreminder.dialogs.ActionPickerDialog;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.reminder.ReminderDataProvider;
+import com.cray.software.justreminder.theme.MonthImage;
 import com.hexrain.flextcal.FlextCal;
 import com.hexrain.flextcal.FlextListener;
 
@@ -109,6 +110,8 @@ public class CalendarViewFragment extends Fragment {
         }
         args.putBoolean(FlextCal.DARK_THEME, cSetter.isDark());
         args.putBoolean(FlextCal.ENABLE_IMAGES, SharedPrefs.getInstance(mContext).getBoolean(Prefs.CALENDAR_IMAGE));
+        MonthImage monthImage = (MonthImage) SharedPrefs.getInstance(mContext).getObject(Prefs.CALENDAR_IMAGES, MonthImage.class);
+        args.putLongArray(FlextCal.MONTH_IMAGES, monthImage.getPhotos());
         calendarView.setArguments(args);
         calendarView.setBackgroundForToday(cSetter.getColor(cSetter.colorCurrentCalendar()));
         replace(calendarView, ScreenManager.ACTION_CALENDAR);

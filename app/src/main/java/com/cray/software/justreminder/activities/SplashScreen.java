@@ -63,6 +63,8 @@ import com.cray.software.justreminder.services.CheckPosition;
 import com.cray.software.justreminder.services.GeolocationService;
 import com.cray.software.justreminder.tests.TestActivity;
 import com.cray.software.justreminder.theme.MainImageActivity;
+import com.cray.software.justreminder.theme.MonthImage;
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -123,6 +125,7 @@ public class SplashScreen extends AppCompatActivity {
             uiEd.putString(Prefs.TIME_NIGHT, "23:0");
             uiEd.putString(Prefs.TTS_LOCALE, Language.ENGLISH);
             uiEd.putString(Prefs.MAIN_IMAGE_PATH, MainImageActivity.DEFAULT_PHOTO);
+            uiEd.putString(Prefs.CALENDAR_IMAGES, new Gson().toJson(new MonthImage()));
             uiEd.putInt(Prefs.START_DAY, 1);
             uiEd.putInt(Prefs.DAYS_TO_BIRTHDAY, 0);
             uiEd.putInt(Prefs.NOTIFICATION_REPEAT_INTERVAL, 15);
@@ -550,7 +553,9 @@ public class SplashScreen extends AppCompatActivity {
         if (!prefs.hasKey(Prefs.MAIN_IMAGE_PATH)){
             prefs.putString(Prefs.MAIN_IMAGE_PATH, MainImageActivity.DEFAULT_PHOTO);
         }
-
+        if (!prefs.hasKey(Prefs.CALENDAR_IMAGES)) {
+            prefs.putObject(Prefs.CALENDAR_IMAGES, new MonthImage());
+        }
         if (Module.isPro()) {
             if (!prefs.hasKey(Prefs.LED_STATUS)) {
                 prefs.putBoolean(Prefs.LED_STATUS, true);
