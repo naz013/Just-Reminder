@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,7 +87,6 @@ public class CalendarViewFragment extends Fragment {
     public void onResume() {
         super.onResume();
         showCalendar();
-        Log.d(TAG, "onResume: ");
     }
 
     @Override
@@ -146,10 +144,9 @@ public class CalendarViewFragment extends Fragment {
 
             @Override
             public void onMonthSelected(int month) {
-                loadImage(month);
+
             }
         };
-
         calendarView.setCaldroidListener(listener);
         calendarView.refreshView();
         boolean isReminder = SharedPrefs.getInstance(mContext).getBoolean(Prefs.REMINDERS_IN_CALENDAR);
@@ -158,21 +155,6 @@ public class CalendarViewFragment extends Fragment {
         replace(calendarView, ScreenManager.ACTION_CALENDAR);
         SharedPrefs.getInstance(mContext).putInt(Prefs.LAST_CALENDAR_VIEW, 1);
         getActivity().invalidateOptionsMenu();
-    }
-
-    private void loadImage(int month) {
-//        if (mImageView != null && isImage) {
-//            if (ImageCheck.getInstance().isImage(month)){
-//                Picasso.with(getActivity())
-//                        .load(new File(ImageCheck.getInstance().getImage(month)))
-//                        .resize(1080, 1920)
-//                        .centerCrop()
-//                        .onlyScaleDown()
-//                        .into(mImageView);
-//            } else {
-//                new LoadAsync(getActivity(), month).execute();
-//            }
-//        }
     }
 
     private void replace(Fragment fragment, String tag) {

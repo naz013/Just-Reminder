@@ -42,10 +42,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import com.cray.software.justreminder.activities.Help;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
@@ -350,6 +352,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
 
     @Override
     public void onItemSelected(String tag) {
+        Log.d(Constants.LOG_TAG, "onItemSelected: " + tag);
         // update the main content by replacing fragments
         if (tag != null) {
             restoreUi();
@@ -522,7 +525,11 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
     private void openMarket() throws ActivityNotFoundException {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse("market://details?id=" + "com.cray.software.justreminderpro"));
-        startActivity(intent);
+        try {
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, R.string.could_not_launch_market, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -573,8 +580,9 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
             getWindow().setStatusBarColor(cSetter.getColor(cSetter.colorPrimaryDark()));
         }
         if (mTag != null) onItemSelected(mTag);
-        if (sPrefs.getBoolean(Prefs.STATUS_BAR_NOTIFICATION))
+        if (sPrefs.getBoolean(Prefs.STATUS_BAR_NOTIFICATION)) {
             new Notifier(this).recreatePermanent();
+        }
         isChangesShown();
         new DelayedAsync(this, null).execute();
         if (LocationUtil.isGooglePlayServicesAvailable(this)) {
