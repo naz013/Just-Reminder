@@ -3,6 +3,7 @@
 
     <color name="whitePrimary">#FFFFFF</color>
     <color name="whitePrimary30">#4DFFFFFF</color>
+    <color name="whitePrimary15">#26FFFFFF</color>
     <color name="blackPrimary">#000000</color>
 
     <color name="material_grey">#303030</color>

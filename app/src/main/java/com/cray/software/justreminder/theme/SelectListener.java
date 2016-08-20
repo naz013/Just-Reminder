@@ -1,5 +1,7 @@
 package com.cray.software.justreminder.theme;
 
+import android.view.View;
+
 /**
  * Copyright 2016 Nazar Suhovich
  * <p>
@@ -18,4 +20,5 @@ package com.cray.software.justreminder.theme;
 public interface SelectListener {
     void onImageSelected(boolean b);
     void deselectOverItem(int position);
+    void onItemLongClicked(int position, View view);
 }

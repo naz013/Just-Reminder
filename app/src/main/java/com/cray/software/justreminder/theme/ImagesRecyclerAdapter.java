@@ -71,6 +71,12 @@ public class ImagesRecyclerAdapter extends RecyclerView.Adapter<ImagesRecyclerAd
             super(itemView);
             binding = DataBindingUtil.bind(itemView);
             binding.container.setOnClickListener(view -> performClick(getAdapterPosition()));
+            binding.container.setOnLongClickListener(view -> {
+                if (mListener != null) {
+                    mListener.onItemLongClicked(getAdapterPosition(), view);
+                }
+                return true;
+            });
         }
     }
 

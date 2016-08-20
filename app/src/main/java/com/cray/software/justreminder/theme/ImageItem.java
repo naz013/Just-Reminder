@@ -24,10 +24,10 @@ public class ImageItem {
     private String format;
     @SerializedName("width")
     @Expose
-    private long width;
+    private int width;
     @SerializedName("height")
     @Expose
-    private long height;
+    private int height;
     @SerializedName("filename")
     @Expose
     private String filename;
@@ -62,19 +62,19 @@ public class ImageItem {
         this.format = format;
     }
 
-    public long getWidth() {
+    public int getWidth() {
         return width;
     }
 
-    public void setWidth(long width) {
+    public void setWidth(int width) {
         this.width = width;
     }
 
-    public long getHeight() {
+    public int getHeight() {
         return height;
     }
 
-    public void setHeight(long height) {
+    public void setHeight(int height) {
         this.height = height;
     }
 

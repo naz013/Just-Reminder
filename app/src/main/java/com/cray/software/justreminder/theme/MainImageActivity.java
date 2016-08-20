@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Nazar Suhovich
+ * Copyright 2016 Nazar Suhovich
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,27 +17,37 @@
 package com.cray.software.justreminder.theme;
 
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
+import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.roboto_views.RoboRadioButton;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
+import com.cray.software.justreminder.utils.MemoryUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,11 +65,17 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
     private RadioGroup selectGroup;
     private RecyclerView imagesList;
     private ImagesRecyclerAdapter mAdapter;
+    private RelativeLayout fullContainer;
+    private ImageView fullImageView;
+    private ImageButton downloadButton;
+    private ImageButton setToMonthButton;
 
     private List<ImageItem> mPhotoList = new ArrayList<>();
     private int mPointer;
 
     private int position = -1;
+    private ImageItem mSelectedItem;
+
     private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -106,6 +122,11 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
         @Override
         public void deselectOverItem(int position) {
             mPhotoList.get(position).setSelected(false);
+        }
+
+        @Override
+        public void onItemLongClicked(int position, View view) {
+            showImage(position);
         }
     };
 
@@ -158,6 +179,109 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
             emptyImage.setImageResource(R.drawable.ic_broken_image);
         }
         initRecyclerView();
+        initImageContainer();
+    }
+
+    private void initImageContainer() {
+        fullContainer = (RelativeLayout) findViewById(R.id.fullContainer);
+        fullContainer.setOnTouchListener((view, motionEvent) -> {
+            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                hideImage();
+            }
+            return true;
+        });
+        fullImageView = (ImageView) findViewById(R.id.fullImageView);
+        fullImageView.setOnTouchListener((view, motionEvent) -> true);
+        downloadButton = (ImageButton) findViewById(R.id.downloadButton);
+        downloadButton.setOnClickListener(view -> showDownloadDialog());
+        setToMonthButton = (ImageButton) findViewById(R.id.setToMonthButton);
+        setToMonthButton.setOnClickListener(view -> showMonthDialog());
+        if (!SharedPrefs.getInstance(this).getBoolean(Prefs.CALENDAR_IMAGE)) {
+            setToMonthButton.setVisibility(View.GONE);
+        }
+    }
+
+    private void showMonthDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setItems(R.array.month_list, (dialogInterface, i) -> {
+            setImageFotMonth(i);
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void showDownloadDialog() {
+        if (!Permissions.checkPermission(this, Permissions.WRITE_EXTERNAL)) {
+            Permissions.requestPermission(this, 112, Permissions.WRITE_EXTERNAL);
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        CharSequence maxSize = mSelectedItem.getHeight() + "x" + mSelectedItem.getWidth();
+        builder.setItems(new CharSequence[]{maxSize, "1920x1080", "1280x768", "800x480"}, (dialogInterface, i) -> {
+            int width = mSelectedItem.getWidth();
+            int height = mSelectedItem.getHeight();
+            switch (i) {
+                case 1:
+                    width = 1080;
+                    height = 1920;
+                    break;
+                case 2:
+                    width = 768;
+                    height = 1280;
+                    break;
+                case 3:
+                    width = 480;
+                    height = 800;
+                    break;
+            }
+            downloadImage(width, height);
+            dialogInterface.dismiss();
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void showImage(int position) {
+        mSelectedItem = mPhotoList.get(position);
+        if (mSelectedItem != null) {
+            Picasso.with(this)
+                    .load(RetrofitBuilder.getImageLink(mSelectedItem.getId()))
+                    .error(ColorSetter.getInstance(this).isDark() ? R.drawable.ic_broken_image_white : R.drawable.ic_broken_image)
+                    .into(fullImageView);
+            ViewUtils.show(this, fullContainer);
+        }
+    }
+
+    private void hideImage() {
+        ViewUtils.hide(this, fullContainer);
+        fullImageView.setImageBitmap(null);
+        mSelectedItem = null;
+    }
+
+    private void downloadImage(int width, int height) {
+        if (!Permissions.checkPermission(this, Permissions.WRITE_EXTERNAL)) {
+            Permissions.requestPermission(this, 112, Permissions.WRITE_EXTERNAL);
+            return;
+        }
+        if (MemoryUtil.isSdPresent()) {
+            File folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            if (!folder.exists()) {
+                folder.mkdirs();
+            }
+            File imageFile = new File(folder, mSelectedItem.getFilename());
+            new DownloadAsync(this, mSelectedItem.getFilename(), imageFile.toString(), width, height, mSelectedItem.getId()).execute();
+        } else {
+            Toast.makeText(this, R.string.no_sd_card, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        hideImage();
+    }
+
+    private void setImageFotMonth(int month) {
+        MonthImage monthImage = (MonthImage) SharedPrefs.getInstance(this).getObject(Prefs.CALENDAR_IMAGES, MonthImage.class);
+        monthImage.setPhoto(month, mSelectedItem.getId());
+        SharedPrefs.getInstance(this).putObject(Prefs.CALENDAR_IMAGES, monthImage);
+        hideImage();
     }
 
     private void initRecyclerView() {
@@ -177,8 +301,7 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
             }
         });
         imagesList.setLayoutManager(gridLayoutManager);
-        imagesList.addItemDecoration(new GridMarginDecoration(
-                getResources().getDimensionPixelSize(R.dimen.grid_item_spacing)));
+        imagesList.addItemDecoration(new GridMarginDecoration(getResources().getDimensionPixelSize(R.dimen.grid_item_spacing)));
         imagesList.setHasFixedSize(true);
         imagesList.setItemAnimator(new DefaultItemAnimator());
         imagesList.setOnScrollListener(mOnScrollListener);
@@ -226,5 +349,14 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
     private void setImageUrl(String imageUrl, int id) {
         SharedPrefs.getInstance(this).putString(Prefs.MAIN_IMAGE_PATH, imageUrl);
         SharedPrefs.getInstance(this).putInt(Prefs.MAIN_IMAGE_ID, id);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (fullContainer.getVisibility() == View.VISIBLE) {
+            hideImage();
+        } else {
+            finish();
+        }
     }
 }
