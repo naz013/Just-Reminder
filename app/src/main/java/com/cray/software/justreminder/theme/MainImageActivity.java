@@ -180,6 +180,8 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
         }
         initRecyclerView();
         initImageContainer();
+        mCall = RetrofitBuilder.getApi().getAllImages();
+        mCall.enqueue(mPhotoCallback);
     }
 
     private void initImageContainer() {
@@ -306,13 +308,6 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
         imagesList.setItemAnimator(new DefaultItemAnimator());
         imagesList.setOnScrollListener(mOnScrollListener);
         imagesList.setVisibility(View.GONE);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mCall = RetrofitBuilder.getApi().getAllImages();
-        mCall.enqueue(mPhotoCallback);
     }
 
     @Override
