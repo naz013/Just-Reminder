@@ -202,7 +202,7 @@ public class SplashScreen extends AppCompatActivity {
         if (!prefs.getBoolean(Prefs.IS_MIGRATION)) {
             try {
                 migrateToNewDb();
-            } catch (SQLiteException e) {
+            } catch (SQLiteException | IllegalStateException e) {
                 e.printStackTrace();
             }
             checkGroups();
@@ -238,7 +238,7 @@ public class SplashScreen extends AppCompatActivity {
         }
     }
 
-    private void migrateToNewDb() throws SQLiteException{
+    private void migrateToNewDb() throws SQLiteException, IllegalStateException {
         stopService(new Intent(SplashScreen.this, GeolocationService.class));
         stopService(new Intent(SplashScreen.this, CheckPosition.class));
         DataBase db = new DataBase(this);
