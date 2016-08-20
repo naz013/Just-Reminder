@@ -96,7 +96,6 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
             mPrefs.putBoolean(Prefs.CALENDAR_FEATURE_TASKS, true);
             featureRemindersPrefs.setChecked(true);
         }
-
         UpdatesHelper.getInstance(getActivity()).updateCalendarWidget();
     }
 
@@ -105,10 +104,13 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
             mPrefs.putBoolean(Prefs.CALENDAR_IMAGE, false);
             bgImagePrefs.setChecked(false);
         } else {
-            mPrefs.putBoolean(Prefs.CALENDAR_IMAGE, true);
-            bgImagePrefs.setChecked(true);
+            if (Permissions.checkPermission(getActivity(), Permissions.WRITE_EXTERNAL)) {
+                mPrefs.putBoolean(Prefs.CALENDAR_IMAGE, true);
+                bgImagePrefs.setChecked(true);
+            } else {
+                Permissions.requestPermission(getActivity(), 225, Permissions.WRITE_EXTERNAL);
+            }
         }
-
         UpdatesHelper.getInstance(getActivity()).updateCalendarWidget();
     }
 

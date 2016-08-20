@@ -520,4 +520,5 @@
     <string name="main_image">La imagen principal</string>
     <string name="default_image">"Defecto"</string>
     <string name="no_images">No fotos</string>
+    <string name="number">#</string>
 </resources>

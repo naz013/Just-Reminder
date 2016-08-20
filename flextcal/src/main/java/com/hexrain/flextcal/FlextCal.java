@@ -97,6 +97,7 @@ public class FlextCal extends Fragment {
     public final static String START_DAY_OF_WEEK = "startDayOfWeek";
     public final static String ENABLE_IMAGES = "enableImages";
     public final static String DARK_THEME = "dark_theme";
+    public final static String MONTH_IMAGES = "month_images";
 
     /**
      * For internal use
@@ -123,6 +124,8 @@ public class FlextCal extends Fragment {
 
     @ColorInt protected int backgroundForToday = 0;
     protected HashMap<DateTime, Events> eventsMap = new HashMap<>();
+
+    private long[] photosList = new long[]{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
     protected int startDayOfWeek = SUNDAY;
 
@@ -297,10 +300,10 @@ public class FlextCal extends Fragment {
 
         if (image != null && enableImage) {
             ImageCheck check = ImageCheck.getInstance();
-            if (check.isImage(month)){
-                Picasso.with(getActivity()).load(new File(check.getImage(month))).resize(1280, 768).into(image);
+            if (check.isImage(month - 1, photosList[month - 1])){
+                Picasso.with(getActivity()).load(new File(check.getImage(month - 1, photosList[month - 1]))).resize(1280, 768).into(image);
             } else {
-                new LoadAsync(getActivity(), month).execute();
+                new LoadAsync(getActivity(), month - 1, photosList[month - 1]).execute();
             }
         }
     }
@@ -345,6 +348,13 @@ public class FlextCal extends Fragment {
             }
             enableImage = args.getBoolean(ENABLE_IMAGES, true);
             isDark = args.getBoolean(DARK_THEME, true);
+            long[] photos = args.getLongArray(MONTH_IMAGES);
+            if (photos != null) {
+                for (int i = 0; i < photos.length; i++) {
+                    long id = photos[i];
+                    if (id != -1) photosList[i] = id;
+                }
+            }
         }
 
         if (month == -1 || year == -1) {

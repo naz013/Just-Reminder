@@ -33,20 +33,22 @@ public class LoadAsync extends AsyncTask<Void, Void, Void> {
 
     private Context context;
     private int month;
+    private long id;
 
-    public LoadAsync(Context context, int month){
+    public LoadAsync(Context context, int month, long id){
         this.context = context;
         this.month = month;
+        this.id = id;
     }
 
     @Override
     protected Void doInBackground(Void... params) {
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if (!ImageCheck.getInstance().isImage(month) && mWifi.isConnected()){
+        if (!ImageCheck.getInstance().isImage(month, id) && mWifi.isConnected()){
             try {
                 Bitmap bitmap = Picasso.with(context)
-                        .load(ImageCheck.getInstance().getImageUrl(month))
+                        .load(ImageCheck.getInstance().getImageUrl(month, id))
                         .resize(1920, 1080)
                         .get();
                 File sdPath = Environment.getExternalStorageDirectory();
@@ -54,8 +56,7 @@ public class LoadAsync extends AsyncTask<Void, Void, Void> {
                 if (!sdPathDr.exists()) {
                     sdPathDr.mkdirs();
                 }
-
-                File image = new File(sdPathDr, ImageCheck.getInstance().getImageName(month));
+                File image = new File(sdPathDr, ImageCheck.getInstance().getImageName(month, id));
                 try {
                     if (image.createNewFile()) {
                         FileOutputStream stream = new FileOutputStream(image);

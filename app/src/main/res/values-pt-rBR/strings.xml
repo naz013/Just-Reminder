@@ -520,4 +520,5 @@
     <string name="main_image">A foto principal</string>
     <string name="default_image">"Padrão"</string>
     <string name="no_images">Sem imagens</string>
+    <string name="number">#</string>
 </resources>

@@ -520,4 +520,5 @@
     <string name="main_image">Ana resim</string>
     <string name="default_image">"Varsayılan"</string>
     <string name="no_images">Resim yok</string>
+    <string name="number">#</string>
 </resources>

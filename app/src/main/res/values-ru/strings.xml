@@ -536,4 +536,5 @@
     <string name="main_image">Основное изображение</string>
     <string name="default_image">"По умолчанию"</string>
     <string name="no_images">Нет фотографий</string>
+    <string name="number">#</string>
 </resources>

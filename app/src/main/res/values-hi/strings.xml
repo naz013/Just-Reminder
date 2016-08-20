@@ -520,4 +520,5 @@
     <string name="main_image">मुख्य तस्वीर</string>
     <string name="default_image">"चूक"</string>
     <string name="no_images">कोई चित्र नहीं है</string>
+    <string name="number">#</string>
 </resources>

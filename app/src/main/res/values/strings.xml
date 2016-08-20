@@ -519,4 +519,5 @@
     <string name="main_image">The main picture</string>
     <string name="default_image">Default </string>
     <string name="no_images">No pictures</string>
+    <string name="number">#</string>
 </resources>

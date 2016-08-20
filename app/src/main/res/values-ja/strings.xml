@@ -521,4 +521,5 @@
     <string name="main_image">メイン画像</string>
     <string name="default_image">"デフォルト"</string>
     <string name="no_images">いいえ写真はありません</string>
+    <string name="number">#</string>
 </resources>

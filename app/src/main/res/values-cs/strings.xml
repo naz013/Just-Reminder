@@ -520,4 +520,5 @@
     <string name="main_image">Hlavní obrázek</string>
     <string name="default_image">"Standardní"</string>
     <string name="no_images">Žádné fotografie</string>
+    <string name="number">#</string>
 </resources>

@@ -520,4 +520,5 @@
     <string name="main_image">Imaginea principală</string>
     <string name="default_image">"Lipsă"</string>
     <string name="no_images">Nu există imagini</string>
+    <string name="number">#</string>
 </resources>
