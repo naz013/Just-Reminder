@@ -45,58 +45,58 @@ public class LED {
         int color;
         switch (code) {
             case 0:
-                color = LED.WHITE;
+                color = WHITE;
                 break;
             case 1:
-                color = LED.RED;
+                color = RED;
                 break;
             case 2:
-                color = LED.GREEN;
+                color = GREEN;
                 break;
             case 3:
-                color = LED.BLUE;
+                color = BLUE;
                 break;
             case 4:
-                color = LED.ORANGE;
+                color = ORANGE;
                 break;
             case 5:
-                color = LED.YELLOW;
+                color = YELLOW;
                 break;
             case 6:
-                color = LED.PINK;
+                color = PINK;
                 break;
             case 7:
-                color = LED.GREEN_LIGHT;
+                color = GREEN_LIGHT;
                 break;
             case 8:
-                color = LED.BLUE_LIGHT;
+                color = BLUE_LIGHT;
                 break;
             case 9:
-                color = LED.PURPLE;
+                color = PURPLE;
                 break;
             case 10:
-                color = LED.AMBER;
+                color = AMBER;
                 break;
             case 11:
-                color = LED.CYAN;
+                color = CYAN;
                 break;
             case 12:
-                color = LED.LIME;
+                color = LIME;
                 break;
             case 13:
-                color = LED.INDIGO;
+                color = INDIGO;
                 break;
             case 14:
-                color = LED.DEEP_ORANGE;
+                color = DEEP_ORANGE;
                 break;
             case 15:
-                color = LED.DEEP_PURPLE;
+                color = DEEP_PURPLE;
                 break;
             case 16:
-                color = LED.TEAL;
+                color = TEAL;
                 break;
             default:
-                color = LED.BLUE;
+                color = BLUE;
                 break;
         }
         return color;
