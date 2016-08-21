@@ -1,123 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/windowBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/toolbar" />
-
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar" />
+
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
-            <android.support.v7.widget.CardView
+            <RadioGroup
+                android:id="@+id/selectGroup"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:gravity="center"
+                android:orientation="horizontal">
 
-                <RadioGroup
-                    android:id="@+id/selectGroup"
-                    android:layout_width="match_parent"
+                <com.cray.software.justreminder.roboto_views.RoboRadioButton
+                    android:id="@+id/defaultCheck"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+                    android:text="@string/default_image" />
 
-                    <com.cray.software.justreminder.roboto_views.RoboRadioButton
-                        android:id="@+id/defaultCheck"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/default_image" />
+                <com.cray.software.justreminder.roboto_views.RoboRadioButton
+                    android:id="@+id/noneCheck"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:text="@string/none" />
 
-                    <com.cray.software.justreminder.roboto_views.RoboRadioButton
-                        android:id="@+id/noneCheck"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:text="@string/none" />
+            </RadioGroup>
 
-                </RadioGroup>
-
-            </android.support.v7.widget.CardView>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <include layout="@layout/empty_item_layout" />
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/imagesList"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-            </RelativeLayout>
-
-        </LinearLayout>
+        </android.support.v7.widget.CardView>
 
         <RelativeLayout
-            android:id="@+id/fullContainer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
+            android:layout_height="match_parent">
 
-            <android.support.v7.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                app:cardCornerRadius="4dp">
+            <include layout="@layout/empty_item_layout" />
 
-                <RelativeLayout
-                    android:layout_width="288dp"
-                    android:layout_height="288dp"
-                    android:padding="8dp">
-
-                    <ImageView
-                        android:id="@+id/fullImageView"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:background="@color/whitePrimary15"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <ImageButton
-                            android:id="@+id/downloadButton"
-                            android:layout_width="44dp"
-                            android:layout_height="44dp"
-                            android:background="@null"
-                            android:src="@drawable/ic_get_app_black_24dp" />
-
-                        <ImageButton
-                            android:id="@+id/setToMonthButton"
-                            android:layout_width="44dp"
-                            android:layout_height="44dp"
-                            android:layout_marginLeft="16dp"
-                            android:background="@null"
-                            android:src="@drawable/ic_event_white_24dp" />
-
-                    </LinearLayout>
-
-                </RelativeLayout>
-
-            </android.support.v7.widget.CardView>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/imagesList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
         </RelativeLayout>
 
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/fullContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/whitePrimary15"
+        android:visibility="gone">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/imageContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            app:cardCornerRadius="4dp">
+
+            <LinearLayout
+                android:layout_width="288dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.cray.software.justreminder.roboto_views.RoboTextView
+                    android:id="@+id/photoInfoView"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:gravity="center"
+                    android:textSize="18sp" />
+
+                <ImageView
+                    android:id="@+id/fullImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="288dp"
+                    android:scaleType="centerCrop" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/downloadButton"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:background="@null"
+                        android:src="@drawable/ic_get_app_white" />
+
+                    <ImageButton
+                        android:id="@+id/setToMonthButton"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:layout_marginLeft="16dp"
+                        android:background="@null"
+                        android:src="@drawable/ic_event_white_24dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
     </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>

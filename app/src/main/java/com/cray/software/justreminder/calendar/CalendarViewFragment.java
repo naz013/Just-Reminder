@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.cray.software.justreminder.theme.MonthImage;
 import com.hexrain.flextcal.FlextCal;
 import com.hexrain.flextcal.FlextListener;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -111,6 +113,7 @@ public class CalendarViewFragment extends Fragment {
         args.putBoolean(FlextCal.DARK_THEME, cSetter.isDark());
         args.putBoolean(FlextCal.ENABLE_IMAGES, SharedPrefs.getInstance(mContext).getBoolean(Prefs.CALENDAR_IMAGE));
         MonthImage monthImage = (MonthImage) SharedPrefs.getInstance(mContext).getObject(Prefs.CALENDAR_IMAGES, MonthImage.class);
+        Log.d(TAG, "showCalendar: " + Arrays.toString(monthImage.getPhotos()));
         args.putLongArray(FlextCal.MONTH_IMAGES, monthImage.getPhotos());
         calendarView.setArguments(args);
         calendarView.setBackgroundForToday(cSetter.getColor(cSetter.colorCurrentCalendar()));

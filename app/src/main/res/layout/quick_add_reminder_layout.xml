@@ -77,7 +77,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
                 app:repeat_type_text="@string/days" />
 
             <View
@@ -89,10 +88,9 @@
 
             <com.cray.software.justreminder.roboto_views.RoboCheckBox
                 android:id="@+id/calendarExport"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="16dp"
                 android:text="@string/add_to_calendar"
                 android:textSize="@dimen/checkbox_text_size"
                 android:visibility="gone"

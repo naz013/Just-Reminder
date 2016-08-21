@@ -301,7 +301,7 @@ public class FlextCal extends Fragment {
         if (image != null && enableImage) {
             ImageCheck check = ImageCheck.getInstance();
             if (check.isImage(month - 1, photosList[month - 1])){
-                Picasso.with(getActivity()).load(new File(check.getImage(month - 1, photosList[month - 1]))).resize(1280, 768).into(image);
+                Picasso.with(getActivity()).load(new File(check.getImage(month - 1, photosList[month - 1]))).into(image);
             } else {
                 new LoadAsync(getActivity(), month - 1, photosList[month - 1]).execute();
             }

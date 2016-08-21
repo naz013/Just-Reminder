@@ -223,15 +223,47 @@ public class ViewUtils {
         view.setVisibility(View.GONE);
     }
 
-    public static void show(Context context, View v) {
-        Animation slide = AnimationUtils.loadAnimation(context, R.anim.scale_zoom);
-        v.startAnimation(slide);
+    public static void show(Context context, View v, AnimationCallback callback) {
+        Animation scaleUp = AnimationUtils.loadAnimation(context, R.anim.scale_zoom);
+        scaleUp.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if (callback != null) callback.onAnimationFinish(1);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        v.startAnimation(scaleUp);
         v.setVisibility(View.VISIBLE);
     }
 
-    public static void hide(Context context, View v) {
-        Animation slide = AnimationUtils.loadAnimation(context, R.anim.scale_zoom_out);
-        v.startAnimation(slide);
+    public static void hide(Context context, View v, AnimationCallback callback) {
+        Animation scaleDown = AnimationUtils.loadAnimation(context, R.anim.scale_zoom_out);
+        scaleDown.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if (callback != null) callback.onAnimationFinish(0);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        v.startAnimation(scaleDown);
         v.setVisibility(View.GONE);
     }
 
@@ -294,5 +326,9 @@ public class ViewUtils {
         // 1dp/ms
         a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density));
         v.startAnimation(a);
+    }
+
+    public interface AnimationCallback {
+        void onAnimationFinish(int code);
     }
 }

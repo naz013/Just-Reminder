@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -69,6 +70,8 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
     private ImageView fullImageView;
     private ImageButton downloadButton;
     private ImageButton setToMonthButton;
+    private RoboTextView photoInfoView;
+    private CardView imageContainer;
 
     private List<ImageItem> mPhotoList = new ArrayList<>();
     private int mPointer;
@@ -129,6 +132,12 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
             showImage(position);
         }
     };
+    private ViewUtils.AnimationCallback mAnimationCallback = (code) -> {
+        if (code == 0) {
+            fullImageView.setImageBitmap(null);
+            mSelectedItem = null;
+        }
+    };
 
     private void loadDataToList() {
         mPointer = START_SIZE - 1;
@@ -185,13 +194,17 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
     }
 
     private void initImageContainer() {
+        imageContainer = (CardView) findViewById(R.id.imageContainer);
+        imageContainer.setVisibility(View.GONE);
         fullContainer = (RelativeLayout) findViewById(R.id.fullContainer);
+        fullContainer.setVisibility(View.GONE);
         fullContainer.setOnTouchListener((view, motionEvent) -> {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                 hideImage();
             }
             return true;
         });
+        photoInfoView = (RoboTextView) findViewById(R.id.photoInfoView);
         fullImageView = (ImageView) findViewById(R.id.fullImageView);
         fullImageView.setOnTouchListener((view, motionEvent) -> true);
         downloadButton = (ImageButton) findViewById(R.id.downloadButton);
@@ -200,6 +213,13 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
         setToMonthButton.setOnClickListener(view -> showMonthDialog());
         if (!SharedPrefs.getInstance(this).getBoolean(Prefs.CALENDAR_IMAGE)) {
             setToMonthButton.setVisibility(View.GONE);
+        }
+        if (ColorSetter.getInstance(this).isDark()) {
+            downloadButton.setImageResource(R.drawable.ic_get_app_white);
+            setToMonthButton.setImageResource(R.drawable.ic_event_white_24dp);
+        } else {
+            downloadButton.setImageResource(R.drawable.ic_get_app_black);
+            setToMonthButton.setImageResource(R.drawable.ic_event_black_24dp);
         }
     }
 
@@ -246,18 +266,19 @@ public class MainImageActivity extends AppCompatActivity implements CompoundButt
     private void showImage(int position) {
         mSelectedItem = mPhotoList.get(position);
         if (mSelectedItem != null) {
+            photoInfoView.setText(getString(R.string.number) + mSelectedItem.getId() + " " + mSelectedItem.getAuthor());
             Picasso.with(this)
                     .load(RetrofitBuilder.getImageLink(mSelectedItem.getId()))
                     .error(ColorSetter.getInstance(this).isDark() ? R.drawable.ic_broken_image_white : R.drawable.ic_broken_image)
                     .into(fullImageView);
-            ViewUtils.show(this, fullContainer);
+            ViewUtils.showReveal(fullContainer);
+            ViewUtils.show(this, imageContainer, mAnimationCallback);
         }
     }
 
     private void hideImage() {
-        ViewUtils.hide(this, fullContainer);
-        fullImageView.setImageBitmap(null);
-        mSelectedItem = null;
+        ViewUtils.hide(this, imageContainer, mAnimationCallback);
+        ViewUtils.hideReveal(fullContainer);
     }
 
     private void downloadImage(int width, int height) {
