@@ -503,7 +503,7 @@
     <string name="move_backward">Kehren Sie zurück</string>
     <string name="create_task">Aufgabe erstellen</string>
     <string name="type_to_search">Tippe um zu suchen</string>
-    <string name="up">Up</string>
+    <string name="up">Oben</string>
     <string name="move_forward">Schritt vorwärts</string>
     <string name="refresh">Erfrischen</string>
     <string name="save_widget">Speichern Widget</string>
@@ -521,22 +521,22 @@
     <string name="default_image">"Standard"</string>
     <string name="no_images">Keine Bilder</string>
     <string name="number">#</string>
-    <string name="no_sd_card">No SD card</string>
-    <string name="downloading_start">Downloading start</string>
+    <string name="no_sd_card">Keine SD-Karte</string>
+    <string name="downloading_start">Downloading begonnen</string>
 
-    <string name="january">January</string>
-    <string name="february">February</string>
-    <string name="march">March</string>
+    <string name="january">Januar</string>
+    <string name="february">Februar</string>
+    <string name="march">März</string>
     <string name="april">April</string>
-    <string name="may">May</string>
-    <string name="june">June</string>
-    <string name="july">July</string>
+    <string name="may">Kann</string>
+    <string name="june">Juni</string>
+    <string name="july">Juli</string>
     <string name="august">August</string>
     <string name="september">September</string>
-    <string name="october">October</string>
+    <string name="october">Oktober</string>
     <string name="november">November</string>
-    <string name="december">December</string>
-    <string name="download_failed">Download failed</string>
+    <string name="december">Dezember</string>
+    <string name="download_failed">Herunterladen fehlgeschlagen</string>
     <array name="month_list">
         <item>@string/january</item>
         <item>@string/february</item>

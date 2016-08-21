@@ -503,7 +503,7 @@
     <string name="move_backward">Devolver</string>
     <string name="create_task">Criar tarefa</string>
     <string name="type_to_search">Escreva para pesquisar</string>
-    <string name="up">Up</string>
+    <string name="up">Acima</string>
     <string name="move_forward">Vá em frente</string>
     <string name="refresh">Refrescar</string>
     <string name="save_widget">Salvar Widget</string>
@@ -521,22 +521,22 @@
     <string name="default_image">"Padrão"</string>
     <string name="no_images">Sem imagens</string>
     <string name="number">#</string>
-    <string name="no_sd_card">No SD card</string>
-    <string name="downloading_start">Downloading start</string>
+    <string name="no_sd_card">Nenhum cartão SD</string>
+    <string name="downloading_start">Baixando começou</string>
 
-    <string name="january">January</string>
-    <string name="february">February</string>
-    <string name="march">March</string>
-    <string name="april">April</string>
-    <string name="may">May</string>
-    <string name="june">June</string>
-    <string name="july">July</string>
-    <string name="august">August</string>
-    <string name="september">September</string>
-    <string name="october">October</string>
-    <string name="november">November</string>
-    <string name="december">December</string>
-    <string name="download_failed">Download failed</string>
+    <string name="january">Janeiro</string>
+    <string name="february">Fevereiro</string>
+    <string name="march">Marcha</string>
+    <string name="april">Abril</string>
+    <string name="may">Pode</string>
+    <string name="june">Junho</string>
+    <string name="july">Julho</string>
+    <string name="august">Agosto</string>
+    <string name="september">Setembro</string>
+    <string name="october">Outubro</string>
+    <string name="november">Novembro</string>
+    <string name="december">Dezembro</string>
+    <string name="download_failed">O download falhou</string>
     <array name="month_list">
         <item>@string/january</item>
         <item>@string/february</item>

@@ -504,7 +504,7 @@
     <string name="move_backward">Reveni înapoi</string>
     <string name="create_task">Creează sarcină</string>
     <string name="type_to_search">Tastați pentru a căuta</string>
-    <string name="up">Up</string>
+    <string name="up">Sus</string>
     <string name="move_forward">Mergi inainte</string>
     <string name="refresh">Reîmprospăta</string>
     <string name="save_widget">Salvați widget</string>
@@ -521,22 +521,22 @@
     <string name="default_image">"Lipsă"</string>
     <string name="no_images">Nu există imagini</string>
     <string name="number">#</string>
-    <string name="no_sd_card">No SD card</string>
-    <string name="downloading_start">Downloading start</string>
+    <string name="no_sd_card">Nu există card SD</string>
+    <string name="downloading_start">Descarcarea început</string>
 
-    <string name="january">January</string>
-    <string name="february">February</string>
-    <string name="march">March</string>
-    <string name="april">April</string>
-    <string name="may">May</string>
-    <string name="june">June</string>
-    <string name="july">July</string>
+    <string name="january">Lanuarie</string>
+    <string name="february">Februarie</string>
+    <string name="march">Martie</string>
+    <string name="april">Aprilie</string>
+    <string name="may">Mai</string>
+    <string name="june">Lunie</string>
+    <string name="july">Lulie</string>
     <string name="august">August</string>
-    <string name="september">September</string>
-    <string name="october">October</string>
-    <string name="november">November</string>
-    <string name="december">December</string>
-    <string name="download_failed">Download failed</string>
+    <string name="september">Septembrie</string>
+    <string name="october">Octombrie</string>
+    <string name="november">Noiembrie</string>
+    <string name="december">Decembrie</string>
+    <string name="download_failed">Descarcare esuata</string>
     <array name="month_list">
         <item>@string/january</item>
         <item>@string/february</item>

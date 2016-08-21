@@ -518,7 +518,7 @@
     <string name="enable_changing_theme_during_day">Увімкнути автоматичну зміну теми протягом дня</string>
     <string name="create_task">Створити завдання</string>
     <string name="type_to_search">Введіть запит для пошуку</string>
-    <string name="up">Up</string>
+    <string name="up">Вгору</string>
     <string name="move_forward">Вперед</string>
     <string name="refresh">Оновити</string>
     <string name="save_widget">Зберегти віджет</string>
@@ -537,22 +537,22 @@
     <string name="no_images">Немає зображень</string>
     <string name="default_image">"За замовчуванням"</string>
     <string name="number">#</string>
-    <string name="no_sd_card">No SD card</string>
-    <string name="downloading_start">Downloading start</string>
+    <string name="no_sd_card">Немає карти пам\'яті</string>
+    <string name="downloading_start">Завантаження почалося</string>
 
-    <string name="january">January</string>
-    <string name="february">February</string>
-    <string name="march">March</string>
-    <string name="april">April</string>
-    <string name="may">May</string>
-    <string name="june">June</string>
-    <string name="july">July</string>
-    <string name="august">August</string>
-    <string name="september">September</string>
-    <string name="october">October</string>
-    <string name="november">November</string>
-    <string name="december">December</string>
-    <string name="download_failed">Download failed</string>
+    <string name="january">Січень</string>
+    <string name="february">Лютий</string>
+    <string name="march">Березень</string>
+    <string name="april">Квітень</string>
+    <string name="may">Травень</string>
+    <string name="june">Червень</string>
+    <string name="july">Липень</string>
+    <string name="august">Серпень</string>
+    <string name="september">Вересень</string>
+    <string name="october">Жовтень</string>
+    <string name="november">Листопад</string>
+    <string name="december">Грудень</string>
+    <string name="download_failed">Помилка завантаження</string>
     <array name="month_list">
         <item>@string/january</item>
         <item>@string/february</item>

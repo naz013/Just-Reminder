@@ -504,7 +504,7 @@
     <string name="move_backward">戻ります</string>
     <string name="create_task">タスクを作成します。</string>
     <string name="type_to_search">検索するタイプ</string>
-    <string name="up">Up</string>
+    <string name="up">アップ</string>
     <string name="move_forward">前進する</string>
     <string name="refresh">リフレッシュ</string>
     <string name="save_widget">保存ウィジェット</string>
@@ -522,22 +522,22 @@
     <string name="default_image">"デフォルト"</string>
     <string name="no_images">いいえ写真はありません</string>
     <string name="number">#</string>
-    <string name="no_sd_card">No SD card</string>
-    <string name="downloading_start">Downloading start</string>
+    <string name="no_sd_card">SDカードがありません</string>
+    <string name="downloading_start">始めダウンロード</string>
 
-    <string name="january">January</string>
-    <string name="february">February</string>
-    <string name="march">March</string>
-    <string name="april">April</string>
-    <string name="may">May</string>
-    <string name="june">June</string>
-    <string name="july">July</string>
-    <string name="august">August</string>
-    <string name="september">September</string>
-    <string name="october">October</string>
-    <string name="november">November</string>
-    <string name="december">December</string>
-    <string name="download_failed">Download failed</string>
+    <string name="january">1月</string>
+    <string name="february">2月</string>
+    <string name="march">3月</string>
+    <string name="april">4月</string>
+    <string name="may">5月</string>
+    <string name="june">六月</string>
+    <string name="july">7月</string>
+    <string name="august">8月</string>
+    <string name="september">9月</string>
+    <string name="october">10月</string>
+    <string name="november">11月</string>
+    <string name="december">12月</string>
+    <string name="download_failed">ダウンロードに失敗しました</string>
     <array name="month_list">
         <item>@string/january</item>
         <item>@string/february</item>
