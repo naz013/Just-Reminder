@@ -1,7 +1,10 @@
 package com.cray.software.justreminder.theme;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
@@ -29,7 +32,7 @@ import io.fabric.sdk.android.services.concurrency.AsyncTask;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class DownloadAsync extends AsyncTask<String, Void, Void> {
+public class DownloadAsync extends AsyncTask<String, Void, DownloadAsync.Image> {
 
     private Context mContext;
     private NotificationManagerCompat mNotifyMgr;
@@ -55,16 +58,22 @@ public class DownloadAsync extends AsyncTask<String, Void, Void> {
         super.onPreExecute();
         builder.setContentTitle(fileName);
         builder.setContentText(mContext.getString(R.string.downloading_start));
-        builder.setSmallIcon(R.drawable.ic_get_app_black_24dp);
+        builder.setSmallIcon(R.drawable.ic_get_app_white);
         mNotifyMgr = NotificationManagerCompat.from(mContext);
         mNotifyMgr.notify((int) id, builder.build());
     }
 
     @Override
-    protected Void doInBackground(String... strings) {
+    protected DownloadAsync.Image doInBackground(String... strings) {
+        Image image = null;
         File file = new File(filePath);
         try {
             Bitmap bitmap = Picasso.with(mContext).load(RetrofitBuilder.getImageLink(id, width, height)).get();
+            if (bitmap != null) {
+                image = new Image();
+                image.bitmap = bitmap;
+                image.path = filePath;
+            }
             try {
                 if (file.createNewFile()) {
                     FileOutputStream stream = new FileOutputStream(file);
@@ -77,15 +86,38 @@ public class DownloadAsync extends AsyncTask<String, Void, Void> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return image;
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
+    protected void onPostExecute(DownloadAsync.Image aVoid) {
         super.onPostExecute(aVoid);
-        builder.setContentText(mContext.getString(R.string.done));
-        builder.setSmallIcon(R.drawable.ic_done_white_24dp);
+        if (aVoid != null) {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.parse("file://" + aVoid.path), "image/*");
+            PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
+            builder.setContentText(mContext.getString(R.string.done));
+            builder.setSmallIcon(R.drawable.ic_done_white_24dp);
+            builder.setContentIntent(pendingIntent);
+            builder.setLargeIcon(aVoid.bitmap);
+            NotificationCompat.BigPictureStyle s = new NotificationCompat.BigPictureStyle();
+            s.bigLargeIcon(aVoid.bitmap);
+            s.bigPicture(aVoid.bitmap);
+            builder.setStyle(s);
+        } else {
+            builder.setContentText(mContext.getString(R.string.download_failed));
+            builder.setSmallIcon(R.drawable.ic_warning_white);
+        }
+        builder.setAutoCancel(true);
         builder.setWhen(System.currentTimeMillis());
         mNotifyMgr.notify((int) id, builder.build());
+    }
+
+    class Image {
+        public Bitmap bitmap;
+        public String path;
+
+        public Image() {}
     }
 }
