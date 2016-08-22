@@ -22,7 +22,7 @@ import java.io.File;
  */
 public class ImageCheck {
 
-    public static final String BASE_URL = "https://unsplash.it/?image=";
+    public static final String BASE_URL = "https://unsplash.it/1920/1080?image=";
     private long[] photos = new long[]{
             227,
             226,

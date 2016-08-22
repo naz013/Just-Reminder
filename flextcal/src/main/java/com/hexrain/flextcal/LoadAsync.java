@@ -49,7 +49,6 @@ public class LoadAsync extends AsyncTask<Void, Void, Void> {
             try {
                 Bitmap bitmap = Picasso.with(context)
                         .load(ImageCheck.getInstance().getImageUrl(month, id))
-                        .resize(1920, 1080)
                         .get();
                 File sdPath = Environment.getExternalStorageDirectory();
                 File sdPathDr = new File(sdPath.toString() + "/JustReminder/" + "image_cache");
