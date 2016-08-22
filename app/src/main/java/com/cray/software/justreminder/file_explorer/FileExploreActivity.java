@@ -93,7 +93,7 @@ public class FileExploreActivity extends AppCompatActivity {
             path = new File(sel + "");
             loadFileList();
             loadList();
-        } else if (mFileName.equalsIgnoreCase("up") && !sel.exists()) {
+        } else if (mFileName.equalsIgnoreCase(getString(R.string.up)) && !sel.exists()) {
             moveUp();
         } else {
             if (filType.matches("any")) {
