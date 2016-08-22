@@ -92,6 +92,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Calendar;
+import java.util.Random;
 
 public class NotesManager extends AppCompatActivity {
 
@@ -304,6 +305,7 @@ public class NotesManager extends AppCompatActivity {
             }
         } else {
             mItem = new NoteItem();
+            mItem.setColor(new Random().nextInt(16));
         }
 
         if (savedInstanceState != null) {

@@ -18,6 +18,7 @@ package com.cray.software.justreminder.notes;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -27,6 +28,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,6 +43,7 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.contacts.FilterCallback;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
@@ -52,6 +55,7 @@ import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NotesFragment extends Fragment implements SyncListener, SimpleListener {
@@ -61,9 +65,41 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     private NoteRecyclerAdapter mAdapter;
 
     private boolean enableGrid = false;
+    private List<NoteItem> mDataList = new ArrayList<>();
 
     private NavigationCallbacks mCallbacks;
     private Activity mContext;
+
+    private SearchView mSearchView = null;
+    private MenuItem mSearchMenu = null;
+
+    private SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            if (mAdapter != null) mAdapter.filter(query, mDataList);
+            if (mSearchMenu != null) {
+                mSearchMenu.collapseActionView();
+            }
+            return false;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            if (mAdapter != null) mAdapter.filter(newText, mDataList);
+            return false;
+        }
+    };
+    private FilterCallback mFilterCallback = new FilterCallback() {
+        @Override
+        public void filter(int size) {
+            currentList.scrollToPosition(0);
+            reloadView();
+        }
+    };
+    private SearchView.OnCloseListener mCloseListener = () -> {
+        loaderAdapter();
+        return true;
+    };
 
     public static NotesFragment newInstance() {
         return new NotesFragment();
@@ -95,6 +131,16 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         }
         if (NoteHelper.getInstance(mContext).getCount() != 0) {
             menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.delete_all));
+        }
+        mSearchMenu = menu.findItem(R.id.action_search);
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        if (mSearchMenu != null) {
+            mSearchView = (SearchView) mSearchMenu.getActionView();
+        }
+        if (mSearchView != null) {
+            mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+            mSearchView.setOnQueryTextListener(queryTextListener);
+            mSearchView.setOnCloseListener(mCloseListener);
         }
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -231,7 +277,8 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
             layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         }
         currentList.setLayoutManager(layoutManager);
-        mAdapter = new NoteRecyclerAdapter(mContext, NoteHelper.getInstance(mContext).getAll());
+        mDataList = NoteHelper.getInstance(mContext).getAll();
+        mAdapter = new NoteRecyclerAdapter(mContext, mDataList, mFilterCallback);
         mAdapter.setEventListener(this);
         reloadView();
         currentList.setAdapter(mAdapter);
@@ -313,7 +360,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
     @Override
     public void onItemLongClicked(final int position, final View view) {
         String showIn = getString(R.string.show_in_status_bar);
-        showIn = showIn.substring(0, showIn.length() - 2);
+        showIn = showIn.substring(0, showIn.length() - 1);
         final String[] items = {getString(R.string.open), getString(R.string.share),
                 showIn, getString(R.string.change_color), getString(R.string.edit),
                 getString(R.string.delete)};

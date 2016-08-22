@@ -19,6 +19,14 @@
     tools:context="com.cray.software.justreminder.app.MainActivity">
 
     <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search_white_24dp"
+        android:title="@string/search"
+        android:visible="false"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always|collapseActionView" />
+
+    <item
         android:id="@+id/action_list"
         android:icon="@drawable/ic_view_quilt_white_24dp"
         android:title="@string/grid_view"

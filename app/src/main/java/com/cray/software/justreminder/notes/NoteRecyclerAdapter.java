@@ -24,18 +24,28 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.constants.Prefs;
+import com.cray.software.justreminder.contacts.FilterCallback;
 import com.cray.software.justreminder.databinding.ItemNoteLayoutBinding;
+import com.cray.software.justreminder.helpers.SharedPrefs;
+import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapter.ViewHolder> {
 
     private List<NoteItem> mDataList;
     private SimpleListener mEventListener;
+    private FilterCallback mCallback;
 
-    public NoteRecyclerAdapter(Context context, List<NoteItem> list) {
+    private boolean isEncrypted = false;
+
+    public NoteRecyclerAdapter(Context context, List<NoteItem> list, FilterCallback callback) {
         this.mDataList = list;
+        this.mCallback = callback;
+        isEncrypted = SharedPrefs.getInstance(context).getBoolean(Prefs.NOTE_ENCRYPT);
         setHasStableIds(true);
     }
 
@@ -74,6 +84,87 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
 
     public NoteItem getItem(int position) {
         return mDataList.get(position);
+    }
+
+    public void filter(String q, List<NoteItem> list) {
+        List<NoteItem> res = filter(list, q);
+        animateTo(res);
+        if (mCallback != null) mCallback.filter(res.size());
+    }
+
+    private List<NoteItem> filter(List<NoteItem> mData, String q) {
+        q = q.toLowerCase();
+        if (mData == null) mData = new ArrayList<>();
+        List<NoteItem> filteredModelList = new ArrayList<>();
+        if (q.matches("")) {
+            filteredModelList = new ArrayList<>(mData);
+        } else {
+            filteredModelList.addAll(getFiltered(mData, q));
+        }
+        return filteredModelList;
+    }
+
+    private List<NoteItem> getFiltered(List<NoteItem> models, String query) {
+        List<NoteItem> list = new ArrayList<>();
+        for (NoteItem model : models) {
+            String text = model.getNote();
+            if (isEncrypted) text = SyncHelper.decrypt(text);
+            if (text.toLowerCase().contains(query)) {
+                list.add(model);
+            }
+        }
+        return list;
+    }
+
+    public NoteItem remove(int position) {
+        final NoteItem model = mDataList.remove(position);
+        notifyItemRemoved(position);
+        return model;
+    }
+
+    public void addItem(int position, NoteItem model) {
+        mDataList.add(position, model);
+        notifyItemInserted(position);
+    }
+
+    public void moveItem(int fromPosition, int toPosition) {
+        final NoteItem model = mDataList.remove(fromPosition);
+        mDataList.add(toPosition, model);
+        notifyItemMoved(fromPosition, toPosition);
+    }
+
+    public void animateTo(List<NoteItem> models) {
+        applyAndAnimateRemovals(models);
+        applyAndAnimateAdditions(models);
+        applyAndAnimateMovedItems(models);
+    }
+
+    private void applyAndAnimateRemovals(List<NoteItem> newModels) {
+        for (int i = mDataList.size() - 1; i >= 0; i--) {
+            final NoteItem model = mDataList.get(i);
+            if (!newModels.contains(model)) {
+                remove(i);
+            }
+        }
+    }
+
+    private void applyAndAnimateAdditions(List<NoteItem> newModels) {
+        for (int i = 0, count = newModels.size(); i < count; i++) {
+            final NoteItem model = newModels.get(i);
+            if (!mDataList.contains(model)) {
+                addItem(i, model);
+            }
+        }
+    }
+
+    private void applyAndAnimateMovedItems(List<NoteItem> newModels) {
+        for (int toPosition = newModels.size() - 1; toPosition >= 0; toPosition--) {
+            final NoteItem model = newModels.get(toPosition);
+            final int fromPosition = mDataList.indexOf(model);
+            if (fromPosition >= 0 && fromPosition != toPosition) {
+                moveItem(fromPosition, toPosition);
+            }
+        }
     }
 
     @Override
