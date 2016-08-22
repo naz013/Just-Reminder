@@ -118,6 +118,12 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
             reloadView();
         }
     };
+    private SearchView.OnCloseListener mSearchCloseListener = new SearchView.OnCloseListener() {
+        @Override
+        public boolean onClose() {
+            return false;
+        }
+    };
 
     /**
      * Fragment default instance.
@@ -150,6 +156,7 @@ public class ActiveFragment extends Fragment implements RecyclerListener, SyncLi
         if (mSearchView != null) {
             mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
             mSearchView.setOnQueryTextListener(queryTextListener);
+            mSearchView.setOnCloseListener(mSearchCloseListener);
         }
         super.onCreateOptionsMenu(menu, inflater);
     }
