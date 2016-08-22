@@ -134,13 +134,6 @@ public class MonthFragment extends BaseFragment implements
         timeField.setText(TimeUtil.getTime(updateTime(System.currentTimeMillis(), false),
                 SharedPrefs.getInstance(getActivity()).getBoolean(Prefs.IS_24_TIME_FORMAT)));
 
-        String dayStr;
-        if (mDay > 28) mDay = 28;
-        if (mDay < 10) dayStr = "0" + mDay;
-        else dayStr = String.valueOf(mDay);
-
-        monthDayField.setText(dayStr);
-
         dayCheck = (RoboRadioButton) view.findViewById(R.id.dayCheck);
         dayCheck.setChecked(true);
         lastCheck = (RoboRadioButton) view.findViewById(R.id.lastCheck);
@@ -158,20 +151,12 @@ public class MonthFragment extends BaseFragment implements
             String type = item.getType();
             long eventTime = item.getEventTime();
             number = item.getAction().getTarget();
-
             if (exp == 1) dateExport.setChecked(true);
-            if (expTasks == Constants.SYNC_GTASKS_ONLY)
+            if (expTasks == Constants.SYNC_GTASKS_ONLY) {
                 dateTaskExport.setChecked(true);
-
+            }
             timeField.setText(TimeUtil.getTime(updateTime(eventTime, true),
                     SharedPrefs.getInstance(getActivity()).getBoolean(Prefs.IS_24_TIME_FORMAT)));
-
-            Calendar calendar = Calendar.getInstance();
-            if (mDay == 0) mDay = calendar.get(Calendar.DAY_OF_MONTH);
-            if (mDay < 10) dayStr = "0" + mDay;
-            else dayStr = String.valueOf(mDay);
-            monthDayField.setText(dayStr);
-
             if (type.matches(Constants.TYPE_MONTHDAY)){
                 actionView.setAction(false);
                 dayCheck.setChecked(true);
@@ -193,6 +178,17 @@ public class MonthFragment extends BaseFragment implements
                     actionView.setType(ActionView.TYPE_MESSAGE);
                 }
             }
+        }
+        Calendar calendar = Calendar.getInstance();
+        mDay = calendar.get(Calendar.DAY_OF_MONTH);
+        String dayStr;
+        if (mDay > 28) mDay = 28;
+        if (mDay < 10) dayStr = "0" + mDay;
+        else dayStr = String.valueOf(mDay);
+        monthDayField.setText(dayStr);
+        if (mListener != null) {
+            mListener.onDateSelect(System.currentTimeMillis(), mDay, calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.YEAR));
         }
         return view;
     }
@@ -253,19 +249,16 @@ public class MonthFragment extends BaseFragment implements
         mYear = year;
         final Calendar cal = Calendar.getInstance();
         cal.set(year, monthOfYear, dayOfMonth);
-
-        if (mDay > 28 && mActionCallbacks != null)
+        if (mDay > 28 && mActionCallbacks != null) {
             mActionCallbacks.showSnackbar(R.string.max_day_supported);
-
+        }
         String dayStr;
         if (mDay > 28) mDay = 28;
         if (mDay < 10) dayStr = "0" + mDay;
         else dayStr = String.valueOf(mDay);
-
         monthDayField.setText(dayStr);
-
         if (mListener != null) {
-            mListener.onDateSelect(cal.getTimeInMillis(), dayOfMonth, monthOfYear, year);
+            mListener.onDateSelect(cal.getTimeInMillis(), mDay, monthOfYear, year);
         }
     }
 
@@ -273,15 +266,12 @@ public class MonthFragment extends BaseFragment implements
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         mHour = hourOfDay;
         mMinute = minute;
-
         Calendar c = Calendar.getInstance();
         c.set(Calendar.HOUR_OF_DAY, hourOfDay);
         c.set(Calendar.MINUTE, minute);
-
         String formattedTime = TimeUtil.getTime(c.getTime(),
                 SharedPrefs.getInstance(getActivity()).getBoolean(Prefs.IS_24_TIME_FORMAT));
         timeField.setText(formattedTime);
-
         if (mListener != null) {
             mListener.onTimeSelect(c.getTimeInMillis(), hourOfDay, minute);
         }

@@ -151,11 +151,11 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
     /**
      * Reminder preferences flags.
      */
-    private int myHour = 0;
-    private int myMinute = 0;
-    private int myYear = 0;
-    private int myMonth = 0;
-    private int myDay = 1;
+    private int mHour = 0;
+    private int mMinute = 0;
+    private int mYear = 0;
+    private int mMonth = 0;
+    private int mDay = 1;
     private int vibration = -1;
     private int voice = -1;
     private int notificationRepeat = -1;
@@ -401,11 +401,11 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             Calendar calendar = Calendar.getInstance();
             if (time > 0) calendar.setTimeInMillis(time);
             else calendar.setTimeInMillis(System.currentTimeMillis());
-            myDay = calendar.get(Calendar.DAY_OF_MONTH);
-            myMonth = calendar.get(Calendar.MONTH);
-            myYear = calendar.get(Calendar.YEAR);
-            myHour = calendar.get(Calendar.HOUR_OF_DAY);
-            myMinute = calendar.get(Calendar.MINUTE);
+            mDay = calendar.get(Calendar.DAY_OF_MONTH);
+            mMonth = calendar.get(Calendar.MONTH);
+            mYear = calendar.get(Calendar.YEAR);
+            mHour = calendar.get(Calendar.HOUR_OF_DAY);
+            mMinute = calendar.get(Calendar.MINUTE);
             if (radius == 0) radius = -1;
             if (catId != null && !catId.matches("")) categoryId = catId;
             if (categoryId != null && !categoryId.matches("")) {
@@ -1052,11 +1052,11 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 }
             }
             if (!fragment.isShoppingReminder()) {
-                myDay = 0;
-                myMonth = 0;
-                myYear = 0;
-                myHour = 0;
-                myMinute = 0;
+                mDay = 0;
+                mMonth = 0;
+                mYear = 0;
+                mHour = 0;
+                mMinute = 0;
             }
         }
         ArrayList<Integer> weekdays = new ArrayList<>();
@@ -1132,22 +1132,22 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             if (isLocationAttached()) {
                 LocationFragment fragment = (LocationFragment) baseFragment;
                 if (fragment.isDelayed()) {
-                    myDay = 0;
-                    myMonth = 0;
-                    myYear = 0;
-                    myHour = 0;
-                    myMinute = 0;
+                    mDay = 0;
+                    mMonth = 0;
+                    mYear = 0;
+                    mHour = 0;
+                    mMinute = 0;
                 }
                 style = fragment.getMarker();
             }
             if (isLocationOutAttached()) {
                 OutLocationFragment fragment = (OutLocationFragment) baseFragment;
                 if (fragment.isDelayed()) {
-                    myDay = 0;
-                    myMonth = 0;
-                    myYear = 0;
-                    myHour = 0;
-                    myMinute = 0;
+                    mDay = 0;
+                    mMonth = 0;
+                    mYear = 0;
+                    mHour = 0;
+                    mMinute = 0;
                 }
                 style = fragment.getMarker();
             }
@@ -1168,11 +1168,11 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
                 return null;
             }
 
-            myDay = 0;
-            myMonth = 0;
-            myYear = 0;
-            myHour = 0;
-            myMinute = 0;
+            mDay = 0;
+            mMonth = 0;
+            mYear = 0;
+            mHour = 0;
+            mMinute = 0;
         }
 
         int mySeconds = 0;
@@ -1185,11 +1185,11 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
             }
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(System.currentTimeMillis());
-            myYear = c.get(Calendar.YEAR);
-            myMonth = c.get(Calendar.MONTH);
-            myDay = c.get(Calendar.DAY_OF_MONTH);
-            myHour = c.get(Calendar.HOUR_OF_DAY);
-            myMinute = c.get(Calendar.MINUTE);
+            mYear = c.get(Calendar.YEAR);
+            mMonth = c.get(Calendar.MONTH);
+            mDay = c.get(Calendar.DAY_OF_MONTH);
+            mHour = c.get(Calendar.HOUR_OF_DAY);
+            mMinute = c.get(Calendar.MINUTE);
             mySeconds = c.get(Calendar.SECOND);
         }
 
@@ -1198,15 +1198,15 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         int calendarSync = getExportCode();
 
         if (isMonthDayAttached()) {
-            if (type.endsWith("_last")) myDay = 0;
+            if (type.endsWith("_last")) mDay = 0;
         }
-        long startTime = TimeCount.getInstance(this).generateStartEvent(type, myDay, myMonth,
-                myYear, myHour, myMinute, mySeconds, weekdays, timeAfter);
+        long startTime = TimeCount.getInstance(this).generateStartEvent(type, mDay, mMonth,
+                mYear, mHour, mMinute, mySeconds, weekdays, timeAfter);
         if (repeat == 0) repeats = -1;
         JExclusion jExclusion = new JExclusion(exclusion);
         JLed jLed = new JLed(ledColor, ledColor == -1 ? 0 : 1);
         JMelody jMelody = new JMelody(melody, volume);
-        JRecurrence jRecurrence = new JRecurrence(myDay, repeat, repeats, weekdays, timeAfter);
+        JRecurrence jRecurrence = new JRecurrence(mDay, repeat, repeats, weekdays, timeAfter);
         JAction jAction = new JAction(type, number, auto, subjectString, attachment);
         JExport jExport = new JExport().setGtasks(gTaskSync).setCalendar(calendarSync);
         JPlace jPlace = new JPlace(latitude, longitude, radius, style);
@@ -1719,15 +1719,15 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
 
     @Override
     public void onDateSelect(long mills, int day, int month, int year) {
-        myDay = day;
-        myMonth = month;
-        myYear = year;
+        mDay = day;
+        mMonth = month;
+        mYear = year;
     }
 
     @Override
     public void onTimeSelect(long mills, int hour, int minute) {
-        myHour = hour;
-        myMinute = minute;
+        mHour = hour;
+        mMinute = minute;
     }
 
     @Override
