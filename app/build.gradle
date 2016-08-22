@@ -123,7 +123,7 @@ dependencies {
     compile project(':flextcal')
     compile project(':shared')
     compile project(':simpleai')
-    //wearApp project(':wear')
+//    wearApp project(':wear')
     compile('com.crashlytics.sdk.android:crashlytics:2.6.2@aar') {
         transitive = true;
     }
