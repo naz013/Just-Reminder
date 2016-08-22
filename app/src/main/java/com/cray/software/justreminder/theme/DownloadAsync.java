@@ -9,6 +9,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
 import com.cray.software.justreminder.R;
+import com.cray.software.justreminder.utils.BitmapUtils;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -69,11 +70,6 @@ public class DownloadAsync extends AsyncTask<String, Void, DownloadAsync.Image> 
         File file = new File(filePath);
         try {
             Bitmap bitmap = Picasso.with(mContext).load(RetrofitBuilder.getImageLink(id, width, height)).get();
-            if (bitmap != null) {
-                image = new Image();
-                image.bitmap = bitmap;
-                image.path = filePath;
-            }
             try {
                 if (file.createNewFile()) {
                     FileOutputStream stream = new FileOutputStream(file);
@@ -82,6 +78,11 @@ public class DownloadAsync extends AsyncTask<String, Void, DownloadAsync.Image> 
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+            if (bitmap != null) {
+                image = new Image();
+                image.bitmap = BitmapUtils.compressBitmap(bitmap);
+                image.path = filePath;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -93,22 +94,34 @@ public class DownloadAsync extends AsyncTask<String, Void, DownloadAsync.Image> 
     protected void onPostExecute(DownloadAsync.Image aVoid) {
         super.onPostExecute(aVoid);
         if (aVoid != null) {
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.parse("file://" + aVoid.path), "image/*");
-            PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
-            builder.setContentText(mContext.getString(R.string.done));
-            builder.setSmallIcon(R.drawable.ic_done_white_24dp);
-            builder.setContentIntent(pendingIntent);
-            builder.setLargeIcon(aVoid.bitmap);
-            NotificationCompat.BigPictureStyle s = new NotificationCompat.BigPictureStyle();
-            s.bigLargeIcon(aVoid.bitmap);
-            s.bigPicture(aVoid.bitmap);
-            builder.setStyle(s);
+            showNotidicationWithImage(aVoid);
         } else {
-            builder.setContentText(mContext.getString(R.string.download_failed));
-            builder.setSmallIcon(R.drawable.ic_warning_white);
+            showErrorNotification();
         }
+    }
+
+    private void showErrorNotification() {
+        builder.setContentText(mContext.getString(R.string.download_failed));
+        builder.setSmallIcon(R.drawable.ic_warning_white);
+        builder.setAutoCancel(true);
+        builder.setWhen(System.currentTimeMillis());
+        mNotifyMgr.notify((int) id, builder.build());
+    }
+
+    private void showNotidicationWithImage(Image image) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.parse("file://" + image.path), "image/*");
+        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
+        builder.setContentText(mContext.getString(R.string.done));
+        builder.setSmallIcon(R.drawable.ic_done_white_24dp);
+        builder.setContentIntent(pendingIntent);
+        Bitmap bitmap = image.bitmap;
+        builder.setLargeIcon(bitmap);
+        NotificationCompat.BigPictureStyle s = new NotificationCompat.BigPictureStyle();
+        s.bigLargeIcon(bitmap);
+        s.bigPicture(bitmap);
+        builder.setStyle(s);
         builder.setAutoCancel(true);
         builder.setWhen(System.currentTimeMillis());
         mNotifyMgr.notify((int) id, builder.build());
