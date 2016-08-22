@@ -72,6 +72,7 @@ import com.cray.software.justreminder.reminder.ReminderHelper;
 import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
+import com.cray.software.justreminder.utils.BitmapUtils;
 import com.cray.software.justreminder.utils.LocationUtil;
 import com.cray.software.justreminder.utils.MemoryUtil;
 import com.cray.software.justreminder.utils.SuperUtil;
@@ -568,7 +569,7 @@ public class NotesManager extends AppCompatActivity {
     private void getImageFromGallery(Uri selectedImage) {
         Bitmap bitmapImage = null;
         try {
-            bitmapImage = decodeUri(selectedImage);
+            bitmapImage = BitmapUtils.decodeUriToBitmap(this, selectedImage);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -587,7 +588,7 @@ public class NotesManager extends AppCompatActivity {
     private void getImageFromCamera() {
         Bitmap bitmapImage = null;
         try {
-            bitmapImage = decodeUri(mImageUri);
+            bitmapImage = BitmapUtils.decodeUriToBitmap(this, mImageUri);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -600,8 +601,8 @@ public class NotesManager extends AppCompatActivity {
             if (!isImageAttached()) {
                 ViewUtils.expand(imageContainer);
             }
-            String imageurl = getRealPathFromURI(mImageUri);
-            File file = new File(imageurl);
+            String pathFromURI = getRealPathFromURI(mImageUri);
+            File file = new File(pathFromURI);
             if (file.exists()) {
                 file.delete();
             }
@@ -622,26 +623,6 @@ public class NotesManager extends AppCompatActivity {
         }
         mFab.setBackgroundTintList(ViewUtils.getFabState(this, cSetter.colorPrimary(color),
                 cSetter.colorPrimaryDark(color)));
-    }
-
-    private Bitmap decodeUri(Uri selectedImage) throws FileNotFoundException {
-        BitmapFactory.Options o = new BitmapFactory.Options();
-        o.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage), null, o);
-        final int REQUIRED_SIZE = 350;
-        int width_tmp = o.outWidth, height_tmp = o.outHeight;
-        int scale = 1;
-        while (true) {
-            if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE) {
-                break;
-            }
-            width_tmp /= 2;
-            height_tmp /= 2;
-            scale *= 2;
-        }
-        BitmapFactory.Options o2 = new BitmapFactory.Options();
-        o2.inSampleSize = scale;
-        return BitmapFactory.decodeStream(getContentResolver().openInputStream(selectedImage), null, o2);
     }
 
     protected Dialog dateDialog() {
