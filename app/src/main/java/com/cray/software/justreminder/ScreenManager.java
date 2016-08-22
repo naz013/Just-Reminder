@@ -682,12 +682,11 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         quickNote.setText("");
         quickNote.setError(null);
         ViewUtils.hideReveal(noteCard);
-        InputMethodManager imm = (InputMethodManager) getSystemService(
-                Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(quickNote.getWindowToken(), 0);
         new Handler().postDelayed(() -> {
             if (!isNoteVisible()) {
-                askNotification(note, id);
+                askNotification(item);
             }
         }, 300);
         if (mTag.matches(FRAGMENT_NOTE) || mTag.matches(FRAGMENT_ACTIVE)) {
@@ -695,19 +694,24 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
         }
     }
 
-    private void askNotification(final String note, final long id) {
+    private void askNotification(final NoteItem item) {
+        String decrypted = item.getNote();
+        if (SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT)) {
+            decrypted = SyncHelper.encrypt(decrypted);
+        }
+        final String finalDecrypted = decrypted;
         ViewUtils.showReveal(noteStatusCard);
         buttonYes.setOnClickListener(v -> {
-            new Notifier(ScreenManager.this).showNoteNotification(note, id);
+            new Notifier(ScreenManager.this).showNoteNotification(item);
             ViewUtils.hideReveal(noteStatusCard);
             if (SharedPrefs.getInstance(this).getBoolean(Prefs.QUICK_NOTE_REMINDER)) {
-                new Handler().postDelayed(() -> askReminder(note, id), 300);
+                new Handler().postDelayed(() -> askReminder(finalDecrypted, item.getId()), 300);
             }
         });
         buttonNo.setOnClickListener(v -> {
             ViewUtils.hideReveal(noteStatusCard);
             if (SharedPrefs.getInstance(this).getBoolean(Prefs.QUICK_NOTE_REMINDER)) {
-                new Handler().postDelayed(() -> askReminder(note, id), 300);
+                new Handler().postDelayed(() -> askReminder(finalDecrypted, item.getId()), 300);
             }
         });
     }

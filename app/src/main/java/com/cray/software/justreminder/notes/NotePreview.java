@@ -231,8 +231,7 @@ public class NotePreview extends AppCompatActivity {
 
     private void moveToStatus() {
         if (mItem != null){
-            new Notifier(this).showNoteNotification((SharedPrefs.getInstance(this).getBoolean(Prefs.NOTE_ENCRYPT) ?
-                            SyncHelper.decrypt(mItem.getNote()): mItem.getNote()), mItem.getId());
+            new Notifier(this).showNoteNotification(mItem);
         }
     }
 

@@ -21,6 +21,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -38,6 +40,7 @@ import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.notes.NoteItem;
 import com.cray.software.justreminder.notes.NotesManager;
 import com.cray.software.justreminder.reminder.ReminderDialog;
 import com.cray.software.justreminder.reminder.ReminderHelper;
@@ -546,16 +549,15 @@ public class Notifier {
 
     /**
      * Status bar notification for notes.
-     * @param content notification title.
-     * @param id note identifier.
      */
-    public void showNoteNotification(String content, long id){
+    public void showNoteNotification(NoteItem item){
         SharedPrefs sPrefs = SharedPrefs.getInstance(mContext);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
         builder.setContentText(mContext.getString(R.string.note));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setColor(ViewUtils.getColor(mContext, R.color.bluePrimary));
         }
+        String content = sPrefs.getBoolean(Prefs.NOTE_ENCRYPT) ? SyncHelper.decrypt(item.getNote()) : item.getNote();
         builder.setSmallIcon(R.drawable.ic_event_note_white_24dp);
         builder.setContentTitle(content);
         boolean isWear = sPrefs.getBoolean(Prefs.WEAR_NOTIFICATION);
@@ -566,8 +568,16 @@ public class Notifier {
                 builder.setGroupSummary(true);
             }
         }
+        if (item.getImage() != null) {
+            Bitmap bitmap = BitmapFactory.decodeByteArray(item.getImage(), 0, item.getImage().length);
+            builder.setLargeIcon(bitmap);
+            NotificationCompat.BigPictureStyle s = new NotificationCompat.BigPictureStyle();
+            s.bigLargeIcon(bitmap);
+            s.bigPicture(bitmap);
+            builder.setStyle(s);
+        }
         NotificationManagerCompat mNotifyMgr = NotificationManagerCompat.from(mContext);
-        Integer it = (int) (long) id;
+        Integer it = (int) (long) item.getId();
         mNotifyMgr.notify(it, builder.build());
         if (isWear){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
