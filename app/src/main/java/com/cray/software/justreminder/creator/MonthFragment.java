@@ -166,7 +166,8 @@ public class MonthFragment extends BaseFragment implements
             timeField.setText(TimeUtil.getTime(updateTime(eventTime, true),
                     SharedPrefs.getInstance(getActivity()).getBoolean(Prefs.IS_24_TIME_FORMAT)));
 
-            if (mDay == 0) mDay = 1;
+            Calendar calendar = Calendar.getInstance();
+            if (mDay == 0) mDay = calendar.get(Calendar.DAY_OF_MONTH);
             if (mDay < 10) dayStr = "0" + mDay;
             else dayStr = String.valueOf(mDay);
             monthDayField.setText(dayStr);

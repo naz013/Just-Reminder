@@ -150,7 +150,7 @@ public class RepeatView extends LinearLayout implements SeekBar.OnSeekBarChangeL
         if (progress == 0) {
             predictionView.setVisibility(INVISIBLE);
         } else {
-            predictionView.setVisibility(VISIBLE);
+            if (showPrediction) predictionView.setVisibility(VISIBLE);
         }
         if (showPrediction) {
             eventView.setText(TimeUtil.getFullDateTime(calendar.getTimeInMillis() + progress * mMultiplier, is24));
@@ -161,7 +161,7 @@ public class RepeatView extends LinearLayout implements SeekBar.OnSeekBarChangeL
         if (enable) {
             predictionView.setVisibility(VISIBLE);
         } else {
-            predictionView.setVisibility(GONE);
+            predictionView.setVisibility(INVISIBLE);
         }
         this.showPrediction = enable;
     }
