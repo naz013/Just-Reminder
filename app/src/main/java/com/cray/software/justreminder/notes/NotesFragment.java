@@ -44,6 +44,7 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
+import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
@@ -311,8 +312,11 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
 
     @Override
     public void onItemLongClicked(final int position, final View view) {
+        String showIn = getString(R.string.show_in_status_bar);
+        showIn = showIn.substring(0, showIn.length() - 2);
         final String[] items = {getString(R.string.open), getString(R.string.share),
-                getString(R.string.change_color), getString(R.string.edit), getString(R.string.delete)};
+                showIn, getString(R.string.change_color), getString(R.string.edit),
+                getString(R.string.delete)};
         Dialogues.showLCAM(mContext, item -> {
             long id = mAdapter.getItem(position).getId();
             switch (item){
@@ -331,18 +335,28 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                     }
                     break;
                 case 2:
-                    selectColor(id);
+                    showInStatusBar(id);
                     break;
                 case 3:
+                    selectColor(id);
+                    break;
+                case 4:
                     mContext.startActivity(new Intent(mContext, NotesManager.class)
                             .putExtra(Constants.EDIT_ID, id));
                     break;
-                case 4:
+                case 5:
                     NoteHelper.getInstance(mContext).deleteNote(id, mCallbacks);
                     loaderAdapter();
                     break;
             }
         }, items);
+    }
+
+    private void showInStatusBar(long id) {
+        NoteItem item = NoteHelper.getInstance(mContext).getNote(id);
+        if (item != null){
+            new Notifier(mContext).showNoteNotification(item);
+        }
     }
 
     private void selectColor(final long id) {
