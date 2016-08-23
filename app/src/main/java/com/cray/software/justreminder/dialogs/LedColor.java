@@ -35,12 +35,12 @@ import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.roboto_views.RoboButton;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 
-public class LedColor extends Activity{
+public class LedColor extends Activity {
 
-    private ListView musicList;
-    private RoboButton musicDialogOk;
+    private ListView mColorsList;
+    private RoboButton mButtonOk;
     private NotificationManagerCompat mNotifyMgr;
-    private NotificationCompat.Builder builder;
+    private NotificationCompat.Builder mBuilder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,52 +52,74 @@ public class LedColor extends Activity{
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
         RoboTextView dialogTitle = (RoboTextView) findViewById(R.id.dialogTitle);
         dialogTitle.setText(getString(R.string.led_color));
+        initColorsList();
+        initOkButton();
+        loadDataToList();
+    }
 
-        musicList = (ListView) findViewById(R.id.musicList);
-        musicList.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-
+    private void loadDataToList() {
         String[] colors = new String[LED.NUM_OF_LEDS];
         for (int i = 0; i < LED.NUM_OF_LEDS; i++) {
             colors[i] = LED.getTitle(this, i);
         }
-
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(LedColor.this,
                 android.R.layout.simple_list_item_single_choice, colors);
-        musicList.setAdapter(adapter);
+        mColorsList.setAdapter(adapter);
+    }
 
-        musicList.setOnItemClickListener((adapterView, view, i, l) -> {
-            if (i != -1) {
-                Messages.toast(LedColor.this, getString(R.string.turn_screen_off_to_see_led_light));
-                showLED(LED.getLED(i));
-            }
-        });
-
-        musicDialogOk = (RoboButton) findViewById(R.id.musicDialogOk);
-        musicDialogOk.setOnClickListener(v -> {
-            int selectedPosition = musicList.getCheckedItemPosition();
+    private void initOkButton() {
+        mButtonOk = (RoboButton) findViewById(R.id.musicDialogOk);
+        mButtonOk.setOnClickListener(v -> {
+            int selectedPosition = mColorsList.getCheckedItemPosition();
             if (selectedPosition != -1) {
-                mNotifyMgr = NotificationManagerCompat.from(LedColor.this);
-                mNotifyMgr.cancel(1);
-                Intent i = new Intent();
-                i.putExtra(Constants.SELECTED_LED_COLOR, selectedPosition);
-                setResult(RESULT_OK, i);
-                finish();
+                cancelNotification();
+                sendResult(selectedPosition);
             } else {
-                Messages.toast(LedColor.this, getString(R.string.select_one_of_item));
+                showToast(getString(R.string.select_one_of_item));
             }
         });
     }
 
-    private void showLED(int color){
-        musicDialogOk.setEnabled(false);
+    private void showToast(String s) {
+        Messages.toast(LedColor.this, s);
+    }
+
+    private void sendResult(int selectedPosition) {
+        Intent intent = new Intent();
+        intent.putExtra(Constants.SELECTED_LED_COLOR, selectedPosition);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    private void cancelNotification() {
         mNotifyMgr = NotificationManagerCompat.from(LedColor.this);
         mNotifyMgr.cancel(1);
-        builder = new NotificationCompat.Builder(LedColor.this);
-        builder.setLights(color, 500, 1000);
-        builder.setSmallIcon(R.drawable.ic_lightbulb_outline_white_24dp);
+    }
+
+    private void initColorsList() {
+        mColorsList = (ListView) findViewById(R.id.musicList);
+        mColorsList.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+        mColorsList.setOnItemClickListener((adapterView, view, i, l) -> {
+            if (i != -1) {
+                selectColor(i);
+            }
+        });
+    }
+
+    private void selectColor(int i) {
+        showToast(getString(R.string.turn_screen_off_to_see_led_light));
+        showLED(LED.getLED(i));
+    }
+
+    private void showLED(int color){
+        mButtonOk.setEnabled(false);
+        cancelNotification();
+        mBuilder = new NotificationCompat.Builder(LedColor.this);
+        mBuilder.setLights(color, 500, 1000);
+        mBuilder.setSmallIcon(R.drawable.ic_lightbulb_outline_white_24dp);
         new Handler().postDelayed(() -> {
-            mNotifyMgr.notify(1, builder.build());
-            musicDialogOk.setEnabled(true);
+            mNotifyMgr.notify(1, mBuilder.build());
+            mButtonOk.setEnabled(true);
         }, 2000);
     }
 }
