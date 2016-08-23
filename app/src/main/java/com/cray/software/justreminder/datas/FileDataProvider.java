@@ -20,7 +20,7 @@ import android.content.Context;
 
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.datas.models.FileModel;
+import com.cray.software.justreminder.datas.models.FileItem;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.utils.MemoryUtil;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -29,7 +29,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class FileDataProvider {
-    private ArrayList<FileModel> data;
+    private ArrayList<FileItem> data;
     private Context mContext;
     private String where;
 
@@ -44,7 +44,7 @@ public class FileDataProvider {
         return where;
     }
 
-    public ArrayList<FileModel> getData(){
+    public ArrayList<FileItem> getData(){
         return data;
     }
 
@@ -52,11 +52,11 @@ public class FileDataProvider {
         return data != null ? data.size() : 0;
     }
 
-    public int getPosition(FileModel item){
+    public int getPosition(FileItem item){
         int res = -1;
         if (data.size() > 0) {
             for (int i = 0; i < data.size(); i++){
-                FileModel item1 = data.get(i);
+                FileItem item1 = data.get(i);
                 if (item.getFileName().matches(item1.getFileName())) {
                     res = i;
                     break;
@@ -66,7 +66,7 @@ public class FileDataProvider {
         return res;
     }
 
-    public FileModel getItem(int index) {
+    public FileItem getItem(int index) {
         if (index < 0 || index >= getCount()) {
             return null;
         }
@@ -83,7 +83,7 @@ public class FileDataProvider {
                 File[] files = dir.listFiles();
                 if (files != null) {
                     for (File file : files) {
-                        data.add(new FileModel(file.getName(),
+                        data.add(new FileItem(file.getName(),
                                 TimeUtil.getFullDateTime(file.lastModified(), is24), file.getPath()));
                     }
                 }
@@ -93,7 +93,7 @@ public class FileDataProvider {
                 File[] files = dir.listFiles();
                 if (files != null) {
                     for (File file : files) {
-                        data.add(new FileModel(file.getName(),
+                        data.add(new FileItem(file.getName(),
                                 TimeUtil.getFullDateTime(file.lastModified(), is24), file.getPath()));
                     }
                 }
@@ -103,7 +103,7 @@ public class FileDataProvider {
                 File[] files = dir.listFiles();
                 if (files != null) {
                     for (File file : files) {
-                        data.add(new FileModel(file.getName(),
+                        data.add(new FileItem(file.getName(),
                                 TimeUtil.getFullDateTime(file.lastModified(), is24), file.getPath()));
                     }
                 }
@@ -113,7 +113,7 @@ public class FileDataProvider {
                 File[] files = dir.listFiles();
                 if (files != null) {
                     for (File file : files) {
-                        data.add(new FileModel(file.getName(),
+                        data.add(new FileItem(file.getName(),
                                 TimeUtil.getFullDateTime(file.lastModified(), is24), file.getPath()));
                     }
                 }
@@ -124,7 +124,7 @@ public class FileDataProvider {
                 File[] files = dir.listFiles();
                 if (files != null) {
                     for (File file : files) {
-                        data.add(new FileModel(file.getName(),
+                        data.add(new FileItem(file.getName(),
                                 TimeUtil.getFullDateTime(file.lastModified(), is24), file.getPath()));
                     }
                 }
@@ -134,7 +134,7 @@ public class FileDataProvider {
                 File[] files = dir.listFiles();
                 if (files != null) {
                     for (File file : files) {
-                        data.add(new FileModel(file.getName(),
+                        data.add(new FileItem(file.getName(),
                                 TimeUtil.getFullDateTime(file.lastModified(), is24), file.getPath()));
                     }
                 }
@@ -144,7 +144,7 @@ public class FileDataProvider {
                 File[] files = dir.listFiles();
                 if (files != null) {
                     for (File file : files) {
-                        data.add(new FileModel(file.getName(),
+                        data.add(new FileItem(file.getName(),
                                 TimeUtil.getFullDateTime(file.lastModified(), is24), file.getPath()));
                     }
                 }
@@ -154,7 +154,7 @@ public class FileDataProvider {
                 File[] files = dir.listFiles();
                 if (files != null) {
                     for (File file : files) {
-                        data.add(new FileModel(file.getName(),
+                        data.add(new FileItem(file.getName(),
                                 TimeUtil.getFullDateTime(file.lastModified(), is24), file.getPath()));
                     }
                 }
@@ -165,7 +165,7 @@ public class FileDataProvider {
                 File[] files = dir.listFiles();
                 if (files != null) {
                     for (File file : files) {
-                        data.add(new FileModel(file.getName(),
+                        data.add(new FileItem(file.getName(),
                                 TimeUtil.getFullDateTime(file.lastModified(), is24), file.getPath()));
                     }
                 }
@@ -175,7 +175,7 @@ public class FileDataProvider {
                 File[] files = dir.listFiles();
                 if (files != null) {
                     for (File file : files) {
-                        data.add(new FileModel(file.getName(),
+                        data.add(new FileItem(file.getName(),
                                 TimeUtil.getFullDateTime(file.lastModified(), is24), file.getPath()));
                     }
                 }
@@ -185,7 +185,7 @@ public class FileDataProvider {
                 File[] files = dir.listFiles();
                 if (files != null) {
                     for (File file : files) {
-                        data.add(new FileModel(file.getName(),
+                        data.add(new FileItem(file.getName(),
                                 TimeUtil.getFullDateTime(file.lastModified(), is24), file.getPath()));
                     }
                 }
@@ -195,7 +195,7 @@ public class FileDataProvider {
                 File[] files = dir.listFiles();
                 if (files != null) {
                     for (File file : files) {
-                        data.add(new FileModel(file.getName(),
+                        data.add(new FileItem(file.getName(),
                                 TimeUtil.getFullDateTime(file.lastModified(), is24), file.getPath()));
                     }
                 }

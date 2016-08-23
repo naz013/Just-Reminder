@@ -26,7 +26,7 @@ import android.support.annotation.NonNull;
 import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.google_tasks.TaskManager;
+import com.cray.software.justreminder.google_tasks.TaskActivity;
 import com.cray.software.justreminder.constants.TasksConstants;
 
 public class TasksWidget extends AppWidgetProvider {
@@ -68,7 +68,7 @@ public class TasksWidget extends AppWidgetProvider {
         rv.setTextColor(R.id.widgetTitle, titleColor);
         rv.setInt(R.id.tasksCount, "setImageResource", plusIcon);
 
-        Intent configIntent = new Intent(context, TaskManager.class);
+        Intent configIntent = new Intent(context, TaskActivity.class);
         configIntent.putExtra(TasksConstants.INTENT_ACTION, TasksConstants.CREATE);
         PendingIntent configPendingIntent = PendingIntent.getActivity(context, 0, configIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
@@ -80,7 +80,7 @@ public class TasksWidget extends AppWidgetProvider {
         rv.setOnClickPendingIntent(R.id.settingsButton, configPendingIntent);
         rv.setInt(R.id.settingsButton, "setImageResource", settingsIcon);
 
-        Intent startActivityIntent = new Intent(context, TaskManager.class);
+        Intent startActivityIntent = new Intent(context, TaskActivity.class);
         PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0,
                 startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         rv.setPendingIntentTemplate(android.R.id.list, startActivityPendingIntent);

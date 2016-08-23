@@ -104,11 +104,7 @@ public class LocationUtil {
     public static boolean isGooglePlayServicesAvailable(Activity a) {
         try {
             int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(a.getApplicationContext());
-            if (resultCode != ConnectionResult.SUCCESS) {
-                return false;
-            } else {
-                return true;
-            }
+            return resultCode == ConnectionResult.SUCCESS;
         } catch (NoSuchMethodError e) {
             return false;
         }
@@ -121,8 +117,8 @@ public class LocationUtil {
      * @return Address string
      */
     public static String getAddress(double currentLat, double currentLong){
-        return String.format("%.5f", currentLat) + ", " +
-                String.format("%.5f", currentLong);
+        return String.format(Locale.getDefault(), "%.5f", currentLat) + ", " +
+                String.format(Locale.getDefault(), "%.5f", currentLong);
     }
 
     /**

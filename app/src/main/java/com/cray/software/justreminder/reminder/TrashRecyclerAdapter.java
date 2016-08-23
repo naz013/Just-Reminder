@@ -31,7 +31,7 @@ import com.cray.software.justreminder.databinding.TrashListItemBinding;
 import com.cray.software.justreminder.datas.AdapterItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 
 import java.util.ArrayList;
 import java.util.List;

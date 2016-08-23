@@ -35,7 +35,7 @@ import com.cray.software.justreminder.dialogs.TargetRadius;
 import com.cray.software.justreminder.dialogs.TrackerOption;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 import com.cray.software.justreminder.views.PrefsView;
 
 public class LocationSettingsFragment extends Fragment implements View.OnClickListener {

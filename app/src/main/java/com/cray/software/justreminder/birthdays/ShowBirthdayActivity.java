@@ -50,7 +50,7 @@ import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.Telephony;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.services.RepeatNotificationReceiver;
 import com.cray.software.justreminder.utils.TimeUtil;

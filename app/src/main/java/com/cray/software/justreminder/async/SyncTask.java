@@ -30,7 +30,7 @@ import com.cray.software.justreminder.helpers.IOHelper;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.SyncListener;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 import com.cray.software.justreminder.reminder.ReminderHelper;
 import com.cray.software.justreminder.reminder.ReminderItem;
 

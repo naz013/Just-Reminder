@@ -31,9 +31,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.activities.CloudDrives;
+import com.cray.software.justreminder.activities.CloudDrivesActivity;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.helpers.CalendarManager;
+import com.cray.software.justreminder.helpers.CalendarHelper;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -163,14 +163,14 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
     }
 
     private void loadCalendars() {
-        ArrayList<String> i = new CalendarManager(getActivity()).getCalendars();
+        ArrayList<String> i = new CalendarHelper(getActivity()).getCalendars();
         if (i != null && i.size() > 0) {
             sPrefs.putBoolean(Prefs.EXPORT_TO_CALENDAR, true);
             exportToCalendarPrefs.setChecked(true);
             eventDuration.setEnabled(true);
             selectCalendar.setEnabled(true);
             checkEnabling();
-            ArrayList<CalendarManager.CalendarItem> list = new CalendarManager(getActivity()).getCalendarsList();
+            ArrayList<CalendarHelper.CalendarItem> list = new CalendarHelper(getActivity()).getCalendarsList();
             Dialogues.selectCalendar(getActivity(), list);
         } else {
             Toast.makeText(getActivity(),
@@ -200,7 +200,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
                 Dialogues.dialogWithSeek(getActivity(), 120, Prefs.EVENT_DURATION, getString(R.string.event_duration), this);
                 break;
             case R.id.selectCalendar:
-                ArrayList<CalendarManager.CalendarItem> list = new CalendarManager(getActivity()).getCalendarsList();
+                ArrayList<CalendarHelper.CalendarItem> list = new CalendarHelper(getActivity()).getCalendarsList();
                 Dialogues.selectCalendar(getActivity(), list);
                 break;
             case R.id.autoBackupPrefs:
@@ -208,7 +208,7 @@ public class ExportSettingsFragment extends Fragment implements View.OnClickList
                 break;
             case R.id.clouds:
                 getActivity().getApplicationContext().startActivity(
-                        new Intent(getActivity().getApplicationContext(), CloudDrives.class)
+                        new Intent(getActivity().getApplicationContext(), CloudDrivesActivity.class)
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
             case R.id.clean:

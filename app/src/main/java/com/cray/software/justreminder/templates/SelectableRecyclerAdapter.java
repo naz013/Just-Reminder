@@ -26,7 +26,7 @@ import android.view.ViewGroup;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 import java.util.ArrayList;

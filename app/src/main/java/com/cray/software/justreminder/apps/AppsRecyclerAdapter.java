@@ -35,11 +35,11 @@ import java.util.List;
 public class AppsRecyclerAdapter extends RecyclerView.Adapter<AppsRecyclerAdapter.ApplicationViewHolder> {
 
     private Context mContext;
-    private List<AppData> mDataList;
+    private List<ApplicationItem> mDataList;
 
     private RecyclerClickListener mListener;
 
-    public AppsRecyclerAdapter(Context context, List<AppData> dataItemList, RecyclerClickListener listener) {
+    public AppsRecyclerAdapter(Context context, List<ApplicationItem> dataItemList, RecyclerClickListener listener) {
         this.mContext = context;
         this.mDataList = new ArrayList<>(dataItemList);
         this.mListener = listener;
@@ -53,7 +53,7 @@ public class AppsRecyclerAdapter extends RecyclerView.Adapter<AppsRecyclerAdapte
 
     @Override
     public void onBindViewHolder(ApplicationViewHolder holder, int position) {
-        AppData item = mDataList.get(position);
+        ApplicationItem item = mDataList.get(position);
         holder.binding.setItem(item);
     }
 
@@ -77,50 +77,50 @@ public class AppsRecyclerAdapter extends RecyclerView.Adapter<AppsRecyclerAdapte
         }
     }
 
-    public AppData removeItem(int position) {
-        final AppData model = mDataList.remove(position);
+    public ApplicationItem removeItem(int position) {
+        final ApplicationItem model = mDataList.remove(position);
         notifyItemRemoved(position);
         return model;
     }
 
-    public void addItem(int position, AppData model) {
+    public void addItem(int position, ApplicationItem model) {
         mDataList.add(position, model);
         notifyItemInserted(position);
     }
 
     public void moveItem(int fromPosition, int toPosition) {
-        final AppData model = mDataList.remove(fromPosition);
+        final ApplicationItem model = mDataList.remove(fromPosition);
         mDataList.add(toPosition, model);
         notifyItemMoved(fromPosition, toPosition);
     }
 
-    public void animateTo(List<AppData> models) {
+    public void animateTo(List<ApplicationItem> models) {
         applyAndAnimateRemovals(models);
         applyAndAnimateAdditions(models);
         applyAndAnimateMovedItems(models);
     }
 
-    private void applyAndAnimateRemovals(List<AppData> newModels) {
+    private void applyAndAnimateRemovals(List<ApplicationItem> newModels) {
         for (int i = mDataList.size() - 1; i >= 0; i--) {
-            final AppData model = mDataList.get(i);
+            final ApplicationItem model = mDataList.get(i);
             if (!newModels.contains(model)) {
                 removeItem(i);
             }
         }
     }
 
-    private void applyAndAnimateAdditions(List<AppData> newModels) {
+    private void applyAndAnimateAdditions(List<ApplicationItem> newModels) {
         for (int i = 0, count = newModels.size(); i < count; i++) {
-            final AppData model = newModels.get(i);
+            final ApplicationItem model = newModels.get(i);
             if (!mDataList.contains(model)) {
                 addItem(i, model);
             }
         }
     }
 
-    private void applyAndAnimateMovedItems(List<AppData> newModels) {
+    private void applyAndAnimateMovedItems(List<ApplicationItem> newModels) {
         for (int toPosition = newModels.size() - 1; toPosition >= 0; toPosition--) {
-            final AppData model = newModels.get(toPosition);
+            final ApplicationItem model = newModels.get(toPosition);
             final int fromPosition = mDataList.indexOf(model);
             if (fromPosition >= 0 && fromPosition != toPosition) {
                 moveItem(fromPosition, toPosition);
@@ -128,7 +128,7 @@ public class AppsRecyclerAdapter extends RecyclerView.Adapter<AppsRecyclerAdapte
         }
     }
 
-    public AppData getItem(int position) {
+    public ApplicationItem getItem(int position) {
         if (position < mDataList.size()) return mDataList.get(position);
         else return null;
     }

@@ -23,7 +23,7 @@ import android.os.AsyncTask;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.cloud.Dropbox;
 import com.cray.software.justreminder.cloud.GoogleDrive;
-import com.cray.software.justreminder.datas.models.UserModel;
+import com.cray.software.justreminder.datas.models.UserItem;
 import com.cray.software.justreminder.fragments.BackupsFragment;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.DataListener;
@@ -34,7 +34,7 @@ import java.io.File;
 /**
  * Asynchronously get Dropbox used, shared and all space.
  */
-public class UserInfoAsync extends AsyncTask<Void, Void, UserModel> {
+public class UserInfoAsync extends AsyncTask<Void, Void, UserItem> {
 
     private Context mContext;
     private ProgressDialog progressDialog;
@@ -51,7 +51,7 @@ public class UserInfoAsync extends AsyncTask<Void, Void, UserModel> {
     }
 
     @Override
-    protected UserModel doInBackground(Void... voids) {
+    protected UserItem doInBackground(Void... voids) {
         if (type == BackupsFragment.DROPBOX_INT) {
             Dropbox dbx = new Dropbox(mContext);
             dbx.startSession();
@@ -61,7 +61,7 @@ public class UserInfoAsync extends AsyncTask<Void, Void, UserModel> {
                     long quotaUsed = dbx.userQuotaNormal();
                     String name = dbx.userName();
                     long count = dbx.countFiles();
-                    return new UserModel(name, quota, quotaUsed, count, null);
+                    return new UserItem(name, quota, quotaUsed, count, null);
                 }
             }
         } else if (type == BackupsFragment.GOOGLE_DRIVE_INT) {
@@ -72,7 +72,7 @@ public class UserInfoAsync extends AsyncTask<Void, Void, UserModel> {
                 }
             }
         } else {
-            return new UserModel(null, 0, 0, getCountFiles(), null);
+            return new UserItem(null, 0, 0, getCountFiles(), null);
         }
         return null;
     }
@@ -103,12 +103,12 @@ public class UserInfoAsync extends AsyncTask<Void, Void, UserModel> {
     }
 
     @Override
-    protected void onPostExecute(UserModel userModel) {
-        super.onPostExecute(userModel);
+    protected void onPostExecute(UserItem userItem) {
+        super.onPostExecute(userItem);
         if (progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
 
         if (listener != null && mContext != null)
-            listener.onReceive(userModel);
+            listener.onReceive(userItem);
     }
 }

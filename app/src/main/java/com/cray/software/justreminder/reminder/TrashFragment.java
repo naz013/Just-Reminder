@@ -34,7 +34,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ScreenManager;
+import com.cray.software.justreminder.StartActivity;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.contacts.FilterCallback;
 import com.cray.software.justreminder.datas.AdapterItem;
@@ -162,7 +162,7 @@ public class TrashFragment extends Fragment implements RecyclerListener {
                 throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
             }
         }
-        ((ScreenManager) activity).onSectionAttached(ScreenManager.FRAGMENT_ARCHIVE);
+        ((StartActivity) activity).onSectionAttached(StartActivity.FRAGMENT_ARCHIVE);
     }
 
     @Override
@@ -178,7 +178,7 @@ public class TrashFragment extends Fragment implements RecyclerListener {
                 throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
             }
         }
-        ((ScreenManager) context).onSectionAttached(ScreenManager.FRAGMENT_ARCHIVE);
+        ((StartActivity) context).onSectionAttached(StartActivity.FRAGMENT_ARCHIVE);
     }
 
     @Override

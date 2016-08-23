@@ -25,7 +25,7 @@ import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 
 public class ColorPickerView extends LinearLayout {
 

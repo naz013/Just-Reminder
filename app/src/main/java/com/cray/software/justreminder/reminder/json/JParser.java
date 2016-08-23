@@ -19,7 +19,7 @@ package com.cray.software.justreminder.reminder.json;
 import android.util.Log;
 
 import com.cray.software.justreminder.constants.Constants;
-import com.cray.software.justreminder.datas.models.ShoppingList;
+import com.cray.software.justreminder.datas.models.ShoppingListItem;
 import com.cray.software.justreminder.helpers.TimeCount;
 import com.cray.software.justreminder.reminder.ReminderUtils;
 import com.google.gson.Gson;
@@ -246,7 +246,7 @@ public class JParser {
         if (jsonObject.has("shopping_list")) {
             List<JShopping> list = new ArrayList<>();
             JSONObject listObject = jsonObject.getJSONObject("shopping_list");
-            List<ShoppingList> arrayList = new ArrayList<>();
+            List<ShoppingListItem> arrayList = new ArrayList<>();
             Iterator<?> keys = listObject.keys();
             while (keys.hasNext()) {
                 String key = (String) keys.next();
@@ -258,10 +258,10 @@ public class JParser {
                     int status = 1;
                     if (item.has(Constants.COLUMN_EXTRA_1)) status = item.getInt(Constants.COLUMN_EXTRA_1);
                     int checked = item.getInt(Constants.COLUMN_ARCHIVED);
-                    arrayList.add(new ShoppingList(title, checked, uuId, status, time));
+                    arrayList.add(new ShoppingListItem(title, checked, uuId, status, time));
                 }
             }
-            for (ShoppingList item : arrayList){
+            for (ShoppingListItem item : arrayList){
                 JShopping jShopping = new JShopping(item.getTitle(),
                         item.getIsChecked(), item.getUuId(), item.getTime(), item.getStatus());
                 list.add(jShopping);

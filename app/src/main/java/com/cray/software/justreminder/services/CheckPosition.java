@@ -29,7 +29,7 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.reminder.ReminderDialog;
+import com.cray.software.justreminder.reminder.ReminderDialogActivity;
 import com.cray.software.justreminder.reminder.ReminderHelper;
 import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.reminder.json.JPlace;
@@ -166,7 +166,7 @@ public class CheckPosition extends IntentService {
 
     private void showReminder(long id){
         ReminderHelper.getInstance(getApplicationContext()).setLocation(id, LocationUtil.SHOWN);
-        Intent resultIntent = new Intent(getApplicationContext(), ReminderDialog.class);
+        Intent resultIntent = new Intent(getApplicationContext(), ReminderDialogActivity.class);
         resultIntent.putExtra(Constants.ITEM_ID_INTENT, id);
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         getApplication().startActivity(resultIntent);

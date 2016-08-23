@@ -34,18 +34,17 @@ import android.view.View;
 import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ScreenManager;
+import com.cray.software.justreminder.StartActivity;
 import com.cray.software.justreminder.birthdays.BirthdayHelper;
 import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.notes.NoteItem;
-import com.cray.software.justreminder.notes.NotesManager;
-import com.cray.software.justreminder.reminder.ReminderDialog;
+import com.cray.software.justreminder.notes.NotesActivity;
+import com.cray.software.justreminder.reminder.ReminderDialogActivity;
 import com.cray.software.justreminder.reminder.ReminderHelper;
 import com.cray.software.justreminder.reminder.ReminderItem;
-import com.cray.software.justreminder.reminder.ReminderManager;
+import com.cray.software.justreminder.reminder.ReminderActivity;
 import com.cray.software.justreminder.services.BirthdayPermanentService;
 import com.cray.software.justreminder.utils.TimeUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
@@ -83,7 +82,7 @@ public class Notifier {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
         builder.setContentTitle(task);
         if (sPrefs.getBoolean(Prefs.SMART_FOLD)) {
-            Intent notificationIntent = new Intent(mContext, ReminderDialog.class);
+            Intent notificationIntent = new Intent(mContext, ReminderDialogActivity.class);
             notificationIntent.putExtra(Constants.ITEM_ID_INTENT, itemId);
             notificationIntent.putExtra("int", 1);
             notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -203,7 +202,7 @@ public class Notifier {
                 soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             }
         }
-        Intent notificationIntent = new Intent(mContext, ReminderDialog.class);
+        Intent notificationIntent = new Intent(mContext, ReminderDialogActivity.class);
         notificationIntent.putExtra(Constants.ITEM_ID_INTENT, itemId);
         notificationIntent.putExtra("int", 1);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -620,26 +619,26 @@ public class Notifier {
         } else {
             notification.setPriority(NotificationCompat.PRIORITY_MIN);
         }
-        Intent resultIntent = new Intent(mContext, ReminderManager.class)
+        Intent resultIntent = new Intent(mContext, ReminderActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
-        stackBuilder.addParentStack(ReminderManager.class);
+        stackBuilder.addParentStack(ReminderActivity.class);
         stackBuilder.addNextIntentWithParentStack(resultIntent);
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,
                 PendingIntent.FLAG_ONE_SHOT);
         remoteViews.setOnClickPendingIntent(R.id.notificationAdd, resultPendingIntent);
-        Intent noteIntent = new Intent(mContext, NotesManager.class)
+        Intent noteIntent = new Intent(mContext, NotesActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         TaskStackBuilder noteBuilder = TaskStackBuilder.create(mContext);
-        noteBuilder.addParentStack(NotesManager.class);
+        noteBuilder.addParentStack(NotesActivity.class);
         noteBuilder.addNextIntent(noteIntent);
         PendingIntent notePendingIntent = noteBuilder.getPendingIntent(0,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.noteAdd, notePendingIntent);
-        Intent resInt = new Intent(mContext, ScreenManager.class);
-        resInt.putExtra("tag", ScreenManager.FRAGMENT_ACTIVE);
+        Intent resInt = new Intent(mContext, StartActivity.class);
+        resInt.putExtra("tag", StartActivity.FRAGMENT_ACTIVE);
         TaskStackBuilder stackInt = TaskStackBuilder.create(mContext);
-        stackInt.addParentStack(ScreenManager.class);
+        stackInt.addParentStack(StartActivity.class);
         stackInt.addNextIntent(resInt);
         PendingIntent resultPendingInt = stackInt.getPendingIntent(0,
                 PendingIntent.FLAG_UPDATE_CURRENT);

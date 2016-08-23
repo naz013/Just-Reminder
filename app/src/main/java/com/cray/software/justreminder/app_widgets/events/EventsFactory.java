@@ -32,8 +32,8 @@ import com.cray.software.justreminder.birthdays.BirthdayItem;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
-import com.cray.software.justreminder.calendar.CalendarModel;
-import com.cray.software.justreminder.datas.models.ShoppingList;
+import com.cray.software.justreminder.calendar.CalendarItem;
+import com.cray.software.justreminder.datas.models.ShoppingListItem;
 import com.cray.software.justreminder.helpers.Recurrence;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.TimeCount;
@@ -57,8 +57,8 @@ import java.util.Map;
 public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     private static final String TAG = "EventsFactory";
-    private ArrayList<CalendarModel> data;
-    private Map<Long, List<ShoppingList>> map;
+    private ArrayList<CalendarItem> data;
+    private Map<Long, List<ShoppingListItem>> map;
     private Context mContext;
     private TimeCount mCount;
     private int widgetID;
@@ -128,7 +128,7 @@ public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
                     }
                 }
             }
-            data.add(new CalendarModel(summary, jsonModel.getAction().getTarget(),
+            data.add(new CalendarItem(summary, jsonModel.getAction().getTarget(),
                     id, time, date, eventTime, viewType));
         }
 
@@ -164,7 +164,7 @@ public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                    data.add(new CalendarModel(mContext.getString(R.string.birthday), name, i, birthday, "", eventTime, 1));
+                    data.add(new CalendarItem(mContext.getString(R.string.birthday), name, i, birthday, "", eventTime, 1));
                 }
                 calendar.setTimeInMillis(calendar.getTimeInMillis() + (1000 * 60 * 60 * 24));
                 n++;
@@ -196,7 +196,7 @@ public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
 
         RemoteViews rView = null;
         if (i < getCount()) {
-            CalendarModel item = data.get(i);
+            CalendarItem item = data.get(i);
             if (item.getViewType() == 1) {
                 rView = new RemoteViews(mContext.getPackageName(),
                         R.layout.list_item_current_widget);
@@ -264,9 +264,9 @@ public class EventsFactory implements RemoteViewsService.RemoteViewsFactory {
                 }
 
                 int count = 0;
-                List<ShoppingList> lists = map.get(item.getId());
+                List<ShoppingListItem> lists = map.get(item.getId());
                 rView.removeAllViews(R.id.todoList);
-                for (ShoppingList list : lists) {
+                for (ShoppingListItem list : lists) {
                     RemoteViews view = new RemoteViews(mContext.getPackageName(),
                             R.layout.list_item_task_item_widget);
 

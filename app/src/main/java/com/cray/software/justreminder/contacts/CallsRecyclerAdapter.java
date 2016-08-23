@@ -44,12 +44,12 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 public class CallsRecyclerAdapter extends RecyclerView.Adapter<CallsRecyclerAdapter.ContactViewHolder> {
 
     private Context mContext;
-    private List<CallsData> mDataList;
+    private List<CallsItem> mDataList;
 
     private RecyclerClickListener mListener;
     private FilterCallback mCallback;
 
-    public CallsRecyclerAdapter(Context context, List<CallsData> dataItemList, RecyclerClickListener listener, FilterCallback callback) {
+    public CallsRecyclerAdapter(Context context, List<CallsItem> dataItemList, RecyclerClickListener listener, FilterCallback callback) {
         this.mContext = context;
         this.mDataList = new ArrayList<>(dataItemList);
         this.mListener = listener;
@@ -64,7 +64,7 @@ public class CallsRecyclerAdapter extends RecyclerView.Adapter<CallsRecyclerAdap
 
     @Override
     public void onBindViewHolder(ContactViewHolder holder, int position) {
-        CallsData item = mDataList.get(position);
+        CallsItem item = mDataList.get(position);
         holder.binding.setItem(item);
     }
 
@@ -88,16 +88,16 @@ public class CallsRecyclerAdapter extends RecyclerView.Adapter<CallsRecyclerAdap
         }
     }
 
-    public void filter(String q, List<CallsData> list) {
-        List<CallsData> res = filter(list, q);
+    public void filter(String q, List<CallsItem> list) {
+        List<CallsItem> res = filter(list, q);
         animateTo(res);
         if (mCallback != null) mCallback.filter(res.size());
     }
 
-    private List<CallsData> filter(List<CallsData> mData, String q) {
+    private List<CallsItem> filter(List<CallsItem> mData, String q) {
         q = q.toLowerCase();
         if (mData == null) mData = new ArrayList<>();
-        List<CallsData> filteredModelList = new ArrayList<>();
+        List<CallsItem> filteredModelList = new ArrayList<>();
         if (q.matches("")) {
             filteredModelList = new ArrayList<>(mData);
         } else {
@@ -106,9 +106,9 @@ public class CallsRecyclerAdapter extends RecyclerView.Adapter<CallsRecyclerAdap
         return filteredModelList;
     }
 
-    private List<CallsData> getFiltered(List<CallsData> models, String query) {
-        List<CallsData> list = new ArrayList<>();
-        for (CallsData model : models) {
+    private List<CallsItem> getFiltered(List<CallsItem> models, String query) {
+        List<CallsItem> list = new ArrayList<>();
+        for (CallsItem model : models) {
             final String text = model.getNumberName().toLowerCase();
             if (text.contains(query)) {
                 list.add(model);
@@ -117,50 +117,50 @@ public class CallsRecyclerAdapter extends RecyclerView.Adapter<CallsRecyclerAdap
         return list;
     }
 
-    public CallsData removeItem(int position) {
-        final CallsData model = mDataList.remove(position);
+    public CallsItem removeItem(int position) {
+        final CallsItem model = mDataList.remove(position);
         notifyItemRemoved(position);
         return model;
     }
 
-    public void addItem(int position, CallsData model) {
+    public void addItem(int position, CallsItem model) {
         mDataList.add(position, model);
         notifyItemInserted(position);
     }
 
     public void moveItem(int fromPosition, int toPosition) {
-        final CallsData model = mDataList.remove(fromPosition);
+        final CallsItem model = mDataList.remove(fromPosition);
         mDataList.add(toPosition, model);
         notifyItemMoved(fromPosition, toPosition);
     }
 
-    public void animateTo(List<CallsData> models) {
+    public void animateTo(List<CallsItem> models) {
         applyAndAnimateRemovals(models);
         applyAndAnimateAdditions(models);
         applyAndAnimateMovedItems(models);
     }
 
-    private void applyAndAnimateRemovals(List<CallsData> newModels) {
+    private void applyAndAnimateRemovals(List<CallsItem> newModels) {
         for (int i = mDataList.size() - 1; i >= 0; i--) {
-            final CallsData model = mDataList.get(i);
+            final CallsItem model = mDataList.get(i);
             if (!newModels.contains(model)) {
                 removeItem(i);
             }
         }
     }
 
-    private void applyAndAnimateAdditions(List<CallsData> newModels) {
+    private void applyAndAnimateAdditions(List<CallsItem> newModels) {
         for (int i = 0, count = newModels.size(); i < count; i++) {
-            final CallsData model = newModels.get(i);
+            final CallsItem model = newModels.get(i);
             if (!mDataList.contains(model)) {
                 addItem(i, model);
             }
         }
     }
 
-    private void applyAndAnimateMovedItems(List<CallsData> newModels) {
+    private void applyAndAnimateMovedItems(List<CallsItem> newModels) {
         for (int toPosition = newModels.size() - 1; toPosition >= 0; toPosition--) {
-            final CallsData model = newModels.get(toPosition);
+            final CallsItem model = newModels.get(toPosition);
             final int fromPosition = mDataList.indexOf(model);
             if (fromPosition >= 0 && fromPosition != toPosition) {
                 moveItem(fromPosition, toPosition);
@@ -168,7 +168,7 @@ public class CallsRecyclerAdapter extends RecyclerView.Adapter<CallsRecyclerAdap
         }
     }
 
-    public CallsData getItem(int position) {
+    public CallsItem getItem(int position) {
         if (position < mDataList.size()) return mDataList.get(position);
         else return null;
     }

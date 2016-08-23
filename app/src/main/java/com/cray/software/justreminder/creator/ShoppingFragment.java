@@ -33,7 +33,7 @@ import android.widget.RelativeLayout;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.adapters.TaskListRecyclerAdapter;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
-import com.cray.software.justreminder.datas.models.ShoppingList;
+import com.cray.software.justreminder.datas.models.ShoppingListItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.roboto_views.RoboEditText;
@@ -72,7 +72,7 @@ public class ShoppingFragment extends BaseFragment {
         else return 0;
     }
 
-    public List<ShoppingList> getData() {
+    public List<ShoppingListItem> getData() {
         if (shoppingLists != null) return shoppingLists.getData();
         else return null;
     }
@@ -143,7 +143,7 @@ public class ShoppingFragment extends BaseFragment {
                     shopEdit.setError(getString(R.string.must_be_not_empty));
                     return false;
                 } else {
-                    shoppingLists.addItem(new ShoppingList(task.replaceAll("\n", " ")));
+                    shoppingLists.addItem(new ShoppingListItem(task.replaceAll("\n", " ")));
                     shoppingAdapter.notifyDataSetChanged();
                     shopEdit.setText("");
                     return true;
@@ -159,7 +159,7 @@ public class ShoppingFragment extends BaseFragment {
                 shopEdit.setError(getString(R.string.must_be_not_empty));
                 return;
             }
-            shoppingLists.addItem(new ShoppingList(task));
+            shoppingLists.addItem(new ShoppingListItem(task));
             shoppingAdapter.notifyDataSetChanged();
             shopEdit.setText("");
         });
@@ -217,7 +217,7 @@ public class ShoppingFragment extends BaseFragment {
                 shoppingLists, new TaskListRecyclerAdapter.ActionListener() {
             @Override
             public void onItemCheck(int position, boolean isChecked) {
-                ShoppingList item = shoppingLists.getItem(position);
+                ShoppingListItem item = shoppingLists.getItem(position);
                 if (item.isChecked() == 1) item.setIsChecked(0);
                 else item.setIsChecked(1);
                 loadShoppings();
@@ -231,7 +231,7 @@ public class ShoppingFragment extends BaseFragment {
 
             @Override
             public void onItemChange(int position) {
-                ShoppingList item = shoppingLists.getItem(position);
+                ShoppingListItem item = shoppingLists.getItem(position);
                 if (item.getStatus() == 1) item.setStatus(0);
                 else item.setStatus(1);
                 loadShoppings();

@@ -48,7 +48,7 @@ public class ContactsFragment extends Fragment implements LoadListener {
     private Context mContext;
     private NumberCallback mCallback;
 
-    private List<ContactData> mDataList;
+    private List<ContactItem> mDataList;
     private ContactsRecyclerAdapter mAdapter;
     private String name = "";
 
@@ -233,7 +233,7 @@ public class ContactsFragment extends Fragment implements LoadListener {
     }
 
     @Override
-    public void onLoaded(List<ContactData> list) {
+    public void onLoaded(List<ContactItem> list) {
         this.mDataList = list;
         mProgressView.setVisibility(View.GONE);
         mAdapter = new ContactsRecyclerAdapter(mContext, list, mClickListener, mFilterCallback);

@@ -30,7 +30,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ScreenManager;
+import com.cray.software.justreminder.StartActivity;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -38,7 +38,7 @@ import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 
 public class GroupsFragment extends Fragment implements SimpleListener {
 
@@ -87,7 +87,7 @@ public class GroupsFragment extends Fragment implements SimpleListener {
                 throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
             }
         }
-        ((ScreenManager) context).onSectionAttached(ScreenManager.FRAGMENT_GROUPS);
+        ((StartActivity) context).onSectionAttached(StartActivity.FRAGMENT_GROUPS);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class GroupsFragment extends Fragment implements SimpleListener {
                 throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
             }
         }
-        ((ScreenManager) activity).onSectionAttached(ScreenManager.FRAGMENT_GROUPS);
+        ((StartActivity) activity).onSectionAttached(StartActivity.FRAGMENT_GROUPS);
     }
 
     @Override
@@ -149,7 +149,7 @@ public class GroupsFragment extends Fragment implements SimpleListener {
 
     @Override
     public void onItemClicked(int position, View view) {
-        startActivity(new Intent(mContext, GroupManager.class)
+        startActivity(new Intent(mContext, GroupActivity.class)
                 .putExtra(Constants.ITEM_ID_INTENT, mAdapter.getItem(position).getId()));
     }
 
@@ -163,7 +163,7 @@ public class GroupsFragment extends Fragment implements SimpleListener {
                     changeColor(mAdapter.getItem(position).getId());
                     break;
                 case 1:
-                    startActivity(new Intent(mContext, GroupManager.class)
+                    startActivity(new Intent(mContext, GroupActivity.class)
                             .putExtra(Constants.ITEM_ID_INTENT, mAdapter.getItem(position).getId()));
                     break;
                 case 2:

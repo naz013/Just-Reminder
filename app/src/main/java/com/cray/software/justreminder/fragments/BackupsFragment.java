@@ -33,7 +33,7 @@ import android.widget.AdapterView;
 import android.widget.Spinner;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ScreenManager;
+import com.cray.software.justreminder.StartActivity;
 import com.cray.software.justreminder.cloud.Dropbox;
 import com.cray.software.justreminder.cloud.GoogleDrive;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -104,7 +104,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         if (mContext == null) {
             mContext = activity;
         }
-        ((ScreenManager) activity).onSectionAttached(ScreenManager.FRAGMENT_BACKUPS);
+        ((StartActivity) activity).onSectionAttached(StartActivity.FRAGMENT_BACKUPS);
     }
 
     @Override
@@ -113,7 +113,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
         if (mContext == null) {
             mContext = (Activity) context;
         }
-        ((ScreenManager) context).onSectionAttached(ScreenManager.FRAGMENT_BACKUPS);
+        ((StartActivity) context).onSectionAttached(StartActivity.FRAGMENT_BACKUPS);
     }
 
     @Override

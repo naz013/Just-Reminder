@@ -28,14 +28,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.activities.Help;
-import com.cray.software.justreminder.activities.ThanksDialog;
+import com.cray.software.justreminder.activities.HelpActivity;
+import com.cray.software.justreminder.activities.ThanksActivity;
 import com.cray.software.justreminder.dialogs.AboutDialog;
 import com.cray.software.justreminder.dialogs.ChangeDialog;
 import com.cray.software.justreminder.dialogs.PermissionsList;
 import com.cray.software.justreminder.feedback.SendReportActivity;
 import com.cray.software.justreminder.helpers.Dialogues;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 
 public class OtherSettingsFragment extends Fragment {
 
@@ -65,12 +65,12 @@ public class OtherSettingsFragment extends Fragment {
         TextView thanks = (TextView) rootView.findViewById(R.id.thanks);
         thanks.setOnClickListener(v -> getActivity().getApplicationContext()
                 .startActivity(new Intent(getActivity().getApplicationContext(),
-                        ThanksDialog.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
+                        ThanksActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
 
         TextView help = (TextView) rootView.findViewById(R.id.help);
         help.setOnClickListener(v -> getActivity().getApplicationContext()
                 .startActivity(new Intent(getActivity().getApplicationContext(),
-                        Help.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
+                        HelpActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
 
         TextView menuFeedback = (TextView) rootView.findViewById(R.id.menuFeedback);
         menuFeedback.setOnClickListener(v -> getActivity().getApplicationContext()
@@ -91,7 +91,7 @@ public class OtherSettingsFragment extends Fragment {
 
         TextView permissionExplain = (TextView) rootView.findViewById(R.id.permissionExplain);
         permissionExplain.setOnClickListener(v -> getActivity().getApplicationContext()
-                .startActivity(new Intent(getActivity().getApplicationContext(), ThanksDialog.class)
+                .startActivity(new Intent(getActivity().getApplicationContext(), ThanksActivity.class)
                         .putExtra("int", 1).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
 
         TextView permissionEnable = (TextView) rootView.findViewById(R.id.permissionEnable);

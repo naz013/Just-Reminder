@@ -20,7 +20,7 @@
 
         <variable
             name="item"
-            type="com.cray.software.justreminder.apps.AppData" />
+            type="com.cray.software.justreminder.apps.ApplicationItem" />
 
         <variable
             name="click"

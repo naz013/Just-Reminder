@@ -34,7 +34,7 @@ import android.widget.Spinner;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.app_widgets.WidgetUtils;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
 
 import java.util.ArrayList;

@@ -31,7 +31,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ScreenManager;
+import com.cray.software.justreminder.StartActivity;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -98,7 +98,7 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
                 throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
             }
         }
-        ((ScreenManager) context).onSectionAttached(ScreenManager.FRAGMENT_TEMPLATES);
+        ((StartActivity) context).onSectionAttached(StartActivity.FRAGMENT_TEMPLATES);
     }
 
     @Override
@@ -114,7 +114,7 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
                 throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
             }
         }
-        ((ScreenManager) activity).onSectionAttached(ScreenManager.FRAGMENT_TEMPLATES);
+        ((StartActivity) activity).onSectionAttached(StartActivity.FRAGMENT_TEMPLATES);
     }
 
     @Override
@@ -157,7 +157,7 @@ public class TemplatesFragment extends Fragment implements SimpleListener {
     }
 
     private void editTemplate(int position){
-        startActivity(new Intent(mContext, TemplateManager.class)
+        startActivity(new Intent(mContext, TemplateActivity.class)
                 .putExtra(Constants.ITEM_ID_INTENT, mDataList.get(position).getId()));
     }
 

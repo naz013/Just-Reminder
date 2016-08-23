@@ -26,7 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ScreenManager;
+import com.cray.software.justreminder.StartActivity;
 import com.cray.software.justreminder.fragments.helpers.MapFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.SimpleListener;
@@ -59,7 +59,7 @@ public class GeolocationFragment extends Fragment implements SimpleListener {
         if (mContext == null) {
             mContext = (Activity) context;
         }
-        ((ScreenManager) context).onSectionAttached(ScreenManager.FRAGMENT_LOCATIONS);
+        ((StartActivity) context).onSectionAttached(StartActivity.FRAGMENT_LOCATIONS);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class GeolocationFragment extends Fragment implements SimpleListener {
         if (mContext == null) {
             mContext = activity;
         }
-        ((ScreenManager) activity).onSectionAttached(ScreenManager.FRAGMENT_LOCATIONS);
+        ((StartActivity) activity).onSectionAttached(StartActivity.FRAGMENT_LOCATIONS);
     }
 
     @Override

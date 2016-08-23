@@ -34,7 +34,7 @@ import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.fragments.helpers.TimePickerFragment;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 import com.cray.software.justreminder.settings.fragments.BirthdaysSettingsFragment;
 import com.cray.software.justreminder.settings.fragments.CalendarSettingsFragment;
 import com.cray.software.justreminder.settings.fragments.ExportSettingsFragment;

@@ -25,7 +25,7 @@ import android.content.SharedPreferences;
 import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.reminder.ReminderManager;
+import com.cray.software.justreminder.reminder.ReminderActivity;
 
 public class AddReminderWidget extends AppWidgetProvider{
 
@@ -45,7 +45,7 @@ public class AddReminderWidget extends AppWidgetProvider{
                 R.layout.add_reminder_widget_layout);
         int widgetColor = sp.getInt(AddReminderWidgetConfig.ADD_REMINDER_WIDGET_COLOR + widgetID, 0);
         rv.setInt(R.id.widgetBg, "setBackgroundResource", widgetColor);
-        Intent configIntent = new Intent(context, ReminderManager.class);
+        Intent configIntent = new Intent(context, ReminderActivity.class);
         PendingIntent configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
         rv.setOnClickPendingIntent(R.id.imageView, configPendingIntent);
         appWidgetManager.updateAppWidget(widgetID, rv);

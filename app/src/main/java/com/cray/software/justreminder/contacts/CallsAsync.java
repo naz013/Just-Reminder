@@ -27,7 +27,7 @@ import java.util.List;
 
 public class CallsAsync extends AsyncTask<Void, Void, Void> {
 
-    private List<CallsData> mList;
+    private List<CallsItem> mList;
     private Context mContext;
     private CallsLogListener mListener;
 
@@ -60,7 +60,7 @@ public class CallsAsync extends AsyncTask<Void, Void, Void> {
                     }
                 }
 
-                CallsData data = new CallsData(name, phoneNumber, photo, Long.valueOf(callDate), id, Integer.parseInt(callType));
+                CallsItem data = new CallsItem(name, phoneNumber, photo, Long.valueOf(callDate), id, Integer.parseInt(callType));
                 int pos = getPosition(data.getDate());
                 if (pos == -1) mList.add(data);
                 else mList.add(pos, data);
@@ -73,7 +73,7 @@ public class CallsAsync extends AsyncTask<Void, Void, Void> {
     private int getPosition(long date) {
         if (mList.size() == 0) return 0;
         int position = -1;
-        for (CallsData data : mList) {
+        for (CallsItem data : mList) {
             if (date > data.getDate()) {
                 position = mList.indexOf(data);
                 break;

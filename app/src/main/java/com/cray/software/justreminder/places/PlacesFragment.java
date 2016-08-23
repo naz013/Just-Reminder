@@ -31,7 +31,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ScreenManager;
+import com.cray.software.justreminder.StartActivity;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
@@ -101,7 +101,7 @@ public class PlacesFragment extends Fragment implements SimpleListener {
                 throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
             }
         }
-        ((ScreenManager) context).onSectionAttached(ScreenManager.FRAGMENT_PLACES);
+        ((StartActivity) context).onSectionAttached(StartActivity.FRAGMENT_PLACES);
     }
 
     @Override
@@ -117,7 +117,7 @@ public class PlacesFragment extends Fragment implements SimpleListener {
                 throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
             }
         }
-        ((ScreenManager) activity).onSectionAttached(ScreenManager.FRAGMENT_PLACES);
+        ((StartActivity) activity).onSectionAttached(StartActivity.FRAGMENT_PLACES);
     }
 
     @Override

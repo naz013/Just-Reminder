@@ -26,8 +26,8 @@ import com.cray.software.justreminder.async.BackupTask;
 import com.cray.software.justreminder.cloud.GoogleTasks;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.datas.models.ShoppingList;
-import com.cray.software.justreminder.helpers.CalendarManager;
+import com.cray.software.justreminder.datas.models.ShoppingListItem;
+import com.cray.software.justreminder.helpers.CalendarHelper;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.helpers.Notifier;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -333,7 +333,7 @@ public class Reminder {
      */
     public static void edit(long id, Context context){
         disable(context, id);
-        Intent intent = new Intent(context, ReminderManager.class);
+        Intent intent = new Intent(context, ReminderActivity.class);
         intent.putExtra(Constants.EDIT_ID, id);
         context.startActivity(intent);
     }
@@ -345,8 +345,8 @@ public class Reminder {
      */
     public static void delete(long id, Context context) {
         ReminderItem item = ReminderHelper.getInstance(context).deleteReminder(id);
-        new CalendarManager(context).deleteEvents(id);
-        new DeleteReminderFiles(context, item.getUuId()).execute();
+        new CalendarHelper(context).deleteEvents(id);
+        new DeleteFilesTask(context, item.getUuId()).execute();
         disable(context, id);
     }
 
@@ -465,7 +465,7 @@ public class Reminder {
             List<JShopping> shoppings = jsonModel.getShoppings();
             for (JShopping shopping : shoppings) {
                 if (shopping.getUuId().matches(uuId)) {
-                    shopping.setDeleted(ShoppingList.DELETED);
+                    shopping.setDeleted(ShoppingListItem.DELETED);
                     break;
                 }
             }
@@ -487,7 +487,7 @@ public class Reminder {
             List<JShopping> shoppings = jsonModel.getShoppings();
             for (JShopping shopping : shoppings) {
                 if (shopping.getUuId().matches(uuId)) {
-                    shopping.setDeleted(ShoppingList.ACTIVE);
+                    shopping.setDeleted(ShoppingListItem.ACTIVE);
                     break;
                 }
             }

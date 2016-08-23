@@ -32,7 +32,7 @@ import com.cray.software.justreminder.databinding.TrashListItemBinding;
 import com.cray.software.justreminder.datas.AdapterItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.SimpleListener;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 import com.cray.software.justreminder.reminder.ReminderItem;
 
 import java.util.ArrayList;

@@ -32,11 +32,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ScreenManager;
+import com.cray.software.justreminder.StartActivity;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
-import com.cray.software.justreminder.datas.models.TaskListData;
+import com.cray.software.justreminder.datas.models.TaskListItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
@@ -51,7 +51,7 @@ public class TasksFragment extends Fragment {
 
     private static final String TAG = "TasksFragment";
     private ViewPager pager;
-    private ArrayList<TaskListData> taskListDatum;
+    private ArrayList<TaskListItem> taskListDatum;
     private int currentPos;
     private boolean onCreate = false;
     private NavigationCallbacks mCallbacks;
@@ -80,7 +80,7 @@ public class TasksFragment extends Fragment {
         if (currentPos != 0) {
             menu.add(Menu.NONE, MENU_ITEM_EDIT, 100, R.string.edit_list);
             String listId = taskListDatum.get(currentPos).getTaskList().getListId();
-            TaskListItem listItem = TasksHelper.getInstance(getActivity()).getTaskList(listId);
+            com.cray.software.justreminder.google_tasks.TaskListItem listItem = TasksHelper.getInstance(getActivity()).getTaskList(listId);
             if (listItem != null) {
                 if (listItem.getDef() != 1) {
                     menu.add(Menu.NONE, MENU_ITEM_DELETE, 100, getString(R.string.delete_list));
@@ -98,11 +98,11 @@ public class TasksFragment extends Fragment {
                 new DelayedAsync(mContext, null).execute();
                 return true;
             case R.id.action_add_list:
-                startActivity(new Intent(mContext, TaskListManager.class));
+                startActivity(new Intent(mContext, TaskListActivity.class));
                 return true;
             case MENU_ITEM_EDIT:
                 if (currentPos != 0){
-                    startActivity(new Intent(mContext, TaskListManager.class)
+                    startActivity(new Intent(mContext, TaskListActivity.class)
                             .putExtra(Constants.ITEM_ID_INTENT, taskListDatum.get(currentPos).getTaskList().getId()));
                 }
                 return true;
@@ -143,7 +143,7 @@ public class TasksFragment extends Fragment {
                 throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
             }
         }
-        ((ScreenManager) context).onSectionAttached(ScreenManager.FRAGMENT_TASKS);
+        ((StartActivity) context).onSectionAttached(StartActivity.FRAGMENT_TASKS);
     }
 
     @Override
@@ -159,7 +159,7 @@ public class TasksFragment extends Fragment {
                 throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
             }
         }
-        ((ScreenManager) activity).onSectionAttached(ScreenManager.FRAGMENT_TASKS);
+        ((StartActivity) activity).onSectionAttached(StartActivity.FRAGMENT_TASKS);
     }
 
     @Override
@@ -178,7 +178,7 @@ public class TasksFragment extends Fragment {
         if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.TASK_CHANGED)) {
             SharedPrefs.getInstance(mContext).putBoolean(Prefs.TASK_CHANGED, false);
             if (mCallbacks != null) {
-                mCallbacks.onItemSelected(ScreenManager.FRAGMENT_TASKS);
+                mCallbacks.onItemSelected(StartActivity.FRAGMENT_TASKS);
             }
         }
     }
@@ -222,7 +222,7 @@ public class TasksFragment extends Fragment {
             deleteList();
             dialog.dismiss();
             if (mCallbacks != null) {
-                mCallbacks.onItemSelected(ScreenManager.FRAGMENT_TASKS);
+                mCallbacks.onItemSelected(StartActivity.FRAGMENT_TASKS);
             }
         });
 
@@ -231,7 +231,7 @@ public class TasksFragment extends Fragment {
     }
 
     private void deleteList() {
-        TaskListItem taskListItem = taskListDatum.get(currentPos).getTaskList();
+        com.cray.software.justreminder.google_tasks.TaskListItem taskListItem = taskListDatum.get(currentPos).getTaskList();
         if (taskListItem != null){
             String listId = taskListItem.getListId();
             int def = taskListItem.getDef();
@@ -239,7 +239,7 @@ public class TasksFragment extends Fragment {
             TasksHelper.getInstance(getActivity()).deleteTasks(listId);
             new TaskListAsync(mContext, null, 0, 0, listId, TasksConstants.DELETE_TASK_LIST).execute();
             if (def == 1) {
-                TaskListItem listItem = TasksHelper.getInstance(getActivity()).getTaskLists().get(0);
+                com.cray.software.justreminder.google_tasks.TaskListItem listItem = TasksHelper.getInstance(getActivity()).getTaskLists().get(0);
                 TasksHelper.getInstance(getActivity()).setDefault(listItem.getId());
             }
         }
@@ -247,12 +247,12 @@ public class TasksFragment extends Fragment {
 
     private void loadData() {
         taskListDatum = new ArrayList<>();
-        List<TaskListItem> taskLists = getTaskLists();
+        List<com.cray.software.justreminder.google_tasks.TaskListItem> taskLists = getTaskLists();
         if (taskLists == null || taskLists.size() == 0) return;
         Map<String, Integer> colors = new HashMap<>();
         for (int i = 0; i < taskLists.size(); i++){
-            TaskListItem item = taskLists.get(i);
-            taskListDatum.add(new TaskListData(item, getList(item.getListId()), i));
+            com.cray.software.justreminder.google_tasks.TaskListItem item = taskLists.get(i);
+            taskListDatum.add(new TaskListItem(item, getList(item.getListId()), i));
             if (i > 0) colors.put(item.getListId(), item.getColor());
         }
         Log.d(TAG, "loadData: " + colors.toString());
@@ -293,7 +293,7 @@ public class TasksFragment extends Fragment {
                         ViewUtils.getColor(mContext, mColor.colorAccent()));
                 mCallbacks.onListIdChanged(0);
             } else {
-                TaskListItem taskList = taskListDatum.get(pos).getTaskList();
+                com.cray.software.justreminder.google_tasks.TaskListItem taskList = taskListDatum.get(pos).getTaskList();
                 mCallbacks.onTitleChanged(taskList.getTitle());
                 int tmp = taskList.getColor();
                 mCallbacks.onUiChanged(ViewUtils.getColor(mContext, mColor.colorPrimary(tmp)),
@@ -305,13 +305,13 @@ public class TasksFragment extends Fragment {
         }
     }
 
-    private ArrayList<TaskListItem> getTaskLists() {
-        ArrayList<TaskListItem> lists = new ArrayList<>();
-        TaskListItem zeroItem = new TaskListItem();
+    private ArrayList<com.cray.software.justreminder.google_tasks.TaskListItem> getTaskLists() {
+        ArrayList<com.cray.software.justreminder.google_tasks.TaskListItem> lists = new ArrayList<>();
+        com.cray.software.justreminder.google_tasks.TaskListItem zeroItem = new com.cray.software.justreminder.google_tasks.TaskListItem();
         zeroItem.setTitle(getString(R.string.all));
         zeroItem.setColor(25);
         lists.add(zeroItem);
-        for (TaskListItem item : TasksHelper.getInstance(getActivity()).getTaskLists()) lists.add(item);
+        for (com.cray.software.justreminder.google_tasks.TaskListItem item : TasksHelper.getInstance(getActivity()).getTaskLists()) lists.add(item);
         return lists;
     }
 
@@ -332,6 +332,6 @@ public class TasksFragment extends Fragment {
         String listId = taskListDatum.get(currentPos).getTaskList().getListId();
         TasksHelper.getInstance(getActivity()).deleteCompletedTasks(listId);
         new TaskListAsync(mContext, null, 0, 0, listId, TasksConstants.CLEAR_TASK_LIST).execute();
-        if (mCallbacks != null) mCallbacks.onItemSelected(ScreenManager.FRAGMENT_TASKS);
+        if (mCallbacks != null) mCallbacks.onItemSelected(StartActivity.FRAGMENT_TASKS);
     }
 }

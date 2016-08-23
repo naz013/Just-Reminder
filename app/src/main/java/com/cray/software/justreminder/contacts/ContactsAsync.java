@@ -27,7 +27,7 @@ import java.util.List;
 
 public class ContactsAsync extends AsyncTask<Void, Void, Void> {
 
-    private List<ContactData> mList;
+    private List<ContactItem> mList;
     private Context mContext;
     private LoadListener mListener;
 
@@ -58,7 +58,7 @@ public class ContactsAsync extends AsyncTask<Void, Void, Void> {
                     hasPhone = "false";
                 if (name != null) {
                     if (Boolean.parseBoolean(hasPhone)) {
-                        ContactData data = new ContactData(name, photo, id);
+                        ContactItem data = new ContactItem(name, photo, id);
                         int pos = getPosition(name);
                         if (pos == -1) mList.add(data);
                         else mList.add(pos, data);
@@ -73,7 +73,7 @@ public class ContactsAsync extends AsyncTask<Void, Void, Void> {
     private int getPosition(String name) {
         if (mList.size() == 0) return 0;
         int position = -1;
-        for (ContactData data : mList) {
+        for (ContactItem data : mList) {
             int comp = name.compareTo(data.getName());
             if (comp <= 0) {
                 position = mList.indexOf(data);

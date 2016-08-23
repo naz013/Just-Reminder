@@ -27,7 +27,7 @@ import android.view.MenuItem;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 import com.cray.software.justreminder.utils.ViewUtils;
 
 public class ContactsActivity extends AppCompatActivity implements NumberCallback {

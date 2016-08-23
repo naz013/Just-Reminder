@@ -24,11 +24,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ScreenManager;
+import com.cray.software.justreminder.StartActivity;
 import com.cray.software.justreminder.birthdays.AddBirthdayActivity;
 import com.cray.software.justreminder.places.AddPlaceActivity;
-import com.cray.software.justreminder.calls.FollowReminder;
-import com.cray.software.justreminder.calls.MissedCallDialog;
+import com.cray.software.justreminder.calls.FollowReminderActivity;
+import com.cray.software.justreminder.calls.MissedCallActivity;
 import com.cray.software.justreminder.reminder.AddReminderActivity;
 import com.cray.software.justreminder.templates.QuickSMSActivity;
 import com.cray.software.justreminder.birthdays.ShowBirthdayActivity;
@@ -61,16 +61,16 @@ public class TestActivity extends AppCompatActivity implements SimpleListener {
 
     private ArrayList<ActionItem> getList() {
         list = new ArrayList<>();
-        list.add(new ActionItem("Run application", ScreenManager.class));
+        list.add(new ActionItem("Run application", StartActivity.class));
         list.add(new ActionItem("Contact picker", ContactsActivity.class));
         list.add(new ActionItem("File picker", FileExploreActivity.class));
         list.add(new ActionItem("Feedback screen", SendReportActivity.class));
-        list.add(new ActionItem("After call screen", FollowReminder.class));
+        list.add(new ActionItem("After call screen", FollowReminderActivity.class));
         list.add(new ActionItem("Quick message", QuickSMSActivity.class));
         list.add(new ActionItem("Quick reminder", AddReminderActivity.class));
         list.add(new ActionItem("Add place", AddPlaceActivity.class));
         list.add(new ActionItem("Add birthday", AddBirthdayActivity.class));
-        list.add(new ActionItem("Missed call screen", MissedCallDialog.class));
+        list.add(new ActionItem("Missed call screen", MissedCallActivity.class));
         list.add(new ActionItem("Birthday dialog", ShowBirthdayActivity.class));
         return list;
     }

@@ -36,14 +36,14 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ScreenManager;
+import com.cray.software.justreminder.StartActivity;
 import com.cray.software.justreminder.cloud.GoogleTasks;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 import com.cray.software.justreminder.places.PlacesHelper;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.templates.TemplateHelper;
@@ -103,9 +103,9 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             mFromSavedInstanceState = true;
             disableItem(mCurrentSelectedPosition);
         } else {
-            selectItem(ScreenManager.FRAGMENT_ACTIVE, true);
+            selectItem(StartActivity.FRAGMENT_ACTIVE, true);
             mFromSavedInstanceState = false;
-            disableItem(ScreenManager.FRAGMENT_ACTIVE);
+            disableItem(StartActivity.FRAGMENT_ACTIVE);
         }
     }
 
@@ -129,7 +129,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         prefsButton.setOnClickListener(this);
 
         RoboTextView helpButton = (RoboTextView) rootView.findViewById(R.id.help);
-        helpButton.setOnClickListener(v -> selectItem(ScreenManager.HELP, false));
+        helpButton.setOnClickListener(v -> selectItem(StartActivity.HELP, false));
 
         RoboTextView feedButton = (RoboTextView) rootView.findViewById(R.id.feed);
         feedButton.setOnClickListener(this);
@@ -159,20 +159,20 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
 
         categories = (RoboTextView) rootView.findViewById(R.id.categories);
         categories.setOnClickListener(v -> {
-            selectItem(ScreenManager.FRAGMENT_GROUPS, true);
-            disableItem(ScreenManager.FRAGMENT_GROUPS);
+            selectItem(StartActivity.FRAGMENT_GROUPS, true);
+            disableItem(StartActivity.FRAGMENT_GROUPS);
         });
 
         places = (RoboTextView) rootView.findViewById(R.id.places);
         places.setOnClickListener(v -> {
-            selectItem(ScreenManager.FRAGMENT_PLACES, true);
-            disableItem(ScreenManager.FRAGMENT_PLACES);
+            selectItem(StartActivity.FRAGMENT_PLACES, true);
+            disableItem(StartActivity.FRAGMENT_PLACES);
         });
 
         templates = (RoboTextView) rootView.findViewById(R.id.templates);
         templates.setOnClickListener(v -> {
-            selectItem(ScreenManager.FRAGMENT_TEMPLATES, true);
-            disableItem(ScreenManager.FRAGMENT_TEMPLATES);
+            selectItem(StartActivity.FRAGMENT_TEMPLATES, true);
+            disableItem(StartActivity.FRAGMENT_TEMPLATES);
         });
         reloadItems();
         loadAds(rootView);
@@ -191,7 +191,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
             }
             if (!isAppInstalled("com.cray.software.justreminderpro")){
                 ads_container.setVisibility(View.VISIBLE);
-                ads_container.setOnClickListener(v -> selectItem(ScreenManager.MARKET, false));
+                ads_container.setOnClickListener(v -> selectItem(StartActivity.MARKET, false));
             }
         }
     }
@@ -337,7 +337,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
                         e.printStackTrace();
                     }
                 } else {
-                    mCallbacks.onItemSelected(ScreenManager.FRAGMENT_ACTIVE);
+                    mCallbacks.onItemSelected(StartActivity.FRAGMENT_ACTIVE);
                 }
             }, 250);
         }
@@ -355,26 +355,26 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
         templates.setEnabled(true);
         categories.setEnabled(true);
 
-        if (tag.matches(ScreenManager.FRAGMENT_ACTIVE)){
+        if (tag.matches(StartActivity.FRAGMENT_ACTIVE)){
             activeScreen.setEnabled(false);
-        } else if (tag.matches(ScreenManager.FRAGMENT_ARCHIVE)){
+        } else if (tag.matches(StartActivity.FRAGMENT_ARCHIVE)){
             archiveScreen.setEnabled(false);
-        } else if (tag.matches(ScreenManager.FRAGMENT_EVENTS) ||
-                tag.matches(ScreenManager.ACTION_CALENDAR)){
+        } else if (tag.matches(StartActivity.FRAGMENT_EVENTS) ||
+                tag.matches(StartActivity.ACTION_CALENDAR)){
             calendar.setEnabled(false);
-        } else if (tag.matches(ScreenManager.FRAGMENT_NOTE)){
+        } else if (tag.matches(StartActivity.FRAGMENT_NOTE)){
             notes.setEnabled(false);
-        } else if (tag.matches(ScreenManager.FRAGMENT_GROUPS)){
+        } else if (tag.matches(StartActivity.FRAGMENT_GROUPS)){
             categories.setEnabled(false);
-        } else if (tag.matches(ScreenManager.FRAGMENT_PLACES)){
+        } else if (tag.matches(StartActivity.FRAGMENT_PLACES)){
             places.setEnabled(false);
-        } else if (tag.matches(ScreenManager.FRAGMENT_TEMPLATES)){
+        } else if (tag.matches(StartActivity.FRAGMENT_TEMPLATES)){
             templates.setEnabled(false);
-        } else if (tag.matches(ScreenManager.FRAGMENT_TASKS)){
+        } else if (tag.matches(StartActivity.FRAGMENT_TASKS)){
             googleTasks.setEnabled(false);
-        } else if (tag.matches(ScreenManager.FRAGMENT_LOCATIONS)){
+        } else if (tag.matches(StartActivity.FRAGMENT_LOCATIONS)){
             geoScreen.setEnabled(false);
-        } else if (tag.matches(ScreenManager.FRAGMENT_BACKUPS)){
+        } else if (tag.matches(StartActivity.FRAGMENT_BACKUPS)){
             manageBackup.setEnabled(false);
         }
     }
@@ -431,43 +431,43 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.archiveScreen:
-                selectItem(ScreenManager.FRAGMENT_ARCHIVE, true);
-                disableItem(ScreenManager.FRAGMENT_ARCHIVE);
+                selectItem(StartActivity.FRAGMENT_ARCHIVE, true);
+                disableItem(StartActivity.FRAGMENT_ARCHIVE);
                 break;
             case R.id.activeScreen:
-                selectItem(ScreenManager.FRAGMENT_ACTIVE, true);
-                disableItem(ScreenManager.FRAGMENT_ACTIVE);
+                selectItem(StartActivity.FRAGMENT_ACTIVE, true);
+                disableItem(StartActivity.FRAGMENT_ACTIVE);
                 break;
             case R.id.settings:
-                selectItem(ScreenManager.FRAGMENT_SETTINGS, false);
+                selectItem(StartActivity.FRAGMENT_SETTINGS, false);
                 break;
             case R.id.feed:
-                selectItem(ScreenManager.REPORT, false);
+                selectItem(StartActivity.REPORT, false);
                 break;
             case R.id.geoScreen:
-                selectItem(ScreenManager.FRAGMENT_LOCATIONS, true);
-                disableItem(ScreenManager.FRAGMENT_LOCATIONS);
+                selectItem(StartActivity.FRAGMENT_LOCATIONS, true);
+                disableItem(StartActivity.FRAGMENT_LOCATIONS);
                 break;
             case R.id.notes:
-                selectItem(ScreenManager.FRAGMENT_NOTE, true);
-                disableItem(ScreenManager.FRAGMENT_NOTE);
+                selectItem(StartActivity.FRAGMENT_NOTE, true);
+                disableItem(StartActivity.FRAGMENT_NOTE);
                 break;
             case R.id.googleTasks:
-                selectItem(ScreenManager.FRAGMENT_TASKS, true);
-                disableItem(ScreenManager.FRAGMENT_TASKS);
+                selectItem(StartActivity.FRAGMENT_TASKS, true);
+                disableItem(StartActivity.FRAGMENT_TASKS);
                 break;
             case R.id.calendar:
                 if (SharedPrefs.getInstance(mContext).getInt(Prefs.LAST_CALENDAR_VIEW) == 1) {
-                    selectItem(ScreenManager.ACTION_CALENDAR, true);
-                    disableItem(ScreenManager.ACTION_CALENDAR);
+                    selectItem(StartActivity.ACTION_CALENDAR, true);
+                    disableItem(StartActivity.ACTION_CALENDAR);
                 } else {
-                    selectItem(ScreenManager.FRAGMENT_EVENTS, true);
-                    disableItem(ScreenManager.FRAGMENT_EVENTS);
+                    selectItem(StartActivity.FRAGMENT_EVENTS, true);
+                    disableItem(StartActivity.FRAGMENT_EVENTS);
                 }
                 break;
             case R.id.manageBackup:
-                selectItem(ScreenManager.FRAGMENT_BACKUPS, true);
-                disableItem(ScreenManager.FRAGMENT_BACKUPS);
+                selectItem(StartActivity.FRAGMENT_BACKUPS, true);
+                disableItem(StartActivity.FRAGMENT_BACKUPS);
                 break;
         }
     }

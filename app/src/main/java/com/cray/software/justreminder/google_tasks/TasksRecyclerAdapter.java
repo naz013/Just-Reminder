@@ -90,7 +90,7 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
     }
 
     private void onItemClick(int position){
-        mContext.startActivity(new Intent(mContext, TaskManager.class)
+        mContext.startActivity(new Intent(mContext, TaskActivity.class)
                 .putExtra(Constants.ITEM_ID_INTENT, mDataset.get(position).getId())
                 .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.EDIT));
     }

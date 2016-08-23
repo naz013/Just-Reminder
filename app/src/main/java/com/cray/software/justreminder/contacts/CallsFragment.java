@@ -45,7 +45,7 @@ public class CallsFragment extends Fragment implements CallsLogListener {
     private Context mContext;
     private NumberCallback mCallback;
 
-    private List<CallsData> mDataList;
+    private List<CallsItem> mDataList;
     private CallsRecyclerAdapter mAdapter;
 
     private LinearLayout mEmptyItem;
@@ -185,7 +185,7 @@ public class CallsFragment extends Fragment implements CallsLogListener {
     }
 
     @Override
-    public void onLoaded(List<CallsData> list) {
+    public void onLoaded(List<CallsItem> list) {
         this.mDataList = list;
         mProgressView.setVisibility(View.GONE);
         mAdapter = new CallsRecyclerAdapter(mContext, list, mClickListener, mFilterCallback);

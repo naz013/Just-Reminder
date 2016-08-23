@@ -20,7 +20,7 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 
 public class WidgetUtils {
 

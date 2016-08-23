@@ -29,7 +29,7 @@ import android.view.ViewGroup;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.fragments.helpers.MapCallback;
-import com.cray.software.justreminder.fragments.helpers.PlacesMap;
+import com.cray.software.justreminder.fragments.helpers.PlacesMapFragment;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.reminder.json.JsonModel;
@@ -91,7 +91,7 @@ public class PlacesFragment extends BaseFragment implements MapCallback {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reminder_places_layout, container, false);
         SharedPrefs prefs = SharedPrefs.getInstance(getActivity());
-        placesMap = new PlacesMap();
+        placesMap = new PlacesMapFragment();
         placesMap.setListener(mListener);
         placesMap.setCallback(this);
         placesMap.setRadius(prefs.getInt(Prefs.LOCATION_RADIUS));

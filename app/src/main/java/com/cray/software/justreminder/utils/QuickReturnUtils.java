@@ -122,15 +122,4 @@ public class QuickReturnUtils {
 
         return scrollY;
     }
-
-
-    public static int getActionBarHeight(Context context) {
-        if (sActionBarHeight != 0) {
-            return sActionBarHeight;
-        }
-
-        context.getTheme().resolveAttribute(android.R.attr.actionBarSize, sTypedValue, true);
-        sActionBarHeight = TypedValue.complexToDimensionPixelSize(sTypedValue.data, context.getResources().getDisplayMetrics());
-        return sActionBarHeight;
-    }
 }

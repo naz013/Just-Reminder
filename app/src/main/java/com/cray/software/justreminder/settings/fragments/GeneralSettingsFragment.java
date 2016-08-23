@@ -30,13 +30,13 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.theme.MainImageActivity;
-import com.cray.software.justreminder.theme.ThemerDialog;
+import com.cray.software.justreminder.theme.ThemeActivity;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 import com.cray.software.justreminder.services.WearService;
 import com.cray.software.justreminder.views.PrefsView;
 
@@ -212,7 +212,7 @@ public class GeneralSettingsFragment extends Fragment implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.themeColorPrefs: {
-                Intent intent = new Intent(getActivity().getApplicationContext(), ThemerDialog.class);
+                Intent intent = new Intent(getActivity().getApplicationContext(), ThemeActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getActivity().startActivity(intent);
             }

@@ -51,7 +51,7 @@
         android:theme="@style/HomeWhite.Blue"
         tools:replace="label, allowBackup" >
         <activity
-            android:name=".activities.SplashScreen"
+            android:name=".activities.SplashScreenActivity"
             android:theme="@style/SplashTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -83,7 +83,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.Help"
+            android:name=".activities.HelpActivity"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden" >
             <intent-filter>
@@ -91,7 +91,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.ThanksDialog"
+            android:name=".activities.ThanksActivity"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden" >
             <intent-filter>
@@ -99,21 +99,21 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".reminder.ReminderManager"
+            android:name=".reminder.ReminderActivity"
             android:configChanges="keyboardHidden|orientation|keyboard" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".google_tasks.TaskListManager"
+            android:name=".google_tasks.TaskListActivity"
             android:configChanges="keyboardHidden|orientation|keyboard" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".google_tasks.TaskManager"
+            android:name=".google_tasks.TaskActivity"
             android:configChanges="keyboardHidden|orientation|keyboard" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -134,7 +134,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".templates.TemplateManager"
+            android:name=".templates.TemplateActivity"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -155,13 +155,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".groups.GroupManager"
+            android:name=".groups.GroupActivity"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".notes.NotesManager" >
+        <activity android:name=".notes.NotesActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -212,7 +212,7 @@
         <service android:name=".services.CheckPosition" />
 
         <activity
-            android:name=".reminder.ReminderDialog"
+            android:name=".reminder.ReminderDialogActivity"
             android:configChanges="keyboardHidden|orientation"
             android:noHistory="true"
             android:theme="@style/HomeWhiteTranslucent" >
@@ -238,7 +238,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".theme.ThemerDialog"
+            android:name=".theme.ThemeActivity"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -252,7 +252,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.CalendarStyle"
+            android:name=".activities.CalendarStyleDialog"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -376,7 +376,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".calls.FollowReminder"
+            android:name=".calls.FollowReminderActivity"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -399,7 +399,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.CloudDrives"
+            android:name=".activities.CloudDrivesActivity"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -414,14 +414,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.TimesOfDay"
+            android:name=".activities.TimesOfDayActivity"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".calendar.EventsImport"
+            android:name=".calendar.EventsImportActivity"
             android:configChanges="keyboardHidden|orientation" >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -630,10 +630,10 @@
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".calls.MissedCallAlarm" />
+        <receiver android:name=".calls.MissedCallAlarmReceiver" />
 
         <activity
-            android:name=".calls.MissedCallDialog"
+            android:name=".calls.MissedCallActivity"
             android:configChanges="keyboardHidden|orientation"
             android:noHistory="true"
             android:theme="@style/HomeWhiteFullscreen" >
@@ -665,11 +665,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.ImagePreview"
+            android:name=".activities.ImagePreviewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/HomeWhiteFullscreen" />
         <activity
-            android:name=".ScreenManager"
+            android:name=".StartActivity"
             android:configChanges="keyboardHidden|orientation|keyboard"
             android:windowSoftInputMode="stateHidden" >
             <intent-filter>
@@ -690,10 +690,10 @@
             android:enabled="true" />
 
         <activity
-            android:name=".notes.NotePreview"
+            android:name=".notes.NotePreviewActivity"
             android:theme="@style/HomeWhite.Blue" />
         <activity
-            android:name=".reminder.ReminderPreview"
+            android:name=".reminder.ReminderPreviewActivity"
             android:theme="@style/HomeWhite.Blue" />
         <activity
             android:name=".reminder.ShopsPreview"

@@ -27,7 +27,7 @@ import android.widget.RelativeLayout;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
-import com.cray.software.justreminder.datas.models.ShoppingList;
+import com.cray.software.justreminder.datas.models.ShoppingListItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
@@ -122,7 +122,7 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
 
-        final ShoppingList item = provider.getItem(holder.getAdapterPosition());
+        final ShoppingListItem item = provider.getItem(holder.getAdapterPosition());
         String title = item.getTitle();
 
         int isChecked = item.isChecked();
@@ -154,7 +154,7 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
             });
 
             holder.textView.setOnClickListener(v -> {
-                if (listener != null && item.getStatus() == ShoppingList.DELETED) {
+                if (listener != null && item.getStatus() == ShoppingListItem.DELETED) {
                     listener.onItemChange(holder.getAdapterPosition());
                 }
             });
@@ -166,7 +166,7 @@ public class TaskListRecyclerAdapter extends RecyclerView.Adapter<TaskListRecycl
             });
         }
 
-        if (item.getStatus() == ShoppingList.DELETED){
+        if (item.getStatus() == ShoppingListItem.DELETED){
             holder.textView.setTextColor(ViewUtils.getColor(mContext, R.color.redPrimaryDark));
         }
     }

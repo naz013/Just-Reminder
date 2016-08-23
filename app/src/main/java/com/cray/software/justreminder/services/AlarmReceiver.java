@@ -27,9 +27,9 @@ import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.enums.NewMethod;
 import com.cray.software.justreminder.helpers.Recurrence;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 import com.cray.software.justreminder.reminder.Reminder;
-import com.cray.software.justreminder.reminder.ReminderDialog;
+import com.cray.software.justreminder.reminder.ReminderDialogActivity;
 import com.cray.software.justreminder.reminder.ReminderHelper;
 import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.utils.TimeUtil;
@@ -60,7 +60,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
     }
 
     private void start(Context context, long id) {
-        Intent resultIntent = new Intent(context, ReminderDialog.class);
+        Intent resultIntent = new Intent(context, ReminderDialogActivity.class);
         resultIntent.putExtra(Constants.ITEM_ID_INTENT, id);
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
         context.startActivity(resultIntent);

@@ -22,11 +22,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
-import com.cray.software.justreminder.reminder.ReminderDialog;
+import com.cray.software.justreminder.reminder.ReminderDialogActivity;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 
 import java.util.Calendar;
 
@@ -40,7 +40,7 @@ public class DelayReceiver extends WakefulBroadcastReceiver {
         long id = intent.getLongExtra(Constants.ITEM_ID_INTENT, 0);
         Intent service = new Intent(context, DelayReceiver.class);
         context.startService(service);
-        Intent resultIntent = new Intent(context, ReminderDialog.class);
+        Intent resultIntent = new Intent(context, ReminderDialogActivity.class);
         resultIntent.putExtra(Constants.ITEM_ID_INTENT, id);
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(resultIntent);

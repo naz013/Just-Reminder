@@ -30,8 +30,8 @@ import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.SharedPrefs;
-import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.reminder.ReminderDialog;
+import com.cray.software.justreminder.helpers.Module;
+import com.cray.software.justreminder.reminder.ReminderDialogActivity;
 import com.cray.software.justreminder.reminder.ReminderHelper;
 import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.reminder.json.JsonModel;
@@ -110,7 +110,7 @@ public class RepeatNotificationReceiver extends WakefulBroadcastReceiver {
         builder.setPriority(5);
         if (SharedPrefs.getInstance(context).getBoolean(Prefs.SMART_FOLD)) {
             if (!type.startsWith(Constants.TYPE_WEEKDAY)) {
-                Intent notificationIntent = new Intent(context, ReminderDialog.class);
+                Intent notificationIntent = new Intent(context, ReminderDialogActivity.class);
                 notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                         | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 PendingIntent intent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);

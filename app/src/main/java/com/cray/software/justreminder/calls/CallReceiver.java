@@ -69,7 +69,7 @@ public class CallReceiver extends BroadcastReceiver {
                         //Start quick contact reminder window
                         boolean isFollow = prefs.getBoolean(Prefs.FOLLOW_REMINDER);
                         if (mIncomingNumber != null && isFollow ) {
-                            mContext.startActivity(new Intent(mContext, FollowReminder.class)
+                            mContext.startActivity(new Intent(mContext, FollowReminderActivity.class)
                                     .putExtra(Constants.SELECTED_CONTACT_NUMBER, mIncomingNumber)
                                     .putExtra(Constants.SELECTED_RADIUS, startCallTime)
                                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
@@ -90,7 +90,7 @@ public class CallReceiver extends BroadcastReceiver {
                                 db.open();
 
                                 Cursor c = db.getMissedCall(mIncomingNumber);
-                                MissedCallAlarm alarm = new MissedCallAlarm();
+                                MissedCallAlarmReceiver alarm = new MissedCallAlarmReceiver();
                                 if (c != null && c.moveToFirst()){
                                     do {
                                         long id = c.getLong(c.getColumnIndex(Constants.COLUMN_ID));

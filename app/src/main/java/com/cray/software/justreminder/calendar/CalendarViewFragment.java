@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ScreenManager;
+import com.cray.software.justreminder.StartActivity;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.dialogs.ActionPickerDialog;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -67,7 +67,7 @@ public class CalendarViewFragment extends Fragment {
                 throw new ClassCastException("Activity must implement DateCallback.");
             }
         }
-        ((ScreenManager) activity).onSectionAttached(ScreenManager.ACTION_CALENDAR);
+        ((StartActivity) activity).onSectionAttached(StartActivity.ACTION_CALENDAR);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class CalendarViewFragment extends Fragment {
                 throw new ClassCastException("Activity must implement DateCallback.");
             }
         }
-        ((ScreenManager) context).onSectionAttached(ScreenManager.ACTION_CALENDAR);
+        ((StartActivity) context).onSectionAttached(StartActivity.ACTION_CALENDAR);
     }
 
     @Override
@@ -117,13 +117,13 @@ public class CalendarViewFragment extends Fragment {
         args.putLongArray(FlextCal.MONTH_IMAGES, monthImage.getPhotos());
         calendarView.setArguments(args);
         calendarView.setBackgroundForToday(cSetter.getColor(cSetter.colorCurrentCalendar()));
-        replace(calendarView, ScreenManager.ACTION_CALENDAR);
+        replace(calendarView, StartActivity.ACTION_CALENDAR);
         final FlextListener listener = new FlextListener() {
 
             @Override
             public void onClickDate(Date date, View view) {
                 if (mCallback != null) mCallback.dateSelect(date);
-                ((ScreenManager) mContext).onItemSelected(ScreenManager.FRAGMENT_EVENTS);
+                ((StartActivity) mContext).onItemSelected(StartActivity.FRAGMENT_EVENTS);
             }
 
             @Override
@@ -158,7 +158,7 @@ public class CalendarViewFragment extends Fragment {
         boolean isReminder = SharedPrefs.getInstance(mContext).getBoolean(Prefs.REMINDERS_IN_CALENDAR);
         boolean isFeature = SharedPrefs.getInstance(mContext).getBoolean(Prefs.CALENDAR_FEATURE_TASKS);
         calendarView.setEvents(new ReminderDataProvider(mContext, isReminder, isFeature).getEvents());
-        replace(calendarView, ScreenManager.ACTION_CALENDAR);
+        replace(calendarView, StartActivity.ACTION_CALENDAR);
         SharedPrefs.getInstance(mContext).putInt(Prefs.LAST_CALENDAR_VIEW, 1);
         getActivity().invalidateOptionsMenu();
     }

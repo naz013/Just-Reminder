@@ -27,7 +27,7 @@ import com.cray.software.justreminder.cloud.Dropbox;
 import com.cray.software.justreminder.cloud.GoogleDrive;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.SyncListener;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 
 import org.json.JSONException;
 

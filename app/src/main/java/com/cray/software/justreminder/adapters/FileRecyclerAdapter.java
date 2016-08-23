@@ -27,10 +27,10 @@ import android.widget.ImageView;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.FileConfig;
-import com.cray.software.justreminder.datas.models.FileModel;
+import com.cray.software.justreminder.datas.models.FileItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.SimpleListener;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
     /**
      * List provider.
      */
-    private ArrayList<FileModel> list;
+    private ArrayList<FileItem> list;
 
     /**
      * Recycler view action listener.
@@ -62,7 +62,7 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
      * @param context application context.
      * @param list list of files in folder.
      */
-    public FileRecyclerAdapter(final Context context, ArrayList<FileModel> list) {
+    public FileRecyclerAdapter(final Context context, ArrayList<FileItem> list) {
         this.list = new ArrayList<>();
         this.list.clear();
         this.list = list;
@@ -132,7 +132,7 @@ public class FileRecyclerAdapter extends RecyclerView.Adapter<FileRecyclerAdapte
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        final FileModel item = list.get(position);
+        final FileItem item = list.get(position);
         holder.lastModified.setText(item.getLastModified());
         holder.fileName.setText(item.getFileName());
         holder.fileIcon.setImageResource(getIcon(item.getFileName()));

@@ -39,12 +39,12 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecyclerAdapter.ContactViewHolder> {
 
     private Context mContext;
-    private List<ContactData> mDataList;
+    private List<ContactItem> mDataList;
 
     private RecyclerClickListener mListener;
     private FilterCallback mCallback;
 
-    public ContactsRecyclerAdapter(Context context, List<ContactData> dataItemList, RecyclerClickListener listener, FilterCallback callback) {
+    public ContactsRecyclerAdapter(Context context, List<ContactItem> dataItemList, RecyclerClickListener listener, FilterCallback callback) {
         this.mContext = context;
         this.mDataList = new ArrayList<>(dataItemList);
         this.mListener = listener;
@@ -59,7 +59,7 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
 
     @Override
     public void onBindViewHolder(ContactViewHolder holder, int position) {
-        ContactData item = mDataList.get(position);
+        ContactItem item = mDataList.get(position);
         holder.binding.setItem(item);
     }
 
@@ -83,15 +83,15 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
         }
     }
 
-    public void filter(String q, List<ContactData> list) {
-        List<ContactData> res = filter(list, q);
+    public void filter(String q, List<ContactItem> list) {
+        List<ContactItem> res = filter(list, q);
         animateTo(res);
         if (mCallback != null) mCallback.filter(res.size());
     }
 
-    private List<ContactData> filter(List<ContactData> mData, String q) {
+    private List<ContactItem> filter(List<ContactItem> mData, String q) {
         q = q.toLowerCase();
-        List<ContactData> filteredModelList = new ArrayList<>();
+        List<ContactItem> filteredModelList = new ArrayList<>();
         if (mData == null) mData = new ArrayList<>();
         if (q.matches("")) {
             filteredModelList = new ArrayList<>(mData);
@@ -101,9 +101,9 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
         return filteredModelList;
     }
 
-    private List<ContactData> getFiltered(List<ContactData> models, String query) {
-        List<ContactData> list = new ArrayList<>();
-        for (ContactData model : models) {
+    private List<ContactItem> getFiltered(List<ContactItem> models, String query) {
+        List<ContactItem> list = new ArrayList<>();
+        for (ContactItem model : models) {
             final String text = model.getName().toLowerCase();
             if (text.contains(query)) {
                 list.add(model);
@@ -112,50 +112,50 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
         return list;
     }
 
-    public ContactData removeItem(int position) {
-        final ContactData model = mDataList.remove(position);
+    public ContactItem removeItem(int position) {
+        final ContactItem model = mDataList.remove(position);
         notifyItemRemoved(position);
         return model;
     }
 
-    public void addItem(int position, ContactData model) {
+    public void addItem(int position, ContactItem model) {
         mDataList.add(position, model);
         notifyItemInserted(position);
     }
 
     public void moveItem(int fromPosition, int toPosition) {
-        final ContactData model = mDataList.remove(fromPosition);
+        final ContactItem model = mDataList.remove(fromPosition);
         mDataList.add(toPosition, model);
         notifyItemMoved(fromPosition, toPosition);
     }
 
-    public void animateTo(List<ContactData> models) {
+    public void animateTo(List<ContactItem> models) {
         applyAndAnimateRemovals(models);
         applyAndAnimateAdditions(models);
         applyAndAnimateMovedItems(models);
     }
 
-    private void applyAndAnimateRemovals(List<ContactData> newModels) {
+    private void applyAndAnimateRemovals(List<ContactItem> newModels) {
         for (int i = mDataList.size() - 1; i >= 0; i--) {
-            final ContactData model = mDataList.get(i);
+            final ContactItem model = mDataList.get(i);
             if (!newModels.contains(model)) {
                 removeItem(i);
             }
         }
     }
 
-    private void applyAndAnimateAdditions(List<ContactData> newModels) {
+    private void applyAndAnimateAdditions(List<ContactItem> newModels) {
         for (int i = 0, count = newModels.size(); i < count; i++) {
-            final ContactData model = newModels.get(i);
+            final ContactItem model = newModels.get(i);
             if (!mDataList.contains(model)) {
                 addItem(i, model);
             }
         }
     }
 
-    private void applyAndAnimateMovedItems(List<ContactData> newModels) {
+    private void applyAndAnimateMovedItems(List<ContactItem> newModels) {
         for (int toPosition = newModels.size() - 1; toPosition >= 0; toPosition--) {
-            final ContactData model = newModels.get(toPosition);
+            final ContactItem model = newModels.get(toPosition);
             final int fromPosition = mDataList.indexOf(model);
             if (fromPosition >= 0 && fromPosition != toPosition) {
                 moveItem(fromPosition, toPosition);
@@ -163,7 +163,7 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
         }
     }
 
-    public ContactData getItem(int position) {
+    public ContactItem getItem(int position) {
         if (position < mDataList.size()) return mDataList.get(position);
         else return null;
     }

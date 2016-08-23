@@ -20,7 +20,7 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.contacts.Contacts;
 import com.cray.software.justreminder.datas.ShoppingListDataProvider;
-import com.cray.software.justreminder.datas.models.ShoppingList;
+import com.cray.software.justreminder.datas.models.ShoppingListItem;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -28,7 +28,7 @@ import com.cray.software.justreminder.helpers.Recurrence;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.helpers.TimeCount;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 import com.cray.software.justreminder.notes.NoteItem;
 import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.reminder.ReminderUtils;
@@ -168,7 +168,7 @@ public class BindingMehods {
         container.removeAllViewsInLayout();
         ShoppingListDataProvider provider = new ShoppingListDataProvider(shoppings, false);
         int count = 0;
-        for (ShoppingList list : provider.getData()){
+        for (ShoppingListItem list : provider.getData()){
             View view = LayoutInflater.from(container.getContext()).inflate(R.layout.list_item_task_item_widget, null, false);
             ImageView checkView = (ImageView) view.findViewById(R.id.checkView);
             RoboTextView textView = (RoboTextView) view.findViewById(R.id.shopText);

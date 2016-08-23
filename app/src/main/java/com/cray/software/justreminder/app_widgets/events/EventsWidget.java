@@ -28,7 +28,7 @@ import android.widget.RemoteViews;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.reminder.AddReminderActivity;
 import com.cray.software.justreminder.dialogs.VoiceWidgetDialog;
-import com.cray.software.justreminder.reminder.ReminderManager;
+import com.cray.software.justreminder.reminder.ReminderActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -97,7 +97,7 @@ public class EventsWidget extends AppWidgetProvider {
         rv.setOnClickPendingIntent(R.id.settingsButton, configPendingIntent);
         rv.setInt(R.id.settingsButton, "setImageResource", settingsIcon);
 
-        Intent startActivityIntent = new Intent(context, ReminderManager.class);
+        Intent startActivityIntent = new Intent(context, ReminderActivity.class);
         PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0,
                 startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         rv.setPendingIntentTemplate(android.R.id.list, startActivityPendingIntent);

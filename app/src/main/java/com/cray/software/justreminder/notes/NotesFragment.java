@@ -40,7 +40,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ScreenManager;
+import com.cray.software.justreminder.StartActivity;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.contacts.FilterCallback;
@@ -52,7 +52,7 @@ import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 
 import java.util.ArrayList;
@@ -210,7 +210,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                 throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
             }
         }
-        ((ScreenManager) context).onSectionAttached(ScreenManager.FRAGMENT_NOTE);
+        ((StartActivity) context).onSectionAttached(StartActivity.FRAGMENT_NOTE);
     }
 
     @Override
@@ -226,7 +226,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                 throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
             }
         }
-        ((ScreenManager) activity).onSectionAttached(ScreenManager.FRAGMENT_NOTE);
+        ((StartActivity) activity).onSectionAttached(StartActivity.FRAGMENT_NOTE);
     }
 
     @Override
@@ -325,7 +325,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
 
     private void previewNote(long id, View view){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Intent intent = new Intent(mContext, NotePreview.class);
+            Intent intent = new Intent(mContext, NotePreviewActivity.class);
             intent.putExtra(Constants.EDIT_ID, id);
             String transitionName = "image";
             ActivityOptionsCompat options =
@@ -333,7 +333,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                             transitionName);
             mContext.startActivity(intent, options.toBundle());
         } else {
-            mContext.startActivity(new Intent(mContext, NotePreview.class)
+            mContext.startActivity(new Intent(mContext, NotePreviewActivity.class)
                             .putExtra(Constants.EDIT_ID, id));
         }
     }
@@ -352,7 +352,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
         if (SharedPrefs.getInstance(mContext).getBoolean(Prefs.ITEM_PREVIEW)) {
             previewNote(id, view);
         } else {
-            mContext.startActivity(new Intent(mContext, NotesManager.class)
+            mContext.startActivity(new Intent(mContext, NotesActivity.class)
                     .putExtra(Constants.EDIT_ID, id));
         }
     }
@@ -388,7 +388,7 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                     selectColor(id);
                     break;
                 case 4:
-                    mContext.startActivity(new Intent(mContext, NotesManager.class)
+                    mContext.startActivity(new Intent(mContext, NotesActivity.class)
                             .putExtra(Constants.EDIT_ID, id));
                     break;
                 case 5:

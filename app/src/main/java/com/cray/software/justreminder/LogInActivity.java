@@ -48,7 +48,7 @@ import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.LoginListener;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 import com.cray.software.justreminder.reminder.ReminderHelper;
 import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.roboto_views.RoboCheckBox;
@@ -176,7 +176,7 @@ public class LogInActivity extends Activity implements LoginListener {
                     enabled = false;
                 } else {
                     checkGroups();
-                    startActivity(new Intent(LogInActivity.this, ScreenManager.class));
+                    startActivity(new Intent(LogInActivity.this, StartActivity.class));
                     finish();
                 }
                 break;
@@ -186,7 +186,7 @@ public class LogInActivity extends Activity implements LoginListener {
                     enabled = false;
                 } else {
                     checkGroups();
-                    startActivity(new Intent(LogInActivity.this, ScreenManager.class));
+                    startActivity(new Intent(LogInActivity.this, StartActivity.class));
                     finish();
                 }
                 break;
@@ -198,7 +198,7 @@ public class LogInActivity extends Activity implements LoginListener {
                     enabled = false;
                 } else {
                     checkGroups();
-                    startActivity(new Intent(LogInActivity.this, ScreenManager.class));
+                    startActivity(new Intent(LogInActivity.this, StartActivity.class));
                     finish();
                 }
                 break;
@@ -208,7 +208,7 @@ public class LogInActivity extends Activity implements LoginListener {
                     enabled = false;
                 } else {
                     checkGroups();
-                    startActivity(new Intent(LogInActivity.this, ScreenManager.class));
+                    startActivity(new Intent(LogInActivity.this, StartActivity.class));
                     finish();
                 }
                 break;
@@ -378,7 +378,7 @@ public class LogInActivity extends Activity implements LoginListener {
             sPrefs.putBoolean(Prefs.WIDGET_BIRTHDAYS, false);
             sPrefs.putBoolean(Prefs.SYNC_BIRTHDAYS, false);
         }
-        startActivity(new Intent(LogInActivity.this, ScreenManager.class));
+        startActivity(new Intent(LogInActivity.this, StartActivity.class));
         finish();
     }
 
@@ -404,7 +404,7 @@ public class LogInActivity extends Activity implements LoginListener {
             sPrefs.putBoolean(Prefs.WIDGET_BIRTHDAYS, false);
             sPrefs.putBoolean(Prefs.SYNC_BIRTHDAYS, false);
         }
-        startActivity(new Intent(this, ScreenManager.class));
+        startActivity(new Intent(this, StartActivity.class));
         finish();
     }
 

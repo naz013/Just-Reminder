@@ -31,7 +31,7 @@ import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.calendar.CalendarActivity;
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.reminder.ReminderManager;
+import com.cray.software.justreminder.reminder.ReminderActivity;
 import com.cray.software.justreminder.dialogs.VoiceWidgetDialog;
 
 import java.util.Calendar;
@@ -108,7 +108,7 @@ public class CalendarWidget extends AppWidgetProvider {
         monthAdapter.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetID);
         rv.setRemoteAdapter(R.id.monthGrid, monthAdapter);
 
-        Intent configIntent = new Intent(context, ReminderManager.class);
+        Intent configIntent = new Intent(context, ReminderActivity.class);
         PendingIntent configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
         rv.setOnClickPendingIntent(R.id.plusButton, configPendingIntent);
         rv.setInt(R.id.plusButton, "setImageResource", item.getIconPlus());

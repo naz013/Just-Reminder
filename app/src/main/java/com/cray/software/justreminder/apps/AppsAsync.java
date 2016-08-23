@@ -31,7 +31,7 @@ import java.util.List;
 public class AppsAsync extends AsyncTask<Void, Void, Void> {
 
     private ProgressDialog mDialog;
-    private List<AppData> mList;
+    private List<ApplicationItem> mList;
 
     private Context mContext;
     private LoadListener mListener;
@@ -58,7 +58,7 @@ public class AppsAsync extends AsyncTask<Void, Void, Void> {
             String name = packageInfo.loadLabel(pm).toString();
             String packageName = packageInfo.packageName;
             Drawable drawable = packageInfo.loadIcon(pm);
-            AppData data = new AppData(name, packageName, drawable);
+            ApplicationItem data = new ApplicationItem(name, packageName, drawable);
             int pos = getPosition(name);
             if (pos == -1) mList.add(data);
             else mList.add(getPosition(name), data);
@@ -69,7 +69,7 @@ public class AppsAsync extends AsyncTask<Void, Void, Void> {
     private int getPosition(String name) {
         if (mList.size() == 0) return 0;
         int position = -1;
-        for (AppData data : mList) {
+        for (ApplicationItem data : mList) {
             int comp = name.compareTo(data.getName());
             if (comp <= 0) {
                 position = mList.indexOf(data);

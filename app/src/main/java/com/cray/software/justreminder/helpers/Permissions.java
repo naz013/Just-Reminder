@@ -22,8 +22,6 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Build;
 
-import com.cray.software.justreminder.modules.Module;
-
 /**
  * Helper class for checking app permissions on Android 6.0 Marshmallow and above.
  */

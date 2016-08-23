@@ -31,7 +31,7 @@ import android.view.inputmethod.InputMethodManager;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.helpers.ColorSetter;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 import com.cray.software.justreminder.roboto_views.RoboEditText;
 import com.cray.software.justreminder.utils.ViewUtils;
 
@@ -41,7 +41,7 @@ import java.util.List;
 public class ApplicationActivity extends AppCompatActivity implements LoadListener, RecyclerClickListener {
 
     private AppsRecyclerAdapter mAdapter;
-    private List<AppData> mData;
+    private List<ApplicationItem> mData;
 
     private RoboEditText searchField;
     private RecyclerView mRecyclerView;
@@ -90,15 +90,15 @@ public class ApplicationActivity extends AppCompatActivity implements LoadListen
     }
 
     private void filterApps(String q) {
-        List<AppData> res = filter(mData, q);
+        List<ApplicationItem> res = filter(mData, q);
         mAdapter.animateTo(res);
         mRecyclerView.scrollToPosition(0);
     }
 
-    private List<AppData> filter(List<AppData> mData, String q) {
+    private List<ApplicationItem> filter(List<ApplicationItem> mData, String q) {
         q = q.toLowerCase();
 
-        List<AppData> filteredModelList = new ArrayList<>();
+        List<ApplicationItem> filteredModelList = new ArrayList<>();
         if (q.matches("")) {
             filteredModelList = new ArrayList<>(mData);
         } else {
@@ -107,9 +107,9 @@ public class ApplicationActivity extends AppCompatActivity implements LoadListen
         return filteredModelList;
     }
 
-    private List<AppData> getFiltered(List<AppData> models, String query) {
-        List<AppData> list = new ArrayList<>();
-        for (AppData model : models) {
+    private List<ApplicationItem> getFiltered(List<ApplicationItem> models, String query) {
+        List<ApplicationItem> list = new ArrayList<>();
+        for (ApplicationItem model : models) {
             final String text = model.getName().toLowerCase();
             if (text.contains(query)) {
                 list.add(model);
@@ -140,7 +140,7 @@ public class ApplicationActivity extends AppCompatActivity implements LoadListen
     }
 
     @Override
-    public void onLoaded(List<AppData> list) {
+    public void onLoaded(List<ApplicationItem> list) {
         this.mData = list;
         mAdapter = new AppsRecyclerAdapter(this, mData, this);
         mRecyclerView.setAdapter(mAdapter);

@@ -21,7 +21,7 @@
 
         <variable
             name="item"
-            type="com.cray.software.justreminder.contacts.ContactData" />
+            type="com.cray.software.justreminder.contacts.ContactItem" />
 
         <variable
             name="click"

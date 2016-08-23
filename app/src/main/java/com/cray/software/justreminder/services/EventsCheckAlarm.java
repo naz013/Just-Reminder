@@ -28,13 +28,13 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.databases.DataBase;
 import com.cray.software.justreminder.groups.GroupHelper;
-import com.cray.software.justreminder.helpers.CalendarManager;
+import com.cray.software.justreminder.helpers.CalendarHelper;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.reminder.ReminderItem;
 import com.cray.software.justreminder.reminder.json.JsonModel;
 import com.cray.software.justreminder.reminder.json.JRecurrence;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 import com.cray.software.justreminder.reminder.DateType;
 
 import org.dmfs.rfc5545.recur.Freq;
@@ -88,9 +88,9 @@ public class EventsCheckAlarm extends WakefulBroadcastReceiver {
 
         @Override
         protected Void doInBackground(Void... params) {
-            CalendarManager cm = new CalendarManager(context);
+            CalendarHelper cm = new CalendarHelper(context);
             int calID = SharedPrefs.getInstance(context).getInt(Prefs.EVENTS_CALENDAR);
-            ArrayList<CalendarManager.EventItem> eventItems = cm.getEvents(calID);
+            ArrayList<CalendarHelper.EventItem> eventItems = cm.getEvents(calID);
             if (eventItems != null && eventItems.size() > 0){
                 DataBase db = new DataBase(context);
                 db.open();
@@ -103,7 +103,7 @@ public class EventsCheckAlarm extends WakefulBroadcastReceiver {
                     } while (c.moveToNext());
                 }
                 if (c != null) c.close();
-                for (CalendarManager.EventItem item : eventItems){
+                for (CalendarHelper.EventItem item : eventItems){
                     long itemId = item.getId();
                     if (!ids.contains(itemId)) {
                         String rrule = item.getRrule();

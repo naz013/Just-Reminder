@@ -25,7 +25,7 @@ import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.google_tasks.TaskAsync;
 import com.cray.software.justreminder.google_tasks.TaskItem;
 import com.cray.software.justreminder.google_tasks.TasksHelper;
-import com.cray.software.justreminder.helpers.CalendarManager;
+import com.cray.software.justreminder.helpers.CalendarHelper;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 
 import java.util.ArrayList;
@@ -46,10 +46,10 @@ public class ReminderUtils {
     public static void exportToCalendar(Context context, String summary, long startTime, long id,
                                         boolean calendar, boolean stock){
         if (calendar){
-            new CalendarManager(context).addEvent(summary, startTime, id);
+            new CalendarHelper(context).addEvent(summary, startTime, id);
         }
         if (stock){
-            new CalendarManager(context).addEventToStock(summary, startTime);
+            new CalendarHelper(context).addEventToStock(summary, startTime);
         }
     }
 

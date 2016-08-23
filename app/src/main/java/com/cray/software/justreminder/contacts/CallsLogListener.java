@@ -19,5 +19,5 @@ package com.cray.software.justreminder.contacts;
 import java.util.List;
 
 public interface CallsLogListener {
-    void onLoaded(List<CallsData> list);
+    void onLoaded(List<CallsItem> list);
 }

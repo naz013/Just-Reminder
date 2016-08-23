@@ -16,7 +16,7 @@
 
 package com.cray.software.justreminder.reminder.json;
 
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 
 public class RequestBuilder {
 

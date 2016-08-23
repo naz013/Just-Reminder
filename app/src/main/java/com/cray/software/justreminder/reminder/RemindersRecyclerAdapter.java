@@ -32,7 +32,7 @@ import com.cray.software.justreminder.databinding.ShoppingListItemBinding;
 import com.cray.software.justreminder.datas.AdapterItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.interfaces.RecyclerListener;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.TimeUtil;
 

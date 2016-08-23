@@ -29,8 +29,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.activities.CalendarStyle;
-import com.cray.software.justreminder.calendar.EventsImport;
+import com.cray.software.justreminder.activities.CalendarStyleDialog;
+import com.cray.software.justreminder.calendar.EventsImportActivity;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -170,21 +170,21 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.themeColorPrefs: {
-                Intent intent = new Intent(getActivity().getApplicationContext(), CalendarStyle.class);
+                Intent intent = new Intent(getActivity().getApplicationContext(), CalendarStyleDialog.class);
                 intent.putExtra("type", 1);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getActivity().startActivity(intent);
             }
                 break;
             case R.id.selectedColorPrefs: {
-                Intent intent = new Intent(getActivity().getApplicationContext(), CalendarStyle.class);
+                Intent intent = new Intent(getActivity().getApplicationContext(), CalendarStyleDialog.class);
                 intent.putExtra("type", 2);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getActivity().startActivity(intent);
             }
                 break;
             case R.id.reminderColorPrefs: {
-                Intent intent = new Intent(getActivity().getApplicationContext(), CalendarStyle.class);
+                Intent intent = new Intent(getActivity().getApplicationContext(), CalendarStyleDialog.class);
                 intent.putExtra("type", 3);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getActivity().startActivity(intent);
@@ -212,7 +212,7 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
         if (Permissions.checkPermission(getActivity(), Permissions.READ_CALENDAR,
                 Permissions.WRITE_CALENDAR)) {
             getActivity().getApplicationContext()
-                    .startActivity(new Intent(getActivity().getApplicationContext(), EventsImport.class)
+                    .startActivity(new Intent(getActivity().getApplicationContext(), EventsImportActivity.class)
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         } else {
             Permissions.requestPermission(getActivity(), 101, Permissions.READ_CALENDAR,
@@ -226,7 +226,7 @@ public class CalendarSettingsFragment extends Fragment implements View.OnClickLi
             case 101:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     getActivity().getApplicationContext()
-                            .startActivity(new Intent(getActivity().getApplicationContext(), EventsImport.class)
+                            .startActivity(new Intent(getActivity().getApplicationContext(), EventsImportActivity.class)
                                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 } else {
                     Permissions.showInfo(getActivity(), Permissions.READ_CALENDAR);

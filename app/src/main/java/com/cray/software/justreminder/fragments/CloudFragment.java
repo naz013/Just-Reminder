@@ -42,20 +42,20 @@ import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.datas.FileDataProvider;
-import com.cray.software.justreminder.datas.models.FileModel;
-import com.cray.software.justreminder.datas.models.UserModel;
+import com.cray.software.justreminder.datas.models.FileItem;
+import com.cray.software.justreminder.datas.models.UserItem;
 import com.cray.software.justreminder.graph.PieGraph;
 import com.cray.software.justreminder.graph.PieSlice;
-import com.cray.software.justreminder.groups.GroupManager;
+import com.cray.software.justreminder.groups.GroupActivity;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.interfaces.DataListener;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 import com.cray.software.justreminder.interfaces.SimpleListener;
 import com.cray.software.justreminder.interfaces.SyncListener;
-import com.cray.software.justreminder.modules.Module;
-import com.cray.software.justreminder.notes.NotesManager;
-import com.cray.software.justreminder.reminder.ReminderManager;
+import com.cray.software.justreminder.helpers.Module;
+import com.cray.software.justreminder.notes.NotesActivity;
+import com.cray.software.justreminder.reminder.ReminderActivity;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.MemoryUtil;
 import com.cray.software.justreminder.utils.ViewUtils;
@@ -214,7 +214,7 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
         filesCloudList.setAdapter(adapter);
     }
 
-    private void fillInfo(UserModel model){
+    private void fillInfo(UserItem model){
         if (model != null) {
             String name = model.name;
             if (name != null) {
@@ -235,7 +235,7 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
         }
     }
 
-    private void showQuota(UserModel model) {
+    private void showQuota(UserItem model) {
         long quota = model.quota;
         if (quota != 0) {
             final long availQ = quota - (model.used);
@@ -335,15 +335,15 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
     }
 
     private void editFile(int position) {
-        FileModel model = provider.getItem(position);
+        FileItem model = provider.getItem(position);
         String fileName = model.getFileName();
         if (fileName.endsWith(FileConfig.FILE_NAME_REMINDER)) {
             startActivity(new Intent(mContext,
-                    ReminderManager.class).putExtra(Constants.EDIT_PATH,
+                    ReminderActivity.class).putExtra(Constants.EDIT_PATH,
                     provider.getItem(position).getFilePath()));
         } else if (fileName.endsWith(FileConfig.FILE_NAME_NOTE)) {
             startActivity(new Intent(mContext,
-                    NotesManager.class).putExtra(Constants.EDIT_PATH,
+                    NotesActivity.class).putExtra(Constants.EDIT_PATH,
                     provider.getItem(position).getFilePath()));
         } else if (fileName.endsWith(FileConfig.FILE_NAME_BIRTHDAY)) {
             startActivity(new Intent(mContext,
@@ -351,7 +351,7 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
                     provider.getItem(position).getFilePath()));
         } else if (fileName.endsWith(FileConfig.FILE_NAME_GROUP)) {
             startActivity(new Intent(mContext,
-                    GroupManager.class).putExtra(Constants.EDIT_PATH,
+                    GroupActivity.class).putExtra(Constants.EDIT_PATH,
                     provider.getItem(position).getFilePath()));
         }
     }
@@ -383,7 +383,7 @@ public class CloudFragment extends Fragment implements SimpleListener, SyncListe
     }
 
     @Override
-    public void onReceive(UserModel model) {
+    public void onReceive(UserItem model) {
         fillInfo(model);
     }
 }

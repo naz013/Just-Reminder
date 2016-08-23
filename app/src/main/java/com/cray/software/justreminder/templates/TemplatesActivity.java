@@ -36,7 +36,7 @@ import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Dialogues;
 import com.cray.software.justreminder.helpers.Messages;
 import com.cray.software.justreminder.interfaces.SimpleListener;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 import com.cray.software.justreminder.roboto_views.RoboTextView;
 import com.cray.software.justreminder.utils.QuickReturnUtils;
 import com.cray.software.justreminder.utils.ViewUtils;
@@ -91,7 +91,7 @@ public class TemplatesActivity extends AppCompatActivity implements SimpleListen
 
     private void initFab() {
         mFab = (FloatingActionButton) findViewById(R.id.fab);
-        mFab.setOnClickListener(v -> startActivity(new Intent(TemplatesActivity.this, TemplateManager.class)));
+        mFab.setOnClickListener(v -> startActivity(new Intent(TemplatesActivity.this, TemplateActivity.class)));
     }
 
     private void initTemplatesList() {
@@ -127,7 +127,7 @@ public class TemplatesActivity extends AppCompatActivity implements SimpleListen
     }
 
     private void editTemplate(int position){
-        startActivity(new Intent(this, TemplateManager.class)
+        startActivity(new Intent(this, TemplateActivity.class)
                 .putExtra(Constants.ITEM_ID_INTENT, mDataList.get(position).getId()));
     }
 

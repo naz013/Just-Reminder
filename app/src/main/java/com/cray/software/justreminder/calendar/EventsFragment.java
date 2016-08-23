@@ -30,7 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.ScreenManager;
+import com.cray.software.justreminder.StartActivity;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
@@ -96,12 +96,12 @@ public class EventsFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.action_voice:
                 if (mCallbacks != null){
-                    mCallbacks.onItemSelected(ScreenManager.VOICE_RECOGNIZER);
+                    mCallbacks.onItemSelected(StartActivity.VOICE_RECOGNIZER);
                 }
                 return true;
             case R.id.action_month:
                 if (mCallbacks != null){
-                    mCallbacks.onItemSelected(ScreenManager.ACTION_CALENDAR);
+                    mCallbacks.onItemSelected(StartActivity.ACTION_CALENDAR);
                 }
                 return true;
         }
@@ -133,7 +133,7 @@ public class EventsFragment extends Fragment {
                 throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
             }
         }
-        ((ScreenManager) context).onSectionAttached(ScreenManager.FRAGMENT_EVENTS);
+        ((StartActivity) context).onSectionAttached(StartActivity.FRAGMENT_EVENTS);
     }
 
     @Override
@@ -149,7 +149,7 @@ public class EventsFragment extends Fragment {
                 throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
             }
         }
-        ((ScreenManager) activity).onSectionAttached(ScreenManager.FRAGMENT_EVENTS);
+        ((StartActivity) activity).onSectionAttached(StartActivity.FRAGMENT_EVENTS);
     }
 
     @Override

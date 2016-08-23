@@ -43,7 +43,6 @@ import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
 import com.cray.software.justreminder.groups.Position;
 import com.cray.software.justreminder.interfaces.LCAMListener;
-import com.cray.software.justreminder.modules.Module;
 import com.cray.software.justreminder.services.AutoSyncAlarm;
 import com.cray.software.justreminder.services.EventsCheckAlarm;
 import com.cray.software.justreminder.utils.MemoryUtil;
@@ -368,13 +367,13 @@ public class Dialogues {
      * @param context application context.
      * @param list action listener for dialog.
      */
-    public static void selectCalendar(final Context context, final ArrayList<CalendarManager.CalendarItem> list) {
+    public static void selectCalendar(final Context context, final ArrayList<CalendarHelper.CalendarItem> list) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
         builder.setTitle(context.getString(R.string.choose_calendar));
         ArrayList<String> spinnerArray = new ArrayList<>();
         if (list != null && list.size() > 0) {
-            for (CalendarManager.CalendarItem item : list) {
+            for (CalendarHelper.CalendarItem item : list) {
                 spinnerArray.add(item.getName());
             }
         }
@@ -384,7 +383,7 @@ public class Dialogues {
             if (which != -1) {
                 SharedPrefs prefs = SharedPrefs.getInstance(context);
                 if (list != null) {
-                    CalendarManager.CalendarItem item = list.get(which);
+                    CalendarHelper.CalendarItem item = list.get(which);
                     prefs.putString(Prefs.CALENDAR_NAME, item.getName());
                     prefs.putInt(Prefs.CALENDAR_ID, item.getId());
                 }
@@ -395,7 +394,7 @@ public class Dialogues {
             if (which != -1) {
                 SharedPrefs prefs = SharedPrefs.getInstance(context);
                 if (list != null) {
-                    CalendarManager.CalendarItem item = list.get(which);
+                    CalendarHelper.CalendarItem item = list.get(which);
                     prefs.putString(Prefs.CALENDAR_NAME, item.getName());
                     prefs.putInt(Prefs.CALENDAR_ID, item.getId());
                 }

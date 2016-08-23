@@ -53,7 +53,7 @@ import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.MapListener;
 import com.cray.software.justreminder.interfaces.SimpleListener;
-import com.cray.software.justreminder.modules.Module;
+import com.cray.software.justreminder.helpers.Module;
 import com.cray.software.justreminder.places.PlaceAdapter;
 import com.cray.software.justreminder.places.PlaceItem;
 import com.cray.software.justreminder.places.PlaceRecyclerAdapter;

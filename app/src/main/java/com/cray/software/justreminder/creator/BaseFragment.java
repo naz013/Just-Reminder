@@ -25,10 +25,10 @@ import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.dialogs.ExclusionPickerDialog;
 import com.cray.software.justreminder.file_explorer.FileExploreActivity;
 import com.cray.software.justreminder.fragments.helpers.MapFragment;
-import com.cray.software.justreminder.fragments.helpers.PlacesMap;
+import com.cray.software.justreminder.fragments.helpers.PlacesMapFragment;
 import com.cray.software.justreminder.helpers.Permissions;
 import com.cray.software.justreminder.reminder.json.JsonModel;
-import com.cray.software.justreminder.reminder.ReminderManager;
+import com.cray.software.justreminder.reminder.ReminderActivity;
 import com.cray.software.justreminder.utils.SuperUtil;
 
 import java.util.Calendar;
@@ -41,7 +41,7 @@ public class BaseFragment extends Fragment {
     protected final static String CALENDAR = "calendar";
     protected final static String TASKS = "tasks";
 
-    protected PlacesMap placesMap;
+    protected PlacesMapFragment placesMap;
     protected MapFragment mapFragment;
 
     protected JsonModel item;
@@ -85,7 +85,7 @@ public class BaseFragment extends Fragment {
     public View.OnClickListener fileClick = v -> {
         if (Permissions.checkPermission(getActivity(), Permissions.READ_EXTERNAL)) {
             getActivity().startActivityForResult(new Intent(getActivity(), FileExploreActivity.class)
-                    .putExtra(Constants.FILE_TYPE, "any"), ReminderManager.FILE_REQUEST);
+                    .putExtra(Constants.FILE_TYPE, "any"), ReminderActivity.FILE_REQUEST);
         } else {
             Permissions.requestPermission(getActivity(), 331,
                     Permissions.READ_EXTERNAL);

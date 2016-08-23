@@ -16,8 +16,8 @@
 
 package com.cray.software.justreminder.interfaces;
 
-import com.cray.software.justreminder.datas.models.UserModel;
+import com.cray.software.justreminder.datas.models.UserItem;
 
 public interface DataListener {
-    void onReceive(UserModel model);
+    void onReceive(UserItem model);
 }

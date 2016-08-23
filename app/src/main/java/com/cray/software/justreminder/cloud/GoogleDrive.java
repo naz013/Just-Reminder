@@ -23,7 +23,7 @@ import android.util.Log;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.constants.Prefs;
-import com.cray.software.justreminder.datas.models.UserModel;
+import com.cray.software.justreminder.datas.models.UserItem;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.utils.MemoryUtil;
@@ -95,13 +95,13 @@ public class GoogleDrive {
      * Get information about user.
      * @return user info object
      */
-    public UserModel getData() {
+    public UserItem getData() {
         if (isLinked()) {
             authorize();
             try {
                 About about = driveService.about().get().setFields("user, storageQuota").execute();
                 About.StorageQuota quota = about.getStorageQuota();
-                return new UserModel(about.getUser().getDisplayName(), quota.getLimit(),
+                return new UserItem(about.getUser().getDisplayName(), quota.getLimit(),
                         quota.getUsage(), countFiles(), about.getUser().getPhotoLink());
             } catch (IOException e) {
                 e.printStackTrace();

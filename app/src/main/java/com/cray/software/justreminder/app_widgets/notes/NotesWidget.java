@@ -26,7 +26,7 @@ import android.support.annotation.NonNull;
 import android.widget.RemoteViews;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.notes.NotesManager;
+import com.cray.software.justreminder.notes.NotesActivity;
 
 public class NotesWidget extends AppWidgetProvider {
 
@@ -71,7 +71,7 @@ public class NotesWidget extends AppWidgetProvider {
         rv.setTextColor(R.id.widgetTitle, titleColor);
         rv.setInt(R.id.tasksCount, "setImageResource", plusIcon);
 
-        Intent configIntent = new Intent(context, NotesManager.class);
+        Intent configIntent = new Intent(context, NotesActivity.class);
         PendingIntent configPendingIntent = PendingIntent.getActivity(context, 0, configIntent, 0);
         rv.setOnClickPendingIntent(R.id.tasksCount, configPendingIntent);
 
@@ -81,7 +81,7 @@ public class NotesWidget extends AppWidgetProvider {
         rv.setOnClickPendingIntent(R.id.settingsButton, configPendingIntent);
         rv.setInt(R.id.settingsButton, "setImageResource", settingsIcon);
 
-        Intent startActivityIntent = new Intent(context, NotesManager.class);
+        Intent startActivityIntent = new Intent(context, NotesActivity.class);
         PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0, startActivityIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         rv.setPendingIntentTemplate(android.R.id.list, startActivityPendingIntent);
