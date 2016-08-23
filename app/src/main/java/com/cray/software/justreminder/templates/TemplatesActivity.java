@@ -46,45 +46,65 @@ import java.util.List;
 
 public class TemplatesActivity extends AppCompatActivity implements SimpleListener {
 
-    private RecyclerView listView;
-    private LinearLayout emptyItem;
-    private ColorSetter cs = ColorSetter.getInstance(TemplatesActivity.this);
+    private RecyclerView mTemplatesList;
+    private LinearLayout mEmptyView;
     private FloatingActionButton mFab;
     private List<TemplateItem> mDataList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ColorSetter cs = ColorSetter.getInstance(TemplatesActivity.this);
         setTheme(cs.getStyle());
         if (Module.isLollipop()) {
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         setContentView(R.layout.places_activity_layout);
         setRequestedOrientation(cs.getRequestOrientation());
+        findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
+        initActionBar();
+        initEmptyView();
+        initTemplatesList();
+        initFab();
+    }
 
+    private void initActionBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setTitle(getString(R.string.messages));
+    }
 
-        findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
-
-        emptyItem = (LinearLayout) findViewById(R.id.emptyItem);
-        emptyItem.setVisibility(View.VISIBLE);
+    private void initEmptyView() {
+        mEmptyView = (LinearLayout) findViewById(R.id.emptyItem);
+        mEmptyView.setVisibility(View.VISIBLE);
         RoboTextView emptyText = (RoboTextView) findViewById(R.id.emptyText);
         emptyText.setText(R.string.no_messages);
         ImageView emptyImage = (ImageView) findViewById(R.id.emptyImage);
-        if (cs.isDark()) {
+        if (ColorSetter.getInstance(TemplatesActivity.this).isDark()) {
             emptyImage.setImageResource(R.drawable.ic_textsms_white_vector);
         } else {
             emptyImage.setImageResource(R.drawable.ic_textsms_black_vector);
         }
+    }
 
-        listView = (RecyclerView) findViewById(R.id.currentList);
-
+    private void initFab() {
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(v -> startActivity(new Intent(TemplatesActivity.this, TemplateManager.class)));
+    }
+
+    private void initTemplatesList() {
+        mTemplatesList = (RecyclerView) findViewById(R.id.currentList);
+        mTemplatesList.setLayoutManager(new LinearLayoutManager(this));
+        mTemplatesList.setItemAnimator(new DefaultItemAnimator());
+        ReturnScrollListener scrollListener = new
+                ReturnScrollListener.Builder(QuickReturnViewType.FOOTER)
+                .footer(mFab)
+                .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
+                .isSnappable(true)
+                .build();
+        mTemplatesList.setOnScrollListener(scrollListener);
     }
 
     private void loadTemplates(){
@@ -92,26 +112,17 @@ public class TemplatesActivity extends AppCompatActivity implements SimpleListen
         reloadView();
         TemplatesRecyclerAdapter adapter = new TemplatesRecyclerAdapter(this, mDataList);
         adapter.setEventListener(this);
-        listView.setLayoutManager(new LinearLayoutManager(this));
-        listView.setAdapter(adapter);  // requires *wrapped* adapter
-        listView.setItemAnimator(new DefaultItemAnimator());
-        ReturnScrollListener scrollListener = new
-                ReturnScrollListener.Builder(QuickReturnViewType.FOOTER)
-                .footer(mFab)
-                .minFooterTranslation(QuickReturnUtils.dp2px(this, 88))
-                .isSnappable(true)
-                .build();
-        listView.setOnScrollListener(scrollListener);
+        mTemplatesList.setAdapter(adapter);
     }
 
     private void reloadView() {
         int size = mDataList.size();
         if (size > 0){
-            listView.setVisibility(View.VISIBLE);
-            emptyItem.setVisibility(View.GONE);
+            mTemplatesList.setVisibility(View.VISIBLE);
+            mEmptyView.setVisibility(View.GONE);
         } else {
-            listView.setVisibility(View.GONE);
-            emptyItem.setVisibility(View.VISIBLE);
+            mTemplatesList.setVisibility(View.GONE);
+            mEmptyView.setVisibility(View.VISIBLE);
         }
     }
 
