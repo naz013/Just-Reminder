@@ -32,8 +32,8 @@ import android.widget.TextView;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
-import com.cray.software.justreminder.cloud.DropboxHelper;
-import com.cray.software.justreminder.cloud.GDriveHelper;
+import com.cray.software.justreminder.cloud.Dropbox;
+import com.cray.software.justreminder.cloud.GoogleDrive;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.LED;
 import com.cray.software.justreminder.constants.Language;
@@ -661,8 +661,8 @@ public class Dialogues {
             File dir = MemoryUtil.getParent();
             deleteRecursive(dir);
             new Thread(() -> {
-                GDriveHelper gdx = new GDriveHelper(context);
-                DropboxHelper dbx = new DropboxHelper(context);
+                GoogleDrive gdx = new GoogleDrive(context);
+                Dropbox dbx = new Dropbox(context);
                 if (SyncHelper.isConnected(context)) {
                     gdx.clean();
                     dbx.cleanFolder();

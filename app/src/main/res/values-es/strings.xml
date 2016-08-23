@@ -537,6 +537,7 @@
     <string name="november">Noviembre</string>
     <string name="december">Diciembre</string>
     <string name="download_failed">Descarga fracasó</string>
+    <string name="google_play_services_not_installed">Google Play Services not installed</string>
     <array name="month_list">
         <item>@string/january</item>
         <item>@string/february</item>

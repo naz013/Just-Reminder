@@ -21,7 +21,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.cloud.GoogleTasks;
 import com.cray.software.justreminder.google_tasks.TaskItem;
 import com.cray.software.justreminder.google_tasks.TaskListItem;
 import com.cray.software.justreminder.google_tasks.TasksHelper;
@@ -87,7 +87,7 @@ public class CloudLoginSynchronization extends AsyncTask<Void, String, Void> {
             }
         }
         //getting Google Tasks
-        GTasksHelper helper = new GTasksHelper(mContext);
+        GoogleTasks helper = new GoogleTasks(mContext);
         TaskLists lists = null;
         try {
             lists = helper.getTaskLists();

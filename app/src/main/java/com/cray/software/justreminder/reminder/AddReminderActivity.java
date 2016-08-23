@@ -26,7 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.cloud.GoogleTasks;
 import com.cray.software.justreminder.constants.Configs;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
@@ -61,7 +61,7 @@ public class AddReminderActivity extends AppCompatActivity {
     private int mDay = 1;
     private long mRepeat;
 
-    private GTasksHelper gtx = new GTasksHelper(AddReminderActivity.this);
+    private GoogleTasks gtx = new GoogleTasks(AddReminderActivity.this);
 
     private DateTimeView.OnSelectListener mDateTimeCallback = new DateTimeView.OnSelectListener() {
         @Override

@@ -19,8 +19,8 @@ package com.cray.software.justreminder.groups;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.cray.software.justreminder.cloud.DropboxHelper;
-import com.cray.software.justreminder.cloud.GDriveHelper;
+import com.cray.software.justreminder.cloud.Dropbox;
+import com.cray.software.justreminder.cloud.GoogleDrive;
 import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.reminder.ReminderHelper;
@@ -59,8 +59,8 @@ public class DeleteGroupAsync extends AsyncTask<Void, Void, Void> {
             file.delete();
         }
         boolean isInternet = SyncHelper.isConnected(mContext);
-        DropboxHelper dbx = new DropboxHelper(mContext);
-        GDriveHelper gdx = new GDriveHelper(mContext);
+        Dropbox dbx = new Dropbox(mContext);
+        GoogleDrive gdx = new GoogleDrive(mContext);
         if (dbx.isLinked() && isInternet) {
             dbx.deleteGroup(uuId);
         }

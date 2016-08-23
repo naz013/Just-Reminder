@@ -26,7 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.cloud.GoogleTasks;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.databinding.ListItemTaskBinding;
@@ -109,7 +109,7 @@ public class TasksRecyclerAdapter extends RecyclerView.Adapter<TasksRecyclerAdap
 
     @BindingAdapter({"loadCheck"})
     public static void loadCheck(RoboCheckBox checkBox, TaskItem item) {
-        if (item.getStatus().matches(GTasksHelper.TASKS_COMPLETE)){
+        if (item.getStatus().matches(GoogleTasks.TASKS_COMPLETE)){
             checkBox.setChecked(true);
         } else {
             checkBox.setChecked(false);

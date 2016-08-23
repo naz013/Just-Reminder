@@ -49,7 +49,7 @@ import java.io.IOException;
 /**
  * Dropbox API helper class.
  */
-public class DropboxHelper {
+public class Dropbox {
 
     private Context mContext;
 
@@ -67,7 +67,7 @@ public class DropboxHelper {
     final static private String ACCESS_KEY_NAME = "ACCESS_KEY";
     final static private String ACCESS_SECRET_NAME = "ACCESS_SECRET";
 
-    public DropboxHelper(Context context){
+    public Dropbox(Context context){
         this.mContext = context;
     }
 

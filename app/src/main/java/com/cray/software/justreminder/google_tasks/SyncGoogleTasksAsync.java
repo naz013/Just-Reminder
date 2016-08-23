@@ -21,7 +21,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
-import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.cloud.GoogleTasks;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.google.api.services.tasks.model.Task;
 import com.google.api.services.tasks.model.TaskList;
@@ -44,7 +44,7 @@ public class SyncGoogleTasksAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        GTasksHelper helper = new GTasksHelper(mContext);
+        GoogleTasks helper = new GoogleTasks(mContext);
         TaskLists lists = null;
         try {
             lists = helper.getTaskLists();

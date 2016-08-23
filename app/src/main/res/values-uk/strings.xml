@@ -553,6 +553,7 @@
     <string name="november">Листопад</string>
     <string name="december">Грудень</string>
     <string name="download_failed">Помилка завантаження</string>
+    <string name="google_play_services_not_installed">Google Play Services not installed</string>
     <array name="month_list">
         <item>@string/january</item>
         <item>@string/february</item>

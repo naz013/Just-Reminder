@@ -47,7 +47,7 @@ import android.widget.Spinner;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ReminderApp;
-import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.cloud.GoogleTasks;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.LED;
 import com.cray.software.justreminder.constants.Prefs;
@@ -373,7 +373,7 @@ public class ReminderManager extends AppCompatActivity implements AdapterView.On
         isCalendar = SharedPrefs.getInstance(this).getBoolean(Prefs.EXPORT_TO_CALENDAR);
         isStock = SharedPrefs.getInstance(this).getBoolean(Prefs.EXPORT_TO_STOCK);
         isDark = colorSetter.isDark();
-        hasTasks = new GTasksHelper(this).isLinked();
+        hasTasks = new GoogleTasks(this).isLinked();
     }
 
     private void selectVolume() {

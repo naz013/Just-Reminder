@@ -37,7 +37,7 @@ import android.widget.RelativeLayout;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
-import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.cloud.GoogleTasks;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.Permissions;
@@ -222,7 +222,7 @@ public class NavigationDrawerFragment extends Fragment implements View.OnClickLi
                 if (readPerm) new SaveAsync(mContext).execute(path);
             }
         } else image.setVisibility(View.GONE);
-        if (new GTasksHelper(mContext).isLinked()) {
+        if (new GoogleTasks(mContext).isLinked()) {
             googleTasks.setVisibility(View.VISIBLE);
         }
         int size = TemplateHelper.getInstance(mContext).getAll().size();

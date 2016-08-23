@@ -18,7 +18,7 @@ import android.widget.TimePicker;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
-import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.cloud.GoogleTasks;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
@@ -306,7 +306,7 @@ public class TaskManager extends AppCompatActivity {
         }
         String initListId = mItem.getListId();
         mItem.setListId(listId);
-        mItem.setStatus(GTasksHelper.TASKS_NEED_ACTION);
+        mItem.setStatus(GoogleTasks.TASKS_NEED_ACTION);
         mItem.setTitle(taskName);
         mItem.setNotes(note);
         mItem.setDueDate(due);

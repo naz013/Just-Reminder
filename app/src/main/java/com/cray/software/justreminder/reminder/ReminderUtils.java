@@ -18,7 +18,7 @@ package com.cray.software.justreminder.reminder;
 import android.content.Context;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.cloud.GoogleTasks;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
@@ -63,7 +63,7 @@ public class ReminderUtils {
     public static void exportToTasks(Context context, String summary, long startTime, long mId){
         TaskItem item = new TaskItem();
         item.setTitle(summary);
-        item.setStatus(GTasksHelper.TASKS_NEED_ACTION);
+        item.setStatus(GoogleTasks.TASKS_NEED_ACTION);
         item.setDueDate(startTime);
         item.setReminderId(mId);
         item.setNotes(context.getString(R.string.from_reminder));

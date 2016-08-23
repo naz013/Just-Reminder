@@ -23,8 +23,8 @@ import android.support.v4.app.NotificationManagerCompat;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
-import com.cray.software.justreminder.cloud.DropboxHelper;
-import com.cray.software.justreminder.cloud.GDriveHelper;
+import com.cray.software.justreminder.cloud.Dropbox;
+import com.cray.software.justreminder.cloud.GoogleDrive;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.SyncListener;
 import com.cray.software.justreminder.modules.Module;
@@ -68,11 +68,11 @@ public class SyncNotesAsync extends AsyncTask<Void, Void, Boolean> {
 
         boolean isConnected = SyncHelper.isConnected(mContext);
         if (isConnected) {
-            new DropboxHelper(mContext).downloadNote();
-            new DropboxHelper(mContext).uploadNote();
+            new Dropbox(mContext).downloadNote();
+            new Dropbox(mContext).uploadNote();
             try {
-                new GDriveHelper(mContext).downloadNote(false);
-                new GDriveHelper(mContext).saveNoteToDrive();
+                new GoogleDrive(mContext).downloadNote(false);
+                new GoogleDrive(mContext).saveNoteToDrive();
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -50,9 +50,9 @@ import java.util.Collections;
 /**
  * Google Drive API helper class.
  */
-public class GDriveHelper {
+public class GoogleDrive {
 
-    private static final String TAG = "GDriveHelper";
+    private static final String TAG = "GoogleDrive";
 
     private Context mContext;
 
@@ -61,7 +61,7 @@ public class GDriveHelper {
     private Drive driveService;
     private static final String APPLICATION_NAME = "Reminder/5.0";
 
-    public GDriveHelper(Context context){
+    public GoogleDrive(Context context){
         this.mContext = context;
     }
 

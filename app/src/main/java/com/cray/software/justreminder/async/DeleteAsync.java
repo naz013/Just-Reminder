@@ -21,8 +21,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.cloud.DropboxHelper;
-import com.cray.software.justreminder.cloud.GDriveHelper;
+import com.cray.software.justreminder.cloud.Dropbox;
+import com.cray.software.justreminder.cloud.GoogleDrive;
 import com.cray.software.justreminder.fragments.BackupsFragment;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
@@ -57,7 +57,7 @@ public class DeleteAsync extends AsyncTask<String, Void, Integer> {
     protected Integer doInBackground(String... params) {
         int res = 0;
         if (type == BackupsFragment.DROPBOX_INT) {
-            DropboxHelper dbx = new DropboxHelper(mContext);
+            Dropbox dbx = new Dropbox(mContext);
             dbx.startSession();
             boolean isLinked = dbx.isLinked();
             boolean isConnected = SyncHelper.isConnected(mContext);
@@ -85,7 +85,7 @@ public class DeleteAsync extends AsyncTask<String, Void, Integer> {
                 }
             }
         } else if (type == BackupsFragment.GOOGLE_DRIVE_INT) {
-            GDriveHelper gdx = new GDriveHelper(mContext);
+            GoogleDrive gdx = new GoogleDrive(mContext);
             boolean isLinked = gdx.isLinked();
             boolean isConnected = SyncHelper.isConnected(mContext);
             for (String filePath : params) {

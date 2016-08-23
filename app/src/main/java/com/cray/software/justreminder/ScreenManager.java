@@ -54,7 +54,7 @@ import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.calendar.CalendarViewFragment;
 import com.cray.software.justreminder.calendar.DateCallback;
 import com.cray.software.justreminder.calendar.EventsFragment;
-import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.cloud.GoogleTasks;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
@@ -252,7 +252,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
                 mTag.matches(FRAGMENT_LOCATIONS)) {
             startActivity(new Intent(ScreenManager.this, ReminderManager.class));
         } else if (mTag.matches(FRAGMENT_TASKS)) {
-            if (new GTasksHelper(ScreenManager.this).isLinked()) {
+            if (new GoogleTasks(ScreenManager.this).isLinked()) {
                 startActivity(new Intent(ScreenManager.this, TaskManager.class)
                         .putExtra(Constants.ITEM_ID_INTENT, listId)
                         .putExtra(TasksConstants.INTENT_ACTION, TasksConstants.CREATE));
@@ -368,7 +368,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
                 replace(PlacesFragment.newInstance(), tag);
             } else if (tag.matches(FRAGMENT_TEMPLATES)) {
                 replace(TemplatesFragment.newInstance(), tag);
-            } else if (tag.matches(FRAGMENT_TASKS) && new GTasksHelper(this).isLinked()) {
+            } else if (tag.matches(FRAGMENT_TASKS) && new GoogleTasks(this).isLinked()) {
                 replace(TasksFragment.newInstance(), tag);
             } else if (tag.matches(FRAGMENT_BACKUPS)) {
                 replace(BackupsFragment.newInstance(), tag);
@@ -408,7 +408,7 @@ public class ScreenManager extends AppCompatActivity implements NavigationCallba
                             .build());
                 }
             } else if (tag.matches(TASKS_AUTHORIZATION)) {
-                if (!new GTasksHelper(this).isLinked()) {
+                if (!new GoogleTasks(this).isLinked()) {
                     if (Permissions.checkPermission(ScreenManager.this,
                             Permissions.GET_ACCOUNTS, Permissions.READ_EXTERNAL,
                             Permissions.WRITE_EXTERNAL)) {

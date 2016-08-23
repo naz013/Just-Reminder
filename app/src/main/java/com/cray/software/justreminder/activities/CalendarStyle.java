@@ -36,7 +36,7 @@ import com.cray.software.justreminder.views.ColorPickerView;
 
 public class CalendarStyle extends AppCompatActivity implements ColorPickerView.OnColorListener {
 
-    private int i;
+    private int mReceivedCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,43 +47,39 @@ public class CalendarStyle extends AppCompatActivity implements ColorPickerView.
             getWindow().setStatusBarColor(ViewUtils.getColor(this, cs.colorPrimaryDark()));
         }
         setContentView(R.layout.theme_color_layout);
-
         setRequestedOrientation(cs.getRequestOrientation());
+        findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
+        Intent intent = getIntent();
+        mReceivedCode = intent.getIntExtra("type", 1);
+        initActionBar();
+        findViewById(R.id.fab).setVisibility(View.GONE);
+        initColorPicker();
+    }
 
+    private void initActionBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        toolbar.setTitle(getString(R.string.theme));
-
-        findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
-
-        Intent intent = getIntent();
-        i = intent.getIntExtra("type", 1);
-
-        if (i == 2) toolbar.setTitle(getString(R.string.birthdays_color));
-        else if (i == 3) toolbar.setTitle(getString(R.string.reminders_color));
-        else toolbar.setTitle(getString(R.string.today_color));
-
-        findViewById(R.id.fab).setVisibility(View.GONE);
-        initColorPicker();
+        toolbar.setTitle(getString(R.string.today_color));
+        if (mReceivedCode == 2) toolbar.setTitle(getString(R.string.birthdays_color));
+        else if (mReceivedCode == 3) toolbar.setTitle(getString(R.string.reminders_color));
     }
 
     private void initColorPicker() {
         ColorPickerView pickerView = (ColorPickerView) findViewById(R.id.pickerView);
         pickerView.setListener(this);
         SharedPrefs sPrefs = SharedPrefs.getInstance(this);
-        int loaded;
-        if (i == 2) loaded = sPrefs.getInt(Prefs.BIRTH_COLOR);
-        else if (i == 3) loaded = sPrefs.getInt(Prefs.REMINDER_COLOR);
-        else loaded = sPrefs.getInt(Prefs.TODAY_COLOR);
+        int loaded = sPrefs.getInt(Prefs.TODAY_COLOR);
+        if (mReceivedCode == 2) loaded = sPrefs.getInt(Prefs.BIRTH_COLOR);
+        else if (mReceivedCode == 3) loaded = sPrefs.getInt(Prefs.REMINDER_COLOR);
         pickerView.setSelectedColor(loaded);
     }
 
     void saveColor(int code) {
         SharedPrefs sPrefs = SharedPrefs.getInstance(this);
-        if (i == 2) sPrefs.putInt(Prefs.BIRTH_COLOR, code);
-        else if (i == 3) sPrefs.putInt(Prefs.REMINDER_COLOR, code);
+        if (mReceivedCode == 2) sPrefs.putInt(Prefs.BIRTH_COLOR, code);
+        else if (mReceivedCode == 3) sPrefs.putInt(Prefs.REMINDER_COLOR, code);
         else sPrefs.putInt(Prefs.TODAY_COLOR, code);
         UpdatesHelper.getInstance(this).updateCalendarWidget();
     }

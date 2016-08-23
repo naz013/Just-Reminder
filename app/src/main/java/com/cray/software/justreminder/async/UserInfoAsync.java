@@ -21,8 +21,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.cloud.DropboxHelper;
-import com.cray.software.justreminder.cloud.GDriveHelper;
+import com.cray.software.justreminder.cloud.Dropbox;
+import com.cray.software.justreminder.cloud.GoogleDrive;
 import com.cray.software.justreminder.datas.models.UserModel;
 import com.cray.software.justreminder.fragments.BackupsFragment;
 import com.cray.software.justreminder.helpers.SyncHelper;
@@ -53,7 +53,7 @@ public class UserInfoAsync extends AsyncTask<Void, Void, UserModel> {
     @Override
     protected UserModel doInBackground(Void... voids) {
         if (type == BackupsFragment.DROPBOX_INT) {
-            DropboxHelper dbx = new DropboxHelper(mContext);
+            Dropbox dbx = new Dropbox(mContext);
             dbx.startSession();
             if (dbx.isLinked()) {
                 if (SyncHelper.isConnected(mContext)) {
@@ -65,7 +65,7 @@ public class UserInfoAsync extends AsyncTask<Void, Void, UserModel> {
                 }
             }
         } else if (type == BackupsFragment.GOOGLE_DRIVE_INT) {
-            GDriveHelper gdx = new GDriveHelper(mContext);
+            GoogleDrive gdx = new GoogleDrive(mContext);
             if (gdx.isLinked()) {
                 if (SyncHelper.isConnected(mContext)) {
                     return gdx.getData();

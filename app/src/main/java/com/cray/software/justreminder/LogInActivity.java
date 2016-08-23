@@ -33,12 +33,13 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.widget.Toast;
 
 import com.cray.software.justreminder.async.CloudLoginSynchronization;
 import com.cray.software.justreminder.async.LocalLoginSynchronization;
 import com.cray.software.justreminder.birthdays.BirthdayHelper;
 import com.cray.software.justreminder.birthdays.BirthdayItem;
-import com.cray.software.justreminder.cloud.DropboxHelper;
+import com.cray.software.justreminder.cloud.Dropbox;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.groups.GroupHelper;
 import com.cray.software.justreminder.groups.GroupItem;
@@ -77,7 +78,7 @@ public class LogInActivity extends Activity implements LoginListener {
     private RoboCheckBox checkBox;
     private RoboTextView skipButton;
 
-    private DropboxHelper dbx;
+    private Dropbox dbx;
     private static final int REQUEST_AUTHORIZATION = 1;
     private static final int REQUEST_ACCOUNT_PICKER = 3;
 
@@ -102,7 +103,7 @@ public class LogInActivity extends Activity implements LoginListener {
         }
         setRequestedOrientation(cs.getRequestOrientation());
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
-        dbx = new DropboxHelper(LogInActivity.this);
+        dbx = new Dropbox(LogInActivity.this);
 
         connectGDrive = (PaperButton) findViewById(R.id.connectGDrive);
         connectDropbox = (PaperButton) findViewById(R.id.connectDropbox);
@@ -133,7 +134,10 @@ public class LogInActivity extends Activity implements LoginListener {
 
         connectGDrive.setOnClickListener(v -> {
             if (enabled) {
-                if (!LocationUtil.checkGooglePlayServicesAvailability(this)) return;
+                if (!LocationUtil.checkGooglePlayServicesAvailability(this)) {
+                    Toast.makeText(this, R.string.google_play_services_not_installed, Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if (Permissions.checkPermission(LogInActivity.this, Permissions.GET_ACCOUNTS,
                         Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL, Permissions.ACCESS_FINE_LOCATION)) {
                     Intent intent = AccountPicker.newChooseAccountIntent(null, null,
@@ -164,8 +168,7 @@ public class LogInActivity extends Activity implements LoginListener {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){
             case 101:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
@@ -225,9 +228,7 @@ public class LogInActivity extends Activity implements LoginListener {
         dbx.startSession();
         if (!dbx.isLinked()) {
             if (dbx.checkLink()) {
-                connectDropbox.setEnabled(false);
-                connectGDrive.setEnabled(false);
-                skipButton.setEnabled(false);
+                setButtonStatus(false);
                 SharedPrefs.getInstance(this).putBoolean(Prefs.AUTO_BACKUP, true);
                 if (Permissions.checkPermission(LogInActivity.this, Permissions.READ_EXTERNAL,
                         Permissions.WRITE_EXTERNAL, Permissions.ACCESS_FINE_LOCATION)) {
@@ -240,9 +241,7 @@ public class LogInActivity extends Activity implements LoginListener {
                 }
             }
         } else {
-            connectDropbox.setEnabled(false);
-            connectGDrive.setEnabled(false);
-            skipButton.setEnabled(false);
+            setButtonStatus(false);
         }
     }
 
@@ -325,9 +324,7 @@ public class LogInActivity extends Activity implements LoginListener {
             GoogleAccountManager gam = new GoogleAccountManager(this);
             getAndUseAuthTokenInAsyncTask(gam.getAccountByName(accountName));
             SharedPrefs.getInstance(this).putString(Prefs.DRIVE_USER, SyncHelper.encrypt(accountName));
-            connectDropbox.setEnabled(false);
-            connectGDrive.setEnabled(false);
-            skipButton.setEnabled(false);
+            setButtonStatus(false);
             SharedPrefs.getInstance(this).putBoolean(Prefs.AUTO_BACKUP, true);
             if (Permissions.checkPermission(LogInActivity.this,
                     Permissions.READ_EXTERNAL,
@@ -340,9 +337,7 @@ public class LogInActivity extends Activity implements LoginListener {
         } else if (requestCode == REQUEST_ACCOUNT_PICKER && resultCode == RESULT_OK) {
             accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
             SharedPrefs.getInstance(this).putString(Prefs.DRIVE_USER, SyncHelper.encrypt(accountName));
-            connectDropbox.setEnabled(false);
-            connectGDrive.setEnabled(false);
-            skipButton.setEnabled(false);
+            setButtonStatus(false);
             SharedPrefs.getInstance(this).putBoolean(Prefs.AUTO_BACKUP, true);
             if (Permissions.checkPermission(LogInActivity.this,
                     Permissions.READ_EXTERNAL,
@@ -353,6 +348,12 @@ public class LogInActivity extends Activity implements LoginListener {
                         Permissions.READ_EXTERNAL, Permissions.WRITE_EXTERNAL);
             }
         }
+    }
+
+    private void setButtonStatus(boolean b) {
+        connectDropbox.setEnabled(b);
+        connectGDrive.setEnabled(b);
+        skipButton.setEnabled(b);
     }
 
     @Override

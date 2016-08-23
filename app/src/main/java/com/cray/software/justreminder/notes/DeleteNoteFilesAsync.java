@@ -19,8 +19,8 @@ package com.cray.software.justreminder.notes;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.cray.software.justreminder.cloud.DropboxHelper;
-import com.cray.software.justreminder.cloud.GDriveHelper;
+import com.cray.software.justreminder.cloud.Dropbox;
+import com.cray.software.justreminder.cloud.GoogleDrive;
 import com.cray.software.justreminder.constants.FileConfig;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.utils.MemoryUtil;
@@ -58,8 +58,8 @@ public class DeleteNoteFilesAsync extends AsyncTask<String, Void, Boolean> {
 
             boolean isConnected = SyncHelper.isConnected(mContext);
             if (isConnected) {
-                new DropboxHelper(mContext).deleteNote(uuID);
-                new GDriveHelper(mContext).deleteNoteFileByName(uuID);
+                new Dropbox(mContext).deleteNote(uuID);
+                new GoogleDrive(mContext).deleteNoteFileByName(uuID);
             }
         }
         return null;

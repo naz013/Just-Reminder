@@ -20,7 +20,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
-import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.cloud.GoogleTasks;
 import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.SyncListener;
@@ -43,29 +43,29 @@ public class SwitchTaskAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        GTasksHelper helper = new GTasksHelper(mContext);
+        GoogleTasks helper = new GoogleTasks(mContext);
         boolean isConnected = SyncHelper.isConnected(mContext);
         TasksDataBase data = new TasksDataBase(mContext);
         data.open();
         if (status){
             if (isConnected) {
                 try {
-                    helper.updateTaskStatus(GTasksHelper.TASKS_COMPLETE, listId, taskId);
+                    helper.updateTaskStatus(GoogleTasks.TASKS_COMPLETE, listId, taskId);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else {
-                data.add(null, listId, TasksConstants.UPDATE_STATUS, 0, taskId, null, 0, 0, GTasksHelper.TASKS_COMPLETE);
+                data.add(null, listId, TasksConstants.UPDATE_STATUS, 0, taskId, null, 0, 0, GoogleTasks.TASKS_COMPLETE);
             }
         } else {
             if (isConnected) {
                 try {
-                    helper.updateTaskStatus(GTasksHelper.TASKS_NEED_ACTION, listId, taskId);
+                    helper.updateTaskStatus(GoogleTasks.TASKS_NEED_ACTION, listId, taskId);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else {
-                data.add(null, listId, TasksConstants.UPDATE_STATUS, 0, taskId, null, 0, 0, GTasksHelper.TASKS_NEED_ACTION);
+                data.add(null, listId, TasksConstants.UPDATE_STATUS, 0, taskId, null, 0, 0, GoogleTasks.TASKS_NEED_ACTION);
             }
         }
         data.close();

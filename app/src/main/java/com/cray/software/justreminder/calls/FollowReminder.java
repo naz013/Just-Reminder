@@ -37,7 +37,7 @@ import android.widget.SpinnerAdapter;
 import android.widget.TimePicker;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.cloud.GoogleTasks;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.contacts.Contacts;
@@ -86,7 +86,7 @@ public class FollowReminder extends AppCompatActivity implements CompoundButton.
     private boolean mStock = true;
     private boolean mTasks = true;
 
-    private GTasksHelper mGoogleTasks = new GTasksHelper(FollowReminder.this);
+    private GoogleTasks mGoogleTasks = new GoogleTasks(FollowReminder.this);
     private String mNumber;
 
     @Override

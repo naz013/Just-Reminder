@@ -23,7 +23,7 @@ import android.util.Log;
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
 import com.cray.software.justreminder.async.BackupTask;
-import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.cloud.GoogleTasks;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.datas.models.ShoppingList;
@@ -275,7 +275,7 @@ public class Reminder {
                 boolean isStock = SharedPrefs.getInstance(context).getBoolean(Prefs.EXPORT_TO_STOCK);
                 if (exp == 1 && isCalendar || isStock)
                     ReminderUtils.exportToCalendar(context, summary, time, ids, isCalendar, isStock);
-                if (new GTasksHelper(context).isLinked() && code == Constants.SYNC_GTASKS_ONLY){
+                if (new GoogleTasks(context).isLinked() && code == Constants.SYNC_GTASKS_ONLY){
                     ReminderUtils.exportToTasks(context, summary, time, ids);
                 }
                 new AlarmReceiver().enableReminder(context, ids);

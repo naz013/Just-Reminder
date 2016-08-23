@@ -45,7 +45,7 @@ import java.util.List;
 /**
  * Google Tasks API helper class;
  */
-public class GTasksHelper {
+public class GoogleTasks {
 
     public static final String TASKS_NEED_ACTION = "needsAction";
     public static final String TASKS_COMPLETE = "completed";
@@ -57,7 +57,7 @@ public class GTasksHelper {
     private Tasks service;
     private static final String APPLICATION_NAME = "Reminder/5.0";
 
-    public GTasksHelper(Context context){
+    public GoogleTasks(Context context){
         this.mContext = context;
     }
 

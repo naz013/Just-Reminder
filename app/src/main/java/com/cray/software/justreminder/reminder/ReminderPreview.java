@@ -35,7 +35,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.cray.software.justreminder.R;
-import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.cloud.GoogleTasks;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
@@ -510,7 +510,7 @@ public class ReminderPreview extends AppCompatActivity implements ActionCallback
 
     @BindingAdapter({"loadCheck"})
     public static void loadCheck(RoboCheckBox checkBox, TaskItem item) {
-        if (item.getStatus().matches(GTasksHelper.TASKS_COMPLETE)){
+        if (item.getStatus().matches(GoogleTasks.TASKS_COMPLETE)){
             checkBox.setChecked(true);
         } else {
             checkBox.setChecked(false);

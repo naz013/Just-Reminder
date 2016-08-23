@@ -25,7 +25,7 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.cloud.GoogleTasks;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.helpers.SharedPrefs;
@@ -417,7 +417,7 @@ public class TasksDataBase {
     public List<TaskItem> getCompletedTasks(String listId) throws SQLException {
         openGuard();
         Cursor c = db.query(GOOGLE_TASKS_TABLE_NAME, null, COLUMN_LIST_ID  + "='" + listId + "' AND " +
-                COLUMN_STATUS + "='" + GTasksHelper.TASKS_COMPLETE + "'", null, null, null, null, null);
+                COLUMN_STATUS + "='" + GoogleTasks.TASKS_COMPLETE + "'", null, null, null, null, null);
         List<TaskItem> list = new ArrayList<>();
         if (c != null && c.moveToFirst()) {
             do {
@@ -431,7 +431,7 @@ public class TasksDataBase {
     public boolean setTaskDone(long rowId) {
         openGuard();
         ContentValues args = new ContentValues();
-        args.put(COLUMN_STATUS, GTasksHelper.TASKS_COMPLETE);
+        args.put(COLUMN_STATUS, GoogleTasks.TASKS_COMPLETE);
         args.put(COLUMN_COMPLETED, System.currentTimeMillis());
         return db.update(GOOGLE_TASKS_TABLE_NAME, args, COLUMN_ID + "=" + rowId, null) > 0;
     }
@@ -439,7 +439,7 @@ public class TasksDataBase {
     public boolean setTaskUnDone(long rowId) {
         openGuard();
         ContentValues args = new ContentValues();
-        args.put(COLUMN_STATUS, GTasksHelper.TASKS_NEED_ACTION);
+        args.put(COLUMN_STATUS, GoogleTasks.TASKS_NEED_ACTION);
         args.put(COLUMN_COMPLETED, 0);
         return db.update(GOOGLE_TASKS_TABLE_NAME, args, COLUMN_ID + "=" + rowId, null) > 0;
     }

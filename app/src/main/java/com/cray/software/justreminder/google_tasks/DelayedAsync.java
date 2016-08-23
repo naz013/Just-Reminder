@@ -20,7 +20,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 
-import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.cloud.GoogleTasks;
 import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.interfaces.SyncListener;
@@ -39,7 +39,7 @@ public class DelayedAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        GTasksHelper helper = new GTasksHelper(mContext);
+        GoogleTasks helper = new GoogleTasks(mContext);
         TasksDataBase mData = new TasksDataBase(mContext);
         mData.open();
         boolean isConnected = SyncHelper.isConnected(mContext);
@@ -89,17 +89,17 @@ public class DelayedAsync extends AsyncTask<Void, Void, Void> {
                         String status = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_STATUS));
                         String listId = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_LIST_ID));
                         String taskId = c.getString(c.getColumnIndex(TasksDataBase.COLUMN_TASK_ID));
-                        if (status.matches(GTasksHelper.TASKS_COMPLETE) && listId != null && taskId != null) {
+                        if (status.matches(GoogleTasks.TASKS_COMPLETE) && listId != null && taskId != null) {
                             try {
-                                helper.updateTaskStatus(GTasksHelper.TASKS_COMPLETE, listId, taskId);
+                                helper.updateTaskStatus(GoogleTasks.TASKS_COMPLETE, listId, taskId);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
                             mData.delete(id);
                         }
-                        if (status.matches(GTasksHelper.TASKS_NEED_ACTION) && listId != null && taskId != null) {
+                        if (status.matches(GoogleTasks.TASKS_NEED_ACTION) && listId != null && taskId != null) {
                             try {
-                                helper.updateTaskStatus(GTasksHelper.TASKS_NEED_ACTION, listId, taskId);
+                                helper.updateTaskStatus(GoogleTasks.TASKS_NEED_ACTION, listId, taskId);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

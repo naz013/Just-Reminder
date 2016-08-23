@@ -34,8 +34,8 @@ import android.widget.Spinner;
 
 import com.cray.software.justreminder.R;
 import com.cray.software.justreminder.ScreenManager;
-import com.cray.software.justreminder.cloud.DropboxHelper;
-import com.cray.software.justreminder.cloud.GDriveHelper;
+import com.cray.software.justreminder.cloud.Dropbox;
+import com.cray.software.justreminder.cloud.GoogleDrive;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SyncHelper;
 import com.cray.software.justreminder.spinner.SpinnerItem;
@@ -133,7 +133,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                     R.drawable.ic_sd_storage_black_24dp), LOCAL_INT,
                     R.drawable.ic_sd_storage_white_24dp));
         }
-        DropboxHelper dbx = new DropboxHelper(mContext);
+        Dropbox dbx = new Dropbox(mContext);
         dbx.startSession();
         if (dbx.isLinked()){
             if (isDark) {
@@ -146,7 +146,7 @@ public class BackupsFragment extends Fragment implements AdapterView.OnItemSelec
                         R.drawable.dropbox_icon_white));
             }
         }
-        GDriveHelper gdx = new GDriveHelper(mContext);
+        GoogleDrive gdx = new GoogleDrive(mContext);
         if (gdx.isLinked()) {
             if (isDark) {
                 navIds.add(new Item(new SpinnerItem(getString(R.string.google_drive),

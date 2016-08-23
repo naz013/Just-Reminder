@@ -20,7 +20,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.cray.software.justreminder.app_widgets.UpdatesHelper;
-import com.cray.software.justreminder.cloud.GTasksHelper;
+import com.cray.software.justreminder.cloud.GoogleTasks;
 import com.cray.software.justreminder.constants.TasksConstants;
 import com.cray.software.justreminder.helpers.SyncHelper;
 
@@ -43,7 +43,7 @@ public class TaskListAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        GTasksHelper helper = new GTasksHelper(mContext);
+        GoogleTasks helper = new GoogleTasks(mContext);
         boolean isConnected = SyncHelper.isConnected(mContext);
         TasksDataBase data = new TasksDataBase(mContext);
         data.open();
