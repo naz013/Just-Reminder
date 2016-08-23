@@ -40,7 +40,7 @@ import java.util.ArrayList;
 
 public class FontStyleDialog extends Activity{
 
-    private ListView musicList;
+    private ListView mFontsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +50,23 @@ public class FontStyleDialog extends Activity{
         setContentView(R.layout.music_list_dilog);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         findViewById(R.id.windowBackground).setBackgroundColor(cs.getBackgroundStyle());
+        initTitle();
+        initFontsList();
+        loadDataToList();
+        initOkButton();
+    }
+
+    private void initTitle() {
+        RoboTextView dialogTitle = (RoboTextView) findViewById(R.id.dialogTitle);
+        dialogTitle.setText(getString(R.string.font_style));
+    }
+
+    private void initFontsList() {
+        mFontsList = (ListView) findViewById(R.id.musicList);
+        mFontsList.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+    }
+
+    private void loadDataToList() {
         ArrayList<String> contacts = new ArrayList<>();
         contacts.clear();
         contacts.add("Black");
@@ -64,27 +81,27 @@ public class FontStyleDialog extends Activity{
         contacts.add("Regular");
         contacts.add("Thin");
         contacts.add("Thin Italic");
-
-        musicList = (ListView) findViewById(R.id.musicList);
-        musicList.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
         FontAdapter adapter = new FontAdapter(FontStyleDialog.this, contacts);
-        musicList.setAdapter(adapter);
+        mFontsList.setAdapter(adapter);
+    }
 
-        RoboTextView dialogTitle = (RoboTextView) findViewById(R.id.dialogTitle);
-        dialogTitle.setText(getString(R.string.font_style));
-
+    private void initOkButton() {
         RoboButton musicDialogOk = (RoboButton) findViewById(R.id.musicDialogOk);
         musicDialogOk.setOnClickListener(v -> {
-            Intent intent = new Intent();
-            int selected = musicList.getCheckedItemPosition();
+            int selected = mFontsList.getCheckedItemPosition();
             if (selected != -1) {
-                intent.putExtra(Constants.SELECTED_FONT_STYLE, selected);
-                setResult(RESULT_OK, intent);
-                finish();
+                sendResult(selected);
             } else {
                 Messages.toast(FontStyleDialog.this, getString(R.string.select_one_of_item));
             }
         });
+    }
+
+    private void sendResult(int selected) {
+        Intent intent = new Intent();
+        intent.putExtra(Constants.SELECTED_FONT_STYLE, selected);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     public class FontAdapter extends BaseAdapter {
