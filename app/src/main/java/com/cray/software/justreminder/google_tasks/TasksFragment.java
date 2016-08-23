@@ -36,7 +36,7 @@ import com.cray.software.justreminder.StartActivity;
 import com.cray.software.justreminder.constants.Constants;
 import com.cray.software.justreminder.constants.Prefs;
 import com.cray.software.justreminder.constants.TasksConstants;
-import com.cray.software.justreminder.datas.models.TaskListItem;
+import com.cray.software.justreminder.datas.models.TaskListWrapperItem;
 import com.cray.software.justreminder.helpers.ColorSetter;
 import com.cray.software.justreminder.helpers.SharedPrefs;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
@@ -51,7 +51,7 @@ public class TasksFragment extends Fragment {
 
     private static final String TAG = "TasksFragment";
     private ViewPager pager;
-    private ArrayList<TaskListItem> taskListDatum;
+    private ArrayList<TaskListWrapperItem> taskListDatum;
     private int currentPos;
     private boolean onCreate = false;
     private NavigationCallbacks mCallbacks;
@@ -252,7 +252,7 @@ public class TasksFragment extends Fragment {
         Map<String, Integer> colors = new HashMap<>();
         for (int i = 0; i < taskLists.size(); i++){
             com.cray.software.justreminder.google_tasks.TaskListItem item = taskLists.get(i);
-            taskListDatum.add(new TaskListItem(item, getList(item.getListId()), i));
+            taskListDatum.add(new TaskListWrapperItem(item, getList(item.getListId()), i));
             if (i > 0) colors.put(item.getListId(), item.getColor());
         }
         Log.d(TAG, "loadData: " + colors.toString());

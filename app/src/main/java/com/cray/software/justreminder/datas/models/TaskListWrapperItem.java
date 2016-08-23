@@ -22,13 +22,14 @@ import com.cray.software.justreminder.google_tasks.TaskListItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TaskListItem {
-    private com.cray.software.justreminder.google_tasks.TaskListItem taskList;
+public class TaskListWrapperItem {
+
+    private TaskListItem taskList;
     private List<TaskItem> mData;
     private int position;
 
-    public TaskListItem(com.cray.software.justreminder.google_tasks.TaskListItem taskList, List<TaskItem> mData,
-                        int position){
+    public TaskListWrapperItem(TaskListItem taskList, List<TaskItem> mData,
+                               int position){
         this.taskList = taskList;
         this.mData = new ArrayList<>(mData);
         this.position = position;
@@ -46,7 +47,7 @@ public class TaskListItem {
         return mData;
     }
 
-    public com.cray.software.justreminder.google_tasks.TaskListItem getTaskList() {
+    public TaskListItem getTaskList() {
         return taskList;
     }
 }

@@ -20,7 +20,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.cray.software.justreminder.datas.models.TaskListItem;
+import com.cray.software.justreminder.datas.models.TaskListWrapperItem;
 import com.cray.software.justreminder.interfaces.NavigationCallbacks;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class TasksPagerAdapter extends FragmentStatePagerAdapter {
     /**
      * List of Google Tasks models.
      */
-    private ArrayList<TaskListItem> mData;
+    private ArrayList<TaskListWrapperItem> mData;
 
     /**
      * Navigation drawer callback.
@@ -48,7 +48,7 @@ public class TasksPagerAdapter extends FragmentStatePagerAdapter {
      * @param fm fragment manager.
      * @param data list of models.
      */
-    public TasksPagerAdapter(final FragmentManager fm, final ArrayList<TaskListItem> data, Map<String, Integer> colors) {
+    public TasksPagerAdapter(final FragmentManager fm, final ArrayList<TaskListWrapperItem> data, Map<String, Integer> colors) {
         super(fm);
         this.mData = data;
         this.colors = colors;
