@@ -393,7 +393,8 @@ public class NotesFragment extends Fragment implements SyncListener, SimpleListe
                     break;
                 case 5:
                     NoteHelper.getInstance(mContext).deleteNote(id, mCallbacks);
-                    loaderAdapter();
+                    mAdapter.remove(position);
+                    reloadView();
                     break;
             }
         }, items);
